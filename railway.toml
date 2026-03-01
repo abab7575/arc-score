@@ -2,8 +2,8 @@
 builder = "dockerfile"
 
 [deploy]
-startCommand = "npx next start -p ${PORT:-3000}"
+startCommand = "node_modules/.bin/next start -H 0.0.0.0 -p ${PORT:-3000}"
 healthcheckPath = "/api/health"
-healthcheckTimeout = 30
+healthcheckTimeout = 60
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
