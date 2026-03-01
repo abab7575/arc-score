@@ -1,0 +1,20 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data
+      - ./public/screenshots:/app/public/screenshots
+    environment:
+      - DATABASE_PATH=./data/arc-score.db
+      - SCREENSHOT_STORAGE=local
+      - SCAN_CONCURRENCY=3
+      - SCAN_STAGGER_MS=5000
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

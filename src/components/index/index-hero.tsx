@@ -1,0 +1,248 @@
+"use client";
+
+import { useState } from "react";
+import { Search, ShoppingCart, Eye, Database } from "lucide-react";
+
+interface IndexHeroProps {
+  onSearch: (query: string) => void;
+}
+
+export function IndexHero({ onSearch }: IndexHeroProps) {
+  const [query, setQuery] = useState("");
+
+  return (
+    <>
+      <div className="hero-bold relative">
+        {/* Background layers */}
+        <div className="retro-grid z-[1]" />
+        <div className="scan-lines z-[1]" />
+        <div className="cassette-stripes z-[1]" />
+
+        {/* Decorative elements */}
+        <div className="absolute top-8 left-[6%] w-32 h-32 rounded-full border border-[#84AFFB]/10 z-[1]" />
+        <div className="absolute top-12 left-[7%] w-24 h-24 rounded-full border border-[#84AFFB]/8 z-[1]" />
+        <div className="absolute bottom-12 left-[12%] w-3 h-3 rounded-full bg-[#FF6648] z-[1]" style={{ boxShadow: "0 0 12px #FF6648" }} />
+        <div className="absolute top-20 right-[22%] w-2 h-2 rounded-full bg-[#FBBA16] z-[1]" style={{ boxShadow: "0 0 8px #FBBA16" }} />
+
+        {/* ── Content ──────────────────────────────────────────────────── */}
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14 pb-10 sm:pb-14">
+
+          {/* Top spec line */}
+          <div className="flex items-center gap-3 mb-10 opacity-40">
+            <div className="flex-1 h-px" style={{ background: "repeating-linear-gradient(90deg, rgba(255,255,255,0.2), rgba(255,255,255,0.2) 4px, transparent 4px, transparent 8px)" }} />
+            <span className="spec-label text-white/50">LIVE — SCANNING DAILY</span>
+            <span className="w-2 h-2 rounded-full bg-[#059669] blink" />
+            <div className="flex-1 h-px" style={{ background: "repeating-linear-gradient(90deg, rgba(255,255,255,0.2), rgba(255,255,255,0.2) 4px, transparent 4px, transparent 8px)" }} />
+          </div>
+
+          {/* ── Two-column hero layout ──────────────────────────────────── */}
+          <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+
+            {/* Left — Message */}
+            <div className="flex-1 text-center lg:text-left">
+              {/* The question that hooks */}
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tighter leading-[0.95] mb-5"
+                style={{
+                  textShadow: "2px 2px 0 rgba(255,102,72,0.5), 4px 4px 0 rgba(132,175,251,0.25), 8px 8px 20px rgba(0,0,0,0.3)",
+                }}
+              >
+                Can AI Agents<br />
+                Shop Your<br />
+                Store?
+              </h1>
+
+              {/* Clear explanation */}
+              <p className="text-sm sm:text-base text-white/50 max-w-md leading-relaxed mb-6 mx-auto lg:mx-0">
+                Your customers are starting to send AI agents — like{" "}
+                <span className="text-[#FF6648] font-semibold">ChatGPT</span>,{" "}
+                <span className="text-[#FBBA16] font-semibold">Perplexity</span>, and{" "}
+                <span className="text-[#84AFFB] font-semibold">Google AI</span>{" "}
+                — to browse, compare, and buy products for them. We test how
+                ready your site is.
+              </p>
+
+              {/* Branding badge */}
+              <div className="inline-flex items-center gap-3 px-4 py-2 border border-white/15 bg-white/[0.03] mb-6">
+                <span className="spec-label text-[#FF6648]">ARC SCORE</span>
+                <span className="w-1 h-1 rounded-full bg-white/30" />
+                <span className="spec-label text-white/50">AGENT READINESS INDEX</span>
+                <span className="w-1 h-1 rounded-full bg-white/30" />
+                <span className="spec-label text-[#84AFFB]">0–100</span>
+              </div>
+
+              {/* Search */}
+              <div className="max-w-md relative group mx-auto lg:mx-0">
+                <Search
+                  size={15}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[#FF6648] transition-colors"
+                />
+                <input
+                  type="text"
+                  placeholder="Search 101 brands..."
+                  value={query}
+                  onChange={(e) => {
+                    setQuery(e.target.value);
+                    onSearch(e.target.value);
+                  }}
+                  className="w-full pl-11 pr-20 py-3 border border-white/15 bg-white/5 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-[#FF6648]/50 focus:bg-white/10 transition-all font-mono"
+                />
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 spec-label text-white/20">SEARCH</span>
+              </div>
+            </div>
+
+            {/* Right — Mini score preview card */}
+            <div className="w-full max-w-xs lg:max-w-sm shrink-0">
+              <PreviewCard />
+            </div>
+          </div>
+
+          {/* Bottom spec line */}
+          <div className="mt-10 opacity-25">
+            <div className="h-px" style={{ background: "repeating-linear-gradient(90deg, rgba(255,255,255,0.2), rgba(255,255,255,0.2) 4px, transparent 4px, transparent 8px)" }} />
+          </div>
+        </div>
+
+        {/* Color block strip */}
+        <div className="flex h-[6px] relative z-10">
+          <div className="flex-1 bg-[#FF6648]" />
+          <div className="flex-1 bg-[#FBBA16]" />
+          <div className="flex-1 bg-[#0259DD]" />
+          <div className="flex-1 bg-[#84AFFB]" />
+          <div className="flex-1 bg-[#FFE1D7]" />
+          <div className="flex-1 bg-[#059669]" />
+        </div>
+      </div>
+
+      {/* ── How We Score — explainer strip ────────────────────────────── */}
+      <HowWeScore />
+    </>
+  );
+}
+
+/* ── Preview Card ──────────────────────────────────────────────────────── */
+
+function PreviewCard() {
+  return (
+    <div className="border border-white/15 bg-white/[0.04] backdrop-blur-sm">
+      {/* Header */}
+      <div className="px-5 py-3 border-b border-white/10 flex items-center justify-between">
+        <span className="spec-label text-white/40 text-[9px]">SAMPLE SCORE REPORT</span>
+        <span className="w-2 h-2 rounded-full bg-[#059669]" />
+      </div>
+
+      {/* Score */}
+      <div className="px-5 pt-5 pb-4 flex items-center gap-4">
+        <div
+          className="w-16 h-16 flex items-center justify-center border-2 border-[#059669]"
+          style={{ boxShadow: "0 0 16px rgba(5,150,105,0.2)" }}
+        >
+          <span className="data-num text-2xl font-black text-[#059669]">87</span>
+        </div>
+        <div>
+          <div className="text-sm font-bold text-white">Glossier</div>
+          <div className="spec-label text-white/30 text-[9px] mt-0.5">GRADE A — AGENT-READY</div>
+          <div className="flex items-center gap-1.5 mt-1.5">
+            <span className="spec-label text-[9px] px-1.5 py-0.5 bg-[#059669]/20 text-[#059669]">ACP: UNKNOWN</span>
+            <span className="spec-label text-[9px] px-1.5 py-0.5 bg-[#FBBA16]/20 text-[#FBBA16]">FRICTION: LOW</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Mini category bars */}
+      <div className="px-5 pb-4 space-y-2">
+        <MiniBar label="DISCOVER" score={100} color="#059669" />
+        <MiniBar label="CART" score={100} color="#059669" />
+        <MiniBar label="DATA" score={95} color="#059669" />
+        <MiniBar label="NAVIGATE" score={77} color="#0259DD" />
+        <MiniBar label="PRODUCT" score={75} color="#FBBA16" />
+        <MiniBar label="AGENT API" score={65} color="#FBBA16" />
+      </div>
+
+      {/* Footer */}
+      <div className="px-5 py-3 border-t border-white/10 flex items-center justify-between">
+        <span className="spec-label text-white/25 text-[8px]">7 CATEGORIES TESTED</span>
+        <span className="spec-label text-[#FF6648] text-[8px]">VIEW FULL REPORT →</span>
+      </div>
+    </div>
+  );
+}
+
+function MiniBar({ label, score, color }: { label: string; score: number; color: string }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="spec-label text-white/30 text-[8px] w-14 text-right shrink-0">{label}</span>
+      <div className="flex-1 h-[4px] bg-white/5 overflow-hidden">
+        <div className="h-full" style={{ width: `${score}%`, backgroundColor: color }} />
+      </div>
+      <span className="data-num text-[10px] font-bold w-6 text-right shrink-0" style={{ color }}>{score}</span>
+    </div>
+  );
+}
+
+/* ── How We Score ──────────────────────────────────────────────────────── */
+
+function HowWeScore() {
+  const steps = [
+    {
+      icon: Eye,
+      number: "01",
+      label: "BROWSE",
+      color: "#FF6648",
+      title: "We send AI agents to shop",
+      desc: "Three AI agents visit your site — one browses like a customer, one reads your data feeds, one tests your buttons and forms.",
+    },
+    {
+      icon: ShoppingCart,
+      number: "02",
+      label: "TEST",
+      color: "#0259DD",
+      title: "They try to buy something",
+      desc: "Can they find products? Add to cart? Complete checkout? We test the full shopping journey, from homepage to payment.",
+    },
+    {
+      icon: Database,
+      number: "03",
+      label: "SCORE",
+      color: "#059669",
+      title: "You get a score out of 100",
+      desc: "Your ARC Score shows how ready your store is for AI agent commerce — with specific findings and fixes to improve.",
+    },
+  ];
+
+  return (
+    <div className="bg-white border-b border-[#E8E0D8]">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+        {/* Section label */}
+        <div className="flex items-center gap-3 mb-6">
+          <span className="spec-label text-muted-foreground text-[9px]">HOW IT WORKS</span>
+          <div className="flex-1 h-px bg-[#E8E0D8]" />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {steps.map((step) => (
+            <div key={step.number} className="flex gap-4">
+              {/* Number + icon */}
+              <div className="shrink-0">
+                <div
+                  className="w-10 h-10 flex items-center justify-center"
+                  style={{ backgroundColor: step.color }}
+                >
+                  <step.icon size={18} className="text-white" />
+                </div>
+                <div className="spec-label text-center mt-1.5 text-[9px]" style={{ color: step.color }}>
+                  {step.number}
+                </div>
+              </div>
+
+              {/* Text */}
+              <div>
+                <div className="text-sm font-bold text-foreground mb-1">{step.title}</div>
+                <p className="text-xs text-muted-foreground leading-relaxed">{step.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
