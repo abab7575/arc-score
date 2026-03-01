@@ -12,11 +12,11 @@ RUN npm ci
 # Copy source
 COPY . .
 
-# Build Next.js (standalone output)
-RUN npm run build
-
-# Seed the database (creates tables + populates brands and feeds)
+# Seed the database BEFORE build (so DB exists when Next.js collects page data)
 RUN npx tsx src/lib/db/seed.ts && npx tsx scripts/seed-feeds.ts
+
+# Build Next.js
+RUN npm run build
 
 # Stage 2: Runtime with Puppeteer/Chromium
 FROM node:20-slim AS runner
@@ -40,20 +40,17 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 # Set production environment
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV HOSTNAME=0.0.0.0
 
-# Copy standalone server (includes traced node_modules)
-COPY --from=builder /app/.next/standalone ./
-
-# Copy static assets (not included in standalone by default)
-COPY --from=builder /app/.next/static ./.next/static
-
-# Copy public assets
+# Copy built app and dependencies from builder
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/next.config.ts ./next.config.ts
 
 # Copy seeded database from builder
 COPY --from=builder /app/data ./data
 
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+CMD ["npx", "next", "start", "-H", "0.0.0.0", "-p", "3000"]

@@ -2,7 +2,7 @@
 builder = "dockerfile"
 
 [deploy]
-startCommand = "node server.js"
+startCommand = "npx next start -H 0.0.0.0 -p ${PORT:-3000}"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 60
 restartPolicyType = "on_failure"
