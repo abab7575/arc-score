@@ -15,6 +15,9 @@ COPY . .
 # Build Next.js
 RUN npm run build
 
+# Seed the database (creates tables + populates brands and feeds)
+RUN npx tsx src/lib/db/seed.ts && npx tsx scripts/seed-feeds.ts
+
 # Stage 2: Runtime with Puppeteer/Chromium
 FROM node:20-slim AS runner
 
@@ -49,8 +52,8 @@ COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/next.config.ts ./next.config.ts
 COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
 
-# Create data directory for SQLite
-RUN mkdir -p /app/data
+# Copy seeded database from builder
+COPY --from=builder /app/data ./data
 
 # Expose Next.js port
 EXPOSE 3000
