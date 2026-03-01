@@ -1,0 +1,54 @@
+name: Daily Brand Scan
+
+on:
+  schedule:
+    # Run at 2 AM UTC every day
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Force re-scan all brands"
+        type: boolean
+        default: false
+      category:
+        description: "Only scan a specific category (e.g. fashion, electronics)"
+        type: string
+        required: false
+
+env:
+  BASE_URL: https://arc-score-production.up.railway.app
+
+jobs:
+  trigger-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger daily scan
+        run: |
+          PARAMS=""
+          if [ "${{ github.event.inputs.force }}" = "true" ] || [ "${{ github.event_name }}" = "schedule" ]; then
+            PARAMS="?force=true"
+          fi
+          if [ -n "${{ github.event.inputs.category }}" ]; then
+            SEP="?"
+            [ -n "$PARAMS" ] && SEP="&"
+            PARAMS="${PARAMS}${SEP}category=${{ github.event.inputs.category }}"
+          fi
+
+          echo "Triggering scan: ${BASE_URL}/api/cron/daily-scan${PARAMS}"
+
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            "${BASE_URL}/api/cron/daily-scan${PARAMS}" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "Status: $HTTP_CODE"
+          echo "Response: $BODY"
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "::error::Scan trigger failed with status $HTTP_CODE"
+            exit 1
+          fi

@@ -16,11 +16,11 @@ const projectRoot = path.join(__dirname, "..");
 
 async function main() {
   const args = process.argv.slice(2);
-  const concurrency = parseInt(args.find((a) => a.startsWith("--concurrency="))?.split("=")[1] ?? process.env.SCAN_CONCURRENCY ?? "3");
+  const concurrency = parseInt(args.find((a) => a.startsWith("--concurrency="))?.split("=")[1] ?? process.env.SCAN_CONCURRENCY ?? "2");
   const filterCategory = args.find((a) => a.startsWith("--category="))?.split("=")[1];
   const maxRetries = parseInt(args.find((a) => a.startsWith("--retry="))?.split("=")[1] ?? "2");
   const force = args.includes("--force");
-  const staggerMs = parseInt(process.env.SCAN_STAGGER_MS ?? "5000");
+  const staggerMs = parseInt(process.env.SCAN_STAGGER_MS ?? "8000");
 
   const { BRANDS } = await import(path.join(projectRoot, "src/lib/brands"));
   const { scanBrand } = await import(path.join(projectRoot, "src/lib/scanner/scan-orchestrator"));

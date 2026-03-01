@@ -48,9 +48,15 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.ts ./next.config.ts
 
-# Copy seeded database from builder
-COPY --from=builder /app/data ./data
+# Copy source files needed for runtime scanning (tsx scripts + lib imports)
+COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
 
-EXPOSE 3000
+# Copy seeded database as fallback (entrypoint will skip seed if volume DB exists)
+COPY --from=builder /app/data ./data.seed
 
-CMD ["npx", "next", "start", "-H", "0.0.0.0", "-p", "3000"]
+# Copy entrypoint script
+COPY --from=builder /app/scripts/entrypoint.sh ./entrypoint.sh
+
+CMD ["sh", "./entrypoint.sh"]

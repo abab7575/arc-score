@@ -1,0 +1,45 @@
+name: Daily News Scan
+
+on:
+  schedule:
+    # Run at 1 AM UTC every day (before brand scan)
+    - cron: "0 1 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Force re-scan all feeds"
+        type: boolean
+        default: false
+
+env:
+  BASE_URL: https://arc-score-production.up.railway.app
+
+jobs:
+  trigger-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger news scan
+        run: |
+          PARAMS=""
+          if [ "${{ github.event.inputs.force }}" = "true" ] || [ "${{ github.event_name }}" = "schedule" ]; then
+            PARAMS="?force=true"
+          fi
+
+          echo "Triggering news scan: ${BASE_URL}/api/cron/news-scan${PARAMS}"
+
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            "${BASE_URL}/api/cron/news-scan${PARAMS}" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "Status: $HTTP_CODE"
+          echo "Response: $BODY"
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "::error::News scan trigger failed with status $HTTP_CODE"
+            exit 1
+          fi
