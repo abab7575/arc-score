@@ -24,7 +24,7 @@ async function sha256(input: string): Promise<string> {
 }
 
 export async function hashPassword(password: string): Promise<string> {
-  const salt = toHex(crypto.getRandomValues(new Uint8Array(16)).buffer as ArrayBuffer);
+  const salt = toHex(crypto.getRandomValues(new Uint8Array(16)).buffer);
   const hash = await sha256(salt + password);
   return `${salt}:${hash}`;
 }
@@ -72,7 +72,9 @@ async function hmacVerify(data: string, signature: string): Promise<boolean> {
     { name: "HMAC", hash: "SHA-256" }, false, ["verify"]
   );
   const sigBytes = fromBase64Url(signature);
-  return crypto.subtle.verify("HMAC", key, sigBytes as BufferSource, enc.encode(data));
+  const sigBuffer = new ArrayBuffer(sigBytes.length);
+  new Uint8Array(sigBuffer).set(sigBytes);
+  return crypto.subtle.verify("HMAC", key, sigBuffer, enc.encode(data));
 }
 
 export async function createCustomerSession(customerId: number): Promise<string> {

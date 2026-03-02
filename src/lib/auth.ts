@@ -42,7 +42,9 @@ async function hmacVerify(data: string, signature: string, secret: string): Prom
     ["verify"]
   );
   const sigBytes = fromBase64Url(signature);
-  return crypto.subtle.verify("HMAC", key, sigBytes, enc.encode(data));
+  const sigBuffer = new ArrayBuffer(sigBytes.length);
+  new Uint8Array(sigBuffer).set(sigBytes);
+  return crypto.subtle.verify("HMAC", key, sigBuffer, enc.encode(data));
 }
 
 export function verifyPassword(input: string): boolean {
