@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import { CheckCircle, Loader2 } from "lucide-react";
 
-export default function CheckoutSuccessPage() {
+function CheckoutSuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const sessionId = searchParams.get("session_id");
@@ -24,7 +24,6 @@ export default function CheckoutSuccessPage() {
       .then((r) => r.json())
       .then((data) => {
         if (data.authenticated) {
-          // Already logged in — redirect to account
           router.push("/account");
         } else {
           setChecking(false);
@@ -164,5 +163,19 @@ export default function CheckoutSuccessPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function CheckoutSuccessPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <Loader2 className="w-6 h-6 text-muted-foreground animate-spin" />
+        </div>
+      }
+    >
+      <CheckoutSuccessContent />
+    </Suspense>
   );
 }
