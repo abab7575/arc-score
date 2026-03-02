@@ -1,34 +1,44 @@
 /**
- * Centralized RSS feed source definitions for the ARC Score intel system.
+ * Centralized feed source definitions for the ARC Score intel system.
  * Import this in seed scripts and anywhere feed lists are needed.
  */
+
+export type SourceType = "rss" | "blog" | "newsletter" | "youtube" | "podcast" | "reddit" | "twitter";
 
 export interface FeedSourceDef {
   name: string;
   url: string;
   category: string;
+  sourceType?: SourceType;
 }
 
 export const FEED_SOURCES: FeedSourceDef[] = [
   // ── AI Labs ────────────────────────────────────────────────────────
-  { name: "OpenAI Blog", url: "https://openai.com/blog/rss.xml", category: "ai-lab" },
-  { name: "Google AI Blog", url: "https://blog.google/technology/ai/rss/", category: "ai-lab" },
-  { name: "Anthropic Blog", url: "https://www.anthropic.com/rss.xml", category: "ai-lab" },
-  { name: "Meta AI Blog", url: "https://ai.meta.com/blog/rss/", category: "ai-lab" },
-  { name: "Microsoft AI Blog", url: "https://blogs.microsoft.com/ai/feed/", category: "ai-lab" },
-  { name: "Google DeepMind Blog", url: "https://deepmind.google/blog/rss.xml", category: "ai-lab" },
-  { name: "Cohere Blog", url: "https://cohere.com/blog/rss.xml", category: "ai-lab" },
-  { name: "Mistral AI Blog", url: "https://mistral.ai/feed/", category: "ai-lab" },
+  { name: "OpenAI Blog", url: "https://openai.com/blog/rss.xml", category: "ai-lab", sourceType: "blog" },
+  { name: "Google AI Blog", url: "https://blog.google/technology/ai/rss/", category: "ai-lab", sourceType: "blog" },
+  { name: "Anthropic Blog", url: "https://www.anthropic.com/rss.xml", category: "ai-lab", sourceType: "blog" },
+  { name: "Meta AI Blog", url: "https://ai.meta.com/blog/rss/", category: "ai-lab", sourceType: "blog" },
+  { name: "Microsoft AI Blog", url: "https://blogs.microsoft.com/ai/feed/", category: "ai-lab", sourceType: "blog" },
+  { name: "Google DeepMind Blog", url: "https://deepmind.google/blog/rss.xml", category: "ai-lab", sourceType: "blog" },
+  { name: "Cohere Blog", url: "https://cohere.com/blog/rss.xml", category: "ai-lab", sourceType: "blog" },
+  { name: "Mistral AI Blog", url: "https://mistral.ai/feed/", category: "ai-lab", sourceType: "blog" },
 
   // ── E-commerce Platforms ───────────────────────────────────────────
-  { name: "Shopify Engineering", url: "https://shopify.engineering/blog/feed", category: "ecommerce" },
-  { name: "Stripe Blog", url: "https://stripe.com/blog/feed.rss", category: "ecommerce" },
-  { name: "BigCommerce Blog", url: "https://www.bigcommerce.com/blog/feed/", category: "ecommerce" },
-  { name: "WooCommerce Blog", url: "https://developer.woocommerce.com/feed/", category: "ecommerce" },
-  { name: "Adobe Commerce Blog", url: "https://business.adobe.com/blog/rss.xml", category: "ecommerce" },
-  { name: "Klaviyo Blog", url: "https://www.klaviyo.com/blog/feed", category: "ecommerce" },
-  { name: "Bold Commerce Blog", url: "https://boldcommerce.com/blog/rss.xml", category: "ecommerce" },
-  { name: "Salsify Blog", url: "https://www.salsify.com/blog/rss.xml", category: "ecommerce" },
+  { name: "Shopify Engineering", url: "https://shopify.engineering/blog/feed", category: "ecommerce", sourceType: "blog" },
+  { name: "Stripe Blog", url: "https://stripe.com/blog/feed.rss", category: "ecommerce", sourceType: "blog" },
+  { name: "BigCommerce Blog", url: "https://www.bigcommerce.com/blog/feed/", category: "ecommerce", sourceType: "blog" },
+  { name: "WooCommerce Blog", url: "https://developer.woocommerce.com/feed/", category: "ecommerce", sourceType: "blog" },
+  { name: "Adobe Commerce Blog", url: "https://business.adobe.com/blog/rss.xml", category: "ecommerce", sourceType: "blog" },
+  { name: "Klaviyo Blog", url: "https://www.klaviyo.com/blog/feed", category: "ecommerce", sourceType: "blog" },
+  { name: "Bold Commerce Blog", url: "https://boldcommerce.com/blog/rss.xml", category: "ecommerce", sourceType: "blog" },
+  { name: "Salsify Blog", url: "https://www.salsify.com/blog/rss.xml", category: "ecommerce", sourceType: "blog" },
+
+  // ── Company Blogs (new) ───────────────────────────────────────────
+  { name: "Amazon Science", url: "https://www.amazon.science/index.rss", category: "ecommerce", sourceType: "blog" },
+  { name: "PayPal Engineering", url: "https://medium.com/feed/paypal-tech", category: "ecommerce", sourceType: "blog" },
+  { name: "Perplexity Blog", url: "https://www.perplexity.ai/hub/blog/rss.xml", category: "ai-lab", sourceType: "blog" },
+  { name: "commercetools Blog", url: "https://commercetools.com/blog/rss.xml", category: "ecommerce", sourceType: "blog" },
+  { name: "Mastercard Newsroom", url: "https://www.mastercard.com/news/rss/", category: "ecommerce", sourceType: "blog" },
 
   // ── Retail & Commerce News ─────────────────────────────────────────
   { name: "Retail Dive", url: "https://www.retaildive.com/feeds/news/", category: "retail-news" },
@@ -41,14 +51,13 @@ export const FEED_SOURCES: FeedSourceDef[] = [
   { name: "eMarketer", url: "https://www.insiderintelligence.com/rss/", category: "retail-news" },
 
   // ── AI Agent-Specific ──────────────────────────────────────────────
-  { name: "LangChain Blog", url: "https://blog.langchain.dev/rss/", category: "ai-agent" },
-  { name: "AutoGPT Blog", url: "https://news.agpt.co/feed/", category: "ai-agent" },
-  { name: "Adept AI Blog", url: "https://www.adept.ai/blog/rss.xml", category: "ai-agent" },
-  { name: "MultiOn Blog", url: "https://www.multion.ai/blog/rss.xml", category: "ai-agent" },
-  { name: "Perplexity Blog", url: "https://www.perplexity.ai/hub/blog/rss.xml", category: "ai-agent" },
-  { name: "Fixie AI Blog", url: "https://blog.fixie.ai/feed", category: "ai-agent" },
-  { name: "AI Agent Newsletter", url: "https://www.aiagent.email/feed", category: "ai-agent" },
-  { name: "The Rundown AI", url: "https://www.therundown.ai/feed", category: "ai-agent" },
+  { name: "LangChain Blog", url: "https://blog.langchain.dev/rss/", category: "ai-agent", sourceType: "blog" },
+  { name: "AutoGPT Blog", url: "https://news.agpt.co/feed/", category: "ai-agent", sourceType: "blog" },
+  { name: "Adept AI Blog", url: "https://www.adept.ai/blog/rss.xml", category: "ai-agent", sourceType: "blog" },
+  { name: "MultiOn Blog", url: "https://www.multion.ai/blog/rss.xml", category: "ai-agent", sourceType: "blog" },
+  { name: "Fixie AI Blog", url: "https://blog.fixie.ai/feed", category: "ai-agent", sourceType: "blog" },
+  { name: "AI Agent Newsletter", url: "https://www.aiagent.email/feed", category: "ai-agent", sourceType: "newsletter" },
+  { name: "The Rundown AI", url: "https://www.therundown.ai/feed", category: "ai-agent", sourceType: "newsletter" },
 
   // ── Tech News ──────────────────────────────────────────────────────
   { name: "TechCrunch AI", url: "https://techcrunch.com/category/artificial-intelligence/feed/", category: "tech-news" },
@@ -70,11 +79,45 @@ export const FEED_SOURCES: FeedSourceDef[] = [
   { name: "2PM", url: "https://2pml.com/feed/", category: "dtc-brand" },
   { name: "Lean Luxe", url: "https://leanluxe.com/feed/", category: "dtc-brand" },
   { name: "DTC Newsletter", url: "https://www.directtoconsumer.co/feed", category: "dtc-brand" },
-  { name: "Shopify Partners Blog", url: "https://www.shopify.com/partners/blog/feed", category: "dtc-brand" },
+  { name: "Shopify Partners Blog", url: "https://www.shopify.com/partners/blog/feed", category: "dtc-brand", sourceType: "blog" },
 
   // ── Industry Analysis ──────────────────────────────────────────────
-  { name: "a16z", url: "https://a16z.com/feed/", category: "industry-analysis" },
-  { name: "Benedict Evans", url: "https://www.ben-evans.com/feed", category: "industry-analysis" },
-  { name: "Stratechery", url: "https://stratechery.com/feed/", category: "industry-analysis" },
+  { name: "a16z", url: "https://a16z.com/feed/", category: "industry-analysis", sourceType: "blog" },
+  { name: "Benedict Evans", url: "https://www.ben-evans.com/feed", category: "industry-analysis", sourceType: "blog" },
+  { name: "Stratechery", url: "https://stratechery.com/feed/", category: "industry-analysis", sourceType: "blog" },
   { name: "CB Insights", url: "https://www.cbinsights.com/research/feed/", category: "industry-analysis" },
+
+  // ── Newsletters ────────────────────────────────────────────────────
+  { name: "FourWeekMBA", url: "https://fourweekmba.com/feed/", category: "industry-analysis", sourceType: "newsletter" },
+  { name: "The AI Breakdown", url: "https://www.theaibreakdown.com/feed", category: "ai-agent", sourceType: "newsletter" },
+
+  // ── Podcasts (RSS feeds — show notes and descriptions) ─────────────
+  { name: "Jason & Scot Show", url: "https://feeds.simplecast.com/bVXYq3OE", category: "retail-news", sourceType: "podcast" },
+  { name: "Latent Space Podcast", url: "https://api.substack.com/feed/podcast/1084089.rss", category: "ai-agent", sourceType: "podcast" },
+  { name: "Future Commerce", url: "https://feeds.simplecast.com/yEjb8TV3", category: "ecommerce", sourceType: "podcast" },
+  { name: "All-In Podcast", url: "https://feeds.megaphone.fm/all-in-with-chamath-jason-sacks-and-friedberg", category: "industry-analysis", sourceType: "podcast" },
+  { name: "20VC with Harry Stebbings", url: "https://feeds.megaphone.fm/20vc", category: "industry-analysis", sourceType: "podcast" },
+  { name: "No Priors", url: "https://feeds.transistor.fm/no-priors-ai-machine-learning-technology-and", category: "ai-agent", sourceType: "podcast" },
+  { name: "The Cognitive Revolution", url: "https://feeds.buzzsprout.com/2124832.rss", category: "ai-agent", sourceType: "podcast" },
+  { name: "Pivot", url: "https://feeds.megaphone.fm/pivot", category: "tech-news", sourceType: "podcast" },
+  { name: "Retail Gets Real", url: "https://feeds.simplecast.com/OVMTIfQk", category: "retail-news", sourceType: "podcast" },
+  { name: "Shopify Masters", url: "https://feeds.shopify.com/shopify-masters", category: "ecommerce", sourceType: "podcast" },
+  { name: "Greg Isenberg Startup Ideas", url: "https://feeds.megaphone.fm/startup-ideas-podcast", category: "industry-analysis", sourceType: "podcast" },
+  { name: "Founders Podcast", url: "https://feeds.transistor.fm/founders", category: "industry-analysis", sourceType: "podcast" },
+  { name: "Acquired", url: "https://feeds.pacific-content.com/acquired", category: "industry-analysis", sourceType: "podcast" },
+  { name: "Lex Fridman Podcast", url: "https://lexfridman.com/feed/podcast/", category: "tech-news", sourceType: "podcast" },
+  { name: "a16z Podcast", url: "https://feeds.simplecast.com/JGE3yC0V", category: "industry-analysis", sourceType: "podcast" },
+
+  // ── YouTube (channel RSS feeds) ────────────────────────────────────
+  { name: "Lightcone / YC", url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCcefcZRL2oaA_uBNeo5UOWg", category: "industry-analysis", sourceType: "youtube" },
+  { name: "a16z YouTube", url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCE-E2bGiakLsBgl_mLEhSug", category: "industry-analysis", sourceType: "youtube" },
+  { name: "Latent Space YouTube", url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCWjBpFRzYt4vB3zIleLCrLA", category: "ai-agent", sourceType: "youtube" },
+  { name: "Dwarkesh Patel", url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCXnKE4mGqOXiKLFoTbGRJwA", category: "tech-news", sourceType: "youtube" },
+  { name: "Shopify YouTube", url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCcefcZRL2oaA_uBNeo5UOWg", category: "ecommerce", sourceType: "youtube" },
+
+  // ── Reddit (subreddit JSON feeds) ──────────────────────────────────
+  { name: "r/AI_Agents", url: "https://www.reddit.com/r/AI_Agents/new.json?limit=25", category: "ai-agent", sourceType: "reddit" },
+  { name: "r/shopifyDev", url: "https://www.reddit.com/r/shopifyDev/new.json?limit=25", category: "ecommerce", sourceType: "reddit" },
+  { name: "r/ecommerce", url: "https://www.reddit.com/r/ecommerce/new.json?limit=25", category: "ecommerce", sourceType: "reddit" },
+  { name: "r/Entrepreneur", url: "https://www.reddit.com/r/Entrepreneur/new.json?limit=25", category: "dtc-brand", sourceType: "reddit" },
 ];

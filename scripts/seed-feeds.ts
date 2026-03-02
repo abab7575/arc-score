@@ -18,15 +18,26 @@ sqlite.pragma("foreign_keys = ON");
 
 console.log("\n=== ARC Score Feed Seeder ===\n");
 
-const insertFeed = sqlite.prepare(`
-  INSERT OR IGNORE INTO feed_sources (name, url, category)
-  VALUES (?, ?, ?)
-`);
+// Check if source_type column exists
+const columns = sqlite.prepare("PRAGMA table_info(feed_sources)").all() as Array<{ name: string }>;
+const hasSourceType = columns.some((c) => c.name === "source_type");
+
+const insertFeed = hasSourceType
+  ? sqlite.prepare(`
+      INSERT OR IGNORE INTO feed_sources (name, url, category, source_type)
+      VALUES (?, ?, ?, ?)
+    `)
+  : sqlite.prepare(`
+      INSERT OR IGNORE INTO feed_sources (name, url, category)
+      VALUES (?, ?, ?)
+    `);
 
 let added = 0;
 const insertAll = sqlite.transaction(() => {
   for (const feed of FEED_SOURCES) {
-    const result = insertFeed.run(feed.name, feed.url, feed.category);
+    const result = hasSourceType
+      ? insertFeed.run(feed.name, feed.url, feed.category, feed.sourceType || "rss")
+      : insertFeed.run(feed.name, feed.url, feed.category);
     if (result.changes > 0) added++;
   }
 });

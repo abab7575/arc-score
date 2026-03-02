@@ -57,6 +57,18 @@ export function Navbar() {
               About
             </Link>
             <Link
+              href="/pricing"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Pricing
+            </Link>
+            <Link
+              href="/login"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Log In
+            </Link>
+            <Link
               href="/submit"
               className="text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-4 py-1.5 transition-colors relative group/btn"
             >

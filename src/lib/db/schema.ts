@@ -85,6 +85,7 @@ export const feedSources = sqliteTable("feed_sources", {
   name: text("name").notNull(),
   url: text("url").notNull().unique(),
   category: text("category").notNull(), // e.g. "ai-lab", "ecommerce", "tech-news"
+  sourceType: text("source_type").notNull().default("rss"), // rss, blog, newsletter, youtube, podcast, reddit, twitter
   active: integer("active", { mode: "boolean" }).notNull().default(true),
   lastFetchedAt: text("last_fetched_at"),
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
@@ -97,11 +98,17 @@ export const newsArticles = sqliteTable("news_articles", {
   url: text("url").notNull().unique(),
   description: text("description"),
   publishedAt: text("published_at"),
+  sourceType: text("source_type").notNull().default("rss"), // rss, blog, newsletter, youtube, podcast, reddit, twitter
   relevanceScore: integer("relevance_score").notNull().default(0), // 0-100
   relevanceTags: text("relevance_tags").notNull().default("[]"), // JSON array
   mentionedBrands: text("mentioned_brands").notNull().default("[]"), // JSON array
+  fullContent: text("full_content"), // Transcripts, long-form content
+  aiSummary: text("ai_summary"), // Future: Claude summaries
+  thumbnailUrl: text("thumbnail_url"), // YouTube thumbnails, podcast art
+  contentMeta: text("content_meta").notNull().default("{}"), // JSON: duration, author, etc.
   read: integer("read", { mode: "boolean" }).notNull().default(false),
   flagged: integer("flagged", { mode: "boolean" }).notNull().default(false),
+  archived: integer("archived", { mode: "boolean" }).notNull().default(false),
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 
@@ -112,5 +119,54 @@ export const suggestedBrands = sqliteTable("suggested_brands", {
   sourceArticleId: integer("source_article_id").references(() => newsArticles.id),
   mentionCount: integer("mention_count").notNull().default(1),
   status: text("status").notNull().default("pending"), // pending, added, dismissed
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+// ── Customers & Subscriptions ────────────────────────────────────────
+
+export const customers = sqliteTable("customers", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  name: text("name"),
+  stripeCustomerId: text("stripe_customer_id").unique(),
+  plan: text("plan").notNull().default("free"), // free, monitor, team
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+export const subscriptions = sqliteTable("subscriptions", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  customerId: integer("customer_id").notNull().references(() => customers.id),
+  stripeSubscriptionId: text("stripe_subscription_id").notNull().unique(),
+  stripePriceId: text("stripe_price_id").notNull(),
+  plan: text("plan").notNull(), // monitor, team
+  status: text("status").notNull(), // active, canceled, past_due, trialing
+  currentPeriodEnd: text("current_period_end").notNull(),
+  cancelAtPeriodEnd: integer("cancel_at_period_end", { mode: "boolean" }).notNull().default(false),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+export const brandClaims = sqliteTable("brand_claims", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  customerId: integer("customer_id").notNull().references(() => customers.id),
+  brandId: integer("brand_id").notNull().references(() => brands.id),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+// ── Admin: Brand Discovery Pipeline ─────────────────────────────────
+
+export const brandDiscoveries = sqliteTable("brand_discoveries", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  url: text("url"),
+  category: text("category"),
+  discoverySource: text("discovery_source").notNull().default("news_mention"), // news_mention, competitor_list, manual
+  sourceArticleId: integer("source_article_id").references(() => newsArticles.id),
+  reason: text("reason"), // Why this brand was suggested
+  mentionCount: integer("mention_count").notNull().default(1),
+  status: text("status").notNull().default("pending"), // pending, tracking, skipped, review_later
+  notes: text("notes"),
+  reviewedAt: text("reviewed_at"),
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });

@@ -1,13 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Activity, Store, TrendingUp, Clock, RefreshCw } from "lucide-react";
+import { Activity, Store, TrendingUp, Clock, RefreshCw, Newspaper, AlertTriangle, GitBranch, Rss } from "lucide-react";
+
+interface DailyBrief {
+  todayContent: number;
+  highRelevance: number;
+  discoveriesToday: number;
+  inReviewQueue: number;
+  feedsFetchedToday: number;
+  totalActiveFeeds: number;
+}
 
 interface ScanHealth {
   lastScanAt: string | null;
   totalBrands: number;
   avgScore: number;
   todayScans: number;
+  dailyBrief: DailyBrief | null;
   recentScans: {
     id: number;
     brandName: string;
@@ -133,6 +143,47 @@ export default function AdminDashboardPage() {
           );
         })}
       </div>
+
+      {/* Daily Brief */}
+      {data.dailyBrief && (
+        <div className="bg-white/5 border border-white/10 rounded-xl p-5">
+          <h2 className="text-sm font-semibold text-white/70 uppercase tracking-wider mb-4">
+            Daily Brief
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="text-center">
+              <Newspaper className="w-5 h-5 text-[#0259DD] mx-auto mb-1" />
+              <div className="text-xl font-bold text-white font-mono">{data.dailyBrief.todayContent}</div>
+              <div className="text-xs text-white/40">New Today</div>
+            </div>
+            <div className="text-center">
+              <AlertTriangle className="w-5 h-5 text-[#FF6648] mx-auto mb-1" />
+              <div className="text-xl font-bold text-white font-mono">{data.dailyBrief.highRelevance}</div>
+              <div className="text-xs text-white/40">High Relevance</div>
+            </div>
+            <div className="text-center">
+              <GitBranch className="w-5 h-5 text-[#7C3AED] mx-auto mb-1" />
+              <div className="text-xl font-bold text-white font-mono">{data.dailyBrief.discoveriesToday}</div>
+              <div className="text-xs text-white/40">Discoveries</div>
+            </div>
+            <div className="text-center">
+              <Store className="w-5 h-5 text-[#FBBA16] mx-auto mb-1" />
+              <div className="text-xl font-bold text-white font-mono">{data.dailyBrief.inReviewQueue}</div>
+              <div className="text-xs text-white/40">In Queue</div>
+            </div>
+            <div className="text-center">
+              <Rss className="w-5 h-5 text-emerald-400 mx-auto mb-1" />
+              <div className="text-xl font-bold text-white font-mono">{data.dailyBrief.feedsFetchedToday}</div>
+              <div className="text-xs text-white/40">Feeds Today</div>
+            </div>
+            <div className="text-center">
+              <Activity className="w-5 h-5 text-white/40 mx-auto mb-1" />
+              <div className="text-xl font-bold text-white font-mono">{data.dailyBrief.totalActiveFeeds}</div>
+              <div className="text-xs text-white/40">Active Feeds</div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Recent Scans */}
       <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">

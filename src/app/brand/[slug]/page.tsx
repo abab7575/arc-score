@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import { BrandHeader } from "@/components/brand/brand-header";
@@ -10,8 +11,10 @@ import { AgentJourneys } from "@/components/report/agent-journeys";
 import { FindingsSection } from "@/components/report/findings-section";
 import { ActionPlan } from "@/components/report/action-plan";
 import { AgentCompatibility } from "@/components/report/agent-compatibility";
+import { PaywallGate } from "@/components/report/paywall-gate";
 import { getBrandBySlug, getLatestScanForBrand, getFullScanReport, getScoreHistory, getAllScansForBrand } from "@/lib/db/queries";
 import { BRANDS } from "@/lib/brands";
+import { verifyCustomerSession, getCustomerById, getClaimedBrands, CUSTOMER_COOKIE_NAME } from "@/lib/customer-auth";
 import type { Metadata } from "next";
 import type { Grade } from "@/types/report";
 import { getGradeLabel } from "@/lib/scoring";
@@ -52,6 +55,25 @@ export default async function BrandPage({ params }: BrandPageProps) {
   const history = getScoreHistory(brand.id, 30);
   const allScans = getAllScansForBrand(brand.id);
 
+  // Check if user has paid access to this brand
+  let hasFullAccess = false;
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get(CUSTOMER_COOKIE_NAME)?.value;
+    if (token) {
+      const customerId = await verifyCustomerSession(token);
+      if (customerId) {
+        const customer = getCustomerById(customerId);
+        if (customer && customer.plan !== "free") {
+          const claims = getClaimedBrands(customerId);
+          hasFullAccess = claims.some((c) => c.brandId === brand.id);
+        }
+      }
+    }
+  } catch {
+    // Auth check failed — show free version
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -65,6 +87,7 @@ export default async function BrandPage({ params }: BrandPageProps) {
 
         {report ? (
           <>
+            {/* Always visible: Score, Trend, Categories */}
             <ScoreHero
               score={report.overallScore}
               grade={report.grade}
@@ -88,14 +111,38 @@ export default async function BrandPage({ params }: BrandPageProps) {
             </div>
 
             <ScoreBreakdown categories={report.categories} />
-            <AgentCompatibility scores={report.aiAgentScores} categories={report.categories} />
-            <AgentJourneys journeys={report.journeys} siteName={report.url} />
-            <FindingsSection findings={report.findings} />
-            <ActionPlan
-              actions={report.actionPlan}
-              currentScore={report.overallScore}
-              estimatedScoreAfterFixes={report.estimatedScoreAfterFixes}
-            />
+
+            {/* Gated: Full agent compatibility, journeys, findings, action plan */}
+            {hasFullAccess ? (
+              <>
+                <AgentCompatibility scores={report.aiAgentScores} categories={report.categories} />
+                <AgentJourneys journeys={report.journeys} siteName={report.url} />
+                <FindingsSection findings={report.findings} />
+                <ActionPlan
+                  actions={report.actionPlan}
+                  currentScore={report.overallScore}
+                  estimatedScoreAfterFixes={report.estimatedScoreAfterFixes}
+                />
+              </>
+            ) : (
+              <>
+                <PaywallGate
+                  title="AI Agent Compatibility"
+                  description="See how this brand scores across all 10 AI shopping agents — from ChatGPT Shopping to Amazon Buy For Me — and which agents struggle most."
+                  itemCount={10}
+                />
+                <PaywallGate
+                  title="Detailed Findings"
+                  description="Get the full list of issues with severity ratings, explanations, and which AI agents are affected. Know exactly what's broken."
+                  itemCount={report.findings.length}
+                />
+                <PaywallGate
+                  title="Action Plan"
+                  description="See the prioritized fix list with estimated score gains. This brand could reach ${report.estimatedScoreAfterFixes}/100 by addressing top issues."
+                  itemCount={report.actionPlan?.length}
+                />
+              </>
+            )}
           </>
         ) : (
           <div className="text-center py-20">

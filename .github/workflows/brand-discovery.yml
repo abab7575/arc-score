@@ -1,0 +1,16 @@
+name: Brand Discovery
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # 3 AM UTC daily
+  workflow_dispatch: # Manual trigger
+
+jobs:
+  brand-discovery:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger brand discovery
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.APP_URL }}/api/cron/brand-discovery"

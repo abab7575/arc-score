@@ -263,10 +263,15 @@ export function getFeedSources() {
   return db.select().from(schema.feedSources).orderBy(schema.feedSources.name).all();
 }
 
-export function addFeedSource(data: { name: string; url: string; category: string }) {
+export function addFeedSource(data: { name: string; url: string; category: string; sourceType?: string }) {
   return db
     .insert(schema.feedSources)
-    .values(data)
+    .values({
+      name: data.name,
+      url: data.url,
+      category: data.category,
+      sourceType: data.sourceType || "rss",
+    })
     .returning()
     .get();
 }
@@ -284,4 +289,246 @@ export function updateFeedSourceLastFetched(id: number) {
     .set({ lastFetchedAt: new Date().toISOString() })
     .where(eq(schema.feedSources.id, id))
     .run();
+}
+
+// ── Brand Discovery Pipeline ───────────────────────────────────────
+
+export function getDiscoveries(filters?: {
+  status?: string;
+  search?: string;
+  limit?: number;
+  offset?: number;
+}) {
+  const conditions = [];
+
+  if (filters?.status) {
+    conditions.push(eq(schema.brandDiscoveries.status, filters.status));
+  }
+  if (filters?.search) {
+    conditions.push(
+      or(
+        like(schema.brandDiscoveries.name, `%${filters.search}%`),
+        like(schema.brandDiscoveries.reason, `%${filters.search}%`)
+      )!
+    );
+  }
+
+  const where = conditions.length > 0 ? and(...conditions) : undefined;
+
+  const discoveries = db
+    .select()
+    .from(schema.brandDiscoveries)
+    .where(where)
+    .orderBy(desc(schema.brandDiscoveries.mentionCount), desc(schema.brandDiscoveries.createdAt))
+    .limit(filters?.limit ?? 100)
+    .offset(filters?.offset ?? 0)
+    .all();
+
+  // Attach source article title if available
+  return discoveries.map((d) => {
+    let sourceArticleTitle: string | null = null;
+    if (d.sourceArticleId) {
+      const article = db
+        .select({ title: schema.newsArticles.title })
+        .from(schema.newsArticles)
+        .where(eq(schema.newsArticles.id, d.sourceArticleId))
+        .get();
+      sourceArticleTitle = article?.title ?? null;
+    }
+    return { ...d, sourceArticleTitle };
+  });
+}
+
+export function updateDiscoveryStatus(
+  id: number,
+  status: string,
+  notes?: string
+) {
+  const updates: Record<string, unknown> = { status };
+  if (status === "tracking" || status === "skipped") {
+    updates.reviewedAt = new Date().toISOString();
+  }
+  if (notes !== undefined) {
+    updates.notes = notes;
+  }
+  return db
+    .update(schema.brandDiscoveries)
+    .set(updates)
+    .where(eq(schema.brandDiscoveries.id, id))
+    .run();
+}
+
+export function getDiscoveryStats() {
+  const total = db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.brandDiscoveries)
+    .get()!.count;
+
+  const pending = db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.brandDiscoveries)
+    .where(eq(schema.brandDiscoveries.status, "pending"))
+    .get()!.count;
+
+  // Total brands being tracked (all active brands, not just pipeline-approved ones)
+  const tracking = db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.brands)
+    .where(eq(schema.brands.active, true))
+    .get()!.count;
+
+  const skipped = db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.brandDiscoveries)
+    .where(eq(schema.brandDiscoveries.status, "skipped"))
+    .get()!.count;
+
+  const reviewLater = db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.brandDiscoveries)
+    .where(eq(schema.brandDiscoveries.status, "review_later"))
+    .get()!.count;
+
+  // Added this week
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const addedThisWeek = db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.brandDiscoveries)
+    .where(
+      and(
+        eq(schema.brandDiscoveries.status, "tracking"),
+        gte(schema.brandDiscoveries.reviewedAt, weekAgo)
+      )
+    )
+    .get()!.count;
+
+  // Categories covered
+  const categories = db
+    .select({ category: schema.brandDiscoveries.category })
+    .from(schema.brandDiscoveries)
+    .where(eq(schema.brandDiscoveries.status, "pending"))
+    .all();
+  const uniqueCategories = new Set(categories.map((c) => c.category).filter(Boolean));
+
+  return {
+    total,
+    pending,
+    tracking,
+    skipped,
+    reviewLater,
+    addedThisWeek,
+    categoriesCovered: uniqueCategories.size,
+  };
+}
+
+export function insertDiscovery(data: {
+  name: string;
+  url?: string;
+  category?: string;
+  discoverySource: string;
+  sourceArticleId?: number;
+  reason?: string;
+}) {
+  return db
+    .insert(schema.brandDiscoveries)
+    .values(data)
+    .returning()
+    .get();
+}
+
+export function incrementDiscoveryMentionCount(id: number) {
+  return db
+    .update(schema.brandDiscoveries)
+    .set({
+      mentionCount: sql`${schema.brandDiscoveries.mentionCount} + 1`,
+    })
+    .where(eq(schema.brandDiscoveries.id, id))
+    .run();
+}
+
+export function getExistingDiscoveryByName(name: string) {
+  return db
+    .select()
+    .from(schema.brandDiscoveries)
+    .where(
+      and(
+        sql`lower(${schema.brandDiscoveries.name}) = ${name.toLowerCase()}`,
+        or(
+          eq(schema.brandDiscoveries.status, "pending"),
+          eq(schema.brandDiscoveries.status, "review_later")
+        )!
+      )
+    )
+    .get();
+}
+
+// ── Daily Brief ────────────────────────────────────────────────────
+
+export function getDailyBrief() {
+  const today = new Date().toISOString().split("T")[0];
+
+  // Content items today
+  const todayContent = db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.newsArticles)
+    .where(gte(schema.newsArticles.createdAt, today))
+    .get()!.count;
+
+  // High relevance items needing attention
+  const highRelevance = db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.newsArticles)
+    .where(
+      and(
+        gte(schema.newsArticles.relevanceScore, 70),
+        eq(schema.newsArticles.read, false)
+      )
+    )
+    .get()!.count;
+
+  // Brand discoveries today
+  const discoveriesToday = db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.brandDiscoveries)
+    .where(gte(schema.brandDiscoveries.createdAt, today))
+    .get()!.count;
+
+  // Brands in review queue
+  const inReviewQueue = db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.brandDiscoveries)
+    .where(
+      or(
+        eq(schema.brandDiscoveries.status, "pending"),
+        eq(schema.brandDiscoveries.status, "review_later")
+      )!
+    )
+    .get()!.count;
+
+  // Feed health — sources fetched today
+  const feedsFetchedToday = db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.feedSources)
+    .where(
+      and(
+        eq(schema.feedSources.active, true),
+        gte(schema.feedSources.lastFetchedAt, today)
+      )
+    )
+    .get()!.count;
+
+  const totalActiveFeeds = db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.feedSources)
+    .where(eq(schema.feedSources.active, true))
+    .get()!.count;
+
+  return {
+    todayContent,
+    highRelevance,
+    discoveriesToday,
+    inReviewQueue,
+    feedsFetchedToday,
+    totalActiveFeeds,
+  };
 }
