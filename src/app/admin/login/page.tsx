@@ -35,16 +35,47 @@ export default function AdminLoginPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center"
-      style={{ backgroundColor: "#0A1628" }}
+      className="min-h-[60vh] flex items-center justify-center"
+      style={{ backgroundColor: "#FFF8F0" }}
     >
       <div className="w-full max-w-sm">
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+        <div
+          className="p-8 relative"
+          style={{
+            backgroundColor: "#fff",
+            border: "1px solid #E8E0D8",
+          }}
+        >
+          {/* Offset shadow */}
+          <div
+            className="absolute inset-0 -z-10"
+            style={{
+              backgroundColor: "#0A1628",
+              transform: "translate(4px, 4px)",
+            }}
+          />
+
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-white tracking-tight">
-              ARC Score Admin
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <div
+                className="w-8 h-8 flex items-center justify-center"
+                style={{ backgroundColor: "#FF6648" }}
+              >
+                <span className="text-xs font-black text-white font-mono">A</span>
+              </div>
+            </div>
+            <h1
+              className="text-xl font-black tracking-tight"
+              style={{ color: "#0A1628" }}
+            >
+              Mission Control
             </h1>
-            <p className="text-sm text-white/50 mt-1">Mission control</p>
+            <p
+              className="font-mono text-[10px] uppercase tracking-widest mt-1"
+              style={{ color: "#9CA3AF" }}
+            >
+              ARC Score Admin
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -55,20 +86,35 @@ export default function AdminLoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
                 autoFocus
-                className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#0259DD] focus:border-transparent"
+                className="w-full px-4 py-3 text-sm focus:outline-none"
+                style={{
+                  backgroundColor: "#FFF8F0",
+                  border: "1px solid #E8E0D8",
+                  color: "#0A1628",
+                }}
               />
             </div>
 
             {error && (
-              <p className="text-sm text-[#FF6648]">{error}</p>
+              <p className="text-sm font-medium" style={{ color: "#FF6648" }}>
+                {error}
+              </p>
             )}
 
             <button
               type="submit"
               disabled={loading || !password}
-              className="w-full py-3 rounded-lg bg-[#0259DD] text-white font-medium hover:bg-[#0259DD]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full py-3 text-sm font-bold text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors relative group"
+              style={{ backgroundColor: "#0259DD" }}
             >
               {loading ? "Authenticating..." : "Enter"}
+              <span
+                className="absolute inset-0 -z-10 transition-transform group-hover:translate-x-[3px] group-hover:translate-y-[3px]"
+                style={{
+                  backgroundColor: "#0A1628",
+                  transform: "translate(2px, 2px)",
+                }}
+              />
             </button>
           </form>
         </div>

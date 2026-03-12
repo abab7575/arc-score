@@ -20,9 +20,9 @@ export interface ContentItem {
 }
 
 function relevanceBadge(score: number) {
-  if (score >= 70) return { label: "High", className: "bg-emerald-500/20 text-emerald-400" };
-  if (score >= 40) return { label: "Medium", className: "bg-yellow-500/20 text-yellow-400" };
-  return { label: "Low", className: "bg-white/10 text-white/40" };
+  if (score >= 70) return { label: "High", className: "bg-emerald-500/20 text-emerald-600" };
+  if (score >= 40) return { label: "Medium", className: "bg-yellow-500/20 text-yellow-600" };
+  return { label: "Low", className: "bg-secondary text-muted-foreground" };
 }
 
 interface ContentCardProps {
@@ -40,7 +40,7 @@ export default function ContentCard({ item, onMarkRead, onToggleFlag }: ContentC
 
   return (
     <div
-      className={`bg-white/5 border border-white/10 rounded-xl overflow-hidden hover:border-white/20 transition-colors ${
+      className={`bg-white border border-border shadow-sm rounded-xl overflow-hidden hover:border-border/80 transition-colors ${
         item.read ? "opacity-60" : ""
       }`}
     >
@@ -65,9 +65,9 @@ export default function ContentCard({ item, onMarkRead, onToggleFlag }: ContentC
                 {item.relevanceScore}
               </span>
               <SourceTypeIcon sourceType={item.sourceType} showLabel />
-              <span className="text-xs text-white/30 truncate">{item.sourceName}</span>
+              <span className="text-xs text-muted-foreground/60 truncate">{item.sourceName}</span>
               {item.publishedAt && (
-                <span className="text-xs text-white/20">
+                <span className="text-xs text-muted-foreground/60">
                   {new Date(item.publishedAt).toLocaleDateString()}
                 </span>
               )}
@@ -81,7 +81,7 @@ export default function ContentCard({ item, onMarkRead, onToggleFlag }: ContentC
               href={item.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm font-medium text-white hover:text-[#0259DD] transition-colors inline-flex items-center gap-1"
+              className="text-sm font-medium text-foreground hover:text-[#0259DD] transition-colors inline-flex items-center gap-1"
             >
               <span className="line-clamp-2">{item.title}</span>
               <ExternalLink className="w-3 h-3 opacity-50 flex-shrink-0" />
@@ -89,7 +89,7 @@ export default function ContentCard({ item, onMarkRead, onToggleFlag }: ContentC
 
             {/* Description */}
             {item.description && (
-              <p className="text-xs text-white/40 mt-1.5 line-clamp-2">
+              <p className="text-xs text-muted-foreground/60 mt-1.5 line-clamp-2">
                 {item.description}
               </p>
             )}
@@ -100,13 +100,13 @@ export default function ContentCard({ item, onMarkRead, onToggleFlag }: ContentC
                 {tags.slice(0, 4).map((tag) => (
                   <span
                     key={tag}
-                    className="px-1.5 py-0.5 rounded bg-white/5 text-xs text-white/40"
+                    className="px-1.5 py-0.5 rounded bg-secondary text-xs text-muted-foreground"
                   >
                     {tag}
                   </span>
                 ))}
                 {tags.length > 4 && (
-                  <span className="text-xs text-white/20">+{tags.length - 4}</span>
+                  <span className="text-xs text-muted-foreground/60">+{tags.length - 4}</span>
                 )}
               </div>
             )}
@@ -116,8 +116,8 @@ export default function ContentCard({ item, onMarkRead, onToggleFlag }: ContentC
           <div className="flex flex-col gap-1 flex-shrink-0">
             <button
               onClick={() => onMarkRead(item.id, !item.read)}
-              className={`p-2 rounded-md hover:bg-white/10 transition-colors ${
-                item.read ? "text-emerald-400" : "text-white/30"
+              className={`p-2 rounded-md hover:bg-secondary transition-colors ${
+                item.read ? "text-emerald-600" : "text-muted-foreground/60"
               }`}
               title={item.read ? "Mark unread" : "Mark read"}
             >
@@ -125,8 +125,8 @@ export default function ContentCard({ item, onMarkRead, onToggleFlag }: ContentC
             </button>
             <button
               onClick={() => onToggleFlag(item.id, !item.flagged)}
-              className={`p-2 rounded-md hover:bg-white/10 transition-colors ${
-                item.flagged ? "text-[#FF6648]" : "text-white/30"
+              className={`p-2 rounded-md hover:bg-secondary transition-colors ${
+                item.flagged ? "text-[#FF6648]" : "text-muted-foreground/60"
               }`}
               title={item.flagged ? "Unflag" : "Flag"}
             >

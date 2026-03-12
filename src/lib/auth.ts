@@ -33,18 +33,13 @@ async function hmacSign(data: string, secret: string): Promise<string> {
 }
 
 async function hmacVerify(data: string, signature: string, secret: string): Promise<boolean> {
-  const enc = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    "raw",
-    enc.encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["verify"]
-  );
-  const sigBytes = fromBase64Url(signature);
-  const sigBuffer = new ArrayBuffer(sigBytes.length);
-  new Uint8Array(sigBuffer).set(sigBytes);
-  return crypto.subtle.verify("HMAC", key, sigBuffer, enc.encode(data));
+  const expected = await hmacSign(data, secret);
+  if (expected.length !== signature.length) return false;
+  let result = 0;
+  for (let i = 0; i < expected.length; i++) {
+    result |= expected.charCodeAt(i) ^ signature.charCodeAt(i);
+  }
+  return result === 0;
 }
 
 export function verifyPassword(input: string): boolean {

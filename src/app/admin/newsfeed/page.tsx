@@ -130,7 +130,7 @@ export default function NewsfeedPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-6 h-6 text-white/40 animate-spin" />
+        <Loader2 className="w-6 h-6 text-muted-foreground animate-spin" />
       </div>
     );
   }
@@ -140,8 +140,8 @@ export default function NewsfeedPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Newsfeed</h1>
-          <p className="text-sm text-white/40 mt-1">
+          <h1 className="text-2xl font-bold text-foreground">Newsfeed</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             {items.length} items from {new Set(items.map((i) => i.sourceName)).size} sources
           </p>
         </div>
@@ -164,8 +164,8 @@ export default function NewsfeedPage() {
         <div
           className={`rounded-xl px-5 py-4 text-sm ${
             scanResult.errors.length > 0 && scanResult.newArticles === 0
-              ? "bg-red-500/10 border border-red-500/20 text-red-400"
-              : "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"
+              ? "bg-red-500/10 border border-red-500/20 text-red-600"
+              : "bg-emerald-500/10 border border-emerald-500/20 text-emerald-600"
           }`}
         >
           <div className="flex items-center justify-between">
@@ -173,14 +173,14 @@ export default function NewsfeedPage() {
               <span><strong>{scanResult.newArticles}</strong> new items</span>
               <span><strong>{scanResult.highRelevance}</strong> high relevance</span>
               <span><strong>{scanResult.newSuggestions}</strong> brand suggestions</span>
-              <span className="text-white/30">{scanResult.totalItems} checked</span>
+              <span className="text-muted-foreground/60">{scanResult.totalItems} checked</span>
             </div>
-            <button onClick={() => setScanResult(null)} className="p-1 hover:bg-white/10 rounded">
+            <button onClick={() => setScanResult(null)} className="p-1 hover:bg-secondary rounded">
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
           {scanResult.errors.length > 0 && (
-            <div className="mt-2 text-xs text-white/40">
+            <div className="mt-2 text-xs text-muted-foreground/60">
               {scanResult.errors.length} feed error{scanResult.errors.length !== 1 && "s"}
             </div>
           )}
@@ -189,7 +189,7 @@ export default function NewsfeedPage() {
 
       {/* Source type tabs */}
       <div className="flex items-center gap-3 overflow-x-auto">
-        <div className="flex gap-1 bg-white/5 rounded-lg p-1 flex-shrink-0">
+        <div className="flex gap-1 bg-secondary rounded-lg p-1 flex-shrink-0">
           {SOURCE_TYPE_TABS.map((tab) => (
             <button
               key={tab.value}
@@ -197,7 +197,7 @@ export default function NewsfeedPage() {
               className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
                 sourceTypeFilter === tab.value
                   ? "bg-[#0259DD] text-white"
-                  : "text-white/40 hover:text-white hover:bg-white/5"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
               }`}
             >
               {tab.label}
@@ -209,13 +209,13 @@ export default function NewsfeedPage() {
       {/* Filters row */}
       <div className="flex flex-wrap items-center gap-3">
         <form onSubmit={handleSearch} className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search articles..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-white border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
           />
         </form>
 
@@ -224,7 +224,7 @@ export default function NewsfeedPage() {
           className={`flex items-center gap-1.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
             filterUnread
               ? "bg-[#0259DD] text-white"
-              : "bg-white/5 border border-white/10 text-white/50 hover:text-white"
+              : "bg-white border border-border text-muted-foreground hover:text-foreground"
           }`}
         >
           <BookOpen className="w-3.5 h-3.5" />
@@ -236,7 +236,7 @@ export default function NewsfeedPage() {
           className={`flex items-center gap-1.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
             filterFlagged
               ? "bg-[#FF6648] text-white"
-              : "bg-white/5 border border-white/10 text-white/50 hover:text-white"
+              : "bg-white border border-border text-muted-foreground hover:text-foreground"
           }`}
         >
           <Flag className="w-3.5 h-3.5" />
@@ -246,7 +246,7 @@ export default function NewsfeedPage() {
         <select
           value={minRelevance}
           onChange={(e) => setMinRelevance(parseInt(e.target.value))}
-          className="px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
+          className="px-3 py-2.5 rounded-lg bg-white border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
         >
           <option value={0}>All Relevance</option>
           <option value={20}>20+</option>
@@ -256,7 +256,7 @@ export default function NewsfeedPage() {
 
         <button
           onClick={() => setSortMode(sortMode === "newest" ? "relevance" : "newest")}
-          className="flex items-center gap-1.5 px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white/50 text-sm font-medium hover:text-white transition-colors"
+          className="flex items-center gap-1.5 px-3 py-2.5 rounded-lg bg-white border border-border text-muted-foreground text-sm font-medium hover:text-foreground transition-colors"
         >
           <SortAsc className="w-3.5 h-3.5" />
           {sortMode === "newest" ? "Newest" : "Relevance"}
@@ -264,7 +264,7 @@ export default function NewsfeedPage() {
 
         <button
           onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-          className="p-2.5 rounded-lg bg-white/5 border border-white/10 text-white/50 hover:text-white transition-colors"
+          className="p-2.5 rounded-lg bg-white border border-border text-muted-foreground hover:text-foreground transition-colors"
         >
           {viewMode === "grid" ? <List className="w-4 h-4" /> : <LayoutGrid className="w-4 h-4" />}
         </button>
@@ -272,7 +272,7 @@ export default function NewsfeedPage() {
 
       {/* Content cards */}
       {items.length === 0 ? (
-        <div className="bg-white/5 border border-white/10 rounded-xl px-5 py-12 text-center text-white/30 text-sm">
+        <div className="bg-white border border-border shadow-sm rounded-xl px-5 py-12 text-center text-muted-foreground/60 text-sm">
           No items found. Click &quot;Scan All Sources&quot; to fetch the latest.
         </div>
       ) : (

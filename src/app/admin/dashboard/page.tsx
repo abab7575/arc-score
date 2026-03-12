@@ -30,12 +30,12 @@ interface ScanHealth {
 
 function gradeColor(grade: string) {
   switch (grade) {
-    case "A": return "text-emerald-400";
-    case "B": return "text-blue-400";
-    case "C": return "text-yellow-400";
-    case "D": return "text-orange-400";
-    case "F": return "text-red-400";
-    default: return "text-white/50";
+    case "A": return "#059669";
+    case "B": return "#0259DD";
+    case "C": return "#FBBA16";
+    case "D": return "#FF6648";
+    case "F": return "#DC2626";
+    default: return "#9CA3AF";
   }
 }
 
@@ -55,9 +55,20 @@ export default function AdminDashboardPage() {
 
   async function fetchData() {
     setLoading(true);
-    const res = await fetch("/api/admin/dashboard");
-    const json = await res.json();
-    setData(json);
+    try {
+      const res = await fetch("/api/admin/dashboard");
+      const json = await res.json();
+      setData(json);
+    } catch {
+      setData({
+        lastScanAt: null,
+        totalBrands: 0,
+        avgScore: 0,
+        todayScans: 0,
+        dailyBrief: null,
+        recentScans: [],
+      });
+    }
     setLoading(false);
   }
 
@@ -72,49 +83,36 @@ export default function AdminDashboardPage() {
   if (loading || !data) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-white/40">Loading...</div>
+        <div className="font-mono text-xs" style={{ color: "#9CA3AF" }}>Loading...</div>
       </div>
     );
   }
 
   const cards = [
-    {
-      label: "Total Brands",
-      value: data.totalBrands,
-      icon: Store,
-      color: "#0259DD",
-    },
-    {
-      label: "Avg Score",
-      value: data.avgScore,
-      icon: TrendingUp,
-      color: "#FBBA16",
-    },
-    {
-      label: "Scans Today",
-      value: data.todayScans,
-      icon: Activity,
-      color: "#7C3AED",
-    },
-    {
-      label: "Last Scan",
-      value: data.lastScanAt ? timeAgo(data.lastScanAt) : "Never",
-      icon: Clock,
-      color: "#FF6648",
-    },
+    { label: "Total Brands", value: data.totalBrands, icon: Store, color: "#0259DD" },
+    { label: "Avg Score", value: data.avgScore, icon: TrendingUp, color: "#FBBA16" },
+    { label: "Scans Today", value: data.todayScans, icon: Activity, color: "#7C3AED" },
+    { label: "Last Scan", value: data.lastScanAt ? timeAgo(data.lastScanAt) : "Never", icon: Clock, color: "#FF6648" },
   ];
 
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+        <h1 className="text-2xl font-black tracking-tight" style={{ color: "#0A1628" }}>
+          Dashboard
+        </h1>
         <button
           onClick={triggerFullScan}
           disabled={scanning}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0259DD] text-white text-sm font-medium hover:bg-[#0259DD]/80 disabled:opacity-50 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white disabled:opacity-50 transition-colors relative group"
+          style={{ backgroundColor: "#0259DD" }}
         >
           <RefreshCw className={`w-4 h-4 ${scanning ? "animate-spin" : ""}`} />
           {scanning ? "Starting..." : "Full Scan"}
+          <span
+            className="absolute inset-0 -z-10 transition-transform group-hover:translate-x-[3px] group-hover:translate-y-[3px]"
+            style={{ backgroundColor: "#0A1628", transform: "translate(2px, 2px)" }}
+          />
         </button>
       </div>
 
@@ -125,18 +123,23 @@ export default function AdminDashboardPage() {
           return (
             <div
               key={card.label}
-              className="bg-white/5 border border-white/10 rounded-xl p-5"
+              className="p-5 relative"
+              style={{ backgroundColor: "#fff", border: "1px solid #E8E0D8" }}
             >
+              <div
+                className="absolute inset-0 -z-10"
+                style={{ backgroundColor: card.color + "30", transform: "translate(3px, 3px)" }}
+              />
               <div className="flex items-center gap-3 mb-3">
                 <div
-                  className="w-8 h-8 rounded-lg flex items-center justify-center"
+                  className="w-8 h-8 flex items-center justify-center"
                   style={{ backgroundColor: card.color + "20" }}
                 >
                   <Icon className="w-4 h-4" style={{ color: card.color }} />
                 </div>
-                <span className="text-sm text-white/50">{card.label}</span>
+                <span className="text-xs font-medium" style={{ color: "#6B7280" }}>{card.label}</span>
               </div>
-              <div className="text-2xl font-bold text-white font-mono">
+              <div className="text-2xl font-black font-mono" style={{ color: "#0A1628" }}>
                 {card.value}
               </div>
             </div>
@@ -146,80 +149,84 @@ export default function AdminDashboardPage() {
 
       {/* Daily Brief */}
       {data.dailyBrief && (
-        <div className="bg-white/5 border border-white/10 rounded-xl p-5">
-          <h2 className="text-sm font-semibold text-white/70 uppercase tracking-wider mb-4">
+        <div className="p-5 relative" style={{ backgroundColor: "#fff", border: "1px solid #E8E0D8" }}>
+          <div
+            className="absolute inset-0 -z-10"
+            style={{ backgroundColor: "#7C3AED20", transform: "translate(3px, 3px)" }}
+          />
+          <h2
+            className="font-mono text-[10px] uppercase tracking-widest mb-4"
+            style={{ color: "#FF6648" }}
+          >
             Daily Brief
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            <div className="text-center">
-              <Newspaper className="w-5 h-5 text-[#0259DD] mx-auto mb-1" />
-              <div className="text-xl font-bold text-white font-mono">{data.dailyBrief.todayContent}</div>
-              <div className="text-xs text-white/40">New Today</div>
-            </div>
-            <div className="text-center">
-              <AlertTriangle className="w-5 h-5 text-[#FF6648] mx-auto mb-1" />
-              <div className="text-xl font-bold text-white font-mono">{data.dailyBrief.highRelevance}</div>
-              <div className="text-xs text-white/40">High Relevance</div>
-            </div>
-            <div className="text-center">
-              <GitBranch className="w-5 h-5 text-[#7C3AED] mx-auto mb-1" />
-              <div className="text-xl font-bold text-white font-mono">{data.dailyBrief.discoveriesToday}</div>
-              <div className="text-xs text-white/40">Discoveries</div>
-            </div>
-            <div className="text-center">
-              <Store className="w-5 h-5 text-[#FBBA16] mx-auto mb-1" />
-              <div className="text-xl font-bold text-white font-mono">{data.dailyBrief.inReviewQueue}</div>
-              <div className="text-xs text-white/40">In Queue</div>
-            </div>
-            <div className="text-center">
-              <Rss className="w-5 h-5 text-emerald-400 mx-auto mb-1" />
-              <div className="text-xl font-bold text-white font-mono">{data.dailyBrief.feedsFetchedToday}</div>
-              <div className="text-xs text-white/40">Feeds Today</div>
-            </div>
-            <div className="text-center">
-              <Activity className="w-5 h-5 text-white/40 mx-auto mb-1" />
-              <div className="text-xl font-bold text-white font-mono">{data.dailyBrief.totalActiveFeeds}</div>
-              <div className="text-xs text-white/40">Active Feeds</div>
-            </div>
+            {[
+              { icon: Newspaper, value: data.dailyBrief.todayContent, label: "New Today", color: "#0259DD" },
+              { icon: AlertTriangle, value: data.dailyBrief.highRelevance, label: "High Relevance", color: "#FF6648" },
+              { icon: GitBranch, value: data.dailyBrief.discoveriesToday, label: "Discoveries", color: "#7C3AED" },
+              { icon: Store, value: data.dailyBrief.inReviewQueue, label: "In Queue", color: "#FBBA16" },
+              { icon: Rss, value: data.dailyBrief.feedsFetchedToday, label: "Feeds Today", color: "#059669" },
+              { icon: Activity, value: data.dailyBrief.totalActiveFeeds, label: "Active Feeds", color: "#9CA3AF" },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.label} className="text-center">
+                  <Icon className="w-5 h-5 mx-auto mb-1" style={{ color: item.color }} />
+                  <div className="text-xl font-black font-mono" style={{ color: "#0A1628" }}>{item.value}</div>
+                  <div className="font-mono text-[9px] uppercase tracking-wider" style={{ color: "#9CA3AF" }}>{item.label}</div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
 
       {/* Recent Scans */}
-      <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
-        <div className="px-5 py-4 border-b border-white/10">
-          <h2 className="text-sm font-semibold text-white/70 uppercase tracking-wider">
+      <div className="relative" style={{ backgroundColor: "#fff", border: "1px solid #E8E0D8" }}>
+        <div
+          className="absolute inset-0 -z-10"
+          style={{ backgroundColor: "#0259DD15", transform: "translate(3px, 3px)" }}
+        />
+        <div className="px-5 py-4" style={{ borderBottom: "1px solid #E8E0D8" }}>
+          <h2 className="font-mono text-[10px] uppercase tracking-widest" style={{ color: "#FF6648" }}>
             Recent Scans
           </h2>
         </div>
-        <div className="divide-y divide-white/5">
-          {data.recentScans.map((scan) => (
+        <div>
+          {data.recentScans.map((scan, i) => (
             <div
               key={scan.id}
               className="px-5 py-3 flex items-center justify-between"
+              style={i < data.recentScans.length - 1 ? { borderBottom: "1px solid #F0E8E0" } : {}}
             >
               <div className="flex items-center gap-4">
-                <span className={`font-mono font-bold text-lg w-8 ${gradeColor(scan.grade)}`}>
+                <span
+                  className="font-mono font-black text-lg w-8"
+                  style={{ color: gradeColor(scan.grade) }}
+                >
                   {scan.grade}
                 </span>
                 <div>
-                  <p className="text-sm font-medium text-white">{scan.brandName}</p>
-                  <p className="text-xs text-white/40">{scan.brandSlug}</p>
+                  <p className="text-sm font-bold" style={{ color: "#0A1628" }}>{scan.brandName}</p>
+                  <p className="font-mono text-[10px]" style={{ color: "#9CA3AF" }}>{scan.brandSlug}</p>
                 </div>
               </div>
               <div className="flex items-center gap-6">
-                <span className="text-sm font-mono text-white/70">
+                <span className="text-sm font-mono font-bold" style={{ color: "#6B7280" }}>
                   {scan.overallScore}/100
                 </span>
-                <span className="text-xs text-white/30">
+                <span className="font-mono text-[10px]" style={{ color: "#9CA3AF" }}>
                   {timeAgo(scan.scannedAt)}
                 </span>
               </div>
             </div>
           ))}
           {data.recentScans.length === 0 && (
-            <div className="px-5 py-8 text-center text-white/30 text-sm">
-              No scans yet. Run your first scan above.
+            <div className="px-5 py-12 text-center">
+              <p className="text-sm" style={{ color: "#9CA3AF" }}>
+                No scans yet. Run your first scan above.
+              </p>
             </div>
           )}
         </div>

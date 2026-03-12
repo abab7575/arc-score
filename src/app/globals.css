@@ -562,3 +562,24 @@ html {
   z-index: 100;
   transform-origin: left;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   COMMAND CENTER — Arcade Mission Control
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+@keyframes status-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes float-particle {
+  0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
+  25% { transform: translateY(-8px) translateX(4px); opacity: 0.6; }
+  50% { transform: translateY(-4px) translateX(-3px); opacity: 0.2; }
+  75% { transform: translateY(-12px) translateX(2px); opacity: 0.5; }
+}

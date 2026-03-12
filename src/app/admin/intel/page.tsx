@@ -44,9 +44,9 @@ interface ScanResult {
 }
 
 function relevanceBadge(score: number) {
-  if (score >= 70) return { label: "High", className: "bg-emerald-500/20 text-emerald-400" };
-  if (score >= 40) return { label: "Medium", className: "bg-yellow-500/20 text-yellow-400" };
-  return { label: "Low", className: "bg-white/10 text-white/40" };
+  if (score >= 70) return { label: "High", className: "bg-emerald-500/20 text-emerald-600" };
+  if (score >= 40) return { label: "Medium", className: "bg-yellow-500/20 text-yellow-600" };
+  return { label: "Low", className: "bg-secondary text-muted-foreground" };
 }
 
 const BRAND_CATEGORIES = [
@@ -208,7 +208,7 @@ export default function AdminIntelPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-white/40">Loading...</div>
+        <div className="text-muted-foreground">Loading...</div>
       </div>
     );
   }
@@ -217,7 +217,7 @@ export default function AdminIntelPage() {
     <div className="space-y-8">
       {/* Header with Scan button */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-white">Intel</h1>
+        <h1 className="text-2xl font-bold text-foreground">Intel</h1>
         <button
           onClick={handleScanNews}
           disabled={scanning}
@@ -237,8 +237,8 @@ export default function AdminIntelPage() {
         <div
           className={`rounded-xl px-5 py-4 text-sm ${
             scanResult.errors.length > 0 && scanResult.newArticles === 0
-              ? "bg-red-500/10 border border-red-500/20 text-red-400"
-              : "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"
+              ? "bg-red-500/10 border border-red-500/20 text-red-600"
+              : "bg-emerald-500/10 border border-emerald-500/20 text-emerald-600"
           }`}
         >
           <div className="flex items-center justify-between">
@@ -252,19 +252,19 @@ export default function AdminIntelPage() {
               <span>
                 <strong>{scanResult.newSuggestions}</strong> new brand suggestions
               </span>
-              <span className="text-white/30">
+              <span className="text-muted-foreground/60">
                 {scanResult.totalItems} items checked
               </span>
             </div>
             <button
               onClick={() => setScanResult(null)}
-              className="p-1 hover:bg-white/10 rounded"
+              className="p-1 hover:bg-secondary rounded"
             >
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
           {scanResult.errors.length > 0 && (
-            <div className="mt-2 text-xs text-white/40">
+            <div className="mt-2 text-xs text-muted-foreground/60">
               {scanResult.errors.length} feed error{scanResult.errors.length !== 1 && "s"} (some feeds may be unavailable)
             </div>
           )}
@@ -284,21 +284,21 @@ export default function AdminIntelPage() {
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-full border ${
                   editingId === s.id
                     ? "bg-[#7C3AED]/20 border-[#7C3AED]/40"
-                    : "bg-white/5 border-white/10"
+                    : "bg-white border-border"
                 }`}
               >
-                <span className="text-sm text-white">{s.name}</span>
-                <span className="text-xs text-white/30">&times;{s.mentionCount}</span>
+                <span className="text-sm text-foreground">{s.name}</span>
+                <span className="text-xs text-muted-foreground/60">&times;{s.mentionCount}</span>
                 <button
                   onClick={() => openEditPanel(s)}
-                  className="p-0.5 rounded hover:bg-emerald-500/20 text-emerald-400"
+                  className="p-0.5 rounded hover:bg-emerald-500/20 text-emerald-600"
                   title="Add brand"
                 >
                   <Plus className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={() => handleDismiss(s.id)}
-                  className="p-0.5 rounded hover:bg-red-500/20 text-red-400"
+                  className="p-0.5 rounded hover:bg-red-500/20 text-red-600"
                   title="Dismiss"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -309,35 +309,35 @@ export default function AdminIntelPage() {
 
           {/* Edit-before-add panel */}
           {editingId && (
-            <div className="mt-4 bg-white/5 border border-white/10 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-white mb-3">
+            <div className="mt-4 bg-white border border-border shadow-sm rounded-lg p-4">
+              <h3 className="text-sm font-medium text-foreground mb-3">
                 Add Brand
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs text-white/40 mb-1">Name</label>
+                  <label className="block text-xs text-muted-foreground/60 mb-1">Name</label>
                   <input
                     type="text"
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-white/40 mb-1">URL</label>
+                  <label className="block text-xs text-muted-foreground/60 mb-1">URL</label>
                   <input
                     type="url"
                     value={editUrl}
                     onChange={(e) => setEditUrl(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-white/40 mb-1">Category</label>
+                  <label className="block text-xs text-muted-foreground/60 mb-1">Category</label>
                   <select
                     value={editCategory}
                     onChange={(e) => setEditCategory(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
                   >
                     {BRAND_CATEGORIES.map((cat) => (
                       <option key={cat} value={cat}>
@@ -357,7 +357,7 @@ export default function AdminIntelPage() {
                 </button>
                 <button
                   onClick={closeEditPanel}
-                  className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white/50 text-sm hover:text-white transition-colors"
+                  className="px-4 py-2 rounded-lg bg-white border border-border text-muted-foreground text-sm hover:text-foreground transition-colors"
                 >
                   Cancel
                 </button>
@@ -370,13 +370,13 @@ export default function AdminIntelPage() {
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
         <form onSubmit={handleSearch} className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search articles..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-white border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
           />
         </form>
 
@@ -385,7 +385,7 @@ export default function AdminIntelPage() {
           className={`flex items-center gap-1.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
             filterUnread
               ? "bg-[#0259DD] text-white"
-              : "bg-white/5 border border-white/10 text-white/50 hover:text-white"
+              : "bg-white border border-border text-muted-foreground hover:text-foreground"
           }`}
         >
           <BookOpen className="w-3.5 h-3.5" />
@@ -397,7 +397,7 @@ export default function AdminIntelPage() {
           className={`flex items-center gap-1.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
             filterFlagged
               ? "bg-[#FF6648] text-white"
-              : "bg-white/5 border border-white/10 text-white/50 hover:text-white"
+              : "bg-white border border-border text-muted-foreground hover:text-foreground"
           }`}
         >
           <Flag className="w-3.5 h-3.5" />
@@ -407,7 +407,7 @@ export default function AdminIntelPage() {
         <select
           value={minRelevance}
           onChange={(e) => setMinRelevance(parseInt(e.target.value))}
-          className="px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
+          className="px-3 py-2.5 rounded-lg bg-white border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
         >
           <option value={0}>All Relevance</option>
           <option value={20}>20+ Relevance</option>
@@ -419,7 +419,7 @@ export default function AdminIntelPage() {
       {/* Articles */}
       <div className="space-y-3">
         {articles.length === 0 && (
-          <div className="bg-white/5 border border-white/10 rounded-xl px-5 py-12 text-center text-white/30 text-sm">
+          <div className="bg-white border border-border shadow-sm rounded-xl px-5 py-12 text-center text-muted-foreground/60 text-sm">
             No articles found. Click &quot;Scan News&quot; to fetch the latest.
           </div>
         )}
@@ -433,7 +433,7 @@ export default function AdminIntelPage() {
           return (
             <div
               key={article.id}
-              className={`bg-white/5 border border-white/10 rounded-xl px-5 py-4 ${
+              className={`bg-white border border-border shadow-sm rounded-xl px-5 py-4 ${
                 article.read ? "opacity-60" : ""
               }`}
             >
@@ -445,9 +445,9 @@ export default function AdminIntelPage() {
                     >
                       {article.relevanceScore}
                     </span>
-                    <span className="text-xs text-white/30">{article.sourceName}</span>
+                    <span className="text-xs text-muted-foreground/60">{article.sourceName}</span>
                     {article.publishedAt && (
-                      <span className="text-xs text-white/20">
+                      <span className="text-xs text-muted-foreground/60">
                         {new Date(article.publishedAt).toLocaleDateString()}
                       </span>
                     )}
@@ -460,14 +460,14 @@ export default function AdminIntelPage() {
                     href={article.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm font-medium text-white hover:text-[#0259DD] transition-colors inline-flex items-center gap-1"
+                    className="text-sm font-medium text-foreground hover:text-[#0259DD] transition-colors inline-flex items-center gap-1"
                   >
                     {article.title}
                     <ExternalLink className="w-3 h-3 opacity-50" />
                   </a>
 
                   {article.description && (
-                    <p className="text-xs text-white/40 mt-1 line-clamp-2">
+                    <p className="text-xs text-muted-foreground/60 mt-1 line-clamp-2">
                       {article.description}
                     </p>
                   )}
@@ -477,7 +477,7 @@ export default function AdminIntelPage() {
                       {tags.map((tag) => (
                         <span
                           key={tag}
-                          className="px-1.5 py-0.5 rounded bg-white/5 text-xs text-white/40"
+                          className="px-1.5 py-0.5 rounded bg-secondary text-xs text-muted-foreground"
                         >
                           {tag}
                         </span>
@@ -489,8 +489,8 @@ export default function AdminIntelPage() {
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => handleMarkRead(article.id, !article.read)}
-                    className={`p-2 rounded-md hover:bg-white/10 transition-colors ${
-                      article.read ? "text-emerald-400" : "text-white/30"
+                    className={`p-2 rounded-md hover:bg-secondary transition-colors ${
+                      article.read ? "text-emerald-600" : "text-muted-foreground/60"
                     }`}
                     title={article.read ? "Mark unread" : "Mark read"}
                   >
@@ -498,8 +498,8 @@ export default function AdminIntelPage() {
                   </button>
                   <button
                     onClick={() => handleToggleFlag(article.id, !article.flagged)}
-                    className={`p-2 rounded-md hover:bg-white/10 transition-colors ${
-                      article.flagged ? "text-[#FF6648]" : "text-white/30"
+                    className={`p-2 rounded-md hover:bg-secondary transition-colors ${
+                      article.flagged ? "text-[#FF6648]" : "text-muted-foreground/60"
                     }`}
                     title={article.flagged ? "Unflag" : "Flag"}
                   >

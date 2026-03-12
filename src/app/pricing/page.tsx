@@ -172,7 +172,7 @@ export default function PricingPage() {
 
         {/* FAQ / Bottom note */}
         <div className="mt-16 text-center">
-          <p className="text-sm text-muted-foreground max-w-xl mx-auto">
+          <p className="text-sm text-gray-500 max-w-xl mx-auto">
             All plans include access to the full public index. Cancel anytime from your account page.
             Need a custom plan or want to discuss enterprise pricing?{" "}
             <a href="mailto:hello@getarcscore.com" className="text-[#0259DD] hover:underline">

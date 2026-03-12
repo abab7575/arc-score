@@ -170,7 +170,7 @@ export default function BrandPipelinePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-6 h-6 text-white/40 animate-spin" />
+        <Loader2 className="w-6 h-6 text-muted-foreground animate-spin" />
       </div>
     );
   }
@@ -180,14 +180,14 @@ export default function BrandPipelinePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Brand Pipeline</h1>
-          <p className="text-sm text-white/40 mt-1">
+          <h1 className="text-2xl font-bold text-foreground">Brand Pipeline</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             Review and triage brand discoveries from news monitoring
           </p>
         </div>
         <div className="flex items-center gap-2">
           <GitBranch className="w-4 h-4 text-[#7C3AED]" />
-          <span className="text-sm text-white/40">
+          <span className="text-sm text-muted-foreground">
             {stats?.pending ?? 0} awaiting review
           </span>
         </div>
@@ -198,12 +198,12 @@ export default function BrandPipelinePage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3">
             <div className="flex items-center gap-2 mb-1">
-              <CheckCircle className="w-4 h-4 text-emerald-400" />
-              <span className="text-xs text-emerald-400 font-medium uppercase tracking-wider">
+              <CheckCircle className="w-4 h-4 text-emerald-600" />
+              <span className="text-xs text-emerald-600 font-medium uppercase tracking-wider">
                 Tracking
               </span>
             </div>
-            <div className="text-2xl font-bold text-white">{stats.tracking}</div>
+            <div className="text-2xl font-bold text-foreground">{stats.tracking}</div>
           </div>
           <div className="bg-[#FBBA16]/10 border border-[#FBBA16]/20 rounded-xl px-4 py-3">
             <div className="flex items-center gap-2 mb-1">
@@ -212,7 +212,7 @@ export default function BrandPipelinePage() {
                 In Queue
               </span>
             </div>
-            <div className="text-2xl font-bold text-white">
+            <div className="text-2xl font-bold text-foreground">
               {stats.pending + stats.reviewLater}
             </div>
           </div>
@@ -223,7 +223,7 @@ export default function BrandPipelinePage() {
                 This Week
               </span>
             </div>
-            <div className="text-2xl font-bold text-white">
+            <div className="text-2xl font-bold text-foreground">
               {stats.addedThisWeek}
             </div>
           </div>
@@ -234,7 +234,7 @@ export default function BrandPipelinePage() {
                 Categories
               </span>
             </div>
-            <div className="text-2xl font-bold text-white">
+            <div className="text-2xl font-bold text-foreground">
               {stats.categoriesCovered}
             </div>
           </div>
@@ -243,7 +243,7 @@ export default function BrandPipelinePage() {
 
       {/* Tabs + Search */}
       <div className="flex flex-wrap items-center gap-3">
-        <div className="flex gap-1 bg-white/5 rounded-lg p-1">
+        <div className="flex gap-1 bg-secondary rounded-lg p-1">
           {tabs.map((tab) => (
             <button
               key={tab.value}
@@ -251,7 +251,7 @@ export default function BrandPipelinePage() {
               className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                 activeTab === tab.value
                   ? "bg-[#0259DD] text-white"
-                  : "text-white/40 hover:text-white hover:bg-white/5"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
               }`}
             >
               {tab.label}
@@ -263,13 +263,13 @@ export default function BrandPipelinePage() {
         </div>
 
         <form onSubmit={handleSearch} className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search discoveries..."
-            className="w-full pl-10 pr-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
+            className="w-full pl-10 pr-4 py-2 rounded-lg bg-white border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
           />
         </form>
       </div>
@@ -277,36 +277,36 @@ export default function BrandPipelinePage() {
       {/* Begin Tracking edit panel */}
       {editingDiscovery && (
         <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-5">
-          <h3 className="text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-3">
+          <h3 className="text-sm font-semibold text-emerald-600 uppercase tracking-wider mb-3">
             Begin Tracking: {editingDiscovery.name}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs text-white/40 mb-1">Name</label>
+              <label className="block text-xs text-muted-foreground/60 mb-1">Name</label>
               <input
                 type="text"
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 rounded-lg bg-white border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
             <div>
-              <label className="block text-xs text-white/40 mb-1">URL</label>
+              <label className="block text-xs text-muted-foreground/60 mb-1">URL</label>
               <input
                 type="url"
                 value={editUrl}
                 onChange={(e) => setEditUrl(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 rounded-lg bg-white border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
             <div>
-              <label className="block text-xs text-white/40 mb-1">
+              <label className="block text-xs text-muted-foreground/60 mb-1">
                 Category
               </label>
               <select
                 value={editCategory}
                 onChange={(e) => setEditCategory(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 rounded-lg bg-white border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
                 {BRAND_CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
@@ -326,7 +326,7 @@ export default function BrandPipelinePage() {
             </button>
             <button
               onClick={closeTrackingPanel}
-              className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white/50 text-sm hover:text-white transition-colors"
+              className="px-4 py-2 rounded-lg bg-white border border-border text-muted-foreground text-sm hover:text-foreground transition-colors"
             >
               Cancel
             </button>
@@ -337,7 +337,7 @@ export default function BrandPipelinePage() {
       {/* Discovery cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         {discoveries.length === 0 && (
-          <div className="col-span-full bg-white/5 border border-white/10 rounded-xl px-5 py-12 text-center text-white/30 text-sm">
+          <div className="col-span-full bg-white border border-border shadow-sm rounded-xl px-5 py-12 text-center text-muted-foreground/60 text-sm">
             {activeTab === "pending"
               ? "No brands awaiting review. Run a news scan to discover new brands."
               : `No ${activeTab === "all" ? "" : activeTab + " "}discoveries found.`}

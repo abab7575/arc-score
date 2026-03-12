@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AdminLink } from "./admin-link";
 
 export function Navbar() {
   return (
@@ -62,6 +63,14 @@ export function Navbar() {
             >
               Pricing
             </Link>
+            <Link
+              href="/command-center"
+              className="text-sm font-semibold transition-colors"
+              style={{ color: "#FBBA16" }}
+            >
+              Command Center
+            </Link>
+            <AdminLink />
             <Link
               href="/login"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"

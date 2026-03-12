@@ -173,7 +173,7 @@ export default function ContentStudioPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-6 h-6 text-white/40 animate-spin" />
+        <Loader2 className="w-6 h-6 text-muted-foreground animate-spin" />
       </div>
     );
   }
@@ -191,8 +191,8 @@ export default function ContentStudioPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Content Studio</h1>
-          <p className="text-sm text-white/40 mt-1">
+          <h1 className="text-2xl font-bold text-foreground">Content Studio</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             Turn ARC Score data into social posts in one click
           </p>
         </div>
@@ -201,7 +201,7 @@ export default function ContentStudioPage() {
 
       {/* Content Type Grid */}
       <div>
-        <label className="block text-xs text-white/40 uppercase tracking-wider font-medium mb-2">
+        <label className="block text-xs text-muted-foreground/60 uppercase tracking-wider font-medium mb-2">
           Content Type
         </label>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
@@ -217,13 +217,13 @@ export default function ContentStudioPage() {
                 }}
                 className={`flex flex-col items-center gap-1.5 px-3 py-3 rounded-xl border text-center transition-all ${
                   active
-                    ? "bg-[#0259DD]/10 border-[#0259DD] text-white"
-                    : "bg-white/5 border-white/10 text-white/50 hover:text-white hover:bg-white/10"
+                    ? "bg-[#0259DD]/10 border-[#0259DD] text-foreground"
+                    : "bg-white border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
                 }`}
               >
                 <Icon className="w-5 h-5" />
                 <span className="text-xs font-medium">{ct.label}</span>
-                <span className="text-[10px] text-white/30 leading-tight">{ct.description}</span>
+                <span className="text-[10px] text-muted-foreground/60 leading-tight">{ct.description}</span>
               </button>
             );
           })}
@@ -232,10 +232,10 @@ export default function ContentStudioPage() {
 
       {/* Platform Pills */}
       <div>
-        <label className="block text-xs text-white/40 uppercase tracking-wider font-medium mb-2">
+        <label className="block text-xs text-muted-foreground/60 uppercase tracking-wider font-medium mb-2">
           Platform
         </label>
-        <div className="flex gap-1 bg-white/5 rounded-lg p-1 w-fit">
+        <div className="flex gap-1 bg-secondary rounded-lg p-1 w-fit">
           {PLATFORMS.map((p) => (
             <button
               key={p.id}
@@ -246,7 +246,7 @@ export default function ContentStudioPage() {
               className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
                 platform === p.id
                   ? "bg-[#0259DD] text-white"
-                  : "text-white/40 hover:text-white hover:bg-white/5"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
               }`}
             >
               {p.label}
@@ -256,8 +256,8 @@ export default function ContentStudioPage() {
       </div>
 
       {/* Options Panel */}
-      <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
-        <label className="block text-xs text-white/40 uppercase tracking-wider font-medium">
+      <div className="bg-white border border-border shadow-sm rounded-xl p-4 space-y-3">
+        <label className="block text-xs text-muted-foreground/60 uppercase tracking-wider font-medium">
           Options
         </label>
 
@@ -265,11 +265,11 @@ export default function ContentStudioPage() {
         {contentType === "category-leaderboard" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-white/40 mb-1">Category</label>
+              <label className="block text-xs text-muted-foreground/60 mb-1">Category</label>
               <select
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
+                className="w-full px-3 py-2 rounded-lg bg-white border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
               >
                 {data?.categories.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -279,7 +279,7 @@ export default function ContentStudioPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs text-white/40 mb-1">Count ({count})</label>
+              <label className="block text-xs text-muted-foreground/60 mb-1">Count ({count})</label>
               <input
                 type="range"
                 min={3}
@@ -295,11 +295,11 @@ export default function ContentStudioPage() {
         {/* Score Spotlight */}
         {contentType === "score-spotlight" && (
           <div>
-            <label className="block text-xs text-white/40 mb-1">Brand</label>
+            <label className="block text-xs text-muted-foreground/60 mb-1">Brand</label>
             <select
               value={brandSlug}
               onChange={(e) => setBrandSlug(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
+              className="w-full px-3 py-2 rounded-lg bg-white border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
             >
               {data?.brands.map((b) => (
                 <option key={b.slug} value={b.slug}>
@@ -314,8 +314,8 @@ export default function ContentStudioPage() {
         {contentType === "biggest-movers" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-white/40 mb-1">Direction</label>
-              <div className="flex gap-1 bg-white/5 rounded-lg p-1">
+              <label className="block text-xs text-muted-foreground/60 mb-1">Direction</label>
+              <div className="flex gap-1 bg-secondary rounded-lg p-1">
                 {(["up", "down", "both"] as const).map((d) => (
                   <button
                     key={d}
@@ -323,7 +323,7 @@ export default function ContentStudioPage() {
                     className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex-1 ${
                       direction === d
                         ? "bg-[#0259DD] text-white"
-                        : "text-white/40 hover:text-white"
+                        : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     {d === "up" ? "Up" : d === "down" ? "Down" : "Both"}
@@ -332,7 +332,7 @@ export default function ContentStudioPage() {
               </div>
             </div>
             <div>
-              <label className="block text-xs text-white/40 mb-1">Count ({count})</label>
+              <label className="block text-xs text-muted-foreground/60 mb-1">Count ({count})</label>
               <input
                 type="range"
                 min={3}
@@ -349,11 +349,11 @@ export default function ContentStudioPage() {
         {contentType === "agent-readiness" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-white/40 mb-1">Agent</label>
+              <label className="block text-xs text-muted-foreground/60 mb-1">Agent</label>
               <select
                 value={agentId}
                 onChange={(e) => setAgentId(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
+                className="w-full px-3 py-2 rounded-lg bg-white border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
               >
                 {data?.agents.map((a) => (
                   <option key={a.id} value={a.id}>
@@ -363,7 +363,7 @@ export default function ContentStudioPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs text-white/40 mb-1">Count ({count})</label>
+              <label className="block text-xs text-muted-foreground/60 mb-1">Count ({count})</label>
               <input
                 type="range"
                 min={3}
@@ -378,7 +378,7 @@ export default function ContentStudioPage() {
 
         {/* Weekly Roundup */}
         {contentType === "weekly-roundup" && (
-          <p className="text-sm text-white/30">
+          <p className="text-sm text-muted-foreground/60">
             No options needed — auto-generates from latest data.
           </p>
         )}
@@ -387,18 +387,18 @@ export default function ContentStudioPage() {
         {contentType === "news-reaction" && (
           <div className="space-y-3">
             <div>
-              <label className="block text-xs text-white/40 mb-1">Search articles</label>
+              <label className="block text-xs text-muted-foreground/60 mb-1">Search articles</label>
               <input
                 type="text"
                 value={articleSearch}
                 onChange={(e) => setArticleSearch(e.target.value)}
                 placeholder="Filter articles..."
-                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
+                className="w-full px-3 py-2 rounded-lg bg-white border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-[#0259DD]"
               />
             </div>
             <div className="max-h-48 overflow-y-auto space-y-1 pr-1">
               {filteredArticles.length === 0 && (
-                <p className="text-sm text-white/30 py-2">No articles found.</p>
+                <p className="text-sm text-muted-foreground/60 py-2">No articles found.</p>
               )}
               {filteredArticles.map((a) => (
                 <label
@@ -406,7 +406,7 @@ export default function ContentStudioPage() {
                   className={`flex items-start gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
                     selectedArticleIds.includes(a.id)
                       ? "bg-[#0259DD]/10 border border-[#0259DD]/30"
-                      : "bg-white/5 border border-transparent hover:bg-white/10"
+                      : "bg-white border border-transparent hover:bg-secondary"
                   }`}
                 >
                   <input
@@ -416,14 +416,14 @@ export default function ContentStudioPage() {
                     className="mt-0.5 accent-[#0259DD]"
                   />
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm text-white truncate">{a.title}</div>
-                    <div className="text-[10px] text-white/30">{a.sourceName}</div>
+                    <div className="text-sm text-foreground truncate">{a.title}</div>
+                    <div className="text-[10px] text-muted-foreground/60">{a.sourceName}</div>
                   </div>
                 </label>
               ))}
             </div>
             <div>
-              <label className="block text-xs text-white/40 mb-1">
+              <label className="block text-xs text-muted-foreground/60 mb-1">
                 Commentary (optional)
               </label>
               <textarea
@@ -431,7 +431,7 @@ export default function ContentStudioPage() {
                 onChange={(e) => setCommentary(e.target.value)}
                 placeholder="Add your take..."
                 rows={3}
-                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#0259DD] resize-none"
+                className="w-full px-3 py-2 rounded-lg bg-white border border-border text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-[#0259DD] resize-none"
               />
             </div>
           </div>
@@ -456,17 +456,17 @@ export default function ContentStudioPage() {
 
       {/* Preview Panel */}
       {result && (
-        <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+        <div className="bg-white border border-border shadow-sm rounded-xl overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <div className="flex items-center gap-3">
-              <span className="text-xs text-white/40 uppercase tracking-wider font-medium">
+              <span className="text-xs text-muted-foreground/60 uppercase tracking-wider font-medium">
                 Preview
               </span>
               <span
                 className={`text-xs font-mono px-2 py-0.5 rounded ${
                   platform === "x" && result.charCount > 280
-                    ? "bg-red-500/20 text-red-400"
-                    : "bg-white/10 text-white/50"
+                    ? "bg-red-500/20 text-red-600"
+                    : "bg-secondary text-muted-foreground"
                 }`}
               >
                 {result.charCount} chars
@@ -477,8 +477,8 @@ export default function ContentStudioPage() {
               onClick={handleCopy}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
                 copied
-                  ? "bg-emerald-500/20 text-emerald-400"
-                  : "bg-white/10 text-white/60 hover:text-white hover:bg-white/20"
+                  ? "bg-emerald-500/20 text-emerald-600"
+                  : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary"
               }`}
             >
               {copied ? (
@@ -494,7 +494,7 @@ export default function ContentStudioPage() {
               )}
             </button>
           </div>
-          <pre className="p-4 text-sm text-white/80 whitespace-pre-wrap font-mono leading-relaxed max-h-[500px] overflow-y-auto">
+          <pre className="p-4 text-sm text-foreground/80 whitespace-pre-wrap font-mono leading-relaxed max-h-[500px] overflow-y-auto">
             {result.content}
           </pre>
         </div>

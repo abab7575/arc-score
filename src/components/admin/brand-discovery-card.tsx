@@ -34,19 +34,19 @@ function timeAgo(dateStr: string) {
 
 function categoryBadgeColor(category: string | null) {
   const colors: Record<string, string> = {
-    fashion: "bg-pink-500/20 text-pink-400",
-    beauty: "bg-rose-500/20 text-rose-400",
-    electronics: "bg-cyan-500/20 text-cyan-400",
-    home: "bg-amber-500/20 text-amber-400",
-    grocery: "bg-lime-500/20 text-lime-400",
-    marketplace: "bg-blue-500/20 text-blue-400",
-    luxury: "bg-purple-500/20 text-purple-400",
-    dtc: "bg-orange-500/20 text-orange-400",
-    sports: "bg-teal-500/20 text-teal-400",
-    resale: "bg-indigo-500/20 text-indigo-400",
-    payments: "bg-emerald-500/20 text-emerald-400",
+    fashion: "bg-pink-500/20 text-pink-600",
+    beauty: "bg-rose-500/20 text-rose-600",
+    electronics: "bg-cyan-500/20 text-cyan-600",
+    home: "bg-amber-500/20 text-amber-600",
+    grocery: "bg-lime-500/20 text-lime-600",
+    marketplace: "bg-blue-500/20 text-blue-600",
+    luxury: "bg-purple-500/20 text-purple-600",
+    dtc: "bg-orange-500/20 text-orange-600",
+    sports: "bg-teal-500/20 text-teal-600",
+    resale: "bg-indigo-500/20 text-indigo-600",
+    payments: "bg-emerald-500/20 text-emerald-600",
   };
-  return colors[category || ""] || "bg-white/10 text-white/40";
+  return colors[category || ""] || "bg-secondary text-muted-foreground";
 }
 
 function sourceLabel(source: string) {
@@ -70,12 +70,12 @@ export default function BrandDiscoveryCard({
   onBeginTracking,
 }: BrandDiscoveryCardProps) {
   return (
-    <div className="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-white/20 transition-colors">
+    <div className="bg-white border border-border shadow-sm rounded-xl p-5 hover:border-border/80 transition-colors">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           {/* Name + URL */}
           <div className="flex items-center gap-2 mb-1.5">
-            <h3 className="text-base font-semibold text-white truncate">
+            <h3 className="text-base font-semibold text-foreground truncate">
               {discovery.name}
             </h3>
             {discovery.url && (
@@ -83,7 +83,7 @@ export default function BrandDiscoveryCard({
                 href={discovery.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/30 hover:text-[#0259DD] transition-colors flex-shrink-0"
+                className="text-muted-foreground/60 hover:text-[#0259DD] transition-colors flex-shrink-0"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
@@ -101,30 +101,30 @@ export default function BrandDiscoveryCard({
                 {discovery.category}
               </span>
             )}
-            <span className="px-2 py-0.5 rounded text-xs font-medium bg-white/5 text-white/40">
+            <span className="px-2 py-0.5 rounded text-xs font-medium bg-secondary text-muted-foreground">
               {sourceLabel(discovery.discoverySource)}
             </span>
-            <span className="text-xs text-white/30 font-mono">
+            <span className="text-xs text-muted-foreground/60 font-mono">
               &times;{discovery.mentionCount}
             </span>
           </div>
 
           {/* Reason */}
           {discovery.reason && (
-            <p className="text-xs text-white/40 line-clamp-2 mb-2">
+            <p className="text-xs text-muted-foreground/60 line-clamp-2 mb-2">
               {discovery.reason}
             </p>
           )}
 
           {/* Source article */}
           {discovery.sourceArticleTitle && (
-            <p className="text-xs text-white/25 truncate">
+            <p className="text-xs text-muted-foreground/60 truncate">
               From: {discovery.sourceArticleTitle}
             </p>
           )}
 
           {/* Timestamp */}
-          <div className="flex items-center gap-1 mt-2 text-xs text-white/20">
+          <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground/60">
             <Clock className="w-3 h-3" />
             {timeAgo(discovery.createdAt)}
           </div>
@@ -135,7 +135,7 @@ export default function BrandDiscoveryCard({
           <div className="flex flex-col gap-1.5 flex-shrink-0">
             <button
               onClick={() => onBeginTracking(discovery)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 text-xs font-medium hover:bg-emerald-500/30 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-600 text-xs font-medium hover:bg-emerald-500/30 transition-colors"
               title="Begin Tracking"
             >
               <Check className="w-3.5 h-3.5" />
@@ -143,7 +143,7 @@ export default function BrandDiscoveryCard({
             </button>
             <button
               onClick={() => onAction(discovery.id, "review_later")}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-500/20 text-yellow-400 text-xs font-medium hover:bg-yellow-500/30 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-500/20 text-yellow-600 text-xs font-medium hover:bg-yellow-500/30 transition-colors"
               title="Review Later"
             >
               <Eye className="w-3.5 h-3.5" />
@@ -151,7 +151,7 @@ export default function BrandDiscoveryCard({
             </button>
             <button
               onClick={() => onAction(discovery.id, "skipped")}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/20 text-red-400 text-xs font-medium hover:bg-red-500/30 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/20 text-red-600 text-xs font-medium hover:bg-red-500/30 transition-colors"
               title="Skip"
             >
               <X className="w-3.5 h-3.5" />
@@ -164,14 +164,14 @@ export default function BrandDiscoveryCard({
           <div className="flex flex-col gap-1.5 flex-shrink-0">
             <button
               onClick={() => onBeginTracking(discovery)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 text-xs font-medium hover:bg-emerald-500/30 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-600 text-xs font-medium hover:bg-emerald-500/30 transition-colors"
             >
               <Check className="w-3.5 h-3.5" />
               Track
             </button>
             <button
               onClick={() => onAction(discovery.id, "skipped")}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/20 text-red-400 text-xs font-medium hover:bg-red-500/30 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/20 text-red-600 text-xs font-medium hover:bg-red-500/30 transition-colors"
             >
               <X className="w-3.5 h-3.5" />
               Skip
@@ -182,7 +182,7 @@ export default function BrandDiscoveryCard({
         {discovery.status === "skipped" && (
           <button
             onClick={() => onAction(discovery.id, "pending")}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 text-white/40 text-xs font-medium hover:bg-white/10 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary text-muted-foreground text-xs font-medium hover:bg-secondary/80 transition-colors"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             Restore
@@ -190,7 +190,7 @@ export default function BrandDiscoveryCard({
         )}
 
         {discovery.status === "tracking" && (
-          <span className="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-medium">
+          <span className="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 text-xs font-medium">
             Tracking
           </span>
         )}

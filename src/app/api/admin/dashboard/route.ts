@@ -3,18 +3,35 @@ import { getScanHealth, getDailyBrief } from "@/lib/db/admin-queries";
 
 export const dynamic = "force-dynamic";
 
+const EMPTY_HEALTH: {
+  lastScanAt: string | null;
+  totalBrands: number;
+  avgScore: number;
+  todayScans: number;
+  recentScans: { id: number; brandName: string; brandSlug: string; overallScore: number; grade: string; scannedAt: string }[];
+} = {
+  lastScanAt: null,
+  totalBrands: 0,
+  avgScore: 0,
+  todayScans: 0,
+  recentScans: [],
+};
+
 export async function GET() {
+  let health: typeof EMPTY_HEALTH = EMPTY_HEALTH;
+  let dailyBrief = null;
+
   try {
-    const health = getScanHealth();
-    let dailyBrief = null;
-    try {
-      dailyBrief = getDailyBrief();
-    } catch {
-      // dailyBrief may fail if brand_discoveries table doesn't exist yet
-    }
-    return NextResponse.json({ ...health, dailyBrief });
+    health = getScanHealth();
   } catch (error) {
-    console.error("Dashboard error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("getScanHealth error:", error);
   }
+
+  try {
+    dailyBrief = getDailyBrief();
+  } catch (error) {
+    console.error("getDailyBrief error:", error);
+  }
+
+  return NextResponse.json({ ...health, dailyBrief });
 }

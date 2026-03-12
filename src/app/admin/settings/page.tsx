@@ -42,15 +42,15 @@ function sourceTypeIcon(type: string) {
 
 function sourceTypeColor(type: string) {
   const colors: Record<string, string> = {
-    rss: "text-orange-400",
-    blog: "text-blue-400",
-    newsletter: "text-emerald-400",
-    youtube: "text-red-400",
-    podcast: "text-purple-400",
-    reddit: "text-orange-500",
-    twitter: "text-sky-400",
+    rss: "text-orange-600",
+    blog: "text-blue-600",
+    newsletter: "text-emerald-600",
+    youtube: "text-red-600",
+    podcast: "text-purple-600",
+    reddit: "text-orange-600",
+    twitter: "text-sky-600",
   };
-  return colors[type] || "text-white/40";
+  return colors[type] || "text-muted-foreground";
 }
 
 export default function SettingsPage() {
@@ -106,17 +106,17 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-6 h-6 text-white/40 animate-spin" />
+        <Loader2 className="w-6 h-6 text-muted-foreground animate-spin" />
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-white">Settings</h1>
+      <h1 className="text-2xl font-bold text-foreground">Settings</h1>
 
       {/* Section tabs */}
-      <div className="flex gap-1 bg-white/5 rounded-lg p-1 w-fit">
+      <div className="flex gap-1 bg-secondary rounded-lg p-1 w-fit">
         {sections.map((section) => {
           const Icon = section.icon;
           return (
@@ -126,7 +126,7 @@ export default function SettingsPage() {
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                 activeSection === section.id
                   ? "bg-[#0259DD] text-white"
-                  : "text-white/40 hover:text-white hover:bg-white/5"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
               }`}
             >
               <Icon className="w-3.5 h-3.5" />
@@ -147,11 +147,11 @@ export default function SettingsPage() {
               return (
                 <div
                   key={type}
-                  className="flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/10 rounded-lg"
+                  className="flex items-center gap-2 px-3 py-2 bg-white border border-border shadow-sm rounded-lg"
                 >
                   <Icon className={`w-4 h-4 ${sourceTypeColor(type)}`} />
-                  <span className="text-sm text-white capitalize">{type}</span>
-                  <span className="text-xs text-white/30">
+                  <span className="text-sm text-foreground capitalize">{type}</span>
+                  <span className="text-xs text-muted-foreground/60">
                     {activeCount}/{typeSources.length}
                   </span>
                 </div>
@@ -162,28 +162,28 @@ export default function SettingsPage() {
           {/* Sources grouped by type */}
           {Object.entries(sourcesByType).map(([type, typeSources]) => (
             <div key={type}>
-              <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider mb-2 capitalize">
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2 capitalize">
                 {type} ({typeSources.length})
               </h3>
               <div className="space-y-1">
                 {typeSources.map((source) => (
                   <div
                     key={source.id}
-                    className={`flex items-center justify-between px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg ${
+                    className={`flex items-center justify-between px-4 py-2.5 bg-white border border-border shadow-sm rounded-lg ${
                       !source.active ? "opacity-40" : ""
                     }`}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className="text-sm text-white truncate">
+                      <span className="text-sm text-foreground truncate">
                         {source.name}
                       </span>
-                      <span className="text-xs text-white/20 truncate hidden sm:inline">
+                      <span className="text-xs text-muted-foreground/60 truncate hidden sm:inline">
                         {source.category}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       {source.lastFetchedAt && (
-                        <span className="text-xs text-white/20 hidden md:inline">
+                        <span className="text-xs text-muted-foreground/60 hidden md:inline">
                           {new Date(source.lastFetchedAt).toLocaleDateString()}
                         </span>
                       )}
@@ -191,8 +191,8 @@ export default function SettingsPage() {
                         onClick={() =>
                           handleToggleSource(source.id, !source.active)
                         }
-                        className={`p-1 rounded hover:bg-white/10 transition-colors ${
-                          source.active ? "text-emerald-400" : "text-white/30"
+                        className={`p-1 rounded hover:bg-secondary transition-colors ${
+                          source.active ? "text-emerald-600" : "text-muted-foreground/60"
                         }`}
                         title={source.active ? "Disable" : "Enable"}
                       >
@@ -204,7 +204,7 @@ export default function SettingsPage() {
                       </button>
                       <button
                         onClick={() => handleDeleteSource(source.id)}
-                        className="p-1 rounded hover:bg-red-500/20 text-white/20 hover:text-red-400 transition-colors"
+                        className="p-1 rounded hover:bg-red-500/20 text-muted-foreground/60 hover:text-red-600 transition-colors"
                         title="Delete"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -224,25 +224,25 @@ export default function SettingsPage() {
       {/* Scan Status section */}
       {activeSection === "status" && (
         <div className="space-y-4">
-          <div className="bg-white/5 border border-white/10 rounded-xl p-5">
-            <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider mb-4">
+          <div className="bg-white border border-border shadow-sm rounded-xl p-5">
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
               Feed Health
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div>
-                <div className="text-2xl font-bold text-white">
+                <div className="text-2xl font-bold text-foreground">
                   {sources.length}
                 </div>
-                <div className="text-xs text-white/40">Total Sources</div>
+                <div className="text-xs text-muted-foreground/60">Total Sources</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-emerald-400">
+                <div className="text-2xl font-bold text-emerald-600">
                   {sources.filter((s) => s.active).length}
                 </div>
-                <div className="text-xs text-white/40">Active</div>
+                <div className="text-xs text-muted-foreground/60">Active</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-white">
+                <div className="text-2xl font-bold text-foreground">
                   {
                     sources.filter(
                       (s) =>
@@ -252,10 +252,10 @@ export default function SettingsPage() {
                     ).length
                   }
                 </div>
-                <div className="text-xs text-white/40">Fetched Today</div>
+                <div className="text-xs text-muted-foreground/60">Fetched Today</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-red-400">
+                <div className="text-2xl font-bold text-red-600">
                   {
                     sources.filter(
                       (s) =>
@@ -266,7 +266,7 @@ export default function SettingsPage() {
                     ).length
                   }
                 </div>
-                <div className="text-xs text-white/40">Stale (3d+)</div>
+                <div className="text-xs text-muted-foreground/60">Stale (3d+)</div>
               </div>
             </div>
           </div>
@@ -276,26 +276,26 @@ export default function SettingsPage() {
       {/* API Keys section */}
       {activeSection === "api" && (
         <div className="space-y-4">
-          <div className="bg-white/5 border border-white/10 rounded-xl p-5">
-            <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider mb-4">
+          <div className="bg-white border border-border shadow-sm rounded-xl p-5">
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
               Configured Services
             </h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-white">CRON_SECRET</span>
-                <span className="px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/20 text-emerald-400">
+                <span className="text-sm text-foreground">CRON_SECRET</span>
+                <span className="px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/20 text-emerald-600">
                   Set
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-white">ADMIN_PASSWORD</span>
-                <span className="px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/20 text-emerald-400">
+                <span className="text-sm text-foreground">ADMIN_PASSWORD</span>
+                <span className="px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/20 text-emerald-600">
                   Set
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-white">ANTHROPIC_API_KEY</span>
-                <span className="px-2 py-0.5 rounded text-xs font-medium bg-white/10 text-white/40">
+                <span className="text-sm text-foreground">ANTHROPIC_API_KEY</span>
+                <span className="px-2 py-0.5 rounded text-xs font-medium bg-secondary text-muted-foreground">
                   Not Set (Phase 5)
                 </span>
               </div>

@@ -1,7 +1,9 @@
+import { Navbar } from "@/components/shared/navbar";
+import { Footer } from "@/components/shared/footer";
 import { AdminSidebar } from "@/components/admin/sidebar";
 
 export const metadata = {
-  title: "ARC Score Admin",
+  title: "Mission Control — ARC Score",
   robots: "noindex, nofollow",
 };
 
@@ -11,9 +13,11 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen" style={{ backgroundColor: "#0F1A2E" }}>
+    <div style={{ backgroundColor: "#FFF8F0", minHeight: "100vh" }}>
+      <Navbar />
       <AdminSidebar />
-      <main className="flex-1 p-8 overflow-auto">{children}</main>
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8">{children}</main>
+      <Footer />
     </div>
   );
 }
