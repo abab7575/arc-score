@@ -150,7 +150,8 @@ function scoreDiscoverability(browser: BrowserAgentResult, a11y: AccessibilityAg
 
 function scoreProductUnderstanding(data: DataAgentResult, browser: BrowserAgentResult, visual?: VisualAgentResult, feed?: FeedAgentResult): CategoryScore {
   let score = 0;
-  if (data.schemaOrg.found && data.schemaOrg.type === "Product") score += 25;
+  const productSchemaTypes = ["Product", "ProductGroup", "IndividualProduct", "ProductModel"];
+  if (data.schemaOrg.found && productSchemaTypes.includes(data.schemaOrg.type ?? "")) score += 25;
   else if (data.jsonLd.found) score += 10;
 
   const hasPrice = data.schemaOrg.fields?.price || data.schemaOrg.fields?.offers;
@@ -364,13 +365,21 @@ function scoreAgenticCommerce(data: DataAgentResult, feed?: FeedAgentResult): Ca
   if (data.llmsTxt.found && data.llmsTxt.content && commerceKeywords.test(data.llmsTxt.content)) score += 5;
 
   // JSON-LD with Offer/Product having availability and price
+  const commerceSchemaTypes = ["Product", "ProductGroup", "IndividualProduct", "ProductModel", "Offer"];
   const hasCommerceJsonLd = data.jsonLd.objects.some((obj) => {
     const item = obj as Record<string, unknown>;
+    const itemType = item["@type"];
+    const typeMatch = typeof itemType === "string" ? commerceSchemaTypes.includes(itemType) : false;
+    if (!typeMatch) return false;
     const offers = item.offers as Record<string, unknown> | undefined;
-    return (
-      (item["@type"] === "Product" || item["@type"] === "Offer") &&
-      (offers?.availability || offers?.price || item.availability || item.price)
+    // Check top-level, in offers, or in hasVariant
+    const hasVariants = Array.isArray(item.hasVariant) && (item.hasVariant as Record<string, unknown>[]).some(
+      (v) => {
+        const vOffers = v.offers as Record<string, unknown> | undefined;
+        return vOffers?.price || vOffers?.availability;
+      }
     );
+    return offers?.availability || offers?.price || item.availability || item.price || hasVariants;
   });
   if (hasCommerceJsonLd) score += 10;
 
@@ -780,7 +789,15 @@ function buildFindings(
   const hasAvailabilityPricing = data.jsonLd.objects.some((obj) => {
     const item = obj as Record<string, unknown>;
     const offers = item.offers as Record<string, unknown> | undefined;
-    return offers?.availability && offers?.price;
+    if (offers?.availability && offers?.price) return true;
+    // Check hasVariant (ProductGroup pattern)
+    if (Array.isArray(item.hasVariant)) {
+      return (item.hasVariant as Record<string, unknown>[]).some((v) => {
+        const vOffers = v.offers as Record<string, unknown> | undefined;
+        return vOffers?.availability && vOffers?.price;
+      });
+    }
+    return false;
   });
   if (!hasAvailabilityPricing && data.schemaOrg.found) {
     findings.push({
