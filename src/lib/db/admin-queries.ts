@@ -462,6 +462,144 @@ export function getExistingDiscoveryByName(name: string) {
     .get();
 }
 
+// ── Content Queue ──────────────────────────────────────────────────
+
+export function getContentQueue(filters?: {
+  status?: string;
+  platform?: string;
+  contentType?: string;
+  sortBy?: "priority" | "newest";
+  limit?: number;
+  offset?: number;
+}) {
+  const conditions = [];
+
+  if (filters?.status) {
+    conditions.push(eq(schema.contentQueue.status, filters.status));
+  }
+  if (filters?.platform) {
+    conditions.push(eq(schema.contentQueue.platform, filters.platform));
+  }
+  if (filters?.contentType) {
+    conditions.push(eq(schema.contentQueue.contentType, filters.contentType));
+  }
+
+  const where = conditions.length > 0 ? and(...conditions) : undefined;
+
+  const orderBy =
+    filters?.sortBy === "newest"
+      ? desc(schema.contentQueue.createdAt)
+      : desc(schema.contentQueue.priorityScore);
+
+  return db
+    .select()
+    .from(schema.contentQueue)
+    .where(where)
+    .orderBy(orderBy, desc(schema.contentQueue.createdAt))
+    .limit(filters?.limit ?? 50)
+    .offset(filters?.offset ?? 0)
+    .all();
+}
+
+export function insertContentQueueItem(data: {
+  contentType: string;
+  platform: string;
+  title: string;
+  body: string;
+  imageUrl?: string;
+  imageTemplate?: string;
+  status?: string;
+  metadata?: string;
+  priorityScore?: number;
+  generatedBy?: string;
+}) {
+  return db
+    .insert(schema.contentQueue)
+    .values({
+      contentType: data.contentType,
+      platform: data.platform,
+      title: data.title,
+      body: data.body,
+      imageUrl: data.imageUrl,
+      imageTemplate: data.imageTemplate,
+      status: data.status ?? "draft",
+      metadata: data.metadata ?? "{}",
+      priorityScore: data.priorityScore ?? 50,
+      generatedBy: data.generatedBy ?? "manual",
+    })
+    .returning()
+    .get();
+}
+
+export function updateContentQueueStatus(
+  id: number,
+  status: string
+) {
+  const updates: Record<string, unknown> = { status };
+  if (status === "approved") {
+    updates.approvedAt = new Date().toISOString();
+  }
+  if (status === "posted") {
+    updates.postedAt = new Date().toISOString();
+  }
+  return db
+    .update(schema.contentQueue)
+    .set(updates)
+    .where(eq(schema.contentQueue.id, id))
+    .run();
+}
+
+export function deleteContentQueueItem(id: number) {
+  return db
+    .delete(schema.contentQueue)
+    .where(eq(schema.contentQueue.id, id))
+    .run();
+}
+
+export function getRecentContentTypes(days: number = 3) {
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+  return db
+    .select({
+      contentType: schema.contentQueue.contentType,
+      platform: schema.contentQueue.platform,
+      metadata: schema.contentQueue.metadata,
+      createdAt: schema.contentQueue.createdAt,
+    })
+    .from(schema.contentQueue)
+    .where(gte(schema.contentQueue.createdAt, since))
+    .orderBy(desc(schema.contentQueue.createdAt))
+    .all();
+}
+
+export function getContentQueueStats() {
+  const draft = db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.contentQueue)
+    .where(eq(schema.contentQueue.status, "draft"))
+    .get()!.count;
+
+  const approved = db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.contentQueue)
+    .where(eq(schema.contentQueue.status, "approved"))
+    .get()!.count;
+
+  const posted = db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.contentQueue)
+    .where(eq(schema.contentQueue.status, "posted"))
+    .get()!.count;
+
+  const today = new Date().toISOString().split("T")[0];
+  const todayCount = db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.contentQueue)
+    .where(gte(schema.contentQueue.createdAt, today))
+    .get()!.count;
+
+  return { draft, approved, posted, todayCount };
+}
+
 // ── Daily Brief ────────────────────────────────────────────────────
 
 export function getDailyBrief() {

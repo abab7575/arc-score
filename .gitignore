@@ -48,3 +48,7 @@ next-env.d.ts
 # scan artifacts
 scan-results.json
 /drizzle
+
+# generated content assets
+/public/content-images/
+/public/fonts/

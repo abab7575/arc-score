@@ -154,6 +154,25 @@ export const brandClaims = sqliteTable("brand_claims", {
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 
+// ── Admin: Content Queue ─────────────────────────────────────────────
+
+export const contentQueue = sqliteTable("content_queue", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  contentType: text("content_type").notNull(), // category-leaderboard, score-spotlight, biggest-movers, agent-readiness, weekly-roundup, news-reaction, educational
+  platform: text("platform").notNull(), // x, linkedin
+  title: text("title").notNull(),
+  body: text("body").notNull(),
+  imageUrl: text("image_url"), // path to generated PNG in public/content-images/
+  imageTemplate: text("image_template"), // scorecard, leaderboard, mover-alert, educational, news-react
+  status: text("status").notNull().default("draft"), // draft, approved, posted, archived
+  metadata: text("metadata").notNull().default("{}"), // JSON: story-specific data
+  priorityScore: integer("priority_score").notNull().default(50), // 0-100
+  generatedBy: text("generated_by").notNull().default("manual"), // cron, manual
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+  approvedAt: text("approved_at"),
+  postedAt: text("posted_at"),
+});
+
 // ── Admin: Brand Discovery Pipeline ─────────────────────────────────
 
 export const brandDiscoveries = sqliteTable("brand_discoveries", {
