@@ -463,6 +463,40 @@ async function main() {
       console.log(`  ${v.brand}: ${issues.map((i) => `${i.check} (${i.severity})`).join(", ")}`);
     }
   }
+
+  // ── Persist validation log ──
+  const fs = await import("fs");
+  const logDir = path.join(projectRoot, "data", "validation-logs");
+  fs.mkdirSync(logDir, { recursive: true });
+
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const logFile = path.join(logDir, `${timestamp}.json`);
+  const logData = {
+    timestamp: new Date().toISOString(),
+    brandsValidated: validations.length,
+    overallAccuracy,
+    totalChecks,
+    totalAccurate,
+    totalFalseNegatives: totalFalseNegs,
+    totalFalsePositives: totalFalsePos,
+    brands: validations.map((v) => ({
+      brand: v.brand,
+      url: v.url,
+      accuracy: v.accuracy,
+      falseNegatives: v.falseNegatives,
+      falsePositives: v.falsePositives,
+      issues: v.results.filter((r) => !r.match).map((r) => ({
+        check: r.check,
+        severity: r.severity,
+        scannerSays: r.scannerSays,
+        validatorSays: r.validatorSays,
+        detail: r.detail,
+      })),
+    })),
+  };
+
+  fs.writeFileSync(logFile, JSON.stringify(logData, null, 2));
+  console.log(`\nValidation log saved to ${logFile}`);
 }
 
 main().catch(console.error);

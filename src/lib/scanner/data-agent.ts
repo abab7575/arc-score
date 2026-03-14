@@ -81,21 +81,44 @@ const AI_USER_AGENTS = [
 
 export async function runDataAgent(
   url: string,
-  productUrl?: string
+  productUrl?: string,
+  renderedHtml?: string
 ): Promise<DataAgentResult> {
   const baseUrl = url.startsWith("http") ? url : `https://${url}`;
   const targetProductUrl = productUrl || baseUrl;
 
   console.log("[Data Agent] Starting scan of", baseUrl);
 
-  // 1. Fetch product page HTML
+  // 1. Fetch product page HTML (raw HTTP)
   console.log("[Data Agent] Fetching page HTML...");
-  const html = await fetchPage(targetProductUrl);
+  const rawHtml = await fetchPage(targetProductUrl);
+
+  // Use browser-rendered HTML if available (catches JS-injected schema)
+  // Fall back to raw HTTP fetch
+  const html = renderedHtml && renderedHtml.length > rawHtml.length
+    ? renderedHtml
+    : rawHtml;
   const htmlSize = html.length;
 
-  // 2. Parse JSON-LD
+  if (renderedHtml) {
+    console.log(`[Data Agent] Using browser-rendered HTML (${Math.round(renderedHtml.length / 1024)}KB) vs raw (${Math.round(rawHtml.length / 1024)}KB)`);
+  }
+
+  // 2. Parse JSON-LD from both sources to maximize detection
   console.log("[Data Agent] Parsing JSON-LD...");
   const jsonLd = parseJsonLd(html);
+
+  // If rendered HTML has more JSON-LD, merge objects from raw HTML too
+  if (renderedHtml && rawHtml.length > 0) {
+    const rawJsonLd = parseJsonLd(rawHtml);
+    for (const obj of rawJsonLd.objects) {
+      const exists = jsonLd.objects.some(
+        (existing) => JSON.stringify(existing) === JSON.stringify(obj)
+      );
+      if (!exists) jsonLd.objects.push(obj);
+    }
+    jsonLd.found = jsonLd.objects.length > 0;
+  }
 
   // 3. Parse Schema.org from JSON-LD
   const schemaOrg = analyzeSchemaOrg(jsonLd.objects);

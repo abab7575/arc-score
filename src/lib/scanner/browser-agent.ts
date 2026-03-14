@@ -45,6 +45,8 @@ export interface BrowserAgentResult {
   addToCartSuccess: boolean;
   checkoutReached: boolean;
   guestCheckoutAvailable: boolean;
+  /** Rendered product page HTML for data agent schema detection */
+  renderedProductHtml?: string;
 }
 
 export interface BrowserAgentOptions {
@@ -387,6 +389,7 @@ export async function runBrowserAgent(
   let addToCartSuccess = false;
   let checkoutReached = false;
   let guestCheckoutAvailable = false;
+  let renderedProductHtml: string | undefined;
   let pagesLoaded = 0;
 
   try {
@@ -870,6 +873,14 @@ export async function runBrowserAgent(
     });
     steps.push(step5);
 
+    // Capture rendered product page HTML for data agent (catches JS-injected schema)
+    try {
+      renderedProductHtml = await page.content();
+      console.log(`[Browser Agent] Captured rendered product HTML (${Math.round((renderedProductHtml?.length ?? 0) / 1024)}KB)`);
+    } catch {
+      console.warn("[Browser Agent] Could not capture rendered HTML");
+    }
+
     // ── Step 6: Select variant ──
     console.log("[Browser Agent] Step 6: Select variant...");
     const step6 = await measureStep(async () => {
@@ -1208,7 +1219,7 @@ export async function runBrowserAgent(
     function buildResult(): BrowserAgentResult {
       const totalDuration = steps.reduce((sum, s) => sum + s.duration, 0);
       const narrative = steps.map((s) => s.narration).join(" ");
-      return { steps, overallResult, narrative, pagesLoaded, totalDuration, blockedByBot, captchaDetected, cookieConsentFound, addToCartSuccess, checkoutReached, guestCheckoutAvailable };
+      return { steps, overallResult, narrative, pagesLoaded, totalDuration, blockedByBot, captchaDetected, cookieConsentFound, addToCartSuccess, checkoutReached, guestCheckoutAvailable, renderedProductHtml };
     }
 
     return buildResult();
@@ -1218,7 +1229,7 @@ export async function runBrowserAgent(
       steps, overallResult: "fail",
       narrative: `Browser Agent encountered a fatal error: ${(e as Error).message}`,
       pagesLoaded, totalDuration: steps.reduce((sum, s) => sum + s.duration, 0),
-      blockedByBot, captchaDetected, cookieConsentFound, addToCartSuccess, checkoutReached, guestCheckoutAvailable,
+      blockedByBot, captchaDetected, cookieConsentFound, addToCartSuccess, checkoutReached, guestCheckoutAvailable, renderedProductHtml,
     };
   } finally {
     if (browser) await browser.close();

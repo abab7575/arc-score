@@ -65,15 +65,17 @@ export async function scanBrand(brand: BrandEntry, options: ScanOptions = {}): P
   const screenshotDir = getScreenshotDir(brand.slug);
   const screenshotUrlPrefix = getScreenshotUrlPrefix(brand.slug);
 
-  // Run all three agents
-  console.log(`[${brand.slug}] Starting Data Agent...`);
-  const dataResult = await runDataAgent(brand.url, brand.productUrl);
-
+  // Run all agents — browser first so we can share rendered HTML with data agent
   console.log(`[${brand.slug}] Starting Browser Agent...`);
   const browserResult = await runBrowserAgent(brand.url, brand.productUrl, {
     screenshotDir,
     screenshotUrlPrefix,
   });
+
+  // Pass browser-rendered HTML to data agent for JS-rendered schema detection
+  const renderedHtml = browserResult.renderedProductHtml;
+  console.log(`[${brand.slug}] Starting Data Agent...`);
+  const dataResult = await runDataAgent(brand.url, brand.productUrl, renderedHtml);
 
   console.log(`[${brand.slug}] Starting Accessibility Agent...`);
   const a11yResult = await runAccessibilityAgent(brand.url, brand.productUrl);
