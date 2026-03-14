@@ -87,24 +87,28 @@ export default function AdminIntelPage() {
   const [sourceId, setSourceId] = useState<number | undefined>();
 
   async function fetchArticles() {
-    const params = new URLSearchParams();
-    if (search) params.set("search", search);
-    if (filterUnread) params.set("unread", "true");
-    if (filterFlagged) params.set("flagged", "true");
-    if (minRelevance > 0) params.set("minRelevance", String(minRelevance));
-    if (sourceId) params.set("sourceId", String(sourceId));
+    try {
+      const params = new URLSearchParams();
+      if (search) params.set("search", search);
+      if (filterUnread) params.set("unread", "true");
+      if (filterFlagged) params.set("flagged", "true");
+      if (minRelevance > 0) params.set("minRelevance", String(minRelevance));
+      if (sourceId) params.set("sourceId", String(sourceId));
 
-    const res = await fetch(`/api/admin/news?${params}`);
-    setArticles(await res.json());
+      const res = await fetch(`/api/admin/news?${params}`);
+      if (res.ok) setArticles(await res.json());
+    } catch {}
   }
 
   async function fetchSuggestions() {
-    const res = await fetch("/api/admin/suggested-brands");
-    setSuggestions(await res.json());
+    try {
+      const res = await fetch("/api/admin/suggested-brands");
+      if (res.ok) setSuggestions(await res.json());
+    } catch {}
   }
 
   useEffect(() => {
-    Promise.all([fetchArticles(), fetchSuggestions()]).then(() =>
+    Promise.all([fetchArticles(), fetchSuggestions()]).finally(() =>
       setLoading(false)
     );
   }, []);

@@ -60,37 +60,42 @@ export default function BrandPipelinePage() {
   const [editCategory, setEditCategory] = useState("general");
 
   async function fetchDiscoveries() {
-    const params = new URLSearchParams();
-    if (activeTab !== "all") {
-      // For pending tab, also show review_later items
-      if (activeTab === "pending") {
-        // Fetch both pending and review_later
-      } else {
-        params.set("status", activeTab);
+    try {
+      const params = new URLSearchParams();
+      if (activeTab !== "all") {
+        // For pending tab, also show review_later items
+        if (activeTab === "pending") {
+          // Fetch both pending and review_later
+        } else {
+          params.set("status", activeTab);
+        }
       }
-    }
-    if (search) params.set("search", search);
+      if (search) params.set("search", search);
 
-    const res = await fetch(`/api/admin/brand-pipeline?${params}`);
-    const data: Discovery[] = await res.json();
+      const res = await fetch(`/api/admin/brand-pipeline?${params}`);
+      if (!res.ok) return;
+      const data: Discovery[] = await res.json();
 
-    // Client-side filter for pending tab (show pending + review_later)
-    if (activeTab === "pending") {
-      setDiscoveries(
-        data.filter((d) => d.status === "pending" || d.status === "review_later")
-      );
-    } else {
-      setDiscoveries(data);
-    }
+      // Client-side filter for pending tab (show pending + review_later)
+      if (activeTab === "pending") {
+        setDiscoveries(
+          data.filter((d) => d.status === "pending" || d.status === "review_later")
+        );
+      } else {
+        setDiscoveries(data);
+      }
+    } catch {}
   }
 
   async function fetchStats() {
-    const res = await fetch("/api/admin/brand-pipeline/stats");
-    setStats(await res.json());
+    try {
+      const res = await fetch("/api/admin/brand-pipeline/stats");
+      if (res.ok) setStats(await res.json());
+    } catch {}
   }
 
   useEffect(() => {
-    Promise.all([fetchDiscoveries(), fetchStats()]).then(() =>
+    Promise.all([fetchDiscoveries(), fetchStats()]).finally(() =>
       setLoading(false)
     );
   }, []);

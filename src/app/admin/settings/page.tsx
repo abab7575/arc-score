@@ -61,12 +61,14 @@ export default function SettingsPage() {
   >("sources");
 
   async function fetchSources() {
-    const res = await fetch("/api/admin/sources");
-    setSources(await res.json());
+    try {
+      const res = await fetch("/api/admin/sources");
+      if (res.ok) setSources(await res.json());
+    } catch {}
   }
 
   useEffect(() => {
-    fetchSources().then(() => setLoading(false));
+    fetchSources().finally(() => setLoading(false));
   }, []);
 
   async function handleToggleSource(id: number, active: boolean) {

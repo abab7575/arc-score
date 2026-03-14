@@ -52,31 +52,34 @@ export default function NewsfeedPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
 
   async function fetchItems() {
-    const params = new URLSearchParams();
-    if (search) params.set("search", search);
-    if (filterUnread) params.set("unread", "true");
-    if (filterFlagged) params.set("flagged", "true");
-    if (minRelevance > 0) params.set("minRelevance", String(minRelevance));
-    params.set("limit", "100");
+    try {
+      const params = new URLSearchParams();
+      if (search) params.set("search", search);
+      if (filterUnread) params.set("unread", "true");
+      if (filterFlagged) params.set("flagged", "true");
+      if (minRelevance > 0) params.set("minRelevance", String(minRelevance));
+      params.set("limit", "100");
 
-    const res = await fetch(`/api/admin/news?${params}`);
-    let data: ContentItem[] = await res.json();
+      const res = await fetch(`/api/admin/news?${params}`);
+      if (!res.ok) return;
+      let data: ContentItem[] = await res.json();
 
-    // Client-side source type filter
-    if (sourceTypeFilter !== "all") {
-      data = data.filter((item) => (item.sourceType || "rss") === sourceTypeFilter);
-    }
+      // Client-side source type filter
+      if (sourceTypeFilter !== "all") {
+        data = data.filter((item) => (item.sourceType || "rss") === sourceTypeFilter);
+      }
 
-    // Sort
-    if (sortMode === "relevance") {
-      data.sort((a, b) => b.relevanceScore - a.relevanceScore);
-    }
+      // Sort
+      if (sortMode === "relevance") {
+        data.sort((a, b) => b.relevanceScore - a.relevanceScore);
+      }
 
-    setItems(data);
+      setItems(data);
+    } catch {}
   }
 
   useEffect(() => {
-    fetchItems().then(() => setLoading(false));
+    fetchItems().finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {

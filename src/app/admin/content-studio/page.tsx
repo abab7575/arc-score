@@ -108,13 +108,17 @@ export default function ContentStudioPage() {
 
   useEffect(() => {
     fetch("/api/admin/content-studio/data")
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error("Failed to load");
+        return r.json();
+      })
       .then((d: StudioData) => {
         setData(d);
         if (d.categories.length > 0) setCategoryId(d.categories[0].id);
         if (d.brands.length > 0) setBrandSlug(d.brands[0].slug);
         if (d.agents.length > 0) setAgentId(d.agents[0].id);
       })
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 

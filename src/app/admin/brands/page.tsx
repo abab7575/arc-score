@@ -64,17 +64,21 @@ export default function AdminBrandsPage() {
   const [adding, setAdding] = useState(false);
 
   async function fetchBrands() {
-    const res = await fetch("/api/admin/brands");
-    setBrands(await res.json());
+    try {
+      const res = await fetch("/api/admin/brands");
+      if (res.ok) setBrands(await res.json());
+    } catch {}
   }
 
   async function fetchSubmissions() {
-    const res = await fetch("/api/admin/submissions");
-    setSubmissions(await res.json());
+    try {
+      const res = await fetch("/api/admin/submissions");
+      if (res.ok) setSubmissions(await res.json());
+    } catch {}
   }
 
   useEffect(() => {
-    Promise.all([fetchBrands(), fetchSubmissions()]).then(() => setLoading(false));
+    Promise.all([fetchBrands(), fetchSubmissions()]).finally(() => setLoading(false));
   }, []);
 
   async function handleAddBrand(e: React.FormEvent) {
