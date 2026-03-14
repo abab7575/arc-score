@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Search, ShoppingCart, Eye, Database } from "lucide-react";
+import Link from "next/link";
+import { Search, ShoppingCart, Eye, Database, ArrowRight, TrendingUp, AlertTriangle, Zap } from "lucide-react";
 
 interface IndexHeroProps {
   onSearch: (query: string) => void;
@@ -51,14 +52,19 @@ export function IndexHero({ onSearch }: IndexHeroProps) {
                 Store?
               </h1>
 
-              {/* Clear explanation */}
-              <p className="text-sm sm:text-base text-white/50 max-w-md leading-relaxed mb-6 mx-auto lg:mx-0">
-                Your customers are starting to send AI agents — like{" "}
-                <span className="text-[#FF6648] font-semibold">ChatGPT</span>,{" "}
-                <span className="text-[#FBBA16] font-semibold">Perplexity</span>, and{" "}
-                <span className="text-[#84AFFB] font-semibold">Google AI</span>{" "}
-                — to browse, compare, and buy products for them. We test how
-                ready your site is.
+              {/* Clear explanation — lead with the business problem */}
+              <p className="text-sm sm:text-base text-white/60 max-w-md leading-relaxed mb-3 mx-auto lg:mx-0">
+                Your customers are sending AI agents to buy for them. If your
+                site isn&apos;t ready, you lose the sale — silently, with no
+                abandoned cart to recover.
+              </p>
+              <p className="text-xs text-white/35 max-w-md leading-relaxed mb-6 mx-auto lg:mx-0">
+                We send 5 AI agents to your store — the same way{" "}
+                <span className="text-[#FF6648]">ChatGPT</span>,{" "}
+                <span className="text-[#FBBA16]">Perplexity</span>,{" "}
+                <span className="text-[#84AFFB]">Google AI</span>, and{" "}
+                <span className="text-white/60">Amazon Buy For Me</span>{" "}
+                would. Then we tell you exactly what broke and how to fix it.
               </p>
 
               {/* Branding badge */}
@@ -115,6 +121,9 @@ export function IndexHero({ onSearch }: IndexHeroProps) {
 
       {/* ── How We Score — explainer strip ────────────────────────────── */}
       <HowWeScore />
+
+      {/* ── Value Proposition — why this matters ─────────────────────── */}
+      <WhyItMatters />
     </>
   );
 }
@@ -175,6 +184,126 @@ function MiniBar({ label, score, color }: { label: string; score: number; color:
         <div className="h-full" style={{ width: `${score}%`, backgroundColor: color }} />
       </div>
       <span className="data-num text-[10px] font-bold w-6 text-right shrink-0" style={{ color }}>{score}</span>
+    </div>
+  );
+}
+
+/* ── Why It Matters — value prop bridge ─────────────────────────────── */
+
+function WhyItMatters() {
+  const agents = [
+    { name: "ChatGPT Shopping", company: "OpenAI", type: "Feed" },
+    { name: "Google AI Mode", company: "Google", type: "Feed" },
+    { name: "Perplexity Shopping", company: "Perplexity", type: "Feed" },
+    { name: "Amazon Buy For Me", company: "Amazon", type: "Browser" },
+    { name: "ChatGPT Operator", company: "OpenAI", type: "Browser" },
+    { name: "Claude Computer Use", company: "Anthropic", type: "Vision" },
+    { name: "Microsoft Copilot", company: "Microsoft", type: "Feed" },
+    { name: "Klarna AI", company: "Klarna", type: "Feed" },
+    { name: "Perplexity Comet", company: "Perplexity", type: "Browser" },
+    { name: "OpenClaw", company: "Open Source", type: "Browser" },
+  ];
+
+  return (
+    <div className="bg-[#FAFAF8] border-b border-[#E8E0D8]">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+
+        {/* Section label */}
+        <div className="flex items-center gap-3 mb-8">
+          <span className="spec-label text-muted-foreground text-[9px]">THE PROBLEM</span>
+          <div className="flex-1 h-px bg-[#E8E0D8]" />
+        </div>
+
+        {/* Three stakes cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
+          <div className="border border-[#E8E0D8] bg-white p-5">
+            <div className="w-9 h-9 flex items-center justify-center bg-[#FF6648] mb-3">
+              <AlertTriangle size={16} className="text-white" />
+            </div>
+            <h3 className="text-sm font-bold text-foreground mb-1.5">
+              Lost sales you can&apos;t see
+            </h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              When an AI agent fails to buy on your site, there&apos;s no abandoned cart.
+              No analytics event. No retargeting pixel. The customer just buys
+              from whoever the agent tries next.
+            </p>
+          </div>
+
+          <div className="border border-[#E8E0D8] bg-white p-5">
+            <div className="w-9 h-9 flex items-center justify-center bg-[#0259DD] mb-3">
+              <TrendingUp size={16} className="text-white" />
+            </div>
+            <h3 className="text-sm font-bold text-foreground mb-1.5">
+              10 agents, 10 different ways in
+            </h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Some agents read your data feeds. Some open a browser and click.
+              Some take screenshots and use vision AI. Your site needs to work
+              for all of them — not just one.
+            </p>
+          </div>
+
+          <div className="border border-[#E8E0D8] bg-white p-5">
+            <div className="w-9 h-9 flex items-center justify-center bg-[#059669] mb-3">
+              <Zap size={16} className="text-white" />
+            </div>
+            <h3 className="text-sm font-bold text-foreground mb-1.5">
+              Fixable in hours, not months
+            </h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Most agent failures come from missing labels, blocked bots, or absent
+              structured data. Small fixes that take hours, not engineering sprints.
+              We tell you exactly which ones matter most.
+            </p>
+          </div>
+        </div>
+
+        {/* 10 AI agents ticker */}
+        <div className="flex items-center gap-3 mb-4">
+          <span className="spec-label text-muted-foreground text-[9px]">WE TEST AGAINST 10 REAL AI SHOPPING AGENTS</span>
+          <div className="flex-1 h-px bg-[#E8E0D8]" />
+        </div>
+
+        <div className="flex flex-wrap gap-2 mb-8">
+          {agents.map((agent) => (
+            <div
+              key={agent.name}
+              className="flex items-center gap-2 px-3 py-1.5 border border-[#E8E0D8] bg-white text-xs"
+            >
+              <span className="font-semibold text-foreground">{agent.name}</span>
+              <span className="spec-label text-[8px] text-muted-foreground">{agent.type.toUpperCase()}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA bridge */}
+        <div className="flex flex-col sm:flex-row items-center gap-4 pt-4 border-t border-[#E8E0D8]">
+          <div className="flex-1">
+            <p className="text-sm text-foreground font-semibold">
+              See how your brand scores — or browse the index below.
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Free scores for every brand. Detailed findings, action plans, and agent replays with a paid plan.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/submit"
+              className="flex items-center gap-2 px-5 py-2.5 bg-[#FF6648] text-white text-sm font-bold hover:bg-[#e85a3f] transition-colors"
+            >
+              Submit Your Site
+              <ArrowRight size={14} />
+            </Link>
+            <Link
+              href="/pricing"
+              className="flex items-center gap-2 px-5 py-2.5 border border-[#E8E0D8] text-sm font-medium text-foreground hover:bg-gray-50 transition-colors"
+            >
+              View Plans
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
