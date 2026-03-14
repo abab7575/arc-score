@@ -231,69 +231,39 @@ function MiniBar({ label, score, color }: { label: string; score: number; color:
 /* ── Brand Logo Ticker ─────────────────────────────────────────────── */
 
 const TICKER_BRANDS = [
-  { name: "Nike", domain: "nike.com" },
-  { name: "Apple", domain: "apple.com" },
-  { name: "Adidas", domain: "adidas.com" },
-  { name: "Samsung", domain: "samsung.com" },
-  { name: "Glossier", domain: "glossier.com" },
-  { name: "Lululemon", domain: "lululemon.com" },
-  { name: "Allbirds", domain: "allbirds.com" },
-  { name: "Nordstrom", domain: "nordstrom.com" },
-  { name: "Sephora", domain: "sephora.com" },
-  { name: "Target", domain: "target.com" },
-  { name: "Zara", domain: "zara.com" },
-  { name: "H&M", domain: "hm.com" },
-  { name: "Gap", domain: "gap.com" },
-  { name: "ASOS", domain: "asos.com" },
-  { name: "Uniqlo", domain: "uniqlo.com" },
-  { name: "Puma", domain: "puma.com" },
-  { name: "Everlane", domain: "everlane.com" },
-  { name: "Warby Parker", domain: "warbyparker.com" },
-  { name: "Bombas", domain: "bombas.com" },
-  { name: "Patagonia", domain: "patagonia.com" },
+  "Nike", "Apple", "Adidas", "Samsung", "Glossier", "Lululemon", "Nordstrom",
+  "Sephora", "Target", "Zara", "H&M", "Gap", "ASOS", "Uniqlo", "Puma",
+  "Everlane", "Warby Parker", "Bombas", "Patagonia", "Allbirds",
 ];
 
 function BrandLogoTicker() {
-  // Double the array for seamless loop
   const doubled = [...TICKER_BRANDS, ...TICKER_BRANDS];
 
   return (
-    <div className="bg-white border-b border-[#E8E0D8] overflow-hidden">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-5">
-        <div className="flex items-center gap-3 mb-4">
+    <div className="bg-white border-b border-[#E8E0D8] overflow-hidden py-5">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 mb-4">
+        <div className="flex items-center gap-3">
           <span className="spec-label text-muted-foreground text-[9px]">WE SCORE BRANDS YOU KNOW</span>
           <div className="flex-1 h-px bg-[#E8E0D8]" />
           <span className="spec-label text-muted-foreground/50 text-[9px]">276+ TRACKED</span>
         </div>
       </div>
 
-      {/* Scrolling ticker */}
-      <div className="relative">
+      <div className="relative overflow-hidden" style={{ maskImage: "linear-gradient(90deg, transparent, black 10%, black 90%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 10%, black 90%, transparent)" }}>
         <div
-          className="flex items-center gap-10 pb-5"
+          className="flex items-center gap-8"
           style={{
-            animation: "ticker 40s linear infinite",
+            animation: "ticker 35s linear infinite",
             width: "max-content",
           }}
         >
-          {doubled.map((brand, i) => (
-            <div
-              key={`${brand.domain}-${i}`}
-              className="flex items-center gap-2.5 shrink-0"
+          {doubled.map((name, i) => (
+            <span
+              key={`${name}-${i}`}
+              className="text-sm font-bold text-foreground/20 whitespace-nowrap tracking-tight shrink-0"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`https://logo.clearbit.com/${brand.domain}`}
-                alt={brand.name}
-                width={24}
-                height={24}
-                className="w-6 h-6 object-contain grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
-                loading="lazy"
-              />
-              <span className="text-xs font-medium text-muted-foreground/50 whitespace-nowrap">
-                {brand.name}
-              </span>
-            </div>
+              {name}
+            </span>
           ))}
         </div>
       </div>
