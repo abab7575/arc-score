@@ -52,6 +52,12 @@ export function Navbar() {
               Landscape
             </Link>
             <Link
+              href="/methodology"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Methodology
+            </Link>
+            <Link
               href="/about"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
