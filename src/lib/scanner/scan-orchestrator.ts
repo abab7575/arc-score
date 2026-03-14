@@ -23,6 +23,10 @@ export interface ScanResult {
 
 export interface ScanOptions {
   force?: boolean;
+  /** Skip visual agent (runs weekly, not daily) */
+  skipVisual?: boolean;
+  /** Skip feed agent (runs weekly, not daily) */
+  skipFeed?: boolean;
 }
 
 /**
@@ -74,14 +78,26 @@ export async function scanBrand(brand: BrandEntry, options: ScanOptions = {}): P
   console.log(`[${brand.slug}] Starting Accessibility Agent...`);
   const a11yResult = await runAccessibilityAgent(brand.url, brand.productUrl);
 
-  console.log(`[${brand.slug}] Starting Visual Agent...`);
-  const visualResult = await runVisualAgent(brand.url, brand.productUrl, {
-    screenshotDir,
-    screenshotUrlPrefix,
-  });
+  // Visual + Feed agents run weekly (not daily) to manage API costs
+  let visualResult;
+  let feedResult;
 
-  console.log(`[${brand.slug}] Starting Feed Agent...`);
-  const feedResult = await runFeedAgent(brand.url, brand.productUrl);
+  if (!options.skipVisual) {
+    console.log(`[${brand.slug}] Starting Visual Agent...`);
+    visualResult = await runVisualAgent(brand.url, brand.productUrl, {
+      screenshotDir,
+      screenshotUrlPrefix,
+    });
+  } else {
+    console.log(`[${brand.slug}] Skipping Visual Agent (weekly only)`);
+  }
+
+  if (!options.skipFeed) {
+    console.log(`[${brand.slug}] Starting Feed Agent...`);
+    feedResult = await runFeedAgent(brand.url, brand.productUrl);
+  } else {
+    console.log(`[${brand.slug}] Skipping Feed Agent (weekly only)`);
+  }
 
   // Build report
   console.log(`[${brand.slug}] Calculating score...`);
