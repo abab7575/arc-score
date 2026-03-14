@@ -15,6 +15,7 @@ import { PaywallGate } from "@/components/report/paywall-gate";
 import { getBrandBySlug, getLatestScanForBrand, getFullScanReport, getScoreHistory, getAllScansForBrand } from "@/lib/db/queries";
 import { BRANDS } from "@/lib/brands";
 import { verifyCustomerSession, getCustomerById, getClaimedBrands, CUSTOMER_COOKIE_NAME } from "@/lib/customer-auth";
+import { verifySessionToken, SESSION_COOKIE_NAME } from "@/lib/auth";
 import type { Metadata } from "next";
 import type { Grade } from "@/types/report";
 import { getGradeLabel } from "@/lib/scoring";
@@ -59,14 +60,24 @@ export default async function BrandPage({ params }: BrandPageProps) {
   let hasFullAccess = false;
   try {
     const cookieStore = await cookies();
-    const token = cookieStore.get(CUSTOMER_COOKIE_NAME)?.value;
-    if (token) {
-      const customerId = await verifyCustomerSession(token);
-      if (customerId) {
-        const customer = getCustomerById(customerId);
-        if (customer && customer.plan !== "free") {
-          const claims = getClaimedBrands(customerId);
-          hasFullAccess = claims.some((c) => c.brandId === brand.id);
+
+    // Admin gets full access to all brands
+    const adminToken = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+    if (adminToken && verifySessionToken(adminToken)) {
+      hasFullAccess = true;
+    }
+
+    // Customer access: paid plan + claimed brand
+    if (!hasFullAccess) {
+      const token = cookieStore.get(CUSTOMER_COOKIE_NAME)?.value;
+      if (token) {
+        const customerId = await verifyCustomerSession(token);
+        if (customerId) {
+          const customer = getCustomerById(customerId);
+          if (customer && customer.plan !== "free") {
+            const claims = getClaimedBrands(customerId);
+            hasFullAccess = claims.some((c) => c.brandId === brand.id);
+          }
         }
       }
     }

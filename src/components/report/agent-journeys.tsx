@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Globe, Database, Eye, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
 import type { AgentJourney, TestResult } from "@/types/report";
 import { AgentSimulation } from "./agent-simulation";
+import { AgentReplay } from "./agent-replay";
 import { JourneyTimeline } from "./journey-timeline";
 import { InfoTooltip, EXPLAINERS } from "@/components/ui/info-tooltip";
 
@@ -119,7 +120,7 @@ export function AgentJourneys({ journeys, siteName }: AgentJourneysProps) {
           </div>
 
           {viewMode === "simulation" ? (
-            <AgentSimulation steps={journey.steps} siteName={siteName} />
+            <AgentReplay steps={journey.steps} siteName={siteName} />
           ) : (
             <JourneyTimeline steps={journey.steps} />
           )}
