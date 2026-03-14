@@ -14,5 +14,25 @@ sqlite.pragma("journal_mode = WAL");
 sqlite.pragma("busy_timeout = 5000");
 sqlite.pragma("foreign_keys = ON");
 
+// Auto-migrate: ensure content_queue table exists
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS content_queue (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    content_type TEXT NOT NULL,
+    platform TEXT NOT NULL,
+    title TEXT NOT NULL,
+    body TEXT NOT NULL,
+    image_url TEXT,
+    image_template TEXT,
+    status TEXT NOT NULL DEFAULT 'draft',
+    metadata TEXT NOT NULL DEFAULT '{}',
+    priority_score INTEGER NOT NULL DEFAULT 50,
+    generated_by TEXT NOT NULL DEFAULT 'manual',
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    approved_at TEXT,
+    posted_at TEXT
+  )
+`);
+
 export const db = drizzle(sqlite, { schema });
 export { schema };
