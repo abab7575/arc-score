@@ -108,9 +108,9 @@ export async function runDataAgent(
   console.log("[Data Agent] Checking robots.txt...");
   const robotsTxt = await checkRobotsTxt(baseUrl);
 
-  // 6. Check sitemap
+  // 6. Check sitemap (use robots.txt Sitemap directives first)
   console.log("[Data Agent] Checking sitemap...");
-  const sitemap = await checkSitemap(baseUrl);
+  const sitemap = await checkSitemap(baseUrl, robotsTxt.content);
 
   // 7. Probe API endpoints
   console.log("[Data Agent] Probing API endpoints...");
@@ -163,11 +163,18 @@ async function fetchPage(url: string): Promise<string> {
     const res = await fetch(url, {
       headers: {
         "User-Agent":
-          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        Accept: "text/html,application/xhtml+xml",
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
       },
       redirect: "follow",
+      signal: AbortSignal.timeout(15000),
     });
+
+    if (res.status === 403 || res.status === 429) {
+      console.warn(`[Data Agent] Blocked by WAF/bot protection (HTTP ${res.status}) for ${url}`);
+    }
+
     return await res.text();
   } catch (e) {
     console.error("[Data Agent] Failed to fetch page:", e);
@@ -221,46 +228,45 @@ function analyzeSchemaOrg(jsonLdObjects: unknown[]): {
     "review",
   ];
 
-  // Look for Product schema
+  const productTypes = ["Product", "ProductGroup", "IndividualProduct", "ProductModel"];
+
+  function isProductType(type: unknown): boolean {
+    if (typeof type === "string") return productTypes.includes(type);
+    if (Array.isArray(type)) return type.some((t) => productTypes.includes(t));
+    return false;
+  }
+
+  function extractFields(item: Record<string, unknown>): Record<string, boolean> {
+    const fields: Record<string, boolean> = {};
+    for (const field of productFields) {
+      // Check top-level, nested in offers, and nested in hasVariant
+      fields[field] = Boolean(
+        item[field] !== undefined ||
+        (item.offers &&
+          typeof item.offers === "object" &&
+          (item.offers as Record<string, unknown>)[field] !== undefined) ||
+        (Array.isArray(item.hasVariant) &&
+          (item.hasVariant as Record<string, unknown>[]).some(
+            (v) => v[field] !== undefined ||
+            (v.offers && typeof v.offers === "object" && (v.offers as Record<string, unknown>)[field] !== undefined)
+          ))
+      );
+    }
+    return fields;
+  }
+
+  // Look for Product / ProductGroup schema
   for (const obj of jsonLdObjects) {
     const item = obj as Record<string, unknown>;
-    if (
-      item["@type"] === "Product" ||
-      (Array.isArray(item["@type"]) &&
-        (item["@type"] as string[]).includes("Product"))
-    ) {
-      const fields: Record<string, boolean> = {};
-      for (const field of productFields) {
-        // Check nested in offers too
-        fields[field] = Boolean(
-          item[field] !== undefined ||
-          (item.offers &&
-            typeof item.offers === "object" &&
-            (item.offers as Record<string, unknown>)[field] !== undefined)
-        );
-      }
-      return { found: true, type: "Product", fields, raw: item };
+    if (isProductType(item["@type"])) {
+      return { found: true, type: String(item["@type"]), fields: extractFields(item), raw: item };
     }
 
     // Check @graph
     if (item["@graph"] && Array.isArray(item["@graph"])) {
       for (const graphItem of item["@graph"] as Record<string, unknown>[]) {
-        if (
-          graphItem["@type"] === "Product" ||
-          (Array.isArray(graphItem["@type"]) &&
-            (graphItem["@type"] as string[]).includes("Product"))
-        ) {
-          const fields: Record<string, boolean> = {};
-          for (const field of productFields) {
-            fields[field] = Boolean(
-              graphItem[field] !== undefined ||
-              (graphItem.offers &&
-                typeof graphItem.offers === "object" &&
-                (graphItem.offers as Record<string, unknown>)[field] !==
-                  undefined)
-            );
-          }
-          return { found: true, type: "Product", fields, raw: graphItem };
+        if (isProductType(graphItem["@type"])) {
+          return { found: true, type: String(graphItem["@type"]), fields: extractFields(graphItem), raw: graphItem };
         }
       }
     }
@@ -305,10 +311,21 @@ async function checkRobotsTxt(
 ): Promise<DataAgentResult["robotsTxt"]> {
   try {
     const res = await fetch(`${baseUrl}/robots.txt`, {
-      headers: { "User-Agent": "ARC-Score-Scanner/1.0" },
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (compatible; ARC-Score-Scanner/1.0; +https://arcscore.ai)",
+      },
+      redirect: "follow",
+      signal: AbortSignal.timeout(10000),
     });
     if (!res.ok)
       return { found: false, blockedAgents: [], allowedAgents: [] };
+
+    // Check if we got HTML instead of a real robots.txt (WAF/bot block)
+    const contentType = res.headers.get("content-type") || "";
+    if (contentType.includes("text/html")) {
+      return { found: false, blockedAgents: [], allowedAgents: [] };
+    }
 
     const content = await res.text();
     const blockedAgents: string[] = [];
@@ -341,18 +358,45 @@ async function checkRobotsTxt(
 }
 
 async function checkSitemap(
-  baseUrl: string
+  baseUrl: string,
+  robotsTxtContent?: string
 ): Promise<DataAgentResult["sitemap"]> {
+  // 1. Extract Sitemap directives from robots.txt (the canonical discovery method)
+  const robotsSitemaps: string[] = [];
+  if (robotsTxtContent) {
+    const sitemapRegex = /^Sitemap:\s*(.+)$/gim;
+    let sitemapMatch;
+    while ((sitemapMatch = sitemapRegex.exec(robotsTxtContent)) !== null) {
+      const url = sitemapMatch[1].trim();
+      if (url.startsWith("http")) {
+        robotsSitemaps.push(url);
+      }
+    }
+  }
+
+  // 2. Build URL list: robots.txt sitemaps first, then common fallback paths
   const sitemapUrls = [
+    ...robotsSitemaps,
     `${baseUrl}/sitemap.xml`,
     `${baseUrl}/sitemap_index.xml`,
     `${baseUrl}/sitemap/sitemap.xml`,
   ];
 
-  for (const sitemapUrl of sitemapUrls) {
+  // Deduplicate
+  const seen = new Set<string>();
+  const uniqueUrls = sitemapUrls.filter((u) => {
+    const normalized = u.toLowerCase();
+    if (seen.has(normalized)) return false;
+    seen.add(normalized);
+    return true;
+  });
+
+  for (const sitemapUrl of uniqueUrls) {
     try {
       const res = await fetch(sitemapUrl, {
         headers: { "User-Agent": "ARC-Score-Scanner/1.0" },
+        redirect: "follow",
+        signal: AbortSignal.timeout(10000),
       });
       if (!res.ok) continue;
 
@@ -360,12 +404,10 @@ async function checkSitemap(
       if (!content.includes("<urlset") && !content.includes("<sitemapindex"))
         continue;
 
-      // Count product-like URLs
+      // Count product-like URLs (only use specific product path patterns)
       const urlMatches = content.match(/<loc>[^<]*<\/loc>/g) || [];
       const productUrls = urlMatches.filter(
-        (u) =>
-          /product|\/p\/|\/pd\/|\/dp\/|\/item/i.test(u) ||
-          /\/[a-z]+-[a-z]+-[a-z]+/i.test(u)
+        (u) => /product|\/p\/|\/pd\/|\/dp\/|\/item|\/shop\//i.test(u)
       ).length;
 
       return {
@@ -376,6 +418,16 @@ async function checkSitemap(
     } catch {
       continue;
     }
+  }
+
+  // 3. If robots.txt had Sitemap directives but we couldn't fetch any,
+  //    still report as found (the declaration exists, we just couldn't access it)
+  if (robotsSitemaps.length > 0) {
+    return {
+      found: true,
+      url: robotsSitemaps[0],
+      productUrls: 0,
+    };
   }
 
   return { found: false, productUrls: 0 };
