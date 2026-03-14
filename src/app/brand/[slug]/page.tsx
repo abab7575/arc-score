@@ -145,7 +145,7 @@ export default async function BrandPage({ params }: BrandPageProps) {
                 <PaywallGate
                   title="Detailed Findings"
                   description="Get the full list of issues with severity ratings, explanations, and which AI agents are affected. Know exactly what's broken."
-                  itemCount={report.findings.length}
+                  itemCount={report.findings?.length ?? 0}
                 />
                 <PaywallGate
                   title="Action Plan"

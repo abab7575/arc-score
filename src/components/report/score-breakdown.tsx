@@ -10,6 +10,15 @@ interface ScoreBreakdownProps {
 }
 
 export function ScoreBreakdown({ categories }: ScoreBreakdownProps) {
+  if (!categories || categories.length === 0) {
+    return (
+      <section className="py-12">
+        <h2 className="text-xl font-semibold text-foreground mb-1">Score Breakdown</h2>
+        <p className="text-sm text-muted-foreground">No category scores available yet. This brand may not have been scanned.</p>
+      </section>
+    );
+  }
+
   const sorted = [...categories].sort((a, b) => b.score - a.score);
   const bestCategory = sorted[0];
   const worstCategory = sorted[sorted.length - 1];

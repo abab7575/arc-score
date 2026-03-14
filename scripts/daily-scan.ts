@@ -3,7 +3,9 @@
  * retry logic, and scan logging.
  *
  * Usage:
- *   npx tsx scripts/daily-scan.ts [--concurrency=3] [--category=fashion] [--retry=2] [--force]
+ *   npx tsx scripts/daily-scan.ts [--concurrency=3] [--category=fashion] [--retry=2] [--force] [--full]
+ *
+ *   --full: Run all 5 agents including Visual + Feed (default: skip these, run weekly)
  */
 
 import path from "path";
@@ -20,6 +22,7 @@ async function main() {
   const filterCategory = args.find((a) => a.startsWith("--category="))?.split("=")[1];
   const maxRetries = parseInt(args.find((a) => a.startsWith("--retry="))?.split("=")[1] ?? "2");
   const force = args.includes("--force");
+  const full = args.includes("--full"); // Run all 5 agents (visual + feed)
   const staggerMs = parseInt(process.env.SCAN_STAGGER_MS ?? "8000");
 
   const { scanBrand } = await import(path.join(projectRoot, "src/lib/scanner/scan-orchestrator"));
@@ -52,11 +55,12 @@ async function main() {
     brands = brands.filter((b: { category: string }) => b.category === filterCategory);
   }
 
-  console.log(`\n=== ARC Score Daily Scan ===`);
+  console.log(`\n=== ARC Score ${full ? "Full Weekly" : "Daily"} Scan ===`);
   console.log(`Brands: ${brands.length}`);
   console.log(`Concurrency: ${concurrency}`);
   console.log(`Max retries: ${maxRetries}`);
   console.log(`Force re-scan: ${force}`);
+  console.log(`Agents: ${full ? "All 5 (Browser, Data, A11y, Visual, Feed)" : "3 core (Browser, Data, A11y)"}`);
   console.log(`Started: ${new Date().toISOString()}`);
   console.log(`===========================\n`);
 
@@ -73,7 +77,7 @@ async function main() {
 
     for (let attempt = 1; attempt <= retries + 1; attempt++) {
       try {
-        const result = await scanBrand(brand, { force });
+        const result = await scanBrand(brand, { force, skipVisual: !full, skipFeed: !full });
         return {
           slug: brand.slug,
           score: result.report.overallScore,
@@ -159,7 +163,7 @@ async function main() {
   const logData = {
     date: today,
     startedAt: new Date().toISOString(),
-    config: { concurrency, maxRetries, force, filterCategory },
+    config: { concurrency, maxRetries, force, full, filterCategory },
     summary: {
       total: results.length,
       successful: successful.length,

@@ -114,7 +114,7 @@ export function FindingCard({ finding }: FindingCardProps) {
                   Affected Agents
                 </h4>
                 <div className="space-y-1.5">
-                  {finding.affectedAgents.map((agent) => {
+                  {(finding.affectedAgents ?? []).map((agent) => {
                     const impact = IMPACT_LABELS[agent.impact];
                     return (
                       <div key={agent.name} className="flex items-center gap-2">

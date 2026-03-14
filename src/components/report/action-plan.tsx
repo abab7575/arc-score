@@ -16,6 +16,15 @@ export function ActionPlan({
   currentScore,
   estimatedScoreAfterFixes,
 }: ActionPlanProps) {
+  if (!actions || actions.length === 0) {
+    return (
+      <section className="py-12">
+        <h2 className="text-xl font-semibold text-foreground mb-2">Action Plan</h2>
+        <p className="text-sm text-muted-foreground">No action items available yet.</p>
+      </section>
+    );
+  }
+
   const quickWins = actions.filter((a) => a.isQuickWin);
   const allSorted = [...actions].sort((a, b) => a.severity === "critical" ? -1 : b.severity === "critical" ? 1 : 0);
 

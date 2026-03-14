@@ -132,7 +132,12 @@ export function getFullScanReport(scanId: number): ScanReport | null {
     .get();
 
   if (!scan) return null;
-  return JSON.parse(scan.reportJson) as ScanReport;
+  try {
+    return JSON.parse(scan.reportJson) as ScanReport;
+  } catch {
+    console.error(`Failed to parse reportJson for scan ${scanId}`);
+    return null;
+  }
 }
 
 export function getLatestScanForBrand(brandId: number) {
