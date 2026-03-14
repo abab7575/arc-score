@@ -6,6 +6,8 @@
 import { runDataAgent } from "./data-agent";
 import { runBrowserAgent } from "./browser-agent";
 import { runAccessibilityAgent } from "./accessibility-agent";
+import { runVisualAgent } from "./visual-agent";
+import { runFeedAgent } from "./feed-agent";
 import { buildReport } from "./scoring-engine";
 import { getScreenshotDir, getScreenshotUrlPrefix } from "./screenshot-manager";
 import { getBrandBySlug, getLatestScanForBrand, insertScan } from "@/lib/db/queries";
@@ -72,6 +74,15 @@ export async function scanBrand(brand: BrandEntry, options: ScanOptions = {}): P
   console.log(`[${brand.slug}] Starting Accessibility Agent...`);
   const a11yResult = await runAccessibilityAgent(brand.url, brand.productUrl);
 
+  console.log(`[${brand.slug}] Starting Visual Agent...`);
+  const visualResult = await runVisualAgent(brand.url, brand.productUrl, {
+    screenshotDir,
+    screenshotUrlPrefix,
+  });
+
+  console.log(`[${brand.slug}] Starting Feed Agent...`);
+  const feedResult = await runFeedAgent(brand.url, brand.productUrl);
+
   // Build report
   console.log(`[${brand.slug}] Calculating score...`);
   const report = buildReport(
@@ -79,7 +90,9 @@ export async function scanBrand(brand: BrandEntry, options: ScanOptions = {}): P
     brand.url,
     dataResult,
     browserResult,
-    a11yResult
+    a11yResult,
+    visualResult,
+    feedResult
   );
 
   // Save to DB

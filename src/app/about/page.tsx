@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
-import { Globe, Database, Eye } from "lucide-react";
+import { Globe, Database, Eye, Camera, Rss } from "lucide-react";
 import { CATEGORY_CONFIG, GRADE_THRESHOLDS } from "@/lib/constants";
 import type { CategoryId } from "@/types/report";
 
@@ -34,6 +34,22 @@ const agents = [
     color: "text-violet-600",
     bg: "bg-violet-50",
   },
+  {
+    icon: Camera,
+    name: "Visual Agent",
+    description: "Takes screenshots and sends them to an AI vision model to test whether multimodal agents like Claude Computer Use can identify buttons, prices, and CTAs by looking at the page.",
+    tests: ["Homepage visual clarity", "Product page element identification", "CTA identification challenge", "Mobile viewport test"],
+    color: "text-[#FF6648]",
+    bg: "bg-[#FF6648]/10",
+  },
+  {
+    icon: Rss,
+    name: "Feed Agent",
+    description: "Tests whether AI shopping platforms can discover your products through external feeds — Google Merchant, Shopify JSON, RSS — without ever visiting your website.",
+    tests: ["Feed auto-discovery", "Google Merchant feed", "Shopify products.json", "RSS/Atom feeds", "Feed quality assessment"],
+    color: "text-[#FBBA16]",
+    bg: "bg-[#FBBA16]/10",
+  },
 ];
 
 const categories = Object.entries(CATEGORY_CONFIG) as [CategoryId, typeof CATEGORY_CONFIG[CategoryId]][];
@@ -53,7 +69,7 @@ export default function AboutPage() {
         {/* Scoring Categories */}
         <section className="mb-12">
           <h2 className="text-lg font-semibold text-foreground mb-4">
-            6 Scoring Categories
+            7 Scoring Categories
           </h2>
           <div className="space-y-3">
             {categories.map(([id, config]) => (
@@ -75,7 +91,7 @@ export default function AboutPage() {
         {/* Agent Types */}
         <section className="mb-12">
           <h2 className="text-lg font-semibold text-foreground mb-4">
-            3 Agent Types
+            5 Agent Types
           </h2>
           <div className="grid grid-cols-1 gap-4">
             {agents.map((agent) => (

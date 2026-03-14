@@ -14,6 +14,8 @@ import type {
 import type { DataAgentResult } from "./data-agent";
 import type { BrowserAgentResult } from "./browser-agent";
 import type { AccessibilityAgentResult } from "./accessibility-agent";
+import type { VisualAgentResult } from "./visual-agent";
+import type { FeedAgentResult } from "./feed-agent";
 import { computeAllAgentScores } from "@/lib/ai-agents";
 
 export function getGrade(score: number): Grade {
@@ -29,24 +31,26 @@ export function buildReport(
   siteUrl: string,
   data: DataAgentResult,
   browser: BrowserAgentResult,
-  a11y: AccessibilityAgentResult
+  a11y: AccessibilityAgentResult,
+  visual?: VisualAgentResult,
+  feed?: FeedAgentResult
 ): ScanReport {
   const categories: CategoryScore[] = [
-    scoreDiscoverability(browser, a11y),
-    scoreProductUnderstanding(data, browser),
-    scoreNavigation(browser, a11y),
-    scoreCartCheckout(browser, data),
+    scoreDiscoverability(browser, a11y, visual),
+    scoreProductUnderstanding(data, browser, visual, feed),
+    scoreNavigation(browser, a11y, visual),
+    scoreCartCheckout(browser, data, visual),
     scorePerformance(browser, data),
-    scoreDataStandards(data),
-    scoreAgenticCommerce(data),
+    scoreDataStandards(data, feed),
+    scoreAgenticCommerce(data, feed),
   ];
 
   const overallScore = Math.round(
     categories.reduce((sum, cat) => sum + cat.score * cat.weight, 0)
   );
   const grade = getGrade(overallScore);
-  const journeys = buildJourneys(siteUrl, browser, data, a11y);
-  const findings = buildFindings(data, browser, a11y);
+  const journeys = buildJourneys(siteUrl, browser, data, a11y, visual, feed);
+  const findings = buildFindings(data, browser, a11y, visual, feed);
   const actionPlan = buildActionPlan(findings);
 
   const topFixes = findings.slice(0, 5);
@@ -102,7 +106,7 @@ function buildVerdict(score: number, grade: string, browser: BrowserAgentResult)
 
 // ---- Category Scoring ----
 
-function scoreDiscoverability(browser: BrowserAgentResult, a11y: AccessibilityAgentResult): CategoryScore {
+function scoreDiscoverability(browser: BrowserAgentResult, a11y: AccessibilityAgentResult, visual?: VisualAgentResult): CategoryScore {
   let score = 0;
   const homepageStep = browser.steps.find((s) => s.action.includes("homepage"));
   if (homepageStep?.result === "pass") score += 20;
@@ -122,6 +126,11 @@ function scoreDiscoverability(browser: BrowserAgentResult, a11y: AccessibilityAg
   if (a11y.headingStructure.length >= 3) score += 15;
   else if (a11y.headingStructure.length >= 1) score += 8;
 
+  // Visual agent bonus: if navigation is visually clear, boost score
+  if (visual && visual.navigationClear) {
+    score = Math.min(100, score + 5);
+  }
+
   const grade = getGrade(score);
   return {
     id: "discoverability",
@@ -139,7 +148,7 @@ function scoreDiscoverability(browser: BrowserAgentResult, a11y: AccessibilityAg
   };
 }
 
-function scoreProductUnderstanding(data: DataAgentResult, browser: BrowserAgentResult): CategoryScore {
+function scoreProductUnderstanding(data: DataAgentResult, browser: BrowserAgentResult, visual?: VisualAgentResult, feed?: FeedAgentResult): CategoryScore {
   let score = 0;
   if (data.schemaOrg.found && data.schemaOrg.type === "Product") score += 25;
   else if (data.jsonLd.found) score += 10;
@@ -163,6 +172,12 @@ function scoreProductUnderstanding(data: DataAgentResult, browser: BrowserAgentR
   if (data.schemaOrg.fields?.aggregateRating) score += 10;
   if (data.schemaOrg.fields?.sku || data.schemaOrg.fields?.gtin || data.schemaOrg.fields?.gtin13) score += 15;
 
+  // Visual agent: can a vision model read the price?
+  if (visual?.priceIdentified) score = Math.min(100, score + 3);
+
+  // Feed agent: product data available in feeds
+  if (feed && feed.totalProductsInFeeds > 0) score = Math.min(100, score + 5);
+
   const grade = getGrade(score);
   return {
     id: "product-understanding",
@@ -180,7 +195,7 @@ function scoreProductUnderstanding(data: DataAgentResult, browser: BrowserAgentR
   };
 }
 
-function scoreNavigation(browser: BrowserAgentResult, a11y: AccessibilityAgentResult): CategoryScore {
+function scoreNavigation(browser: BrowserAgentResult, a11y: AccessibilityAgentResult, visual?: VisualAgentResult): CategoryScore {
   let score = 0;
   if (!browser.cookieConsentFound) score += 15;
   else {
@@ -206,6 +221,9 @@ function scoreNavigation(browser: BrowserAgentResult, a11y: AccessibilityAgentRe
   if (interactionStep?.result === "pass") score += 20;
   else if (interactionStep?.result === "partial") score += 10;
 
+  // Visual agent: low clutter = easier to navigate visually
+  if (visual && visual.visualClutterScore >= 70) score = Math.min(100, score + 5);
+
   const grade = getGrade(score);
   return {
     id: "navigation-interaction",
@@ -223,13 +241,17 @@ function scoreNavigation(browser: BrowserAgentResult, a11y: AccessibilityAgentRe
   };
 }
 
-function scoreCartCheckout(browser: BrowserAgentResult, data: DataAgentResult): CategoryScore {
+function scoreCartCheckout(browser: BrowserAgentResult, data: DataAgentResult, visual?: VisualAgentResult): CategoryScore {
   let score = 0;
   if (browser.addToCartSuccess) score += 35;
   if (browser.checkoutReached) score += 25;
   if (browser.guestCheckoutAvailable) score += 25;
   else if (browser.checkoutReached) score += 5;
   if (data.apiEndpoints.found.length > 0) score += 15;
+
+  // Visual agent: CTA clearly identifiable and distinct
+  if (visual?.addToCartIdentified && visual?.ctaDistinct) score = Math.min(100, score + 5);
+  else if (visual?.addToCartIdentified) score = Math.min(100, score + 2);
 
   const grade = getGrade(score);
   return {
@@ -279,7 +301,7 @@ function scorePerformance(browser: BrowserAgentResult, data: DataAgentResult): C
   };
 }
 
-function scoreDataStandards(data: DataAgentResult): CategoryScore {
+function scoreDataStandards(data: DataAgentResult, feed?: FeedAgentResult): CategoryScore {
   let score = 0;
   if (data.robotsTxt.found) {
     if (data.robotsTxt.blockedAgents.length === 0) score += 20;
@@ -293,6 +315,14 @@ function scoreDataStandards(data: DataAgentResult): CategoryScore {
   }
   if (data.jsonLd.found) score += 25;
   if (data.apiEndpoints.found.length > 0) score += 20;
+
+  // Feed agent: product feeds available
+  if (feed) {
+    if (feed.hasGoogleMerchantFeed) score = Math.min(100, score + 10);
+    if (feed.hasShopifyFeed) score = Math.min(100, score + 5);
+    if (feed.feedsDiscovered.length > 0 && feed.feedsDiscovered.some(f => f.missingFields.length === 0))
+      score = Math.min(100, score + 5);
+  }
 
   const grade = getGrade(score);
   return {
@@ -311,7 +341,7 @@ function scoreDataStandards(data: DataAgentResult): CategoryScore {
   };
 }
 
-function scoreAgenticCommerce(data: DataAgentResult): CategoryScore {
+function scoreAgenticCommerce(data: DataAgentResult, feed?: FeedAgentResult): CategoryScore {
   let score = 0;
 
   // Layer A — ACP Protocol (0-40 pts)
@@ -347,6 +377,9 @@ function scoreAgenticCommerce(data: DataAgentResult): CategoryScore {
   // Product feed in sitemap
   if (data.sitemap.found && data.sitemap.url && /product/i.test(data.sitemap.url)) score += 5;
 
+  // Feed agent: feeds enable programmatic product access
+  if (feed && feed.feedQualityScore >= 50) score += 5;
+
   score = Math.min(100, score);
   const grade = getGrade(score);
   return {
@@ -371,9 +404,11 @@ function buildJourneys(
   siteUrl: string,
   browser: BrowserAgentResult,
   data: DataAgentResult,
-  a11y: AccessibilityAgentResult
+  a11y: AccessibilityAgentResult,
+  visual?: VisualAgentResult,
+  feed?: FeedAgentResult
 ): AgentJourney[] {
-  return [
+  const journeys: AgentJourney[] = [
     {
       agentType: "browser",
       agentName: "Browser Agent",
@@ -418,6 +453,49 @@ function buildJourneys(
       })),
     },
   ];
+
+  // Visual Agent journey (if available)
+  if (visual && visual.steps.length > 0) {
+    journeys.push({
+      agentType: "browser", // Uses browser type since it's visual/browser-based
+      agentName: "Visual Agent",
+      agentDescription: "Takes screenshots and uses AI vision to identify buttons, prices, and CTAs — testing what multimodal agents like Claude Computer Use actually see.",
+      overallResult: visual.overallResult,
+      narrative: visual.narrative,
+      steps: visual.steps.map((s) => ({
+        stepNumber: s.stepNumber,
+        action: s.action,
+        description: s.description,
+        result: s.result,
+        narration: s.narration,
+        thought: s.thought,
+        screenshotUrl: s.screenshotPath,
+        duration: s.duration,
+      })),
+    });
+  }
+
+  // Feed Agent journey (if available)
+  if (feed && feed.steps.length > 0) {
+    journeys.push({
+      agentType: "data", // Uses data type since it's feed/API-based
+      agentName: "Feed Agent",
+      agentDescription: "Tests whether product feeds (Google Merchant, Shopify, RSS) exist and contain complete product data for AI shopping platforms.",
+      overallResult: feed.overallResult,
+      narrative: feed.narrative,
+      steps: feed.steps.map((s) => ({
+        stepNumber: s.stepNumber,
+        action: s.action,
+        description: s.description,
+        result: s.result,
+        narration: s.narration,
+        thought: s.thought,
+        duration: s.duration,
+      })),
+    });
+  }
+
+  return journeys;
 }
 
 function buildDataNarrative(data: DataAgentResult): string {
@@ -556,7 +634,9 @@ function buildDataSteps(data: DataAgentResult) {
 function buildFindings(
   data: DataAgentResult,
   browser: BrowserAgentResult,
-  a11y: AccessibilityAgentResult
+  a11y: AccessibilityAgentResult,
+  visual?: VisualAgentResult,
+  feed?: FeedAgentResult
 ): Finding[] {
   const findings: Finding[] = [];
   let priority = 1;
@@ -712,6 +792,72 @@ function buildFindings(
       fix: { summary: "Add availability and price fields to Product schema offers.", technicalDetail: "In your JSON-LD Product markup, ensure offers includes schema.org/availability (e.g., InStock) and price with priceCurrency.", effortEstimate: "1-2 hours" },
       priority: priority++, effort: "low", estimatedPointsGain: 3,
     });
+  }
+
+  // ── Visual Agent findings ──
+  if (visual) {
+    if (!visual.addToCartIdentified) {
+      findings.push({
+        id: `f${priority}`, severity: "high", category: "cart-checkout",
+        title: "Add-to-cart button not identifiable by vision AI",
+        whatHappened: "The Visual Agent (using AI vision) could not clearly identify the add-to-cart button from a screenshot of the product page.",
+        whyItMatters: "Multimodal AI agents like Claude Computer Use navigate by looking at screenshots. If they can't visually identify the purchase button, they can't buy.",
+        affectedAgents: [{ name: "Visual Agent", impact: "blocked" }],
+        fix: { summary: "Make the add-to-cart button visually prominent — use a contrasting color, larger size, and clear label text.", technicalDetail: "Ensure the CTA button has high contrast ratio (4.5:1+), is larger than surrounding buttons, and uses unambiguous text like 'Add to Cart' or 'Buy Now'.", effortEstimate: "1-2 hours" },
+        priority: priority++, effort: "low", estimatedPointsGain: 5,
+      });
+    }
+    if (!visual.ctaDistinct && visual.addToCartIdentified) {
+      findings.push({
+        id: `f${priority}`, severity: "medium", category: "navigation-interaction",
+        title: "Add-to-cart button visually similar to other buttons",
+        whatHappened: "The add-to-cart button exists but looks similar to other buttons on the page, creating ambiguity for vision-based AI agents.",
+        whyItMatters: "When multiple buttons look alike, vision agents may click the wrong one — adding to wishlist instead of cart, for example.",
+        affectedAgents: [{ name: "Visual Agent", impact: "degraded" }],
+        fix: { summary: "Differentiate the primary CTA from secondary actions using color, size, or visual weight.", technicalDetail: "Use a distinct fill color for the primary CTA and outline/ghost styles for secondary actions.", effortEstimate: "30 minutes" },
+        priority: priority++, effort: "low", estimatedPointsGain: 3,
+      });
+    }
+    if (visual.visualClutterScore < 40) {
+      findings.push({
+        id: `f${priority}`, severity: "medium", category: "navigation-interaction",
+        title: "High visual clutter confuses AI vision agents",
+        whatHappened: "The page layout has high visual density, making it difficult for AI vision models to parse interactive elements.",
+        whyItMatters: "Vision-based agents process screenshots like humans do — cluttered layouts slow them down and increase misclick rates.",
+        affectedAgents: [{ name: "Visual Agent", impact: "degraded" }],
+        fix: { summary: "Simplify the product page layout — reduce competing elements, increase whitespace around CTAs.", technicalDetail: "Remove promotional banners, reduce sidebar content, and ensure the primary product area has clear visual hierarchy.", effortEstimate: "2-4 hours" },
+        priority: priority++, effort: "medium", estimatedPointsGain: 3,
+      });
+    }
+  }
+
+  // ── Feed Agent findings ──
+  if (feed) {
+    if (!feed.hasGoogleMerchantFeed && !feed.hasShopifyFeed) {
+      findings.push({
+        id: `f${priority}`, severity: "high", category: "data-standards",
+        title: "No product feeds for AI shopping platforms",
+        whatHappened: "No Google Merchant, Shopify, or product RSS feed was found at standard paths.",
+        whyItMatters: "AI shopping agents like ChatGPT Shopping and Google AI Mode discover products through feeds, not by browsing. Without a feed, your products are invisible to feed-based agents.",
+        affectedAgents: [{ name: "Feed Agent", impact: "blocked" }],
+        fix: { summary: "Publish a Google Merchant Center product feed or expose /products.json.", technicalDetail: "Create an XML feed following Google's product data specification at a standard path like /feed/google-merchant.xml. For Shopify stores, ensure /products.json is publicly accessible.", effortEstimate: "4-8 hours" },
+        priority: priority++, effort: "medium", estimatedPointsGain: 5,
+      });
+    }
+    for (const feedInfo of feed.feedsDiscovered) {
+      if (feedInfo.missingFields.length > 0) {
+        findings.push({
+          id: `f${priority}`, severity: "medium", category: "data-standards",
+          title: `Product feed missing fields: ${feedInfo.missingFields.join(", ")}`,
+          whatHappened: `The ${feedInfo.type} feed at ${feedInfo.url} is missing required fields: ${feedInfo.missingFields.join(", ")}.`,
+          whyItMatters: "Incomplete product data in feeds means AI shopping agents can't display accurate prices, availability, or images to users.",
+          affectedAgents: [{ name: "Feed Agent", impact: "degraded" }],
+          fix: { summary: `Add missing fields (${feedInfo.missingFields.join(", ")}) to your product feed.`, technicalDetail: "Update your feed generation to include all required Google Merchant Center fields: title, price, availability, image_link, and link.", effortEstimate: "1-2 hours" },
+          priority: priority++, effort: "low", estimatedPointsGain: 3,
+        });
+        break; // Only report once
+      }
+    }
   }
 
   return findings;
