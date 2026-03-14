@@ -1,0 +1,52 @@
+name: Weekly Full Scan (All 5 Agents)
+
+on:
+  schedule:
+    # Run at 3 AM UTC every Sunday
+    - cron: "0 3 * * 0"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Force re-scan all brands"
+        type: boolean
+        default: false
+      category:
+        description: "Only scan a specific category (e.g. fashion, electronics)"
+        type: string
+        required: false
+
+env:
+  BASE_URL: https://arc-score-production.up.railway.app
+
+jobs:
+  trigger-full-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger weekly full scan (Visual + Feed agents)
+        run: |
+          PARAMS="?full=true"
+          if [ "${{ github.event.inputs.force }}" = "true" ] || [ "${{ github.event_name }}" = "schedule" ]; then
+            PARAMS="${PARAMS}&force=true"
+          fi
+          if [ -n "${{ github.event.inputs.category }}" ]; then
+            PARAMS="${PARAMS}&category=${{ github.event.inputs.category }}"
+          fi
+
+          echo "Triggering full scan: ${BASE_URL}/api/cron/daily-scan${PARAMS}"
+
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            "${BASE_URL}/api/cron/daily-scan${PARAMS}" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "Status: $HTTP_CODE"
+          echo "Response: $BODY"
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "::error::Full scan trigger failed with status $HTTP_CODE"
+            exit 1
+          fi

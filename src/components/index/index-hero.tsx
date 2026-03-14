@@ -78,7 +78,7 @@ export function IndexHero({ onSearch }: IndexHeroProps) {
                 />
                 <input
                   type="text"
-                  placeholder="Search 101 brands..."
+                  placeholder="Search 276 brands..."
                   value={query}
                   onChange={(e) => {
                     setQuery(e.target.value);
@@ -189,7 +189,7 @@ function HowWeScore() {
       label: "BROWSE",
       color: "#FF6648",
       title: "We send AI agents to shop",
-      desc: "Three AI agents visit your site — one browses like a customer, one reads your data feeds, one tests your buttons and forms.",
+      desc: "Five AI agents visit your site — one browses like a customer, one reads data feeds, one tests accessibility, one uses AI vision, and one checks your product feeds.",
     },
     {
       icon: ShoppingCart,

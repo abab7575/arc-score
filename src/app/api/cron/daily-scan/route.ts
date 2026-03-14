@@ -14,10 +14,12 @@ export async function POST(request: NextRequest) {
 
   // Spawn the daily scan script in the background
   const force = request.nextUrl.searchParams.get("force") === "true";
+  const full = request.nextUrl.searchParams.get("full") === "true";
   const category = request.nextUrl.searchParams.get("category");
 
   let cmd = "npx tsx scripts/daily-scan.ts";
   if (force) cmd += " --force";
+  if (full) cmd += " --full";
   if (category) cmd += ` --category=${category}`;
 
   exec(cmd, { cwd: process.cwd() }, (error, stdout, stderr) => {
@@ -31,8 +33,8 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({
     status: "started",
-    message: "Daily scan triggered in background",
-    config: { force, category },
+    message: `${full ? "Full weekly" : "Daily"} scan triggered in background`,
+    config: { force, full, category },
     timestamp: new Date().toISOString(),
   });
 }
