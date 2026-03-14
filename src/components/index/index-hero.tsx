@@ -120,6 +120,9 @@ export function IndexHero({ onSearch }: IndexHeroProps) {
         </div>
       </div>
 
+      {/* ── Brand Logo Ticker ────────────────────────────────────────── */}
+      <BrandLogoTicker />
+
       {/* ── How We Score — explainer strip ────────────────────────────── */}
       <HowWeScore />
 
@@ -221,6 +224,86 @@ function MiniBar({ label, score, color }: { label: string; score: number; color:
         <div className="h-full" style={{ width: `${score}%`, backgroundColor: color }} />
       </div>
       <span className="data-num text-[10px] font-bold w-6 text-right shrink-0" style={{ color }}>{score}</span>
+    </div>
+  );
+}
+
+/* ── Brand Logo Ticker ─────────────────────────────────────────────── */
+
+const TICKER_BRANDS = [
+  { name: "Nike", domain: "nike.com" },
+  { name: "Apple", domain: "apple.com" },
+  { name: "Adidas", domain: "adidas.com" },
+  { name: "Samsung", domain: "samsung.com" },
+  { name: "Glossier", domain: "glossier.com" },
+  { name: "Lululemon", domain: "lululemon.com" },
+  { name: "Allbirds", domain: "allbirds.com" },
+  { name: "Nordstrom", domain: "nordstrom.com" },
+  { name: "Sephora", domain: "sephora.com" },
+  { name: "Target", domain: "target.com" },
+  { name: "Zara", domain: "zara.com" },
+  { name: "H&M", domain: "hm.com" },
+  { name: "Gap", domain: "gap.com" },
+  { name: "ASOS", domain: "asos.com" },
+  { name: "Uniqlo", domain: "uniqlo.com" },
+  { name: "Puma", domain: "puma.com" },
+  { name: "Everlane", domain: "everlane.com" },
+  { name: "Warby Parker", domain: "warbyparker.com" },
+  { name: "Bombas", domain: "bombas.com" },
+  { name: "Patagonia", domain: "patagonia.com" },
+];
+
+function BrandLogoTicker() {
+  // Double the array for seamless loop
+  const doubled = [...TICKER_BRANDS, ...TICKER_BRANDS];
+
+  return (
+    <div className="bg-white border-b border-[#E8E0D8] overflow-hidden">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-5">
+        <div className="flex items-center gap-3 mb-4">
+          <span className="spec-label text-muted-foreground text-[9px]">WE SCORE BRANDS YOU KNOW</span>
+          <div className="flex-1 h-px bg-[#E8E0D8]" />
+          <span className="spec-label text-muted-foreground/50 text-[9px]">276+ TRACKED</span>
+        </div>
+      </div>
+
+      {/* Scrolling ticker */}
+      <div className="relative">
+        <div
+          className="flex items-center gap-10 pb-5"
+          style={{
+            animation: "ticker 40s linear infinite",
+            width: "max-content",
+          }}
+        >
+          {doubled.map((brand, i) => (
+            <div
+              key={`${brand.domain}-${i}`}
+              className="flex items-center gap-2.5 shrink-0"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`https://logo.clearbit.com/${brand.domain}`}
+                alt={brand.name}
+                width={24}
+                height={24}
+                className="w-6 h-6 object-contain grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+                loading="lazy"
+              />
+              <span className="text-xs font-medium text-muted-foreground/50 whitespace-nowrap">
+                {brand.name}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes ticker {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+      `}</style>
     </div>
   );
 }
