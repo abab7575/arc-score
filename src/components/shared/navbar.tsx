@@ -69,13 +69,6 @@ export function Navbar() {
             >
               Pricing
             </Link>
-            <Link
-              href="/command-center"
-              className="text-sm font-semibold transition-colors"
-              style={{ color: "#FBBA16" }}
-            >
-              Command Center
-            </Link>
             <AdminLink />
             <Link
               href="/login"

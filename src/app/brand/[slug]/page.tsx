@@ -63,7 +63,7 @@ export default async function BrandPage({ params }: BrandPageProps) {
 
     // Admin gets full access to all brands
     const adminToken = cookieStore.get(SESSION_COOKIE_NAME)?.value;
-    if (adminToken && verifySessionToken(adminToken)) {
+    if (adminToken && (await verifySessionToken(adminToken))) {
       hasFullAccess = true;
     }
 

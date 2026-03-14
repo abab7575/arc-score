@@ -15,7 +15,10 @@ export type BrandCategory =
   | "general"
   | "dtc"
   | "luxury"
-  | "sports";
+  | "sports"
+  | "health"
+  | "pet"
+  | "kids";
 
 export const CATEGORY_LABELS: Record<BrandCategory, string> = {
   fashion: "Fashion",
@@ -27,6 +30,9 @@ export const CATEGORY_LABELS: Record<BrandCategory, string> = {
   dtc: "DTC",
   luxury: "Luxury",
   sports: "Sports & Outdoor",
+  health: "Health & Wellness",
+  pet: "Pet",
+  kids: "Kids & Family",
 };
 
 export const CATEGORY_COLORS: Record<BrandCategory, { bg: string; text: string; border: string }> = {
@@ -39,6 +45,9 @@ export const CATEGORY_COLORS: Record<BrandCategory, { bg: string; text: string; 
   dtc: { bg: "bg-indigo-50", text: "text-indigo-700", border: "border-indigo-200" },
   luxury: { bg: "bg-yellow-50", text: "text-yellow-700", border: "border-yellow-200" },
   sports: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
+  health: { bg: "bg-rose-50", text: "text-rose-700", border: "border-rose-200" },
+  pet: { bg: "bg-orange-50", text: "text-orange-700", border: "border-orange-200" },
+  kids: { bg: "bg-cyan-50", text: "text-cyan-700", border: "border-cyan-200" },
 };
 
 export const BRANDS: BrandEntry[] = [

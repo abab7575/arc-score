@@ -22,11 +22,32 @@ async function main() {
   const force = args.includes("--force");
   const staggerMs = parseInt(process.env.SCAN_STAGGER_MS ?? "8000");
 
-  const { BRANDS } = await import(path.join(projectRoot, "src/lib/brands"));
   const { scanBrand } = await import(path.join(projectRoot, "src/lib/scanner/scan-orchestrator"));
   const { cleanupOldScreenshots } = await import(path.join(projectRoot, "src/lib/scanner/screenshot-manager"));
+  const { db, schema } = await import(path.join(projectRoot, "src/lib/db/index"));
+  const { eq } = await import("drizzle-orm");
 
-  let brands = BRANDS;
+  // Pull active brands from database (includes bulk-imported brands)
+  const dbBrands = db
+    .select({
+      slug: schema.brands.slug,
+      name: schema.brands.name,
+      url: schema.brands.url,
+      productUrl: schema.brands.productUrl,
+      category: schema.brands.category,
+    })
+    .from(schema.brands)
+    .where(eq(schema.brands.active, true))
+    .all();
+
+  let brands = dbBrands.map((b: { slug: string; name: string; url: string; productUrl: string | null; category: string }) => ({
+    slug: b.slug,
+    name: b.name,
+    url: b.url,
+    productUrl: b.productUrl ?? undefined,
+    category: b.category,
+  }));
+
   if (filterCategory) {
     brands = brands.filter((b: { category: string }) => b.category === filterCategory);
   }
