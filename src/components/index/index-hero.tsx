@@ -170,7 +170,7 @@ function PreviewCard() {
       {/* Footer */}
       <div className="px-5 py-3 border-t border-white/10 flex items-center justify-between">
         <span className="spec-label text-white/25 text-[8px]">7 CATEGORIES TESTED</span>
-        <span className="spec-label text-[#FF6648] text-[8px]">VIEW FULL REPORT →</span>
+        <a href="/brand/glossier" className="spec-label text-[#FF6648] text-[8px] hover:text-white transition-colors cursor-pointer">VIEW FULL REPORT →</a>
       </div>
     </div>
   );
