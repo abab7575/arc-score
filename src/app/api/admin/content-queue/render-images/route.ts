@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { generatePendingImages } from "@/lib/content-studio/images/generate-images";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +8,9 @@ export const dynamic = "force-dynamic";
  */
 export async function POST() {
   try {
+    const { generatePendingImages } = await import(
+      "@/lib/content-studio/images/generate-images"
+    );
     const result = await generatePendingImages();
 
     return NextResponse.json({
@@ -16,7 +18,12 @@ export async function POST() {
       message: `Generated ${result.generated} images (${result.failed} failed, ${result.skipped} skipped)`,
     });
   } catch (error) {
-    console.error("Error generating images:", error);
-    return NextResponse.json({ error: "Image generation failed" }, { status: 500 });
+    const message = error instanceof Error ? error.message : "Unknown error";
+    const stack = error instanceof Error ? error.stack : undefined;
+    console.error("Error generating images:", message, stack);
+    return NextResponse.json(
+      { error: "Image generation failed", detail: message },
+      { status: 500 }
+    );
   }
 }

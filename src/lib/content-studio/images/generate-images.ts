@@ -5,66 +5,37 @@
 
 import React from "react";
 import { db, schema } from "@/lib/db/index";
-import { eq, and, isNull } from "drizzle-orm";
-
-// Use eval'd require to prevent Turbopack from statically analyzing native module imports
-// eslint-disable-next-line @typescript-eslint/no-implied-eval
-const dynamicRequire = new Function("mod", "return require(mod)") as (mod: string) => unknown;
-
-function loadRenderer(): {
-  renderImage: (
-    element: React.ReactElement,
-    filename: string
-  ) => Promise<{ buffer: Buffer; base64: string; filename: string }>;
-} {
-  return dynamicRequire("./renderer") as {
-    renderImage: (
-      element: React.ReactElement,
-      filename: string
-    ) => Promise<{ buffer: Buffer; base64: string; filename: string }>;
-  };
-}
-
-function loadTemplates() {
-  return {
-    leaderboard: dynamicRequire("./templates/leaderboard") as typeof import("./templates/leaderboard"),
-    scorecard: dynamicRequire("./templates/scorecard") as typeof import("./templates/scorecard"),
-    moverAlert: dynamicRequire("./templates/mover-alert") as typeof import("./templates/mover-alert"),
-    newsReact: dynamicRequire("./templates/news-react") as typeof import("./templates/news-react"),
-    educational: dynamicRequire("./templates/educational") as typeof import("./templates/educational"),
-  };
-}
-
-type LeaderboardData = import("./templates/leaderboard").LeaderboardData;
-type ScorecardData = import("./templates/scorecard").ScorecardData;
-type MoverAlertData = import("./templates/mover-alert").MoverAlertData;
-type NewsReactData = import("./templates/news-react").NewsReactData;
-type EducationalData = import("./templates/educational").EducationalData;
+import { eq, isNull } from "drizzle-orm";
+import { renderImage } from "./renderer";
+import { LeaderboardImage, type LeaderboardData } from "./templates/leaderboard";
+import { ScorecardImage, type ScorecardData } from "./templates/scorecard";
+import { MoverAlertImage, type MoverAlertData } from "./templates/mover-alert";
+import { NewsReactImage, type NewsReactData } from "./templates/news-react";
+import { EducationalImage, type EducationalData } from "./templates/educational";
 
 function buildImageElement(
   template: string,
   metadata: Record<string, unknown>
 ): React.ReactElement | null {
-  const templates = loadTemplates();
   switch (template) {
     case "leaderboard":
-      return React.createElement(templates.leaderboard.LeaderboardImage, {
+      return React.createElement(LeaderboardImage, {
         data: metadata as unknown as LeaderboardData,
       });
     case "scorecard":
-      return React.createElement(templates.scorecard.ScorecardImage, {
+      return React.createElement(ScorecardImage, {
         data: metadata as unknown as ScorecardData,
       });
     case "mover-alert":
-      return React.createElement(templates.moverAlert.MoverAlertImage, {
+      return React.createElement(MoverAlertImage, {
         data: metadata as unknown as MoverAlertData,
       });
     case "news-react":
-      return React.createElement(templates.newsReact.NewsReactImage, {
+      return React.createElement(NewsReactImage, {
         data: metadata as unknown as NewsReactData,
       });
     case "educational":
-      return React.createElement(templates.educational.EducationalImage, {
+      return React.createElement(EducationalImage, {
         data: metadata as unknown as EducationalData,
       });
     default:
@@ -98,7 +69,6 @@ export async function generateImageForItem(item: {
   if (!element) return null;
 
   try {
-    const { renderImage } = loadRenderer();
     const filename = `content-${item.id}-${item.imageTemplate}.png`;
     const { base64 } = await renderImage(element, filename);
 
@@ -133,12 +103,7 @@ export async function generatePendingImages(): Promise<{
       title: schema.contentQueue.title,
     })
     .from(schema.contentQueue)
-    .where(
-      and(
-        isNull(schema.contentQueue.imageData),
-        // Only items with a template set
-      )
-    )
+    .where(isNull(schema.contentQueue.imageData))
     .all()
     .filter((item: { imageTemplate: string | null }) => item.imageTemplate !== null);
 
