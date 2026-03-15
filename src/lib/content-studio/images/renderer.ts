@@ -5,8 +5,6 @@
  * instead of Satori JSX templates. Much higher visual quality.
  */
 
-import { GoogleGenAI } from "@google/genai";
-
 const MODEL = "gemini-3-pro-image-preview";
 
 const BRAND_STYLE = `
@@ -24,12 +22,13 @@ CRITICAL DESIGN REQUIREMENTS — follow these EXACTLY:
 - Text must be crisp and fully readable — this is an infographic, not an illustration.
 `;
 
-function getClient(): GoogleGenAI | null {
+async function getClient() {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     console.warn("[Image Gen] No GEMINI_API_KEY — skipping image generation");
     return null;
   }
+  const { GoogleGenAI } = await import("@google/genai");
   return new GoogleGenAI({ apiKey });
 }
 
@@ -37,7 +36,7 @@ export async function renderImage(
   prompt: string,
   filename: string
 ): Promise<{ buffer: Buffer; base64: string; filename: string }> {
-  const client = getClient();
+  const client = await getClient();
   if (!client) {
     throw new Error("GEMINI_API_KEY not configured");
   }
