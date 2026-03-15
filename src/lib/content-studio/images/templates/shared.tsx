@@ -1,8 +1,11 @@
 /**
- * Shared Image Frame — Scroll-stopping social infographics
+ * Shared Image Frame
  *
- * The hook is the CONCEPT, not the data.
- * The data is the PROOF, not the headline.
+ * RULES:
+ * 1. LIGHT cream background — matches the website
+ * 2. robotshopper.com must be BIG and prominent
+ * 3. No text under 14px
+ * 4. CTA to visit the site must be obvious
  */
 
 import React from "react";
@@ -47,8 +50,6 @@ export function getReadiness(score: number): string {
   return "Not Ready";
 }
 
-// ── Image Frame ──────────────────────────────────────────────
-
 export function ImageFrame({ children }: { children: React.ReactNode }) {
   return (
     <div
@@ -57,27 +58,14 @@ export function ImageFrame({ children }: { children: React.ReactNode }) {
         height: 675,
         display: "flex",
         flexDirection: "column",
-        backgroundColor: COLORS.navy,
+        backgroundColor: COLORS.cream,
         position: "relative",
         overflow: "hidden",
         fontFamily: "Inter",
       }}
     >
-      {/* Subtle gradient mesh */}
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "radial-gradient(ellipse at 20% 50%, rgba(2,89,221,0.12) 0%, transparent 60%), radial-gradient(ellipse at 85% 30%, rgba(124,58,237,0.08) 0%, transparent 50%)",
-          display: "flex",
-        }}
-      />
-
       {/* Top color strip */}
-      <div style={{ display: "flex", height: 5, width: "100%", flexShrink: 0, position: "relative" }}>
+      <div style={{ display: "flex", height: 6, width: "100%", flexShrink: 0 }}>
         <div style={{ flex: 1, backgroundColor: COLORS.coral, display: "flex" }} />
         <div style={{ flex: 1, backgroundColor: COLORS.mustard, display: "flex" }} />
         <div style={{ flex: 1, backgroundColor: COLORS.cobalt, display: "flex" }} />
@@ -86,39 +74,41 @@ export function ImageFrame({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Content */}
-      <div style={{ display: "flex", flexDirection: "column", flex: 1, padding: "32px 52px 24px", position: "relative" }}>
+      <div style={{ display: "flex", flexDirection: "column", flex: 1, padding: "28px 48px 0" }}>
         {children}
       </div>
 
-      {/* Footer */}
+      {/* CTA Footer — BIG and clear */}
       <div
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "12px 52px",
-          borderTop: "1px solid rgba(255,255,255,0.08)",
+          padding: "16px 48px",
+          backgroundColor: COLORS.navy,
           flexShrink: 0,
-          position: "relative",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, backgroundColor: COLORS.coral }}>
-            <span style={{ fontFamily: "JetBrains Mono", fontSize: 10, fontWeight: 700, color: COLORS.white }}>RS</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, backgroundColor: COLORS.coral, borderRadius: 4 }}>
+            <span style={{ fontFamily: "JetBrains Mono", fontSize: 13, fontWeight: 700, color: COLORS.white }}>RS</span>
           </div>
-          <span style={{ fontSize: 14, fontWeight: 800, color: COLORS.cream }}>Robot Shopper</span>
+          <span style={{ fontSize: 18, fontWeight: 800, color: COLORS.white }}>Robot Shopper</span>
         </div>
-        <span style={{ fontFamily: "JetBrains Mono", fontSize: 12, color: "rgba(255,248,240,0.35)", letterSpacing: "0.03em" }}>robotshopper.com</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <span style={{ fontSize: 16, color: "rgba(255,248,240,0.6)" }}>Check your site&apos;s score →</span>
+          <div style={{ display: "flex", alignItems: "center", padding: "8px 20px", backgroundColor: COLORS.coral, borderRadius: 6 }}>
+            <span style={{ fontFamily: "JetBrains Mono", fontSize: 16, fontWeight: 700, color: COLORS.white, letterSpacing: "0.02em" }}>robotshopper.com</span>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-// ── Score Pill ──────────────────────────────────────────────
-
 export function ScorePill({ score, size = "md" }: { score: number; size?: "sm" | "md" | "lg" }) {
   const color = getScoreColor(score);
-  const dims = size === "lg" ? { w: 72, h: 72, fs: 32 } : size === "md" ? { w: 48, h: 48, fs: 22 } : { w: 32, h: 32, fs: 14 };
+  const dims = size === "lg" ? { w: 72, h: 72, fs: 32 } : size === "md" ? { w: 48, h: 48, fs: 22 } : { w: 36, h: 36, fs: 16 };
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: dims.w, height: dims.h, backgroundColor: color, borderRadius: 8, fontFamily: "JetBrains Mono", fontSize: dims.fs, fontWeight: 700, color: COLORS.white }}>
       {score}
@@ -126,13 +116,11 @@ export function ScorePill({ score, size = "md" }: { score: number; size?: "sm" |
   );
 }
 
-// ── Score Bar ──────────────────────────────────────────────
-
-export function ScoreBar({ score, width = 300, height = 14 }: { score: number; width?: number; height?: number }) {
+export function ScoreBar({ score, width = 300, height = 16 }: { score: number; width?: number; height?: number }) {
   const fillWidth = Math.round((score / 100) * width);
   return (
-    <div style={{ display: "flex", width, height, backgroundColor: "rgba(255,255,255,0.08)", borderRadius: 4, overflow: "hidden" }}>
-      <div style={{ width: fillWidth, height, backgroundColor: getScoreColor(score), borderRadius: 4, display: "flex" }} />
+    <div style={{ display: "flex", width, height, backgroundColor: COLORS.lightGray, borderRadius: 6, overflow: "hidden" }}>
+      <div style={{ width: fillWidth, height, backgroundColor: getScoreColor(score), borderRadius: 6, display: "flex" }} />
     </div>
   );
 }
