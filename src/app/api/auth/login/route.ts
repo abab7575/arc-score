@@ -5,8 +5,15 @@ import {
   createCustomerSession,
   CUSTOMER_COOKIE_NAME,
 } from "@/lib/customer-auth";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for") || "unknown";
+  const { success } = rateLimit(ip, 5, 60000);
+  if (!success) {
+    return NextResponse.json({ error: "Too many attempts. Try again in a minute." }, { status: 429 });
+  }
+
   try {
     const { email, password } = await request.json();
 

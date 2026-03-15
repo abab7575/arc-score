@@ -1,7 +1,14 @@
 import { NextResponse } from "next/server";
 import { verifyPassword, createSessionToken, SESSION_COOKIE_NAME } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  const ip = request.headers.get("x-forwarded-for") || "unknown";
+  const { success } = rateLimit(ip, 5, 60000);
+  if (!success) {
+    return NextResponse.json({ error: "Too many attempts. Try again in a minute." }, { status: 429 });
+  }
+
   try {
     const { password } = await request.json();
 

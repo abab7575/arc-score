@@ -9,8 +9,7 @@ const PLANS = [
   {
     id: "free",
     name: "Free",
-    monthly: 0,
-    annual: 0,
+    price: 0,
     description: "See the problem",
     features: [
       { text: "Public score & grade (0-100)", included: true },
@@ -30,8 +29,7 @@ const PLANS = [
   {
     id: "monitor",
     name: "Monitor",
-    monthly: 99,
-    annual: 79,
+    price: 99,
     description: "Fix the problem",
     features: [
       { text: "Everything in Free", included: true },
@@ -51,8 +49,7 @@ const PLANS = [
   {
     id: "team",
     name: "Team",
-    monthly: 299,
-    annual: 239,
+    price: 299,
     description: "Fix it across brands",
     features: [
       { text: "Everything in Monitor", included: true },
@@ -69,11 +66,31 @@ const PLANS = [
     ctaHref: null,
     highlighted: false,
   },
+  {
+    id: "agency",
+    name: "Agency",
+    price: 599,
+    description: "Scale it for clients",
+    features: [
+      { text: "Everything in Team", included: true },
+      { text: "Up to 20 brands monitored", included: true },
+      { text: "Full findings & action plans", included: true },
+      { text: "Agent journey replays", included: true },
+      { text: "Weekly re-scans", included: true },
+      { text: "Competitor benchmarking (unlimited)", included: true },
+      { text: "PDF export", included: true },
+      { text: "API access", included: true },
+      { text: "Slack channel support", included: true },
+      { text: "Custom scan scheduling", included: true },
+    ],
+    cta: "Contact Us",
+    ctaHref: "mailto:hello@robotshopper.com",
+    highlighted: false,
+  },
 ];
 
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
-  const [annual, setAnnual] = useState(false);
 
   async function handleCheckout(planId: string) {
     setLoading(planId);
@@ -81,7 +98,7 @@ export default function PricingPage() {
       const res = await fetch("/api/stripe/create-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId, annual }),
+        body: JSON.stringify({ planId }),
       });
       const data = await res.json();
       if (data.url) {
@@ -100,9 +117,9 @@ export default function PricingPage() {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-16">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
         {/* Header */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-12">
           <h1 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight mb-3">
             See the problem free. Fix it with a plan.
           </h1>
@@ -113,130 +130,94 @@ export default function PricingPage() {
           </p>
         </div>
 
-        {/* Billing toggle */}
-        <div className="flex items-center justify-center gap-3 mb-10">
-          <span className={`text-sm font-medium ${!annual ? "text-foreground" : "text-muted-foreground"}`}>
-            Monthly
-          </span>
-          <button
-            onClick={() => setAnnual(!annual)}
-            className={`relative w-12 h-6 rounded-full transition-colors ${
-              annual ? "bg-[#059669]" : "bg-gray-300"
-            }`}
-          >
-            <span
-              className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
-                annual ? "translate-x-6" : "translate-x-0.5"
-              }`}
-            />
-          </button>
-          <span className={`text-sm font-medium ${annual ? "text-foreground" : "text-muted-foreground"}`}>
-            Annual
-          </span>
-          {annual && (
-            <span className="text-xs font-bold text-[#059669] bg-[#059669]/10 px-2 py-0.5 rounded-full">
-              Save 20%
-            </span>
-          )}
-        </div>
-
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {PLANS.map((plan) => {
-            const price = annual ? plan.annual : plan.monthly;
-            return (
-              <div
-                key={plan.id}
-                className={`relative flex flex-col p-6 border-2 ${
-                  plan.highlighted
-                    ? "border-[#FF6648] bg-white"
-                    : "border-gray-200 bg-white"
-                }`}
-              >
-                {plan.highlighted && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FF6648] text-white text-[10px] font-bold px-3 py-1 uppercase tracking-wider">
-                    Most Popular
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {PLANS.map((plan) => (
+            <div
+              key={plan.id}
+              className={`relative flex flex-col p-6 border-2 ${
+                plan.highlighted
+                  ? "border-[#FF6648] bg-white"
+                  : "border-gray-200 bg-white"
+              }`}
+            >
+              {plan.highlighted && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FF6648] text-white text-[10px] font-bold px-3 py-1 uppercase tracking-wider">
+                  Most Popular
+                </div>
+              )}
+
+              <div className="mb-5">
+                <h3 className="text-lg font-bold text-foreground">{plan.name}</h3>
+                <p className="text-sm text-muted-foreground mt-0.5">{plan.description}</p>
+              </div>
+
+              <div className="mb-6">
+                {plan.price === 0 ? (
+                  <span className="text-3xl font-black text-foreground">Free</span>
+                ) : (
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-3xl font-black text-foreground">${plan.price}</span>
+                    <span className="text-muted-foreground">/mo</span>
                   </div>
                 )}
-
-                <div className="mb-5">
-                  <h3 className="text-lg font-bold text-foreground">{plan.name}</h3>
-                  <p className="text-sm text-muted-foreground mt-0.5">{plan.description}</p>
-                </div>
-
-                <div className="mb-6">
-                  {price === 0 ? (
-                    <span className="text-3xl font-black text-foreground">Free</span>
-                  ) : (
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-black text-foreground">${price}</span>
-                      <span className="text-muted-foreground">/mo</span>
-                      {annual && plan.monthly > 0 && (
-                        <span className="text-xs text-muted-foreground line-through ml-2">
-                          ${plan.monthly}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                  {annual && price > 0 && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Billed annually at ${price * 12}/yr
-                    </p>
-                  )}
-                </div>
-
-                <ul className="space-y-2.5 mb-8 flex-1">
-                  {plan.features.map((feature) => (
-                    <li key={feature.text} className="flex items-start gap-2">
-                      {feature.included ? (
-                        <Check className="w-4 h-4 text-[#059669] mt-0.5 shrink-0" />
-                      ) : (
-                        <X className="w-4 h-4 text-gray-300 mt-0.5 shrink-0" />
-                      )}
-                      <span className={`text-sm ${feature.included ? "text-foreground" : "text-muted-foreground/50"}`}>
-                        {feature.text}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-
-                {plan.ctaHref ? (
-                  <a
-                    href={plan.ctaHref}
-                    className="block text-center py-3 border-2 border-gray-200 text-sm font-semibold text-foreground hover:bg-gray-50 transition-colors"
-                  >
-                    {plan.cta}
-                  </a>
-                ) : (
-                  <button
-                    onClick={() => handleCheckout(plan.id)}
-                    disabled={loading === plan.id}
-                    className={`w-full py-3 text-sm font-bold transition-colors flex items-center justify-center gap-2 ${
-                      plan.highlighted
-                        ? "bg-[#FF6648] text-white hover:bg-[#e85a3f]"
-                        : "bg-[#0A1628] text-white hover:bg-[#0A1628]/90"
-                    } disabled:opacity-50`}
-                  >
-                    {loading === plan.id ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        Redirecting to checkout...
-                      </>
-                    ) : (
-                      plan.cta
-                    )}
-                  </button>
-                )}
               </div>
-            );
-          })}
+
+              <ul className="space-y-2.5 mb-8 flex-1">
+                {plan.features.map((feature) => (
+                  <li key={feature.text} className="flex items-start gap-2">
+                    {feature.included ? (
+                      <Check className="w-4 h-4 text-[#059669] mt-0.5 shrink-0" />
+                    ) : (
+                      <X className="w-4 h-4 text-gray-300 mt-0.5 shrink-0" />
+                    )}
+                    <span className={`text-sm ${feature.included ? "text-foreground" : "text-muted-foreground/50"}`}>
+                      {feature.text}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              {plan.ctaHref ? (
+                <a
+                  href={plan.ctaHref}
+                  className={`block text-center py-3 border-2 text-sm font-semibold transition-colors ${
+                    plan.id === "agency"
+                      ? "border-[#0A1628] bg-[#0A1628] text-white hover:bg-[#0A1628]/90"
+                      : "border-gray-200 text-foreground hover:bg-gray-50"
+                  }`}
+                >
+                  {plan.cta}
+                </a>
+              ) : (
+                <button
+                  onClick={() => handleCheckout(plan.id)}
+                  disabled={loading === plan.id}
+                  className={`w-full py-3 text-sm font-bold transition-colors flex items-center justify-center gap-2 ${
+                    plan.highlighted
+                      ? "bg-[#FF6648] text-white hover:bg-[#e85a3f]"
+                      : "bg-[#0A1628] text-white hover:bg-[#0A1628]/90"
+                  } disabled:opacity-50`}
+                >
+                  {loading === plan.id ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Redirecting to checkout...
+                    </>
+                  ) : (
+                    plan.cta
+                  )}
+                </button>
+              )}
+            </div>
+          ))}
         </div>
 
         {/* Bottom note */}
         <div className="mt-12 text-center">
           <p className="text-sm text-muted-foreground max-w-xl mx-auto">
             All plans include access to the full public index. Cancel anytime.
-            Need more than 5 brands? <a href="mailto:hello@robotshopper.com" className="text-[#0259DD] hover:underline">Get in touch</a> for custom pricing.
+            Need something custom? <a href="mailto:hello@robotshopper.com" className="text-[#0259DD] hover:underline">Get in touch</a>.
           </p>
         </div>
       </main>

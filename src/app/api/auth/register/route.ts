@@ -11,8 +11,15 @@ import {
   CUSTOMER_COOKIE_NAME,
 } from "@/lib/customer-auth";
 import { stripe, getPlanByPriceId } from "@/lib/stripe";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for") || "unknown";
+  const { success } = rateLimit(ip, 3, 60000);
+  if (!success) {
+    return NextResponse.json({ error: "Too many attempts. Try again in a minute." }, { status: 429 });
+  }
+
   try {
     const { email, password, name, stripeSessionId } = await request.json();
 

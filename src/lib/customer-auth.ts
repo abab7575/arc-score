@@ -4,7 +4,7 @@
  */
 
 import { db, schema } from "@/lib/db/index";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 export const CUSTOMER_COOKIE_NAME = "arc_customer_session";
@@ -23,17 +23,52 @@ async function sha256(input: string): Promise<string> {
   return toHex(hash);
 }
 
+function hexToBytes(hex: string): Uint8Array {
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < hex.length; i += 2) {
+    bytes[i / 2] = parseInt(hex.substring(i, i + 2), 16);
+  }
+  return bytes;
+}
+
+async function pbkdf2Hash(password: string, saltHex: string): Promise<string> {
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    enc.encode(password),
+    "PBKDF2",
+    false,
+    ["deriveBits"],
+  );
+  const saltBytes = hexToBytes(saltHex);
+  const derived = await crypto.subtle.deriveBits(
+    { name: "PBKDF2", salt: saltBytes.buffer as ArrayBuffer, iterations: 600_000, hash: "SHA-256" },
+    keyMaterial,
+    256, // 32 bytes
+  );
+  return toHex(derived);
+}
+
 export async function hashPassword(password: string): Promise<string> {
-  const salt = toHex(crypto.getRandomValues(new Uint8Array(16)).buffer);
-  const hash = await sha256(salt + password);
+  const saltArr = crypto.getRandomValues(new Uint8Array(16));
+  const salt = toHex(saltArr.buffer as ArrayBuffer);
+  const hash = await pbkdf2Hash(password, salt);
   return `${salt}:${hash}`;
 }
 
 export async function verifyPassword(password: string, stored: string): Promise<boolean> {
   const [salt, hash] = stored.split(":");
   if (!salt || !hash) return false;
-  const computed = await sha256(salt + password);
-  return computed === hash;
+
+  // PBKDF2 produces 64-hex-char output (32 bytes); legacy SHA-256 also produces
+  // 64 hex chars but the salt was 32 hex chars (16 bytes). Distinguish by trying
+  // PBKDF2 first, then falling back to legacy SHA-256 for backward compatibility.
+  const pbkdf2Computed = await pbkdf2Hash(password, salt);
+  if (pbkdf2Computed === hash) return true;
+
+  // Fallback: legacy SHA-256 hash(salt + password)
+  const legacyComputed = await sha256(salt + password);
+  return legacyComputed === hash;
 }
 
 // ── Session Tokens ──────────────────────────────────────────────────
@@ -193,6 +228,6 @@ export function claimBrand(customerId: number, brandId: number) {
 
 export function unclaimBrand(customerId: number, brandId: number) {
   return db.delete(schema.brandClaims)
-    .where(eq(schema.brandClaims.customerId, customerId))
+    .where(and(eq(schema.brandClaims.customerId, customerId), eq(schema.brandClaims.brandId, brandId)))
     .run();
 }
