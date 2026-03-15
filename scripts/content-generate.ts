@@ -32,7 +32,7 @@ async function renderStoryImage(
   story: StoryCandidate,
   platform: string,
   index: number
-): Promise<string | undefined> {
+): Promise<{ base64: string; filename: string } | undefined> {
   const filename = `${story.id}-${platform}-${index}.png`;
   const data = story.templateData;
 
@@ -182,9 +182,9 @@ async function main() {
       const body = generateTextForStory(story, platform);
 
       // Generate image
-      const imageUrl = await renderStoryImage(story, platform, i);
-      if (imageUrl) {
-        console.log(`  Image: ${imageUrl}`);
+      const imageResult = await renderStoryImage(story, platform, i);
+      if (imageResult) {
+        console.log(`  Image: ${imageResult.filename} (${Math.round(imageResult.base64.length / 1024)}KB)`);
       }
 
       // Insert into queue
@@ -193,7 +193,7 @@ async function main() {
         platform,
         title: story.title,
         body,
-        imageUrl: imageUrl ?? undefined,
+        imageUrl: imageResult ? `/api/admin/content-images/${Date.now()}` : undefined,
         imageTemplate: story.imageTemplate,
         status: "draft",
         metadata: JSON.stringify(story.templateData),
