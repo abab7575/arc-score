@@ -23,7 +23,10 @@ interface OutreachEmail {
   reportUrl: string;
 }
 
-function generateSubject(name: string, score: number, issueCount: number): string {
+function generateSubject(name: string, score: number, issueCount: number, blockedByBot: boolean): string {
+  if (blockedByBot) {
+    return `${name}: AI shopping agents are blocked from your site entirely`;
+  }
   if (score < 20) {
     return `${name}: AI shopping agents can't buy from your site (Score: ${score}/100)`;
   }
@@ -44,8 +47,33 @@ function generateBody(
   issueCount: number,
   topIssues: string[],
   estimatedScore: number,
-  reportUrl: string
+  reportUrl: string,
+  blockedByBot: boolean
 ): string {
+  if (blockedByBot) {
+    // WAF-blocked brands get a different, more accurate email
+    return `Hey —
+
+We tried to send 5 AI shopping agents to buy from ${url}. They couldn't even get in.
+
+Your score: ${score}/100 (Grade ${grade}).
+
+Your site's bot protection blocks all automated access — including the AI shopping agents your customers are starting to use (ChatGPT Shopping, Google AI Mode, Perplexity, Amazon Buy For Me).
+
+This means when someone asks ChatGPT to "find me a product from ${name}," the agent hits a wall. No product data, no add-to-cart, no checkout. The customer just buys from whoever the agent tries next.
+
+This is increasingly common — about 40% of the sites we scan have this issue. The fix is usually a targeted robots.txt update that allows known AI agents while keeping scrapers out.
+
+Full score breakdown (free): ${reportUrl}
+
+Cheers,
+Andy
+Founder, Robot Shopper
+(Yes, a real human wrote this. The robots just did the shopping part.)
+robotshopper.com`;
+  }
+
+  // Standard email for accessible but low-scoring sites
   const issueList = topIssues
     .slice(0, 3)
     .map((issue, i) => `${i + 1}. ${issue}`)
@@ -125,12 +153,17 @@ export function generateOutreachQueue(options: {
 
   const results: OutreachEmail[] = [];
 
+  // Staleness guardrail: only use scans from the last 14 days
+  const maxScanAge = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
+  let staleSkipped = 0;
+
   for (const brand of brandsQuery) {
     const latestScan = db
       .select({
         overallScore: schema.scans.overallScore,
         grade: schema.scans.grade,
         reportJson: schema.scans.reportJson,
+        scannedAt: schema.scans.scannedAt,
       })
       .from(schema.scans)
       .where(eq(schema.scans.brandId, brand.id))
@@ -139,11 +172,19 @@ export function generateOutreachQueue(options: {
       .get();
 
     if (!latestScan) continue;
+
+    // Skip stale scans — never send outreach based on old data
+    if (latestScan.scannedAt < maxScanAge) {
+      staleSkipped++;
+      continue;
+    }
+
     if (latestScan.overallScore > maxScore || latestScan.overallScore < minScore) continue;
 
     let issueCount = 0;
     let topIssues: string[] = [];
     let estimatedScoreAfterFixes = latestScan.overallScore;
+    let blockedByBot = false;
 
     try {
       const report = JSON.parse(latestScan.reportJson);
@@ -152,13 +193,24 @@ export function generateOutreachQueue(options: {
         .slice(0, 5)
         .map((f: { title: string }) => f.title);
       estimatedScoreAfterFixes = report.estimatedScoreAfterFixes ?? latestScan.overallScore;
+
+      // Check if the site blocks bots (changes email template)
+      const browserJourney = report.journeys?.find((j: { agentType: string }) => j.agentType === "browser");
+      if (browserJourney?.overallResult === "fail") {
+        const botStep = browserJourney.steps?.find((s: { narration: string }) =>
+          s.narration?.toLowerCase().includes("block") || s.narration?.toLowerCase().includes("bot")
+        );
+        if (botStep) blockedByBot = true;
+      }
+      // Also check the verdict
+      if (report.verdict?.toLowerCase().includes("block")) blockedByBot = true;
     } catch { /* skip */ }
 
     const reportUrl = `https://robotshopper.com/brand/${brand.slug}`;
-    const subject = generateSubject(brand.name, latestScan.overallScore, issueCount);
+    const subject = generateSubject(brand.name, latestScan.overallScore, issueCount, blockedByBot);
     const body = generateBody(
       brand.name, brand.url, latestScan.overallScore, latestScan.grade,
-      issueCount, topIssues, estimatedScoreAfterFixes, reportUrl
+      issueCount, topIssues, estimatedScoreAfterFixes, reportUrl, blockedByBot
     );
 
     results.push({
@@ -175,6 +227,10 @@ export function generateOutreachQueue(options: {
       body,
       reportUrl,
     });
+  }
+
+  if (staleSkipped > 0) {
+    console.log(`[Outreach] Skipped ${staleSkipped} brands with stale scan data (>14 days old). Rescan them first.`);
   }
 
   // Sort by score ascending (worst = most compelling)
