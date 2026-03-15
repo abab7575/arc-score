@@ -42,5 +42,29 @@ try {
   // Column already exists
 }
 
+// Auto-migrate: ensure outreach table exists
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS outreach (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    brand_id INTEGER NOT NULL REFERENCES brands(id),
+    contact_email TEXT,
+    contact_name TEXT,
+    contact_title TEXT,
+    email_source TEXT,
+    subject TEXT NOT NULL,
+    body TEXT NOT NULL,
+    brand_score INTEGER NOT NULL,
+    brand_grade TEXT NOT NULL,
+    issue_count INTEGER NOT NULL DEFAULT 0,
+    top_issues TEXT NOT NULL DEFAULT '[]',
+    report_url TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'queued',
+    notes TEXT,
+    sent_at TEXT,
+    replied_at TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+
 export const db = drizzle(sqlite, { schema });
 export { schema };
