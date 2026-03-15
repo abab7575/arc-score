@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { discoverStories } from "@/lib/content-studio/intelligence";
 import { generateContent } from "@/lib/content-studio/generators";
 import { insertContentQueueItem } from "@/lib/db/admin-queries";
+import { generatePendingImages } from "@/lib/content-studio/images/generate-images";
 import { EDUCATIONAL_TOPICS } from "@/lib/content-studio/educational-topics";
 import type { Platform, ContentType } from "@/lib/content-studio/templates";
 import type { StoryCandidate } from "@/lib/content-studio/intelligence";
@@ -78,10 +79,19 @@ export async function POST() {
       }
     }
 
+    // Generate images in the background (don't block response)
+    generatePendingImages()
+      .then((imgResult) => {
+        console.log(`[Content Gen] Image rendering: ${imgResult.generated} generated, ${imgResult.failed} failed`);
+      })
+      .catch((err) => {
+        console.error("[Content Gen] Image rendering error:", err);
+      });
+
     return NextResponse.json({
       generated,
       stories: stories.length,
-      message: `Generated ${generated} queue items from ${stories.length} stories`,
+      message: `Generated ${generated} queue items from ${stories.length} stories. Images rendering in background.`,
     });
   } catch (error) {
     console.error("Error generating content:", error);
