@@ -71,9 +71,11 @@ The good news: the top fixes alone could get you to ${estimatedScore}/100 (+${im
 
 If you want the full findings with fix instructions and agent journey replays, that's on our Monitor plan — but the score and category breakdown are free to view right now.
 
-Best,
-[Your name]
-Robot Shopper — robotshopper.com`;
+Cheers,
+Andy
+Founder, Robot Shopper
+(Yes, a real human wrote this. The robots just did the shopping part.)
+robotshopper.com`;
 }
 
 /**
