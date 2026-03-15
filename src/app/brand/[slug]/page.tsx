@@ -35,13 +35,13 @@ export async function generateMetadata({ params }: BrandPageProps): Promise<Meta
   const latestScan = getLatestScanForBrand(brand.id);
   if (latestScan) {
     return {
-      title: `${brand.name} ARC Score — ${latestScan.overallScore}/100 (Grade ${latestScan.grade})`,
-      description: `${brand.name} scores ${latestScan.overallScore}/100 on the ARC Agent Readiness Index. Grade ${latestScan.grade}: ${getGradeLabel(latestScan.grade as Grade)}.`,
+      title: `${brand.name} Robot Shopper Score — ${latestScan.overallScore}/100 (Grade ${latestScan.grade})`,
+      description: `${brand.name} scores ${latestScan.overallScore}/100 on the Robot Shopper Agent Readiness Index. Grade ${latestScan.grade}: ${getGradeLabel(latestScan.grade as Grade)}.`,
     };
   }
 
   return {
-    title: `${brand.name} — ARC Score`,
+    title: `${brand.name} — Robot Shopper`,
     description: `Agent readiness score for ${brand.name}. See how well AI agents can navigate ${brand.url}.`,
   };
 }
@@ -89,11 +89,11 @@ export default async function BrandPage({ params }: BrandPageProps) {
     ? {
         "@context": "https://schema.org",
         "@type": "Review",
-        name: `${brand.name} ARC Score`,
-        reviewBody: latestScan.verdict,
+        name: `${brand.name} Robot Shopper Score`,
+        reviewBody: latestScan.verdict || `${brand.name} scores ${latestScan.overallScore}/100 on agent readiness.`,
         author: {
           "@type": "Organization",
-          name: "ARC Score",
+          name: "Robot Shopper",
           url: "https://arcscore.com",
         },
         itemReviewed: {
@@ -131,10 +131,10 @@ export default async function BrandPage({ params }: BrandPageProps) {
           <>
             {/* Always visible: Score, Trend, Categories */}
             <ScoreHero
-              score={report.overallScore}
-              grade={report.grade}
-              verdict={report.verdict}
-              comparison={report.comparison}
+              score={report.overallScore ?? 0}
+              grade={report.grade ?? "F"}
+              verdict={report.verdict ?? "Score data available."}
+              comparison={report.comparison ?? ""}
             />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

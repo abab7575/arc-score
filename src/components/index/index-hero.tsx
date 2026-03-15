@@ -69,9 +69,9 @@ export function IndexHero({ onSearch }: IndexHeroProps) {
 
               {/* Branding badge */}
               <div className="inline-flex items-center gap-3 px-4 py-2 border border-white/15 bg-white/[0.03] mb-6">
-                <span className="spec-label text-[#FF6648]">ARC SCORE</span>
+                <span className="spec-label text-[#FF6648]">ROBOT SHOPPER</span>
                 <span className="w-1 h-1 rounded-full bg-white/30" />
-                <span className="spec-label text-white/50">AGENT READINESS INDEX</span>
+                <span className="spec-label text-white/50">AI AGENT READINESS INDEX</span>
                 <span className="w-1 h-1 rounded-full bg-white/30" />
                 <span className="spec-label text-[#84AFFB]">0–100</span>
               </div>
@@ -148,7 +148,7 @@ function FailingCard() {
           className="w-12 h-12 flex items-center justify-center border-2 border-[#dc2626] shrink-0"
           style={{ boxShadow: "0 0 12px rgba(220,38,38,0.2)" }}
         >
-          <span className="data-num text-lg font-black text-[#dc2626]">18</span>
+          <span className="data-num text-lg font-black text-[#dc2626]">27</span>
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
@@ -525,7 +525,7 @@ function HowWeScore() {
       label: "SCORE",
       color: "#059669",
       title: "You get a score out of 100",
-      desc: "Your ARC Score shows how ready your store is for AI agent commerce — with specific findings and fixes to improve.",
+      desc: "Your score shows how ready your store is for AI agent commerce — with specific findings and fixes to improve.",
     },
   ];
 
