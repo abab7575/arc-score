@@ -152,18 +152,18 @@ export default async function BrandPage({ params }: BrandPageProps) {
               </div>
             </div>
 
-            <ScoreBreakdown categories={report.categories} />
+            <ScoreBreakdown categories={report.categories ?? []} />
 
             {/* Gated: Full agent compatibility, journeys, findings, action plan */}
             {hasFullAccess ? (
               <>
-                <AgentCompatibility scores={report.aiAgentScores} categories={report.categories} />
-                <AgentJourneys journeys={report.journeys} siteName={report.url} />
-                <FindingsSection findings={report.findings} />
+                <AgentCompatibility scores={report.aiAgentScores} categories={report.categories ?? []} />
+                <AgentJourneys journeys={report.journeys ?? []} siteName={report.url} />
+                <FindingsSection findings={report.findings ?? []} />
                 <ActionPlan
-                  actions={report.actionPlan}
-                  currentScore={report.overallScore}
-                  estimatedScoreAfterFixes={report.estimatedScoreAfterFixes}
+                  actions={report.actionPlan ?? []}
+                  currentScore={report.overallScore ?? 0}
+                  estimatedScoreAfterFixes={report.estimatedScoreAfterFixes ?? 0}
                 />
               </>
             ) : (
@@ -180,8 +180,8 @@ export default async function BrandPage({ params }: BrandPageProps) {
                 />
                 <PaywallGate
                   title="Action Plan"
-                  description="See the prioritized fix list with estimated score gains. This brand could reach ${report.estimatedScoreAfterFixes}/100 by addressing top issues."
-                  itemCount={report.actionPlan?.length}
+                  description={`See the prioritized fix list with estimated score gains. This brand could reach ${report.estimatedScoreAfterFixes ?? 0}/100 by addressing top issues.`}
+                  itemCount={report.actionPlan?.length ?? 0}
                 />
               </>
             )}
