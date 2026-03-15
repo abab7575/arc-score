@@ -192,17 +192,17 @@ function ReportPreview() {
           <div className="w-2.5 h-2.5 rounded-full bg-[#059669]/60" />
         </div>
         <div className="flex-1 flex items-center justify-center">
-          <span className="spec-label text-[8px] text-[#0A1628]/30">robotshopper.com/brand/glossier</span>
+          <span className="spec-label text-[8px] text-[#0A1628]/30">robotshopper.com/brand/nike</span>
         </div>
       </div>
 
       {/* Score section */}
       <div className="px-5 pt-5 pb-3 text-center border-b border-[#0A1628]/5">
-        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full border-[3px] border-[#059669] mb-2" style={{ boxShadow: "0 0 20px rgba(5,150,105,0.1)" }}>
-          <span className="data-num text-3xl font-black text-[#059669]">87</span>
+        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full border-[3px] border-[#d97706] mb-2" style={{ boxShadow: "0 0 20px rgba(217,119,6,0.1)" }}>
+          <span className="data-num text-3xl font-black text-[#d97706]">67</span>
         </div>
-        <div className="text-xs font-bold text-[#0A1628]">Glossier</div>
-        <div className="spec-label text-[8px] text-[#059669] mt-0.5">GRADE A — AGENT-READY</div>
+        <div className="text-xs font-bold text-[#0A1628]">Nike</div>
+        <div className="spec-label text-[8px] text-[#d97706] mt-0.5">GRADE C — NEEDS WORK</div>
       </div>
 
       {/* Category bars preview */}
@@ -210,10 +210,10 @@ function ReportPreview() {
         <div className="spec-label text-[7px] text-[#0A1628]/30 mb-2">SCORE BREAKDOWN</div>
         <div className="space-y-1.5">
           <MiniBar label="DISCOVER" score={100} color="#059669" />
-          <MiniBar label="CART" score={100} color="#059669" />
-          <MiniBar label="DATA" score={95} color="#059669" />
-          <MiniBar label="NAVIGATE" score={77} color="#0259DD" />
-          <MiniBar label="PRODUCT" score={75} color="#FBBA16" />
+          <MiniBar label="CART" score={85} color="#059669" />
+          <MiniBar label="DATA" score={70} color="#0259DD" />
+          <MiniBar label="NAVIGATE" score={55} color="#d97706" />
+          <MiniBar label="AGENT API" score={20} color="#dc2626" />
         </div>
       </div>
 
@@ -263,11 +263,11 @@ function ReportPreview() {
         <div className="spec-label text-[7px] text-[#0A1628]/30 mb-2">ACTION PLAN</div>
         <div className="flex items-center justify-between mb-1.5">
           <div className="flex items-center gap-2">
-            <span className="data-num text-sm font-bold text-[#ea580c]">87</span>
+            <span className="data-num text-sm font-bold text-[#d97706]">67</span>
             <ArrowRight size={10} className="text-[#0A1628]/20" />
-            <span className="data-num text-sm font-bold text-[#059669]">94</span>
+            <span className="data-num text-sm font-bold text-[#059669]">84</span>
           </div>
-          <span className="spec-label text-[7px] text-[#059669]">+7 POINTS POSSIBLE</span>
+          <span className="spec-label text-[7px] text-[#059669]">+17 POINTS POSSIBLE</span>
         </div>
         <div className="space-y-1">
           <ActionRow num="1" text="Add JSON-LD product schema" pts="+12" />
@@ -278,7 +278,7 @@ function ReportPreview() {
 
       {/* CTA overlay */}
       <a
-        href="/brand/glossier"
+        href="/brand/nike"
         className="flex items-center justify-center gap-2 py-2.5 bg-[#0259DD] text-white text-xs font-bold hover:bg-[#0249BB] transition-colors"
       >
         View Full Report
