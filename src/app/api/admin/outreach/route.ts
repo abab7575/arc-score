@@ -87,10 +87,66 @@ export async function POST(request: NextRequest) {
     const items = generateOutreachQueue({ maxScore, category, limit });
     const inserted = insertOutreachItems(items);
 
+    // Auto-find emails via Apollo in the background (don't block response)
+    if (process.env.APOLLO_API_KEY && inserted > 0) {
+      import("@/lib/outreach/email-discovery").then(async ({ batchFindContacts }) => {
+        // Get items that need emails (newly inserted, no email yet)
+        const needsEmail = db
+          .select({
+            id: schema.outreach.id,
+            brandId: schema.outreach.brandId,
+          })
+          .from(schema.outreach)
+          .where(eq(schema.outreach.status, "queued"))
+          .all();
+
+        const domains = needsEmail.map((item: { id: number; brandId: number }) => {
+          const brand = db
+            .select({ url: schema.brands.url })
+            .from(schema.brands)
+            .where(eq(schema.brands.id, item.brandId))
+            .get();
+          return { brandId: item.brandId, domain: brand?.url ?? "", outreachId: item.id };
+        }).filter((d: { domain: string }) => d.domain.length > 0);
+
+        // Limit to 10 per batch to conserve credits
+        const maxPerBatch = body.maxCredits ?? 10;
+        const results = await batchFindContacts(
+          domains.slice(0, maxPerBatch),
+          maxPerBatch
+        );
+
+        // Update outreach items with found emails
+        let emailsFound = 0;
+        for (const [brandId, result] of results) {
+          if (result.found && result.contact?.email) {
+            const outreachItem = domains.find((d: { brandId: number }) => d.brandId === brandId);
+            if (outreachItem) {
+              db.update(schema.outreach)
+                .set({
+                  contactEmail: result.contact.email,
+                  contactName: result.contact.name,
+                  contactTitle: result.contact.title,
+                  emailSource: "apollo",
+                  status: "ready",
+                })
+                .where(eq(schema.outreach.id, outreachItem.outreachId))
+                .run();
+              emailsFound++;
+            }
+          }
+        }
+        console.log(`[Outreach] Apollo found ${emailsFound} emails for ${results.size} brands`);
+      }).catch((err) => {
+        console.error("[Outreach] Apollo lookup error:", err);
+      });
+    }
+
     return NextResponse.json({
       generated: items.length,
       inserted,
-      message: `Generated ${items.length} outreach items, inserted ${inserted} new`,
+      apolloEnabled: !!process.env.APOLLO_API_KEY,
+      message: `Generated ${items.length} outreach items, inserted ${inserted} new${process.env.APOLLO_API_KEY ? ". Finding emails via Apollo in background..." : ""}`,
     });
   } catch (error) {
     console.error("Error generating outreach:", error);

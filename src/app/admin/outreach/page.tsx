@@ -69,6 +69,7 @@ export default function OutreachPage() {
   const [filter, setFilter] = useState("all");
   const [editingEmail, setEditingEmail] = useState<number | null>(null);
   const [emailInput, setEmailInput] = useState("");
+  const [findingEmails, setFindingEmails] = useState(false);
 
   async function fetchItems() {
     try {
@@ -155,14 +156,35 @@ export default function OutreachPage() {
             Pre-written emails for every scanned brand. Copy, paste, send.
           </p>
         </div>
-        <button
-          onClick={handleGenerate}
-          disabled={generating}
-          className="flex items-center gap-2 px-4 py-2 bg-[#FF6648] text-white text-sm font-bold hover:bg-[#e85a3f] transition-colors disabled:opacity-50"
-        >
-          <Sparkles size={14} />
-          {generating ? "Generating..." : "Generate Queue"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={async () => {
+              setFindingEmails(true);
+              try {
+                const res = await fetch("/api/admin/outreach/find-emails", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ maxCredits: 10 }),
+                });
+                if (res.ok) await fetchItems();
+              } catch { /* ignore */ }
+              finally { setFindingEmails(false); }
+            }}
+            disabled={findingEmails}
+            className="flex items-center gap-2 px-4 py-2 border border-[#0259DD] text-[#0259DD] text-sm font-bold hover:bg-[#0259DD] hover:text-white transition-colors disabled:opacity-50"
+          >
+            <Search size={14} />
+            {findingEmails ? "Finding..." : "Find Emails (Apollo)"}
+          </button>
+          <button
+            onClick={handleGenerate}
+            disabled={generating}
+            className="flex items-center gap-2 px-4 py-2 bg-[#FF6648] text-white text-sm font-bold hover:bg-[#e85a3f] transition-colors disabled:opacity-50"
+          >
+            <Sparkles size={14} />
+            {generating ? "Generating..." : "Generate Queue"}
+          </button>
+        </div>
       </div>
 
       {/* Stats */}
