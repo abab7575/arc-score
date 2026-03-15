@@ -4,7 +4,7 @@
  * satori: JSX → SVG
  * @resvg/resvg-js: SVG → PNG
  *
- * Saves PNGs to public/content-images/{date}/
+ * Returns PNG buffer for database storage (survives Railway deploys).
  */
 
 import satori from "satori";
@@ -43,10 +43,14 @@ function loadFonts() {
 const WIDTH = 1200;
 const HEIGHT = 675;
 
+/**
+ * Render a React element to a PNG buffer.
+ * Returns { buffer, base64 } so callers can store in DB or write to disk.
+ */
 export async function renderImage(
   element: ReactElement,
   filename: string
-): Promise<string> {
+): Promise<{ buffer: Buffer; base64: string; filename: string }> {
   const fonts = loadFonts();
 
   const svg = await satori(element, {
@@ -64,18 +68,13 @@ export async function renderImage(
     fitTo: { mode: "width", value: WIDTH },
   });
   const pngData = resvg.render();
-  const pngBuffer = pngData.asPng();
+  const pngBuffer = Buffer.from(pngData.asPng());
 
-  // Save to public/content-images/{date}/
-  const dateDir = new Date().toISOString().split("T")[0];
-  const outputDir = path.join(process.cwd(), "public", "content-images", dateDir);
-  fs.mkdirSync(outputDir, { recursive: true });
-
-  const outputPath = path.join(outputDir, filename);
-  fs.writeFileSync(outputPath, pngBuffer);
-
-  // Return the public URL path
-  return `/content-images/${dateDir}/${filename}`;
+  return {
+    buffer: pngBuffer,
+    base64: pngBuffer.toString("base64"),
+    filename,
+  };
 }
 
 export { WIDTH, HEIGHT };

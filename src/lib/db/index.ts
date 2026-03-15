@@ -23,6 +23,7 @@ sqlite.exec(`
     title TEXT NOT NULL,
     body TEXT NOT NULL,
     image_url TEXT,
+    image_data TEXT,
     image_template TEXT,
     status TEXT NOT NULL DEFAULT 'draft',
     metadata TEXT NOT NULL DEFAULT '{}',
@@ -33,6 +34,13 @@ sqlite.exec(`
     posted_at TEXT
   )
 `);
+
+// Auto-migrate: add image_data column if missing (for existing databases)
+try {
+  sqlite.exec(`ALTER TABLE content_queue ADD COLUMN image_data TEXT`);
+} catch {
+  // Column already exists
+}
 
 export const db = drizzle(sqlite, { schema });
 export { schema };

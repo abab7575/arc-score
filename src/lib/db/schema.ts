@@ -162,7 +162,8 @@ export const contentQueue = sqliteTable("content_queue", {
   platform: text("platform").notNull(), // x, linkedin
   title: text("title").notNull(),
   body: text("body").notNull(),
-  imageUrl: text("image_url"), // path to generated PNG in public/content-images/
+  imageUrl: text("image_url"), // path to generated PNG or /api/admin/content-images/{id}
+  imageData: text("image_data"), // base64-encoded PNG for persistent storage
   imageTemplate: text("image_template"), // scorecard, leaderboard, mover-alert, educational, news-react
   status: text("status").notNull().default("draft"), // draft, approved, posted, archived
   metadata: text("metadata").notNull().default("{}"), // JSON: story-specific data

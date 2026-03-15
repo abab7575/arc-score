@@ -1,6 +1,6 @@
 /**
  * Generates images for content queue items that have a template but no image.
- * Called after content generation or as a standalone batch process.
+ * Stores PNG as base64 in the database so images survive Railway deploys.
  */
 
 import React from "react";
@@ -11,8 +11,18 @@ import { eq, and, isNull } from "drizzle-orm";
 // eslint-disable-next-line @typescript-eslint/no-implied-eval
 const dynamicRequire = new Function("mod", "return require(mod)") as (mod: string) => unknown;
 
-function loadRenderer(): { renderImage: (element: React.ReactElement, filename: string) => Promise<string> } {
-  return dynamicRequire("./renderer") as { renderImage: (element: React.ReactElement, filename: string) => Promise<string> };
+function loadRenderer(): {
+  renderImage: (
+    element: React.ReactElement,
+    filename: string
+  ) => Promise<{ buffer: Buffer; base64: string; filename: string }>;
+} {
+  return dynamicRequire("./renderer") as {
+    renderImage: (
+      element: React.ReactElement,
+      filename: string
+    ) => Promise<{ buffer: Buffer; base64: string; filename: string }>;
+  };
 }
 
 function loadTemplates() {
@@ -65,6 +75,7 @@ function buildImageElement(
 
 /**
  * Generate an image for a single content queue item.
+ * Stores the PNG as base64 in the imageData column.
  */
 export async function generateImageForItem(item: {
   id: number;
@@ -89,15 +100,16 @@ export async function generateImageForItem(item: {
   try {
     const { renderImage } = loadRenderer();
     const filename = `content-${item.id}-${item.imageTemplate}.png`;
-    const imageUrl = await renderImage(element, filename);
+    const { base64 } = await renderImage(element, filename);
 
-    // Update the database
+    // Store base64 in DB and set imageUrl to the serving endpoint
+    const imageUrl = `/api/admin/content-images/${item.id}`;
     db.update(schema.contentQueue)
-      .set({ imageUrl })
+      .set({ imageUrl, imageData: base64 })
       .where(eq(schema.contentQueue.id, item.id))
       .run();
 
-    console.log(`[Image Gen] Generated ${imageUrl} for item ${item.id}`);
+    console.log(`[Image Gen] Generated image for item ${item.id} (${Math.round(base64.length / 1024)}KB)`);
     return imageUrl;
   } catch (err) {
     console.error(`[Image Gen] Failed for item ${item.id}:`, err);
@@ -123,7 +135,7 @@ export async function generatePendingImages(): Promise<{
     .from(schema.contentQueue)
     .where(
       and(
-        isNull(schema.contentQueue.imageUrl),
+        isNull(schema.contentQueue.imageData),
         // Only items with a template set
       )
     )
