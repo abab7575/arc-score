@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Store, Newspaper, Rss, GitBranch, Megaphone, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, Store, Newspaper, Rss, GitBranch, Megaphone, Send, Settings, LogOut } from "lucide-react";
 
 const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -11,6 +11,7 @@ const navItems = [
   { href: "/admin/newsfeed", label: "Newsfeed", icon: Rss },
   { href: "/admin/brand-pipeline", label: "Pipeline", icon: GitBranch },
   { href: "/admin/content-studio", label: "Content", icon: Megaphone },
+  { href: "/admin/outreach", label: "Outreach", icon: Send },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 

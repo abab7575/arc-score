@@ -174,6 +174,29 @@ export const contentQueue = sqliteTable("content_queue", {
   postedAt: text("posted_at"),
 });
 
+// ── Admin: Outreach Queue ────────────────────────────────────────────
+
+export const outreach = sqliteTable("outreach", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  brandId: integer("brand_id").notNull().references(() => brands.id),
+  contactEmail: text("contact_email"),
+  contactName: text("contact_name"),
+  contactTitle: text("contact_title"),
+  emailSource: text("email_source"), // hunter, apollo, manual, website
+  subject: text("subject").notNull(),
+  body: text("body").notNull(),
+  brandScore: integer("brand_score").notNull(),
+  brandGrade: text("brand_grade").notNull(),
+  issueCount: integer("issue_count").notNull().default(0),
+  topIssues: text("top_issues").notNull().default("[]"), // JSON array
+  reportUrl: text("report_url").notNull(),
+  status: text("status").notNull().default("queued"), // queued, email_found, ready, sent, replied, converted, skipped
+  notes: text("notes"),
+  sentAt: text("sent_at"),
+  repliedAt: text("replied_at"),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
 // ── Admin: Brand Discovery Pipeline ─────────────────────────────────
 
 export const brandDiscoveries = sqliteTable("brand_discoveries", {
