@@ -1,11 +1,8 @@
 /**
- * Shared Image Frame — Bold, punchy social media infographics
+ * Shared Image Frame — Scroll-stopping social infographics
  *
- * Rules:
- * - No tiny text. Minimum 14px for anything readable.
- * - Fill the space. No dead zones.
- * - Hook → Data → CTA. Every image.
- * - Must be readable at phone-in-feed size (small thumbnail).
+ * The hook is the CONCEPT, not the data.
+ * The data is the PROOF, not the headline.
  */
 
 import React from "react";
@@ -60,14 +57,27 @@ export function ImageFrame({ children }: { children: React.ReactNode }) {
         height: 675,
         display: "flex",
         flexDirection: "column",
-        backgroundColor: COLORS.cream,
+        backgroundColor: COLORS.navy,
         position: "relative",
         overflow: "hidden",
         fontFamily: "Inter",
       }}
     >
+      {/* Subtle gradient mesh */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "radial-gradient(ellipse at 20% 50%, rgba(2,89,221,0.12) 0%, transparent 60%), radial-gradient(ellipse at 85% 30%, rgba(124,58,237,0.08) 0%, transparent 50%)",
+          display: "flex",
+        }}
+      />
+
       {/* Top color strip */}
-      <div style={{ display: "flex", height: 6, width: "100%", flexShrink: 0 }}>
+      <div style={{ display: "flex", height: 5, width: "100%", flexShrink: 0, position: "relative" }}>
         <div style={{ flex: 1, backgroundColor: COLORS.coral, display: "flex" }} />
         <div style={{ flex: 1, backgroundColor: COLORS.mustard, display: "flex" }} />
         <div style={{ flex: 1, backgroundColor: COLORS.cobalt, display: "flex" }} />
@@ -76,7 +86,7 @@ export function ImageFrame({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Content */}
-      <div style={{ display: "flex", flexDirection: "column", flex: 1, padding: "28px 48px 0" }}>
+      <div style={{ display: "flex", flexDirection: "column", flex: 1, padding: "32px 52px 24px", position: "relative" }}>
         {children}
       </div>
 
@@ -86,44 +96,43 @@ export function ImageFrame({ children }: { children: React.ReactNode }) {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "14px 48px",
-          backgroundColor: COLORS.navy,
+          padding: "12px 52px",
+          borderTop: "1px solid rgba(255,255,255,0.08)",
           flexShrink: 0,
+          position: "relative",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 26, height: 26, backgroundColor: COLORS.coral }}>
-            <span style={{ fontFamily: "JetBrains Mono", fontSize: 11, fontWeight: 700, color: COLORS.white }}>RS</span>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, backgroundColor: COLORS.coral }}>
+            <span style={{ fontFamily: "JetBrains Mono", fontSize: 10, fontWeight: 700, color: COLORS.white }}>RS</span>
           </div>
-          <span style={{ fontSize: 15, fontWeight: 800, color: COLORS.white }}>Robot Shopper</span>
-          <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginLeft: 4 }}>We test if AI agents can shop your site</span>
+          <span style={{ fontSize: 14, fontWeight: 800, color: COLORS.cream }}>Robot Shopper</span>
         </div>
-        <span style={{ fontFamily: "JetBrains Mono", fontSize: 13, color: "rgba(255,255,255,0.5)", letterSpacing: "0.03em" }}>robotshopper.com</span>
+        <span style={{ fontFamily: "JetBrains Mono", fontSize: 12, color: "rgba(255,248,240,0.35)", letterSpacing: "0.03em" }}>robotshopper.com</span>
       </div>
+    </div>
+  );
+}
+
+// ── Score Pill ──────────────────────────────────────────────
+
+export function ScorePill({ score, size = "md" }: { score: number; size?: "sm" | "md" | "lg" }) {
+  const color = getScoreColor(score);
+  const dims = size === "lg" ? { w: 72, h: 72, fs: 32 } : size === "md" ? { w: 48, h: 48, fs: 22 } : { w: 32, h: 32, fs: 14 };
+  return (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: dims.w, height: dims.h, backgroundColor: color, borderRadius: 8, fontFamily: "JetBrains Mono", fontSize: dims.fs, fontWeight: 700, color: COLORS.white }}>
+      {score}
     </div>
   );
 }
 
 // ── Score Bar ──────────────────────────────────────────────
 
-export function ScoreBar({ score, width = 300, height = 16 }: { score: number; width?: number; height?: number }) {
+export function ScoreBar({ score, width = 300, height = 14 }: { score: number; width?: number; height?: number }) {
   const fillWidth = Math.round((score / 100) * width);
   return (
-    <div style={{ display: "flex", width, height, backgroundColor: COLORS.lightGray, borderRadius: 4, overflow: "hidden" }}>
+    <div style={{ display: "flex", width, height, backgroundColor: "rgba(255,255,255,0.08)", borderRadius: 4, overflow: "hidden" }}>
       <div style={{ width: fillWidth, height, backgroundColor: getScoreColor(score), borderRadius: 4, display: "flex" }} />
-    </div>
-  );
-}
-
-// ── Grade Badge ──────────────────────────────────────────────
-
-export function GradeBadge({ grade, size = "md" }: { grade: string; size?: "sm" | "md" | "lg" }) {
-  const color = getScoreColor(grade === "A" ? 90 : grade === "B" ? 75 : grade === "C" ? 55 : grade === "D" ? 35 : 15);
-  const dims = size === "lg" ? 52 : size === "md" ? 36 : 26;
-  const fontSize = size === "lg" ? 26 : size === "md" ? 18 : 13;
-  return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: dims, height: dims, backgroundColor: color, borderRadius: 6, fontFamily: "JetBrains Mono", fontSize, fontWeight: 700, color: COLORS.white }}>
-      {grade}
     </div>
   );
 }
