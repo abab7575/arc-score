@@ -57,25 +57,24 @@ export default function AdminDashboardPage() {
     setLoading(true);
     try {
       const res = await fetch("/api/admin/dashboard");
-      const json = await res.json();
-      setData(json);
+      if (res.ok) {
+        const json = await res.json();
+        setData(json);
+      } else {
+        setData({ lastScanAt: null, totalBrands: 0, avgScore: 0, todayScans: 0, dailyBrief: null, recentScans: [] });
+      }
     } catch {
-      setData({
-        lastScanAt: null,
-        totalBrands: 0,
-        avgScore: 0,
-        todayScans: 0,
-        dailyBrief: null,
-        recentScans: [],
-      });
+      setData({ lastScanAt: null, totalBrands: 0, avgScore: 0, todayScans: 0, dailyBrief: null, recentScans: [] });
     }
     setLoading(false);
   }
 
   async function triggerFullScan() {
     setScanning(true);
-    await fetch("/api/cron/daily-scan?force=true", { method: "POST" });
-    setScanning(false);
+    try {
+      await fetch("/api/cron/daily-scan?force=true", { method: "POST" });
+    } catch { /* ignore */ }
+    finally { setScanning(false); }
   }
 
   useEffect(() => { fetchData(); }, []);

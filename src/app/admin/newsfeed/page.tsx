@@ -91,8 +91,18 @@ export default function NewsfeedPage() {
     setScanResult(null);
     try {
       const res = await fetch("/api/admin/news/scan", { method: "POST" });
+      if (!res.ok) {
+        setScanResult({
+          totalItems: 0,
+          newArticles: 0,
+          highRelevance: 0,
+          newSuggestions: 0,
+          errors: [`Scan failed (HTTP ${res.status})`],
+        });
+        return;
+      }
       const result: ScanResult = await res.json();
-      setScanResult(result);
+      setScanResult({ ...result, errors: result.errors ?? [] });
       await fetchItems();
     } catch {
       setScanResult({
@@ -108,21 +118,25 @@ export default function NewsfeedPage() {
   }
 
   async function handleMarkRead(id: number, read: boolean) {
-    await fetch(`/api/admin/news/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ read }),
-    });
-    setItems((prev) => prev.map((a) => (a.id === id ? { ...a, read } : a)));
+    try {
+      await fetch(`/api/admin/news/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ read }),
+      });
+      setItems((prev) => prev.map((a) => (a.id === id ? { ...a, read } : a)));
+    } catch { /* ignore */ }
   }
 
   async function handleToggleFlag(id: number, flagged: boolean) {
-    await fetch(`/api/admin/news/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ flagged }),
-    });
-    setItems((prev) => prev.map((a) => (a.id === id ? { ...a, flagged } : a)));
+    try {
+      await fetch(`/api/admin/news/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ flagged }),
+      });
+      setItems((prev) => prev.map((a) => (a.id === id ? { ...a, flagged } : a)));
+    } catch { /* ignore */ }
   }
 
   function handleSearch(e: React.FormEvent) {
@@ -166,7 +180,7 @@ export default function NewsfeedPage() {
       {scanResult && (
         <div
           className={`rounded-xl px-5 py-4 text-sm ${
-            scanResult.errors.length > 0 && scanResult.newArticles === 0
+            (scanResult.errors?.length ?? 0) > 0 && scanResult.newArticles === 0
               ? "bg-red-500/10 border border-red-500/20 text-red-600"
               : "bg-emerald-500/10 border border-emerald-500/20 text-emerald-600"
           }`}

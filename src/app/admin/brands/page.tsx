@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   Search,
   Plus,
@@ -9,7 +10,6 @@ import {
   ToggleRight,
   CheckCircle,
   XCircle,
-  ChevronDown,
 } from "lucide-react";
 
 interface Brand {
@@ -84,47 +84,59 @@ export default function AdminBrandsPage() {
   async function handleAddBrand(e: React.FormEvent) {
     e.preventDefault();
     setAdding(true);
-    await fetch("/api/admin/brands", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: newName,
-        url: newUrl,
-        category: newCategory,
-        productUrl: newProductUrl || undefined,
-      }),
-    });
-    setNewName("");
-    setNewUrl("");
-    setNewProductUrl("");
-    setAdding(false);
-    await fetchBrands();
-    setTab("brands");
+    try {
+      const res = await fetch("/api/admin/brands", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: newName,
+          url: newUrl,
+          category: newCategory,
+          productUrl: newProductUrl || undefined,
+        }),
+      });
+      if (res.ok) {
+        setNewName("");
+        setNewUrl("");
+        setNewProductUrl("");
+        await fetchBrands();
+        setTab("brands");
+      }
+    } catch { /* ignore */ }
+    finally { setAdding(false); }
   }
 
   async function toggleActive(id: number, active: boolean) {
-    await fetch(`/api/admin/brands/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ active }),
-    });
-    setBrands((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, active } : b))
-    );
+    try {
+      await fetch(`/api/admin/brands/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ active }),
+      });
+      setBrands((prev) =>
+        prev.map((b) => (b.id === id ? { ...b, active } : b))
+      );
+    } catch { /* ignore */ }
   }
 
   async function triggerScan(id: number) {
-    await fetch(`/api/admin/brands/${id}/scan`, { method: "POST" });
+    try {
+      await fetch(`/api/admin/brands/${id}/scan`, { method: "POST" });
+    } catch { /* ignore */ }
   }
 
   async function handleSubmission(id: number, status: "approved" | "rejected") {
-    await fetch(`/api/admin/submissions/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
-    setSubmissions((prev) => prev.filter((s) => s.id !== id));
-    if (status === "approved") await fetchBrands();
+    try {
+      const res = await fetch(`/api/admin/submissions/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      if (res.ok) {
+        setSubmissions((prev) => prev.filter((s) => s.id !== id));
+        if (status === "approved") await fetchBrands();
+      }
+    } catch { /* ignore */ }
   }
 
   const filtered = brands
@@ -227,9 +239,12 @@ export default function AdminBrandsPage() {
                       {brand.latestGrade ?? "–"}
                     </span>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">
+                      <Link
+                        href={`/brand/${brand.slug}`}
+                        className="text-sm font-medium text-foreground hover:text-[#0259DD] transition-colors truncate block"
+                      >
                         {brand.name}
-                      </p>
+                      </Link>
                       <p className="text-xs text-muted-foreground/60">
                         {brand.category} · {brand.slug}
                       </p>

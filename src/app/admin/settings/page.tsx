@@ -72,19 +72,23 @@ export default function SettingsPage() {
   }, []);
 
   async function handleToggleSource(id: number, active: boolean) {
-    await fetch(`/api/admin/sources/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ active }),
-    });
-    setSources((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, active } : s))
-    );
+    try {
+      await fetch(`/api/admin/sources/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ active }),
+      });
+      setSources((prev) =>
+        prev.map((s) => (s.id === id ? { ...s, active } : s))
+      );
+    } catch { /* ignore */ }
   }
 
   async function handleDeleteSource(id: number) {
-    await fetch(`/api/admin/sources/${id}`, { method: "DELETE" });
-    setSources((prev) => prev.filter((s) => s.id !== id));
+    try {
+      await fetch(`/api/admin/sources/${id}`, { method: "DELETE" });
+      setSources((prev) => prev.filter((s) => s.id !== id));
+    } catch { /* ignore */ }
   }
 
   // Group sources by type
