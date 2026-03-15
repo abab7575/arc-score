@@ -4,20 +4,25 @@ import { verifySessionToken, SESSION_COOKIE_NAME } from "@/lib/auth";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Only protect /admin/* routes (except login)
-  if (!pathname.startsWith("/admin")) return NextResponse.next();
-  if (pathname === "/admin/login") return NextResponse.next();
+  // Protect /admin/* pages (except login)
+  if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
+    const token = request.cookies.get(SESSION_COOKIE_NAME)?.value;
+    if (!token || !(await verifySessionToken(token))) {
+      return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
+  }
 
-  const token = request.cookies.get(SESSION_COOKIE_NAME)?.value;
-
-  if (!token || !(await verifySessionToken(token))) {
-    const loginUrl = new URL("/admin/login", request.url);
-    return NextResponse.redirect(loginUrl);
+  // Protect /api/admin/* routes (except login/logout)
+  if (pathname.startsWith("/api/admin") && !pathname.startsWith("/api/admin/login") && !pathname.startsWith("/api/admin/logout")) {
+    const token = request.cookies.get(SESSION_COOKIE_NAME)?.value;
+    if (!token || !(await verifySessionToken(token))) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/api/admin/:path*"],
 };

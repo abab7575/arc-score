@@ -70,6 +70,26 @@ function CheckoutSuccessContent() {
     );
   }
 
+  if (!sessionId) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main className="max-w-md mx-auto px-4 py-16 text-center">
+          <h1 className="text-2xl font-black text-foreground mb-2">
+            No checkout session found
+          </h1>
+          <p className="text-muted-foreground mb-6">
+            This page requires a valid checkout session. If you just completed a payment, check your email for confirmation.
+          </p>
+          <a href="/pricing" className="text-sm font-bold text-[#0259DD] hover:underline">
+            Back to Pricing
+          </a>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
