@@ -80,12 +80,16 @@ export function ContentFeed() {
   async function handleRegenerateImages() {
     setRegenerating(true);
     try {
-      const res = await fetch("/api/admin/content-queue/render-images?regenerate=true", { method: "POST" });
+      const res = await fetch("/api/admin/content-queue/render-images?limit=20", { method: "POST" });
       const data = await res.json();
-      console.log("Regenerated images:", data);
+      if (data.error) {
+        alert(`Image generation error: ${data.detail || data.error}`);
+      } else {
+        alert(`Generated ${data.generated} images. ${data.remaining} remaining — click again for more.`);
+      }
       await fetchQueue();
-    } catch {
-      // silent fail
+    } catch (err) {
+      alert("Failed to connect to image generation API");
     } finally {
       setRegenerating(false);
     }
