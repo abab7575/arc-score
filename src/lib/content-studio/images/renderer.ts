@@ -1,80 +1,81 @@
 /**
- * Image Generation Pipeline
+ * Image Generation Pipeline — Nano Banana Pro (Google Gemini)
  *
- * satori: JSX → SVG
- * @resvg/resvg-js: SVG → PNG
- *
- * Returns PNG buffer for database storage (survives Railway deploys).
+ * Generates professional infographic images using AI image generation
+ * instead of Satori JSX templates. Much higher visual quality.
  */
 
-import satori from "satori";
-import { Resvg } from "@resvg/resvg-js";
-import fs from "fs";
-import path from "path";
-import type { ReactElement } from "react";
+import { GoogleGenAI } from "@google/genai";
 
-// ── Font Loading ──────────────────────────────────────────────────
+const MODEL = "gemini-3-pro-image-preview";
 
-const FONTS_DIR = path.join(process.cwd(), "public", "fonts");
+const BRAND_STYLE = `
+CRITICAL DESIGN REQUIREMENTS — follow these EXACTLY:
+- Style: Clean, modern infographic. Premium feel. Magazine-quality layout.
+- Background: Warm cream/off-white (#FFF8F0)
+- Primary text: Dark navy (#0A1628)
+- Accent colors: Coral red (#FF6648), Cobalt blue (#0259DD), Mustard yellow (#FBBA16), Emerald green (#059669), Violet (#7C3AED)
+- Top edge: A thin 5px multi-color stripe across the full width (coral, mustard, cobalt, violet, emerald — left to right)
+- Bottom bar: Navy (#0A1628) footer with "Robot Shopper" in white and "robotshopper.com" in coral
+- Typography: Clean sans-serif. Headlines must be LARGE and BOLD (like 40pt+). Body text at least 16pt.
+- Layout: Use the FULL canvas. No dead space. Fill the frame.
+- Dimensions: Landscape 16:9 aspect ratio
+- NO clip art, NO stock photo style, NO cartoons. Clean data visualization and typography only.
+- Text must be crisp and fully readable — this is an infographic, not an illustration.
+`;
 
-let fontsLoaded = false;
-let fontData: {
-  interRegular: ArrayBuffer;
-  interBold: ArrayBuffer;
-  interBlack: ArrayBuffer;
-  jetBrainsBold: ArrayBuffer;
-} | null = null;
-
-function loadFonts() {
-  if (fontsLoaded && fontData) return fontData;
-
-  fontData = {
-    interRegular: fs.readFileSync(path.join(FONTS_DIR, "Inter-Regular.ttf")).buffer as ArrayBuffer,
-    interBold: fs.readFileSync(path.join(FONTS_DIR, "Inter-Bold.ttf")).buffer as ArrayBuffer,
-    interBlack: fs.readFileSync(path.join(FONTS_DIR, "Inter-Black.ttf")).buffer as ArrayBuffer,
-    jetBrainsBold: fs.readFileSync(path.join(FONTS_DIR, "JetBrainsMono-Bold.ttf")).buffer as ArrayBuffer,
-  };
-  fontsLoaded = true;
-  return fontData;
+function getClient(): GoogleGenAI | null {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    console.warn("[Image Gen] No GEMINI_API_KEY — skipping image generation");
+    return null;
+  }
+  return new GoogleGenAI({ apiKey });
 }
 
-// ── Core Render Pipeline ──────────────────────────────────────────
-
-const WIDTH = 1200;
-const HEIGHT = 675;
-
-/**
- * Render a React element to a PNG buffer.
- * Returns { buffer, base64 } so callers can store in DB or write to disk.
- */
 export async function renderImage(
-  element: ReactElement,
+  prompt: string,
   filename: string
 ): Promise<{ buffer: Buffer; base64: string; filename: string }> {
-  const fonts = loadFonts();
+  const client = getClient();
+  if (!client) {
+    throw new Error("GEMINI_API_KEY not configured");
+  }
 
-  const svg = await satori(element, {
-    width: WIDTH,
-    height: HEIGHT,
-    fonts: [
-      { name: "Inter", data: fonts.interRegular, weight: 400, style: "normal" },
-      { name: "Inter", data: fonts.interBold, weight: 700, style: "normal" },
-      { name: "Inter", data: fonts.interBlack, weight: 900, style: "normal" },
-      { name: "JetBrains Mono", data: fonts.jetBrainsBold, weight: 700, style: "normal" },
-    ],
+  const fullPrompt = `Create a professional social media infographic image.\n\n${BRAND_STYLE}\n\nCONTENT TO SHOW:\n${prompt}`;
+
+  const response = await client.models.generateContent({
+    model: MODEL,
+    contents: fullPrompt,
+    config: {
+      responseModalities: ["TEXT", "IMAGE"],
+      imageConfig: {
+        aspectRatio: "16:9",
+      },
+    },
   });
 
-  const resvg = new Resvg(svg, {
-    fitTo: { mode: "width", value: WIDTH },
-  });
-  const pngData = resvg.render();
-  const pngBuffer = Buffer.from(pngData.asPng());
+  // Extract image from response
+  const candidates = response.candidates;
+  if (!candidates || candidates.length === 0) {
+    throw new Error("No candidates in response");
+  }
 
-  return {
-    buffer: pngBuffer,
-    base64: pngBuffer.toString("base64"),
-    filename,
-  };
+  const parts = candidates[0].content?.parts;
+  if (!parts) {
+    throw new Error("No parts in response");
+  }
+
+  for (const part of parts) {
+    if (part.inlineData?.data) {
+      const base64 = part.inlineData.data;
+      const buffer = Buffer.from(base64, "base64");
+      return { buffer, base64, filename };
+    }
+  }
+
+  throw new Error("No image data in response");
 }
 
-export { WIDTH, HEIGHT };
+export const WIDTH = 1200;
+export const HEIGHT = 675;
