@@ -147,8 +147,55 @@ export default function OutreachPage() {
     );
   }
 
+  const readyCount = items.filter((i) => i.status === "ready").length;
+  const queuedCount = items.filter((i) => i.status === "queued").length;
+
   return (
     <div className="space-y-6">
+      {/* Quick-start guide — only show when queue is empty or has actionable items */}
+      {items.length === 0 ? (
+        <div className="border-2 border-dashed border-[#FF6648]/30 bg-[#FF6648]/5 p-6">
+          <h2 className="text-base font-bold text-foreground mb-3">Get started in 3 steps</h2>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="flex gap-3">
+              <span className="data-num text-lg font-black text-[#FF6648]">1</span>
+              <div>
+                <p className="text-sm font-semibold text-foreground">Generate Queue</p>
+                <p className="text-xs text-muted-foreground">Click the button below. Creates pre-written emails for all brands scoring under 70.</p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="data-num text-lg font-black text-[#0259DD]">2</span>
+              <div>
+                <p className="text-sm font-semibold text-foreground">Find Emails</p>
+                <p className="text-xs text-muted-foreground">Apollo auto-finds contacts. Click &quot;Find Emails&quot; for more. Uses 1 credit per lookup.</p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="data-num text-lg font-black text-[#059669]">3</span>
+              <div>
+                <p className="text-sm font-semibold text-foreground">Copy &amp; Send</p>
+                <p className="text-xs text-muted-foreground">Open a card. Copy subject + body. Paste into your email. Send. Mark as sent.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : readyCount > 0 ? (
+        <div className="flex items-center gap-3 px-4 py-3 bg-[#059669]/10 border border-[#059669]/20">
+          <span className="text-sm">
+            <strong className="text-[#059669]">{readyCount} emails ready to send.</strong>
+            {" "}Expand a card below → copy subject + body → paste into your email → send → mark as sent.
+          </span>
+        </div>
+      ) : queuedCount > 0 ? (
+        <div className="flex items-center gap-3 px-4 py-3 bg-[#0259DD]/10 border border-[#0259DD]/20">
+          <span className="text-sm">
+            <strong className="text-[#0259DD]">{queuedCount} brands need emails.</strong>
+            {" "}Click &quot;Find Emails (Apollo)&quot; to auto-discover contacts, or add emails manually.
+          </span>
+        </div>
+      ) : null}
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-foreground">Outreach</h1>
