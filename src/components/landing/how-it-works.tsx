@@ -8,6 +8,7 @@ import {
   CreditCard,
   Database,
   Accessibility,
+  Eye,
   Play,
   FileText,
   BarChart3,
@@ -39,7 +40,7 @@ const checks = [
   },
 ];
 
-/* ─── Three agents ─── */
+/* ─── Five scanning agents ─── */
 
 const agents = [
   {
@@ -68,6 +69,24 @@ const agents = [
     color: "text-violet-600",
     bg: "bg-violet-50",
     border: "border-violet-100",
+  },
+  {
+    icon: Eye,
+    label: "Visual Agent",
+    detail:
+      "Takes screenshots and uses AI vision to identify buttons, prices, and CTAs — testing what multimodal agents actually see.",
+    color: "text-amber-600",
+    bg: "bg-amber-50",
+    border: "border-amber-100",
+  },
+  {
+    icon: Database,
+    label: "Feed Agent",
+    detail:
+      "Tests product feeds — Google Merchant, Shopify JSON, RSS — for completeness and accuracy.",
+    color: "text-emerald-600",
+    bg: "bg-emerald-50",
+    border: "border-emerald-100",
   },
 ];
 
@@ -156,7 +175,7 @@ export function HowItWorks() {
         ))}
       </div>
 
-      {/* ─── Three agents ─── */}
+      {/* ─── Five scanning agents ─── */}
       <div className="text-center mb-8 sm:mb-10">
         <motion.h3
           className="text-base sm:text-lg font-bold text-gray-900 mb-2"
@@ -164,7 +183,7 @@ export function HowItWorks() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          Three agents. Three perspectives.
+          Five agents. Five perspectives.
         </motion.h3>
         <motion.p
           className="text-sm text-gray-500 max-w-md mx-auto"
@@ -178,7 +197,7 @@ export function HowItWorks() {
         </motion.p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-16 sm:mb-20">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-16 sm:mb-20">
         {agents.map((a, i) => (
           <motion.div
             key={a.label}

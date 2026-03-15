@@ -182,13 +182,13 @@ export default function MethodologyPage() {
                 <span className="text-[#0259DD] text-lg">&#9881;</span>
               </div>
               <h3 className="text-sm font-semibold text-foreground mb-1">
-                10 agents, 10 lenses
+                5 agents, 10 lenses
               </h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                The overall score uses our default weights. But each AI agent
-                — ChatGPT Shopping, Amazon Buy For Me, Claude Computer Use —
-                has its own weight profile. A site that&apos;s great for feed
-                agents might fail browser agents.
+                We send 5 specialized agents to test every site. Then we score
+                the results through 10 AI shopping agent lenses — ChatGPT
+                Shopping, Amazon Buy For Me, Claude Computer Use and more.
+                A site that&apos;s great for feed agents might fail browser agents.
               </p>
             </div>
             <div className="rounded-xl border border-gray-200 p-5">
@@ -358,13 +358,14 @@ export default function MethodologyPage() {
         {/* ── 10 AI Agent Profiles ─────────────────────────────── */}
         <section className="mb-16">
           <h2 className="text-xl font-bold text-foreground mb-2">
-            10 AI shopping agents
+            10 AI shopping agent lenses
           </h2>
           <p className="text-sm text-muted-foreground mb-6">
-            Each agent has a different weight profile based on how it actually
-            works. Feed agents care most about structured data. Browser agents
-            care about clickable UI. A site can score 90 for one agent and 40
-            for another.
+            We score every site through 10 real-world AI shopping agent
+            lenses. Each has a different weight profile based on how it
+            actually works. Feed agents care most about structured data.
+            Browser agents care about clickable UI. A site can score 90
+            for one agent and 40 for another.
           </p>
 
           {/* Feed agents */}

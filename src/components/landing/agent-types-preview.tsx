@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Globe, Database, Eye } from "lucide-react";
+import { Globe, Database, Eye, Camera, Rss } from "lucide-react";
 
 const agents = [
   {
@@ -37,18 +37,40 @@ const agents = [
       "Focus management and traps",
     ],
   },
+  {
+    icon: Camera,
+    name: "Visual Agent",
+    simulates: "Multimodal AI agents using vision",
+    tests: [
+      "Can AI vision find the buy button?",
+      "Is pricing visually clear?",
+      "Desktop vs mobile rendering",
+      "Visual clutter affecting navigation",
+    ],
+  },
+  {
+    icon: Rss,
+    name: "Feed Agent",
+    simulates: "AI shopping platforms reading feeds",
+    tests: [
+      "Google Merchant product feed",
+      "Shopify JSON product data",
+      "Feed field completeness",
+      "Price and availability accuracy",
+    ],
+  },
 ];
 
 export function AgentTypesPreview() {
   return (
     <section className="py-20">
       <h2 className="text-xl font-semibold text-foreground text-center mb-3">
-        Three agents, three perspectives
+        Five agents, five perspectives
       </h2>
       <p className="text-sm text-muted-foreground text-center mb-12 max-w-lg mx-auto">
-        Personal AI agents interact with sites in different ways. We test all three to give you complete coverage.
+        Personal AI agents interact with sites in different ways. We test all five to give you complete coverage.
       </p>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {agents.map((agent, i) => (
           <motion.div
             key={agent.name}

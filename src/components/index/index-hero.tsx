@@ -426,12 +426,12 @@ function WhyItMatters() {
               <TrendingUp size={16} className="text-white" />
             </div>
             <h3 className="text-sm font-bold text-foreground mb-1.5">
-              10 agents, 10 different ways in
+              5 agents, 10 scoring lenses
             </h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Some agents read your data feeds. Some open a browser and click.
-              Some take screenshots and use vision AI. Your site needs to work
-              for all of them — not just one.
+              We send 5 specialized agents to test your site — browser, data,
+              accessibility, visual, and feed. Then we score through 10 real AI
+              shopping agent lenses. Your site needs to work for all of them.
             </p>
           </div>
 
@@ -452,7 +452,7 @@ function WhyItMatters() {
 
         {/* 10 AI agents ticker */}
         <div className="flex items-center gap-3 mb-4">
-          <span className="spec-label text-muted-foreground text-[9px]">WE TEST AGAINST 10 REAL AI SHOPPING AGENTS</span>
+          <span className="spec-label text-muted-foreground text-[9px]">WE SCORE AGAINST 10 REAL AI SHOPPING AGENT LENSES</span>
           <div className="flex-1 h-px bg-[#E8E0D8]" />
         </div>
 
