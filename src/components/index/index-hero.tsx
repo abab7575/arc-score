@@ -84,13 +84,13 @@ export function IndexHero({ onSearch }: IndexHeroProps) {
                   <div className="w-5 h-5 bg-[#FF6648] flex items-center justify-center shrink-0">
                     <Eye size={11} className="text-white" />
                   </div>
-                  <span><strong className="text-[#0A1628]/70">See</strong> where agents get stuck</span>
+                  <span><strong className="text-[#0A1628]/70">Watch</strong> agents shop your site</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-[#0A1628]/50">
                   <div className="w-5 h-5 bg-[#0259DD] flex items-center justify-center shrink-0">
                     <AlertTriangle size={11} className="text-white" />
                   </div>
-                  <span><strong className="text-[#0A1628]/70">Find</strong> what&apos;s broken</span>
+                  <span><strong className="text-[#0A1628]/70">See</strong> where they get stuck</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-[#0A1628]/50">
                   <div className="w-5 h-5 bg-[#059669] flex items-center justify-center shrink-0">
@@ -138,8 +138,9 @@ export function IndexHero({ onSearch }: IndexHeroProps) {
               </div>
             </div>
 
-            {/* Right — Product Preview */}
-            <div className="w-full max-w-sm lg:max-w-[420px] shrink-0">
+            {/* Right — Agent Replay Preview + Report */}
+            <div className="w-full max-w-sm lg:max-w-[420px] shrink-0 space-y-3">
+              <AgentReplayPreview />
               <ReportPreview />
             </div>
           </div>
@@ -173,6 +174,152 @@ export function IndexHero({ onSearch }: IndexHeroProps) {
       {/* ── Why It Matters ──────────────────────────────────────────── */}
       <WhyItMatters />
     </>
+  );
+}
+
+/* ── Agent Replay Preview — the "oh shit" moment ─────────────────────── */
+
+function AgentReplayPreview() {
+  return (
+    <div className="relative overflow-hidden bg-[#0A1628] border-2 border-[#0A1628]/20" style={{ boxShadow: "6px 6px 0 rgba(10,22,40,0.08)" }}>
+      {/* Browser chrome */}
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-white/10 bg-[#0A1628]">
+        <div className="flex gap-1.5">
+          <div className="w-2 h-2 rounded-full bg-[#FF6648]/60" />
+          <div className="w-2 h-2 rounded-full bg-[#FBBA16]/60" />
+          <div className="w-2 h-2 rounded-full bg-[#059669]/60" />
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <span className="spec-label text-[7px] text-white/25">nike.com/checkout</span>
+        </div>
+      </div>
+
+      {/* Fake website screenshot area */}
+      <div className="relative" style={{ height: 200, background: "linear-gradient(180deg, #1a1a2e 0%, #16213e 100%)" }}>
+        {/* Fake checkout form elements */}
+        <div className="absolute inset-0 p-4">
+          {/* Fake nav bar */}
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-12 h-3 bg-white/10 rounded" />
+            <div className="flex-1" />
+            <div className="w-6 h-3 bg-white/8 rounded" />
+            <div className="w-6 h-3 bg-white/8 rounded" />
+          </div>
+          {/* Fake form */}
+          <div className="max-w-[200px] mx-auto space-y-2">
+            <div className="w-20 h-2.5 bg-white/15 rounded" />
+            <div className="w-full h-5 bg-white/8 rounded border border-white/10" />
+            <div className="w-16 h-2.5 bg-white/15 rounded" />
+            <div className="w-full h-5 bg-white/8 rounded border border-white/10" />
+            <div className="flex gap-2">
+              <div className="flex-1 h-5 bg-white/8 rounded border border-white/10" />
+              <div className="w-16 h-5 bg-white/8 rounded border border-white/10" />
+            </div>
+            <div className="w-24 h-2.5 bg-white/15 rounded mt-1" />
+            <div className="w-full h-7 bg-white/5 rounded border border-white/10 flex items-center justify-center">
+              <span className="text-[8px] text-white/20">Sign in to continue</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Vignette/spotlight effect */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: "radial-gradient(circle 60px at 65% 72%, transparent 0%, rgba(10,22,40,0.7) 100%)",
+          }}
+        />
+
+        {/* Cursor */}
+        <div className="absolute" style={{ left: "63%", top: "68%", transform: "translate(-2px, -2px)" }}>
+          {/* Cursor arrow */}
+          <svg width="14" height="18" viewBox="0 0 14 18" fill="none" style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }}>
+            <path d="M1 1L1 15L5 11L9 17L11 16L7 10L13 9L1 1Z" fill="#4f46e5" stroke="white" strokeWidth="1.5" />
+          </svg>
+          {/* Red ripple */}
+          <div
+            className="absolute rounded-full border-2 border-[#dc2626]"
+            style={{
+              width: 24, height: 24, top: -4, left: -4,
+              opacity: 0.5,
+              animation: "pulse-ring 2s ease-out infinite",
+            }}
+          />
+        </div>
+
+        {/* STUCK label with glitch effect */}
+        <div className="absolute" style={{ left: "53%", top: "52%", transform: "translateX(-50%)" }}>
+          <span
+            className="font-mono text-sm font-bold tracking-widest text-[#dc2626]"
+            style={{
+              textShadow: "2px 0 #FF6648, -2px 0 #0259DD",
+              animation: "glitch 3s infinite",
+            }}
+          >
+            STUCK
+          </span>
+        </div>
+
+        {/* Thought bubble */}
+        <div className="absolute bg-white/95 backdrop-blur-sm rounded-lg border border-[#dc2626]/30 px-2.5 py-1.5 max-w-[160px]"
+          style={{ right: 12, top: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}
+        >
+          <span className="text-[9px] leading-relaxed">
+            <strong className="text-[#dc2626]">Agent:</strong>{" "}
+            <span className="text-[#0A1628]/70">Looking for guest checkout... no option found. Login required.</span>
+          </span>
+        </div>
+      </div>
+
+      {/* Step progress bar */}
+      <div className="px-3 py-2.5 border-t border-white/10 flex items-center gap-3">
+        <div className="flex items-center gap-1">
+          <StepDot result="pass" />
+          <StepDot result="pass" />
+          <StepDot result="pass" />
+          <StepDot result="partial" />
+          <StepDot result="fail" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <span className="text-[9px] font-semibold text-white/70">ChatGPT Operator</span>
+          <span className="text-[9px] text-white/30 ml-1">· Step 5/5</span>
+        </div>
+        <span className="spec-label text-[7px] text-[#dc2626]">BLOCKED</span>
+      </div>
+
+      {/* Human vs Agent gap */}
+      <div className="px-3 py-2.5 border-t border-white/10 bg-[#0A1628]">
+        <div className="flex items-center gap-1.5 mb-2">
+          <Eye size={9} className="text-[#FBBA16]" />
+          <span className="spec-label text-[7px] text-[#FBBA16]">HUMAN VS AGENT GAP</span>
+        </div>
+        <div className="space-y-1.5">
+          <div className="flex items-start gap-1.5">
+            <CheckCircle2 size={9} className="text-[#059669] shrink-0 mt-0.5" />
+            <span className="text-[9px] text-white/50">Human sees a login form and creates an account</span>
+          </div>
+          <div className="flex items-start gap-1.5">
+            <XCircle size={9} className="text-[#dc2626] shrink-0 mt-0.5" />
+            <span className="text-[9px] text-white/50">Agent can&apos;t create accounts — needs guest checkout</span>
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes pulse-ring {
+          0% { transform: scale(1); opacity: 0.5; }
+          50% { transform: scale(2); opacity: 0; }
+          100% { transform: scale(1); opacity: 0; }
+        }
+        @keyframes glitch {
+          0%, 90%, 100% { transform: translateX(-50%); }
+          92% { transform: translateX(calc(-50% + 2px)); }
+          94% { transform: translateX(calc(-50% - 3px)); }
+          96% { transform: translateX(calc(-50% + 1px)); }
+          98% { transform: translateX(-50%); }
+        }
+      `}</style>
+    </div>
   );
 }
 
@@ -228,31 +375,6 @@ function ReportPreview() {
             <div className="flex items-center gap-1.5 mt-1.5">
               <span className="spec-label text-[7px] px-1.5 py-0.5 bg-[#ea580c]/10 text-[#ea580c]">HIGH</span>
               <span className="spec-label text-[7px] px-1.5 py-0.5 bg-[#059669]/10 text-[#059669]">+12 PTS IF FIXED</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Agent journey preview — shows the "replay" value */}
-      <div className="px-5 py-3 border-b border-[#0A1628]/5">
-        <div className="spec-label text-[7px] text-[#0A1628]/30 mb-2">AGENT JOURNEY</div>
-        <div className="flex items-center gap-2">
-          {/* Step dots */}
-          <div className="flex items-center gap-1">
-            <StepDot result="pass" />
-            <StepDot result="pass" />
-            <StepDot result="pass" />
-            <StepDot result="partial" />
-            <StepDot result="fail" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5">
-              <Bot size={10} className="text-[#0259DD] shrink-0" />
-              <span className="text-[10px] font-semibold text-[#0A1628] truncate">ChatGPT Operator trying to checkout...</span>
-            </div>
-            <div className="flex items-center gap-1 mt-0.5">
-              <XCircle size={9} className="text-[#dc2626]" />
-              <span className="text-[9px] text-[#dc2626]">Stuck on payment form — no guest checkout</span>
             </div>
           </div>
         </div>
@@ -481,7 +603,8 @@ function WhyItMatters() {
             <h3 className="text-sm font-bold text-foreground mb-1.5">Lost sales you can&apos;t see</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
               When an AI agent fails to buy on your site, there&apos;s no abandoned cart.
-              No analytics event. The customer just buys from whoever the agent tries next.
+              No analytics event. We show you the exact moment the agent gets stuck —
+              with screenshots, cursor tracking, and the human vs agent gap.
             </p>
           </div>
           <div className="border border-[#E8E0D8] bg-white p-5">
@@ -545,8 +668,8 @@ function WhyItMatters() {
 function HowWeScore() {
   const steps = [
     { icon: Eye, number: "01", color: "#FF6648", title: "We send robot shoppers", desc: "Five AI agents visit your site — one browses like a customer, one reads data feeds, one tests accessibility, one uses AI vision, and one checks your product feeds." },
-    { icon: ShoppingCart, number: "02", color: "#0259DD", title: "They try to buy something", desc: "Can they find products? Add to cart? Complete checkout? We test the full shopping journey, from homepage to payment." },
-    { icon: Database, number: "03", color: "#059669", title: "You get a score + fix list", desc: "Your score shows how ready your store is — with specific findings, an action plan, and agent journey replays showing exactly what happened." },
+    { icon: ShoppingCart, number: "02", color: "#0259DD", title: "Watch them try to buy", desc: "You get a step-by-step replay of each agent's journey — with screenshots, cursor tracking, and the exact moment they get stuck. See the gap between what a human sees and what the agent can't do." },
+    { icon: Database, number: "03", color: "#059669", title: "Get the fix list", desc: "Every issue ranked by severity and impact. 'Fix this one thing and gain +12 points.' Hand it to your dev team — most fixes take hours, not months." },
   ];
 
   return (
