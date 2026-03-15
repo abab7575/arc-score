@@ -2,7 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import Link from "next/link";
-import { Search, ShoppingCart, Eye, Database, ArrowRight, TrendingUp, AlertTriangle, Zap, Mail } from "lucide-react";
+import { Search, ShoppingCart, Eye, Database, ArrowRight, TrendingUp, AlertTriangle, Zap, Mail, Bot, XCircle, CheckCircle2, ChevronRight } from "lucide-react";
 
 interface IndexHeroProps {
   onSearch: (query: string) => void;
@@ -13,55 +13,54 @@ export function IndexHero({ onSearch }: IndexHeroProps) {
 
   return (
     <>
-      {/* ── Hero — Light Retro ──────────────────────────────────────────── */}
+      {/* ── Hero ──────────────────────────────────────────────────────── */}
       <div className="relative overflow-hidden" style={{ backgroundColor: "#FFF8F0" }}>
-        {/* Retro grid overlay — warm tint */}
+        {/* Retro grid — bolder */}
         <div
           className="absolute inset-0 pointer-events-none z-[1]"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,102,72,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(2,89,221,0.04) 1px, transparent 1px)",
+              "linear-gradient(rgba(255,102,72,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(2,89,221,0.06) 1px, transparent 1px)",
             backgroundSize: "40px 40px",
           }}
         />
 
-        {/* Cassette diagonal stripes — light version */}
-        <div
-          className="absolute top-0 right-0 w-[45%] h-full pointer-events-none z-[1] overflow-hidden"
-        >
+        {/* Cassette diagonal stripes — more visible */}
+        <div className="absolute top-0 right-0 w-[50%] h-full pointer-events-none z-[1] overflow-hidden">
           <div
             className="absolute top-[-20%] right-[-10%] w-[120%] h-[140%]"
             style={{
-              background: "repeating-linear-gradient(-65deg, transparent, transparent 22px, rgba(255,102,72,0.04) 22px, rgba(255,102,72,0.04) 24px)",
+              background: "repeating-linear-gradient(-65deg, transparent, transparent 20px, rgba(255,102,72,0.06) 20px, rgba(255,102,72,0.06) 22px)",
             }}
           />
         </div>
 
-        {/* Decorative dots */}
-        <div className="absolute top-8 left-[6%] w-32 h-32 rounded-full border border-[#0259DD]/8 z-[1]" />
-        <div className="absolute top-12 left-[7%] w-24 h-24 rounded-full border border-[#0259DD]/6 z-[1]" />
-        <div className="absolute bottom-12 left-[12%] w-3 h-3 rounded-full bg-[#FF6648] z-[1]" style={{ boxShadow: "0 0 8px rgba(255,102,72,0.3)" }} />
-        <div className="absolute top-20 right-[22%] w-2 h-2 rounded-full bg-[#FBBA16] z-[1]" style={{ boxShadow: "0 0 6px rgba(251,186,22,0.3)" }} />
+        {/* Accent dots — bigger, more vivid */}
+        <div className="absolute top-8 left-[5%] w-40 h-40 rounded-full border-2 border-[#0259DD]/8 z-[1]" />
+        <div className="absolute top-14 left-[6%] w-28 h-28 rounded-full border border-[#FF6648]/10 z-[1]" />
+        <div className="absolute bottom-16 left-[10%] w-3.5 h-3.5 rounded-full bg-[#FF6648] z-[1]" style={{ boxShadow: "0 0 12px rgba(255,102,72,0.4)" }} />
+        <div className="absolute top-24 right-[18%] w-3 h-3 rounded-full bg-[#FBBA16] z-[1]" style={{ boxShadow: "0 0 10px rgba(251,186,22,0.4)" }} />
+        <div className="absolute bottom-32 right-[8%] w-2 h-2 rounded-full bg-[#0259DD] z-[1]" style={{ boxShadow: "0 0 8px rgba(2,89,221,0.3)" }} />
 
         {/* Content */}
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14 pb-10 sm:pb-14">
 
           {/* Top spec line */}
-          <div className="flex items-center gap-3 mb-10 opacity-50">
-            <div className="flex-1 h-px" style={{ background: "repeating-linear-gradient(90deg, rgba(10,22,40,0.12), rgba(10,22,40,0.12) 4px, transparent 4px, transparent 8px)" }} />
-            <span className="spec-label text-[#0A1628]/40">LIVE — SCANNING DAILY</span>
+          <div className="flex items-center gap-3 mb-8 opacity-60">
+            <div className="flex-1 h-px" style={{ background: "repeating-linear-gradient(90deg, rgba(10,22,40,0.15), rgba(10,22,40,0.15) 4px, transparent 4px, transparent 8px)" }} />
+            <span className="spec-label text-[#0A1628]/50">LIVE — SCANNING DAILY</span>
             <span className="w-2 h-2 rounded-full bg-[#059669] blink" />
-            <div className="flex-1 h-px" style={{ background: "repeating-linear-gradient(90deg, rgba(10,22,40,0.12), rgba(10,22,40,0.12) 4px, transparent 4px, transparent 8px)" }} />
+            <div className="flex-1 h-px" style={{ background: "repeating-linear-gradient(90deg, rgba(10,22,40,0.15), rgba(10,22,40,0.15) 4px, transparent 4px, transparent 8px)" }} />
           </div>
 
-          {/* Two-column hero layout */}
-          <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+          {/* Two-column layout */}
+          <div className="flex flex-col lg:flex-row items-start gap-10 lg:gap-14">
 
             {/* Left — Message */}
-            <div className="flex-1 text-center lg:text-left">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#0A1628] tracking-tighter leading-[0.95] mb-5"
+            <div className="flex-1 text-center lg:text-left pt-2">
+              <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-black text-[#0A1628] tracking-tighter leading-[0.92] mb-5"
                 style={{
-                  textShadow: "2px 2px 0 rgba(255,102,72,0.2), 4px 4px 0 rgba(2,89,221,0.08)",
+                  textShadow: "2px 2px 0 rgba(255,102,72,0.15), 3px 3px 0 rgba(2,89,221,0.06)",
                 }}
               >
                 Can AI Agents<br />
@@ -69,27 +68,36 @@ export function IndexHero({ onSearch }: IndexHeroProps) {
                 Store?
               </h1>
 
-              <p className="text-sm sm:text-base text-[#0A1628]/60 max-w-md leading-relaxed mb-3 mx-auto lg:mx-0">
-                Your customers are sending AI agents to buy for them. If your
-                site isn&apos;t ready, you lose the sale — silently, with no
-                abandoned cart to recover.
+              <p className="text-sm sm:text-base text-[#0A1628]/65 max-w-md leading-relaxed mb-2 mx-auto lg:mx-0">
+                Your customers are sending{" "}
+                <span className="font-semibold text-[#0A1628]">ChatGPT, Perplexity, and Google AI</span>{" "}
+                to buy for them. If your site isn&apos;t ready, you lose the sale — silently.
               </p>
-              <p className="text-xs text-[#0A1628]/40 max-w-md leading-relaxed mb-6 mx-auto lg:mx-0">
-                We send 5 AI agents to your store — the same way{" "}
-                <span className="text-[#FF6648] font-semibold">ChatGPT</span>,{" "}
-                <span className="text-[#FBBA16] font-semibold">Perplexity</span>,{" "}
-                <span className="text-[#0259DD] font-semibold">Google AI</span>, and{" "}
-                <span className="text-[#0A1628]/60 font-semibold">Amazon Buy For Me</span>{" "}
-                would. Then we tell you exactly what broke and how to fix it.
+              <p className="text-sm text-[#0A1628]/45 max-w-md leading-relaxed mb-6 mx-auto lg:mx-0">
+                We send 5 robot shoppers to your store. They try to find products, add to cart, and check out.
+                You get a score, the findings, and exactly how to fix it.
               </p>
 
-              {/* Branding badge */}
-              <div className="inline-flex items-center gap-3 px-4 py-2 border border-[#0A1628]/10 bg-white/60 mb-6">
-                <span className="spec-label text-[#FF6648]">ROBOT SHOPPER</span>
-                <span className="w-1 h-1 rounded-full bg-[#0A1628]/20" />
-                <span className="spec-label text-[#0A1628]/40">AI AGENT READINESS INDEX</span>
-                <span className="w-1 h-1 rounded-full bg-[#0A1628]/20" />
-                <span className="spec-label text-[#0259DD]">0–100</span>
+              {/* Value props — compact, punchy */}
+              <div className="flex flex-col sm:flex-row gap-3 mb-6 max-w-md mx-auto lg:mx-0">
+                <div className="flex items-center gap-2 text-xs text-[#0A1628]/50">
+                  <div className="w-5 h-5 bg-[#FF6648] flex items-center justify-center shrink-0">
+                    <Eye size={11} className="text-white" />
+                  </div>
+                  <span><strong className="text-[#0A1628]/70">See</strong> where agents get stuck</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-[#0A1628]/50">
+                  <div className="w-5 h-5 bg-[#0259DD] flex items-center justify-center shrink-0">
+                    <AlertTriangle size={11} className="text-white" />
+                  </div>
+                  <span><strong className="text-[#0A1628]/70">Find</strong> what&apos;s broken</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-[#0A1628]/50">
+                  <div className="w-5 h-5 bg-[#059669] flex items-center justify-center shrink-0">
+                    <Zap size={11} className="text-white" />
+                  </div>
+                  <span><strong className="text-[#0A1628]/70">Fix</strong> it in hours</span>
+                </div>
               </div>
 
               {/* Search */}
@@ -106,16 +114,33 @@ export function IndexHero({ onSearch }: IndexHeroProps) {
                     setQuery(e.target.value);
                     onSearch(e.target.value);
                   }}
-                  className="w-full pl-11 pr-20 py-3 border border-[#0A1628]/10 bg-white text-sm text-[#0A1628] placeholder:text-[#0A1628]/25 focus:outline-none focus:border-[#FF6648]/50 focus:shadow-[0_0_0_3px_rgba(255,102,72,0.08)] transition-all font-mono"
+                  className="w-full pl-11 pr-24 py-3.5 border-2 border-[#0A1628]/10 bg-white text-sm text-[#0A1628] placeholder:text-[#0A1628]/25 focus:outline-none focus:border-[#FF6648] focus:shadow-[0_0_0_3px_rgba(255,102,72,0.1)] transition-all font-mono"
                 />
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 spec-label text-[#0A1628]/15">SEARCH</span>
               </div>
+
+              {/* CTA row */}
+              <div className="flex items-center gap-3 mt-4 justify-center lg:justify-start">
+                <Link
+                  href="/submit"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-[#FF6648] text-white text-sm font-bold hover:bg-[#e85a3f] transition-colors"
+                  style={{ boxShadow: "3px 3px 0 rgba(10,22,40,0.08)" }}
+                >
+                  Submit Your Site
+                  <ArrowRight size={14} />
+                </Link>
+                <Link
+                  href="/pricing"
+                  className="text-sm font-medium text-[#0A1628]/50 hover:text-[#0A1628] transition-colors"
+                >
+                  View Plans →
+                </Link>
+              </div>
             </div>
 
-            {/* Right — Dual score preview cards */}
-            <div className="w-full max-w-xs lg:max-w-sm shrink-0 space-y-3">
-              <FailingCard />
-              <PassingCard />
+            {/* Right — Product Preview */}
+            <div className="w-full max-w-sm lg:max-w-[420px] shrink-0">
+              <ReportPreview />
             </div>
           </div>
 
@@ -125,8 +150,8 @@ export function IndexHero({ onSearch }: IndexHeroProps) {
           </div>
         </div>
 
-        {/* Color block strip */}
-        <div className="flex h-[6px] relative z-10">
+        {/* Color block strip — thicker */}
+        <div className="flex h-[8px] relative z-10">
           <div className="flex-1 bg-[#FF6648]" />
           <div className="flex-1 bg-[#FBBA16]" />
           <div className="flex-1 bg-[#0259DD]" />
@@ -142,93 +167,140 @@ export function IndexHero({ onSearch }: IndexHeroProps) {
       {/* ── Email Capture ──────────────────────────────────────────── */}
       <EmailCapture />
 
-      {/* ── How We Score — explainer strip ────────────────────────────── */}
+      {/* ── How We Score ────────────────────────────────────────────── */}
       <HowWeScore />
 
-      {/* ── Value Proposition — why this matters ─────────────────────── */}
+      {/* ── Why It Matters ──────────────────────────────────────────── */}
       <WhyItMatters />
     </>
   );
 }
 
-/* ── Failing Card — light theme ──────────────────────────────────────── */
+/* ── Report Preview — "this is what you get" ─────────────────────────── */
 
-function FailingCard() {
+function ReportPreview() {
   return (
-    <div className="bg-white border border-[#dc2626]/20 relative overflow-hidden" style={{ boxShadow: "0 2px 8px rgba(220,38,38,0.08)" }}>
-      {/* Red danger stripe */}
-      <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#dc2626]" />
-
-      <div className="px-4 py-3 flex items-center gap-3">
-        <div
-          className="w-12 h-12 flex items-center justify-center border-2 border-[#dc2626] bg-[#dc2626]/5 shrink-0"
-        >
-          <span className="data-num text-lg font-black text-[#dc2626]">27</span>
+    <div
+      className="bg-white border-2 border-[#0A1628]/10 overflow-hidden relative"
+      style={{ boxShadow: "6px 6px 0 rgba(10,22,40,0.06)" }}
+    >
+      {/* Browser chrome */}
+      <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#0A1628]/8 bg-[#FAFAF8]">
+        <div className="flex gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-full bg-[#FF6648]/60" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[#FBBA16]/60" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[#059669]/60" />
         </div>
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 flex items-center justify-center">
+          <span className="spec-label text-[8px] text-[#0A1628]/30">robotshopper.com/brand/glossier</span>
+        </div>
+      </div>
+
+      {/* Score section */}
+      <div className="px-5 pt-5 pb-3 text-center border-b border-[#0A1628]/5">
+        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full border-[3px] border-[#059669] mb-2" style={{ boxShadow: "0 0 20px rgba(5,150,105,0.1)" }}>
+          <span className="data-num text-3xl font-black text-[#059669]">87</span>
+        </div>
+        <div className="text-xs font-bold text-[#0A1628]">Glossier</div>
+        <div className="spec-label text-[8px] text-[#059669] mt-0.5">GRADE A — AGENT-READY</div>
+      </div>
+
+      {/* Category bars preview */}
+      <div className="px-5 py-3 border-b border-[#0A1628]/5">
+        <div className="spec-label text-[7px] text-[#0A1628]/30 mb-2">SCORE BREAKDOWN</div>
+        <div className="space-y-1.5">
+          <MiniBar label="DISCOVER" score={100} color="#059669" />
+          <MiniBar label="CART" score={100} color="#059669" />
+          <MiniBar label="DATA" score={95} color="#059669" />
+          <MiniBar label="NAVIGATE" score={77} color="#0259DD" />
+          <MiniBar label="PRODUCT" score={75} color="#FBBA16" />
+        </div>
+      </div>
+
+      {/* Finding preview — shows the "diagnostic" value */}
+      <div className="px-5 py-3 border-b border-[#0A1628]/5">
+        <div className="spec-label text-[7px] text-[#0A1628]/30 mb-2">FINDING DETECTED</div>
+        <div className="flex items-start gap-2 px-3 py-2.5 bg-[#FFF8F0] border-l-2 border-[#ea580c]">
+          <AlertTriangle size={12} className="text-[#ea580c] shrink-0 mt-0.5" />
+          <div>
+            <div className="text-[11px] font-semibold text-[#0A1628]">Missing product schema markup</div>
+            <div className="text-[10px] text-[#0A1628]/45 mt-0.5">Feed agents can&apos;t read prices or availability</div>
+            <div className="flex items-center gap-1.5 mt-1.5">
+              <span className="spec-label text-[7px] px-1.5 py-0.5 bg-[#ea580c]/10 text-[#ea580c]">HIGH</span>
+              <span className="spec-label text-[7px] px-1.5 py-0.5 bg-[#059669]/10 text-[#059669]">+12 PTS IF FIXED</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Agent journey preview — shows the "replay" value */}
+      <div className="px-5 py-3 border-b border-[#0A1628]/5">
+        <div className="spec-label text-[7px] text-[#0A1628]/30 mb-2">AGENT JOURNEY</div>
+        <div className="flex items-center gap-2">
+          {/* Step dots */}
+          <div className="flex items-center gap-1">
+            <StepDot result="pass" />
+            <StepDot result="pass" />
+            <StepDot result="pass" />
+            <StepDot result="partial" />
+            <StepDot result="fail" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5">
+              <Bot size={10} className="text-[#0259DD] shrink-0" />
+              <span className="text-[10px] font-semibold text-[#0A1628] truncate">ChatGPT Operator trying to checkout...</span>
+            </div>
+            <div className="flex items-center gap-1 mt-0.5">
+              <XCircle size={9} className="text-[#dc2626]" />
+              <span className="text-[9px] text-[#dc2626]">Stuck on payment form — no guest checkout</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Action plan preview */}
+      <div className="px-5 py-3">
+        <div className="spec-label text-[7px] text-[#0A1628]/30 mb-2">ACTION PLAN</div>
+        <div className="flex items-center justify-between mb-1.5">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-[#0A1628]">Abercrombie</span>
-            <span className="spec-label text-[8px] text-[#dc2626]">GRADE F</span>
+            <span className="data-num text-sm font-bold text-[#ea580c]">87</span>
+            <ArrowRight size={10} className="text-[#0A1628]/20" />
+            <span className="data-num text-sm font-bold text-[#059669]">94</span>
           </div>
-          <div className="spec-label text-[9px] text-[#dc2626]/70 mt-0.5">AGENTS BLOCKED — NOT READY</div>
-          <div className="flex items-center gap-1.5 mt-1.5">
-            <span className="spec-label text-[8px] px-1.5 py-0.5 bg-[#dc2626]/8 text-[#dc2626]">CHECKOUT: FAILED</span>
-            <span className="spec-label text-[8px] px-1.5 py-0.5 bg-[#dc2626]/8 text-[#dc2626]">BOTS: BLOCKED</span>
-          </div>
+          <span className="spec-label text-[7px] text-[#059669]">+7 POINTS POSSIBLE</span>
+        </div>
+        <div className="space-y-1">
+          <ActionRow num="1" text="Add JSON-LD product schema" pts="+12" />
+          <ActionRow num="2" text="Enable guest checkout" pts="+8" />
+          <ActionRow num="3" text="Allow GPTBot in robots.txt" pts="+5" />
         </div>
       </div>
 
-      <div className="px-4 pb-3 space-y-1.5">
-        <MiniBar label="DISCOVER" score={20} color="#dc2626" />
-        <MiniBar label="CART" score={8} color="#dc2626" />
-        <MiniBar label="DATA" score={15} color="#dc2626" />
-      </div>
-
-      <div className="px-4 py-2.5 border-t border-[#dc2626]/10 flex items-center justify-between">
-        <span className="spec-label text-[#0A1628]/20 text-[8px]">AI AGENTS CAN&apos;T BUY HERE</span>
-        <a href="/brand/abercrombie" className="spec-label text-[#FF6648] text-[8px] hover:text-[#0A1628] transition-colors cursor-pointer">SEE WHY →</a>
-      </div>
+      {/* CTA overlay */}
+      <a
+        href="/brand/glossier"
+        className="flex items-center justify-center gap-2 py-2.5 bg-[#0259DD] text-white text-xs font-bold hover:bg-[#0249BB] transition-colors"
+      >
+        View Full Report
+        <ChevronRight size={12} />
+      </a>
     </div>
   );
 }
 
-/* ── Passing Card — light theme ──────────────────────────────────────── */
-
-function PassingCard() {
+function StepDot({ result }: { result: "pass" | "partial" | "fail" }) {
+  const color = result === "pass" ? "#059669" : result === "partial" ? "#FBBA16" : "#dc2626";
   return (
-    <div className="bg-white border border-[#059669]/20 relative overflow-hidden" style={{ boxShadow: "0 2px 8px rgba(5,150,105,0.08)" }}>
-      {/* Green success stripe */}
-      <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#059669]" />
+    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
+  );
+}
 
-      <div className="px-4 py-3 flex items-center gap-3">
-        <div
-          className="w-12 h-12 flex items-center justify-center border-2 border-[#059669] bg-[#059669]/5 shrink-0"
-        >
-          <span className="data-num text-lg font-black text-[#059669]">87</span>
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-[#0A1628]">Glossier</span>
-            <span className="spec-label text-[8px] text-[#059669]">GRADE A</span>
-          </div>
-          <div className="spec-label text-[9px] text-[#059669]/70 mt-0.5">AGENT-READY — SALES FLOWING</div>
-          <div className="flex items-center gap-1.5 mt-1.5">
-            <span className="spec-label text-[8px] px-1.5 py-0.5 bg-[#059669]/8 text-[#059669]">CHECKOUT: WORKS</span>
-            <span className="spec-label text-[8px] px-1.5 py-0.5 bg-[#059669]/8 text-[#059669]">FRICTION: LOW</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="px-4 pb-3 space-y-1.5">
-        <MiniBar label="DISCOVER" score={100} color="#059669" />
-        <MiniBar label="CART" score={100} color="#059669" />
-        <MiniBar label="DATA" score={95} color="#059669" />
-      </div>
-
-      <div className="px-4 py-2.5 border-t border-[#059669]/10 flex items-center justify-between">
-        <span className="spec-label text-[#0A1628]/20 text-[8px]">AI AGENTS CAN SHOP HERE</span>
-        <a href="/brand/glossier" className="spec-label text-[#FF6648] text-[8px] hover:text-[#0A1628] transition-colors cursor-pointer">VIEW REPORT →</a>
-      </div>
+function ActionRow({ num, text, pts }: { num: string; text: string; pts: string }) {
+  return (
+    <div className="flex items-center gap-2 text-[10px]">
+      <span className="data-num text-[9px] font-bold text-[#0A1628]/25 w-3">{num}</span>
+      <span className="text-[#0A1628]/60 flex-1 truncate">{text}</span>
+      <span className="data-num text-[9px] font-bold text-[#059669]">{pts}</span>
     </div>
   );
 }
@@ -236,11 +308,11 @@ function PassingCard() {
 function MiniBar({ label, score, color }: { label: string; score: number; color: string }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="spec-label text-[#0A1628]/25 text-[8px] w-14 text-right shrink-0">{label}</span>
+      <span className="spec-label text-[#0A1628]/25 text-[7px] w-14 text-right shrink-0">{label}</span>
       <div className="flex-1 h-[4px] bg-[#0A1628]/5 overflow-hidden">
         <div className="h-full" style={{ width: `${score}%`, backgroundColor: color }} />
       </div>
-      <span className="data-num text-[10px] font-bold w-6 text-right shrink-0" style={{ color }}>{score}</span>
+      <span className="data-num text-[9px] font-bold w-6 text-right shrink-0" style={{ color }}>{score}</span>
     </div>
   );
 }
@@ -315,7 +387,7 @@ function EmailCapture() {
       });
       setSubmitted(true);
     } catch {
-      // silently fail for now
+      // silently fail
     } finally {
       setLoading(false);
     }
@@ -348,34 +420,22 @@ function EmailCapture() {
               <p className="text-xs text-muted-foreground mb-5">
                 Enter your email and brand URL. We&apos;ll alert you when your score is ready.
               </p>
-
               <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3">
                 <div className="flex-1 min-w-0">
                   <label className="spec-label text-[9px] text-muted-foreground mb-1.5 block">EMAIL *</label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="you@company.com"
-                    value={email}
+                  <input type="email" required placeholder="you@company.com" value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full px-3 py-2.5 border border-[#E8E0D8] bg-[#FFF8F0] text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-[#FF6648]/50 transition-colors font-mono"
                   />
                 </div>
-
                 <div className="flex-1 min-w-0">
                   <label className="spec-label text-[9px] text-muted-foreground mb-1.5 block">BRAND URL <span className="text-muted-foreground/40">(OPTIONAL)</span></label>
-                  <input
-                    type="url"
-                    placeholder="https://yourbrand.com"
-                    value={brandUrl}
+                  <input type="url" placeholder="https://yourbrand.com" value={brandUrl}
                     onChange={(e) => setBrandUrl(e.target.value)}
                     className="w-full px-3 py-2.5 border border-[#E8E0D8] bg-[#FFF8F0] text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-[#FF6648]/50 transition-colors font-mono"
                   />
                 </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
+                <button type="submit" disabled={loading}
                   className="px-6 py-2.5 bg-[#FF6648] text-white text-sm font-bold hover:bg-[#e85a3f] transition-colors disabled:opacity-50 whitespace-nowrap shrink-0"
                 >
                   {loading ? "Sending..." : "Notify Me"}
@@ -389,26 +449,25 @@ function EmailCapture() {
   );
 }
 
-/* ── Why It Matters — value prop bridge ─────────────────────────────── */
+/* ── Why It Matters ─────────────────────────────────────────────────── */
 
 function WhyItMatters() {
   const agents = [
-    { name: "ChatGPT Shopping", company: "OpenAI", type: "Feed" },
-    { name: "Google AI Mode", company: "Google", type: "Feed" },
-    { name: "Perplexity Shopping", company: "Perplexity", type: "Feed" },
-    { name: "Amazon Buy For Me", company: "Amazon", type: "Browser" },
-    { name: "ChatGPT Operator", company: "OpenAI", type: "Browser" },
-    { name: "Claude Computer Use", company: "Anthropic", type: "Vision" },
-    { name: "Microsoft Copilot", company: "Microsoft", type: "Feed" },
-    { name: "Klarna AI", company: "Klarna", type: "Feed" },
-    { name: "Perplexity Comet", company: "Perplexity", type: "Browser" },
-    { name: "OpenClaw", company: "Open Source", type: "Browser" },
+    { name: "ChatGPT Shopping", type: "Feed" },
+    { name: "Google AI Mode", type: "Feed" },
+    { name: "Perplexity Shopping", type: "Feed" },
+    { name: "Amazon Buy For Me", type: "Browser" },
+    { name: "ChatGPT Operator", type: "Browser" },
+    { name: "Claude Computer Use", type: "Vision" },
+    { name: "Microsoft Copilot", type: "Feed" },
+    { name: "Klarna AI", type: "Feed" },
+    { name: "Perplexity Comet", type: "Browser" },
+    { name: "OpenClaw", type: "Browser" },
   ];
 
   return (
     <div className="bg-[#FAFAF8] border-b border-[#E8E0D8]">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
-
         <div className="flex items-center gap-3 mb-8">
           <span className="spec-label text-muted-foreground text-[9px]">THE PROBLEM</span>
           <div className="flex-1 h-px bg-[#E8E0D8]" />
@@ -419,41 +478,31 @@ function WhyItMatters() {
             <div className="w-9 h-9 flex items-center justify-center bg-[#FF6648] mb-3">
               <AlertTriangle size={16} className="text-white" />
             </div>
-            <h3 className="text-sm font-bold text-foreground mb-1.5">
-              Lost sales you can&apos;t see
-            </h3>
+            <h3 className="text-sm font-bold text-foreground mb-1.5">Lost sales you can&apos;t see</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
               When an AI agent fails to buy on your site, there&apos;s no abandoned cart.
-              No analytics event. No retargeting pixel. The customer just buys
-              from whoever the agent tries next.
+              No analytics event. The customer just buys from whoever the agent tries next.
             </p>
           </div>
-
           <div className="border border-[#E8E0D8] bg-white p-5">
             <div className="w-9 h-9 flex items-center justify-center bg-[#0259DD] mb-3">
               <TrendingUp size={16} className="text-white" />
             </div>
-            <h3 className="text-sm font-bold text-foreground mb-1.5">
-              5 agents, 10 scoring lenses
-            </h3>
+            <h3 className="text-sm font-bold text-foreground mb-1.5">5 agents, 10 scoring lenses</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
               We send 5 specialized agents to test your site — browser, data,
-              accessibility, visual, and feed. Then we score through 10 real AI
-              shopping agent lenses. Your site needs to work for all of them.
+              accessibility, visual, and feed. Then score through 10 real AI
+              shopping agent lenses.
             </p>
           </div>
-
           <div className="border border-[#E8E0D8] bg-white p-5">
             <div className="w-9 h-9 flex items-center justify-center bg-[#059669] mb-3">
               <Zap size={16} className="text-white" />
             </div>
-            <h3 className="text-sm font-bold text-foreground mb-1.5">
-              Fixable in hours, not months
-            </h3>
+            <h3 className="text-sm font-bold text-foreground mb-1.5">Fixable in hours, not months</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Most agent failures come from missing labels, blocked bots, or absent
+              Most failures come from missing labels, blocked bots, or absent
               structured data. Small fixes that take hours, not engineering sprints.
-              We tell you exactly which ones matter most.
             </p>
           </div>
         </div>
@@ -465,10 +514,7 @@ function WhyItMatters() {
 
         <div className="flex flex-wrap gap-2 mb-8">
           {agents.map((agent) => (
-            <div
-              key={agent.name}
-              className="flex items-center gap-2 px-3 py-1.5 border border-[#E8E0D8] bg-white text-xs"
-            >
+            <div key={agent.name} className="flex items-center gap-2 px-3 py-1.5 border border-[#E8E0D8] bg-white text-xs">
               <span className="font-semibold text-foreground">{agent.name}</span>
               <span className="spec-label text-[8px] text-muted-foreground">{agent.type.toUpperCase()}</span>
             </div>
@@ -477,25 +523,14 @@ function WhyItMatters() {
 
         <div className="flex flex-col sm:flex-row items-center gap-4 pt-4 border-t border-[#E8E0D8]">
           <div className="flex-1">
-            <p className="text-sm text-foreground font-semibold">
-              See how your brand scores — or browse the index below.
-            </p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Free scores for every brand. Detailed findings, action plans, and agent replays with a paid plan.
-            </p>
+            <p className="text-sm text-foreground font-semibold">See how your brand scores — or browse the index below.</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Free scores for every brand. Detailed findings and action plans with a paid plan.</p>
           </div>
           <div className="flex items-center gap-3">
-            <Link
-              href="/submit"
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#FF6648] text-white text-sm font-bold hover:bg-[#e85a3f] transition-colors"
-            >
-              Submit Your Site
-              <ArrowRight size={14} />
+            <Link href="/submit" className="flex items-center gap-2 px-5 py-2.5 bg-[#FF6648] text-white text-sm font-bold hover:bg-[#e85a3f] transition-colors">
+              Submit Your Site <ArrowRight size={14} />
             </Link>
-            <Link
-              href="/pricing"
-              className="flex items-center gap-2 px-5 py-2.5 border border-[#E8E0D8] text-sm font-medium text-foreground hover:bg-gray-50 transition-colors"
-            >
+            <Link href="/pricing" className="flex items-center gap-2 px-5 py-2.5 border border-[#E8E0D8] text-sm font-medium text-foreground hover:bg-gray-50 transition-colors">
               View Plans
             </Link>
           </div>
@@ -509,30 +544,9 @@ function WhyItMatters() {
 
 function HowWeScore() {
   const steps = [
-    {
-      icon: Eye,
-      number: "01",
-      label: "BROWSE",
-      color: "#FF6648",
-      title: "We send AI agents to shop",
-      desc: "Five AI agents visit your site — one browses like a customer, one reads data feeds, one tests accessibility, one uses AI vision, and one checks your product feeds.",
-    },
-    {
-      icon: ShoppingCart,
-      number: "02",
-      label: "TEST",
-      color: "#0259DD",
-      title: "They try to buy something",
-      desc: "Can they find products? Add to cart? Complete checkout? We test the full shopping journey, from homepage to payment.",
-    },
-    {
-      icon: Database,
-      number: "03",
-      label: "SCORE",
-      color: "#059669",
-      title: "You get a score out of 100",
-      desc: "Your score shows how ready your store is for AI agent commerce — with specific findings and fixes to improve.",
-    },
+    { icon: Eye, number: "01", color: "#FF6648", title: "We send robot shoppers", desc: "Five AI agents visit your site — one browses like a customer, one reads data feeds, one tests accessibility, one uses AI vision, and one checks your product feeds." },
+    { icon: ShoppingCart, number: "02", color: "#0259DD", title: "They try to buy something", desc: "Can they find products? Add to cart? Complete checkout? We test the full shopping journey, from homepage to payment." },
+    { icon: Database, number: "03", color: "#059669", title: "You get a score + fix list", desc: "Your score shows how ready your store is — with specific findings, an action plan, and agent journey replays showing exactly what happened." },
   ];
 
   return (
@@ -542,22 +556,15 @@ function HowWeScore() {
           <span className="spec-label text-muted-foreground text-[9px]">HOW IT WORKS</span>
           <div className="flex-1 h-px bg-[#E8E0D8]" />
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {steps.map((step) => (
             <div key={step.number} className="flex gap-4">
               <div className="shrink-0">
-                <div
-                  className="w-10 h-10 flex items-center justify-center"
-                  style={{ backgroundColor: step.color }}
-                >
+                <div className="w-10 h-10 flex items-center justify-center" style={{ backgroundColor: step.color }}>
                   <step.icon size={18} className="text-white" />
                 </div>
-                <div className="spec-label text-center mt-1.5 text-[9px]" style={{ color: step.color }}>
-                  {step.number}
-                </div>
+                <div className="spec-label text-center mt-1.5 text-[9px]" style={{ color: step.color }}>{step.number}</div>
               </div>
-
               <div>
                 <div className="text-sm font-bold text-foreground mb-1">{step.title}</div>
                 <p className="text-xs text-muted-foreground leading-relaxed">{step.desc}</p>
