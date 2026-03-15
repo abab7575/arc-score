@@ -211,12 +211,24 @@ export async function generateImageForItem(item: {
   }
 }
 
-export async function generatePendingImages(): Promise<{
+export async function generatePendingImages(options?: { limit?: number }): Promise<{
   generated: number;
   failed: number;
   skipped: number;
+  remaining: number;
 }> {
-  const pending = db
+  const batchLimit = options?.limit ?? 5; // Small batches to avoid timeouts
+
+  // First, clear stale imageUrls that point to non-existent files (no imageData backing them)
+  const cleared = db.update(schema.contentQueue)
+    .set({ imageUrl: null })
+    .where(isNull(schema.contentQueue.imageData))
+    .run();
+  if (cleared.changes > 0) {
+    console.log(`[Image Gen] Cleared ${cleared.changes} stale image URLs`);
+  }
+
+  const allPending = db
     .select({
       id: schema.contentQueue.id,
       imageTemplate: schema.contentQueue.imageTemplate,
@@ -228,7 +240,10 @@ export async function generatePendingImages(): Promise<{
     .all()
     .filter((item: { imageTemplate: string | null }) => item.imageTemplate !== null);
 
-  console.log(`[Image Gen] Found ${pending.length} items needing images`);
+  const pending = allPending.slice(0, batchLimit);
+  const remaining = allPending.length - pending.length;
+
+  console.log(`[Image Gen] Processing ${pending.length} of ${allPending.length} items needing images`);
 
   let generated = 0;
   let failed = 0;
@@ -248,5 +263,5 @@ export async function generatePendingImages(): Promise<{
     await new Promise((r) => setTimeout(r, 2000));
   }
 
-  return { generated, failed, skipped };
+  return { generated, failed, skipped, remaining };
 }

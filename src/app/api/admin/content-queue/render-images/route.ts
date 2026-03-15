@@ -12,6 +12,7 @@ export const dynamic = "force-dynamic";
 export async function POST(request: NextRequest) {
   try {
     const regenerate = request.nextUrl.searchParams.get("regenerate") === "true";
+    const limit = parseInt(request.nextUrl.searchParams.get("limit") ?? "5");
 
     // Clear existing image data if regenerating
     if (regenerate) {
@@ -25,12 +26,12 @@ export async function POST(request: NextRequest) {
     const { generatePendingImages } = await import(
       "@/lib/content-studio/images/generate-images"
     );
-    const result = await generatePendingImages();
+    const result = await generatePendingImages({ limit });
 
     return NextResponse.json({
       ...result,
       regenerated: regenerate,
-      message: `Generated ${result.generated} images (${result.failed} failed, ${result.skipped} skipped)${regenerate ? " [regenerated]" : ""}`,
+      message: `Generated ${result.generated} images (${result.failed} failed, ${result.remaining} remaining)${regenerate ? " [regenerated]" : ""}`,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
