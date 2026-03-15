@@ -1,7 +1,8 @@
 /**
- * Shared Image Frame — NASA x Tokyo x 1970s retro
+ * Shared Image Frame — Light-themed infographic style
  *
- * Navy background, gradient mesh overlay, scan lines, coral stripe, watermark.
+ * Cream background, bold brand colors, fun & funky Robot Shopper vibe.
+ * Every image should tell the whole story at a glance.
  */
 
 import React from "react";
@@ -16,17 +17,36 @@ export const COLORS = {
   mustard: "#FBBA16",
   violet: "#7C3AED",
   white: "#FFFFFF",
-  gray: "#94A3B8",
+  gray: "#64748B",
+  lightGray: "#F1EDE8",
+  emerald: "#059669",
+  red: "#dc2626",
+  orange: "#ea580c",
+  amber: "#d97706",
 } as const;
+
+export function getScoreColor(score: number): string {
+  if (score >= 85) return COLORS.emerald;
+  if (score >= 70) return COLORS.cobalt;
+  if (score >= 50) return COLORS.amber;
+  if (score >= 30) return COLORS.orange;
+  return COLORS.red;
+}
+
+export function getGradeForScore(score: number): string {
+  if (score >= 85) return "A";
+  if (score >= 70) return "B";
+  if (score >= 50) return "C";
+  if (score >= 30) return "D";
+  return "F";
+}
 
 // ── Image Frame Wrapper ──────────────────────────────────────────
 
 export function ImageFrame({
   children,
-  label,
 }: {
   children: React.ReactNode;
-  label?: string;
 }) {
   return (
     <div
@@ -35,37 +55,20 @@ export function ImageFrame({
         height: 675,
         display: "flex",
         flexDirection: "column",
-        backgroundColor: COLORS.navy,
+        backgroundColor: COLORS.cream,
         position: "relative",
         overflow: "hidden",
         fontFamily: "Inter",
       }}
     >
-      {/* Gradient mesh overlay */}
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: `radial-gradient(ellipse at 20% 50%, rgba(2, 89, 221, 0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(124, 58, 237, 0.1) 0%, transparent 50%)`,
-          display: "flex",
-        }}
-      />
-
-      {/* Coral cassette stripe at top */}
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 4,
-          backgroundColor: COLORS.coral,
-          display: "flex",
-        }}
-      />
+      {/* Top color strip — cassette tape edge */}
+      <div style={{ display: "flex", height: 6, width: "100%" }}>
+        <div style={{ flex: 1, backgroundColor: COLORS.coral, display: "flex" }} />
+        <div style={{ flex: 1, backgroundColor: COLORS.mustard, display: "flex" }} />
+        <div style={{ flex: 1, backgroundColor: COLORS.cobalt, display: "flex" }} />
+        <div style={{ flex: 1, backgroundColor: COLORS.violet, display: "flex" }} />
+        <div style={{ flex: 1, backgroundColor: COLORS.emerald, display: "flex" }} />
+      </div>
 
       {/* Content area */}
       <div
@@ -73,74 +76,70 @@ export function ImageFrame({
           display: "flex",
           flexDirection: "column",
           flex: 1,
-          padding: "32px 48px 24px",
+          padding: "32px 48px 20px",
           position: "relative",
         }}
       >
-        {/* Top label */}
-        {label && (
+        {children}
+      </div>
+
+      {/* Bottom bar */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "12px 48px",
+          backgroundColor: COLORS.navy,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {/* Logo mark */}
           <div
             style={{
               display: "flex",
               alignItems: "center",
-              marginBottom: 20,
+              justifyContent: "center",
+              width: 28,
+              height: 28,
+              backgroundColor: COLORS.coral,
             }}
           >
             <span
               style={{
                 fontFamily: "JetBrains Mono",
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: 700,
-                color: COLORS.coral,
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
+                color: COLORS.white,
               }}
             >
-              {label}
+              RS
             </span>
           </div>
-        )}
-
-        {children}
-      </div>
-
-      {/* Watermark */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: 16,
-          right: 24,
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-        }}
-      >
+          <span
+            style={{
+              fontFamily: "Inter",
+              fontSize: 14,
+              fontWeight: 900,
+              color: COLORS.white,
+              letterSpacing: "-0.02em",
+            }}
+          >
+            Robot Shopper
+          </span>
+        </div>
         <span
           style={{
             fontFamily: "JetBrains Mono",
-            fontSize: 12,
+            fontSize: 11,
             fontWeight: 700,
-            color: "rgba(255, 255, 255, 0.3)",
-            letterSpacing: "0.15em",
+            color: "rgba(255,255,255,0.4)",
+            letterSpacing: "0.05em",
           }}
         >
-          ROBOT SHOPPER
+          robotshopper.com
         </span>
       </div>
-
-      {/* Bottom cobalt accent line */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: 2,
-          backgroundColor: COLORS.cobalt,
-          opacity: 0.5,
-          display: "flex",
-        }}
-      />
     </div>
   );
 }
@@ -150,23 +149,14 @@ export function ImageFrame({
 export function ScoreBar({
   score,
   width = 300,
-  height = 12,
+  height = 14,
 }: {
   score: number;
   width?: number;
   height?: number;
 }) {
   const fillWidth = Math.round((score / 100) * width);
-  const color =
-    score >= 85
-      ? "#059669"
-      : score >= 70
-      ? COLORS.cobalt
-      : score >= 50
-      ? "#d97706"
-      : score >= 30
-      ? "#ea580c"
-      : "#dc2626";
+  const color = getScoreColor(score);
 
   return (
     <div
@@ -174,8 +164,8 @@ export function ScoreBar({
         display: "flex",
         width,
         height,
-        backgroundColor: "rgba(255, 255, 255, 0.08)",
-        borderRadius: 2,
+        backgroundColor: COLORS.lightGray,
+        borderRadius: 4,
         overflow: "hidden",
       }}
     >
@@ -184,7 +174,7 @@ export function ScoreBar({
           width: fillWidth,
           height,
           backgroundColor: color,
-          borderRadius: 2,
+          borderRadius: 4,
           display: "flex",
         }}
       />
@@ -199,19 +189,12 @@ export function GradeBadge({
   grade: string;
   size?: "sm" | "md" | "lg";
 }) {
-  const color =
-    grade === "A"
-      ? "#059669"
-      : grade === "B"
-      ? COLORS.cobalt
-      : grade === "C"
-      ? "#d97706"
-      : grade === "D"
-      ? "#ea580c"
-      : "#dc2626";
+  const color = getScoreColor(
+    grade === "A" ? 90 : grade === "B" ? 75 : grade === "C" ? 55 : grade === "D" ? 35 : 15
+  );
 
-  const dims = size === "lg" ? 56 : size === "md" ? 40 : 28;
-  const fontSize = size === "lg" ? 28 : size === "md" ? 20 : 14;
+  const dims = size === "lg" ? 56 : size === "md" ? 36 : 24;
+  const fontSize = size === "lg" ? 28 : size === "md" ? 18 : 12;
 
   return (
     <div
@@ -222,7 +205,7 @@ export function GradeBadge({
         width: dims,
         height: dims,
         backgroundColor: color,
-        borderRadius: 2,
+        borderRadius: 4,
         fontFamily: "JetBrains Mono",
         fontSize,
         fontWeight: 700,
@@ -231,5 +214,32 @@ export function GradeBadge({
     >
       {grade}
     </div>
+  );
+}
+
+export function Tag({
+  label,
+  color = COLORS.coral,
+}: {
+  label: string;
+  color?: string;
+}) {
+  return (
+    <span
+      style={{
+        display: "flex",
+        fontFamily: "JetBrains Mono",
+        fontSize: 11,
+        fontWeight: 700,
+        color,
+        letterSpacing: "0.1em",
+        textTransform: "uppercase",
+        backgroundColor: color + "15",
+        padding: "4px 10px",
+        borderRadius: 4,
+      }}
+    >
+      {label}
+    </span>
   );
 }

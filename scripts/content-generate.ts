@@ -43,10 +43,10 @@ async function renderStoryImage(
           React.createElement(ScorecardImage, {
             data: {
               brandName: data.brandName as string,
-              overallScore: data.overallScore as number,
+              score: data.overallScore as number,
               grade: data.grade as string,
               categories: data.categories as Array<{ name: string; score: number; grade: string }>,
-              delta: data.delta as number | null,
+              delta: (data.delta as number | null) ?? undefined,
             },
           }),
           filename
@@ -57,8 +57,8 @@ async function renderStoryImage(
           React.createElement(LeaderboardImage, {
             data: {
               title: story.title,
-              brands: data.brands as Array<{ rank: number; name: string; score: number; grade: string }>,
-              totalBrands: data.totalBrands as number,
+              brands: data.brands as Array<{ name: string; score: number; grade: string }>,
+              totalTracked: data.totalBrands as number,
             },
           }),
           filename
@@ -69,8 +69,8 @@ async function renderStoryImage(
           React.createElement(MoverAlertImage, {
             data: {
               brandName: data.brandName as string,
-              previousScore: data.previousScore as number,
-              currentScore: data.currentScore as number,
+              scoreBefore: data.previousScore as number,
+              scoreAfter: data.currentScore as number,
               delta: data.delta as number,
               grade: data.grade as string,
             },
@@ -124,12 +124,12 @@ function generateTextForStory(story: StoryCandidate, platform: Platform): string
 
     if (platform === "x") {
       const bullets = topic.bullets.slice(0, 3).map((b) => `• ${b}`).join("\n");
-      const text = `${topic.title}\n\n${bullets}\n\narcscore.com`;
+      const text = `${topic.title}\n\n${bullets}\n\nrobotshopper.com`;
       return text.length > 280 ? text.slice(0, 279) + "…" : text;
     }
 
     const bullets = topic.bullets.map((b) => `• ${b}`).join("\n");
-    return `${topic.title}\n\n${topic.subtitle}\n\n${bullets}\n\nLearn more at arcscore.com\n\n#AICommerce #Ecommerce #ARC`;
+    return `${topic.title}\n\n${topic.subtitle}\n\n${bullets}\n\nLearn more at robotshopper.com\n\n#AICommerce #Ecommerce #RobotShopper`;
   }
 
   // All other content types use the existing generator

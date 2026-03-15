@@ -1,97 +1,62 @@
 /**
- * News React Image Template — Article title + commentary card
+ * News React Image — Commentary on AI commerce news
+ *
+ * At a glance: "Here's a news story about AI shopping + our take on it."
  */
 
 import React from "react";
-import { ImageFrame, COLORS } from "./shared";
+import { ImageFrame, Tag, COLORS } from "./shared";
 
 export interface NewsReactData {
   headline: string;
-  source: string;
+  source?: string;
   commentary?: string;
+  url?: string;
 }
 
 export function NewsReactImage({ data }: { data: NewsReactData }) {
   return (
-    <ImageFrame label="Industry News">
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          flex: 1,
-          justifyContent: "center",
-          gap: 24,
-        }}
-      >
-        {/* Source badge */}
-        <div style={{ display: "flex" }}>
-          <span
-            style={{
-              fontFamily: "JetBrains Mono",
-              fontSize: 13,
-              fontWeight: 700,
-              color: COLORS.mustard,
-              padding: "4px 12px",
-              backgroundColor: "rgba(251, 186, 22, 0.1)",
-              borderRadius: 2,
-            }}
-          >
-            {data.source}
-          </span>
+    <ImageFrame>
+      <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 16 }}>
+        {/* Tags */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Tag label="AI Commerce News" color={COLORS.mustard} />
+          {data.source && (
+            <Tag label={data.source} color={COLORS.cobalt} />
+          )}
         </div>
 
         {/* Headline */}
-        <span
-          style={{
-            fontSize: 36,
-            fontWeight: 900,
-            color: COLORS.cream,
-            lineHeight: 1.3,
-            maxWidth: 1000,
-          }}
-        >
+        <span style={{ fontFamily: "Inter", fontSize: 36, fontWeight: 900, color: COLORS.navy, letterSpacing: "-0.02em", lineHeight: 1.2, maxWidth: 900 }}>
           {data.headline}
         </span>
 
+        {/* Divider */}
+        <div style={{ display: "flex", height: 3, backgroundColor: COLORS.lightGray, borderRadius: 2 }}>
+          <div style={{ width: 60, height: 3, backgroundColor: COLORS.mustard, borderRadius: 2, display: "flex" }} />
+        </div>
+
         {/* Commentary */}
         {data.commentary && (
-          <div
-            style={{
-              display: "flex",
-              borderLeft: `3px solid ${COLORS.coral}`,
-              paddingLeft: 20,
-            }}
-          >
-            <span
-              style={{
-                fontSize: 18,
-                fontWeight: 400,
-                color: COLORS.gray,
-                lineHeight: 1.6,
-                fontStyle: "italic",
-                maxWidth: 900,
-              }}
-            >
-              {data.commentary}
-            </span>
+          <div style={{ display: "flex", padding: "20px 24px", backgroundColor: COLORS.white, borderRadius: 12, border: `1px solid ${COLORS.lightGray}`, borderLeft: `4px solid ${COLORS.coral}`, flex: 1, maxHeight: 200 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <span style={{ fontFamily: "JetBrains Mono", fontSize: 11, fontWeight: 700, color: COLORS.coral, letterSpacing: "0.1em" }}>
+                OUR TAKE
+              </span>
+              <span style={{ fontSize: 16, color: COLORS.navy, lineHeight: 1.6 }}>
+                {data.commentary}
+              </span>
+            </div>
           </div>
         )}
 
-        {/* Footer */}
-        <div
-          style={{
-            display: "flex",
-            marginTop: "auto",
-          }}
-        >
-          <span
-            style={{
-              fontFamily: "JetBrains Mono",
-              fontSize: 12,
-              color: COLORS.gray,
-            }}
-          >
-            AI Agent Readiness perspective · robotshopper.com
+        {/* What this means */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: "auto" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, backgroundColor: COLORS.cobalt, borderRadius: 6 }}>
+            <span style={{ color: COLORS.white, fontSize: 16 }}>?</span>
+          </div>
+          <span style={{ fontSize: 13, color: COLORS.gray }}>
+            What does this mean for your site? Check your AI agent readiness score at robotshopper.com
           </span>
         </div>
       </div>

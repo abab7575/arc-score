@@ -1,103 +1,75 @@
 /**
- * Educational Image Template — Category/agent/protocol explainer card
+ * Educational Image — Explainer/insight about AI agent commerce
+ *
+ * At a glance: "Here's something you should know about AI shopping agents."
  */
 
 import React from "react";
-import { ImageFrame, COLORS } from "./shared";
+import { ImageFrame, Tag, COLORS } from "./shared";
 
 export interface EducationalData {
   title: string;
-  subtitle: string;
-  bullets: string[];
+  subtitle?: string;
+  bullets?: string[];
   accentColor?: string;
 }
 
 export function EducationalImage({ data }: { data: EducationalData }) {
+  const bullets = (data.bullets || []).slice(0, 5);
   const accent = data.accentColor || COLORS.cobalt;
 
   return (
-    <ImageFrame label="Did You Know?">
-      <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 20 }}>
-        {/* Title */}
-        <span
-          style={{
-            fontSize: 36,
-            fontWeight: 900,
-            color: COLORS.cream,
-            lineHeight: 1.2,
-          }}
-        >
+    <ImageFrame>
+      <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 12 }}>
+        {/* Header */}
+        <Tag label="Did You Know?" color={COLORS.coral} />
+
+        <span style={{ fontFamily: "Inter", fontSize: 38, fontWeight: 900, color: COLORS.navy, letterSpacing: "-0.02em", lineHeight: 1.15, maxWidth: 900 }}>
           {data.title}
         </span>
 
-        {/* Subtitle */}
-        <span
-          style={{
-            fontSize: 18,
-            fontWeight: 400,
-            color: COLORS.gray,
-            lineHeight: 1.5,
-            maxWidth: 900,
-          }}
-        >
-          {data.subtitle}
-        </span>
+        {data.subtitle && (
+          <span style={{ fontSize: 16, color: COLORS.gray, lineHeight: 1.5, maxWidth: 800 }}>
+            {data.subtitle}
+          </span>
+        )}
 
         {/* Accent divider */}
-        <div
-          style={{
-            width: 60,
-            height: 3,
-            backgroundColor: accent,
-            borderRadius: 2,
-            display: "flex",
-          }}
-        />
+        <div style={{ display: "flex", height: 4, width: 60, backgroundColor: accent, borderRadius: 2, marginTop: 4, marginBottom: 4 }} />
 
-        {/* Bullet points */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {data.bullets.slice(0, 5).map((bullet, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-              <span
+        {/* Bullets */}
+        {bullets.length > 0 && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
+            {bullets.map((bullet, i) => (
+              <div
+                key={i}
                 style={{
-                  fontFamily: "JetBrains Mono",
-                  fontSize: 14,
-                  fontWeight: 700,
-                  color: accent,
-                  minWidth: 24,
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 14,
+                  padding: "12px 16px",
+                  backgroundColor: COLORS.white,
+                  borderRadius: 10,
+                  border: `1px solid ${COLORS.lightGray}`,
                 }}
               >
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span
-                style={{
-                  fontSize: 16,
-                  fontWeight: 400,
-                  color: COLORS.white,
-                  lineHeight: 1.5,
-                }}
-              >
-                {bullet}
-              </span>
-            </div>
-          ))}
-        </div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 28, height: 28, backgroundColor: accent + "15", borderRadius: 6, flexShrink: 0 }}>
+                  <span style={{ fontFamily: "JetBrains Mono", fontSize: 13, fontWeight: 700, color: accent }}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                </div>
+                <span style={{ fontSize: 14, color: COLORS.navy, lineHeight: 1.5, paddingTop: 3 }}>
+                  {bullet}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
 
-        {/* Footer */}
-        <div
-          style={{
-            display: "flex",
-            marginTop: "auto",
-          }}
-        >
-          <span
-            style={{
-              fontFamily: "JetBrains Mono",
-              fontSize: 12,
-              color: COLORS.gray,
-            }}
-          >
-            Learn more at robotshopper.com
+        {/* Footer context */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "auto" }}>
+          <span style={{ fontSize: 11, color: COLORS.gray }}>
+            Learn more about AI agent readiness at robotshopper.com
           </span>
         </div>
       </div>
