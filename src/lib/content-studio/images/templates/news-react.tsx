@@ -1,11 +1,9 @@
 /**
- * News React Image — Commentary on AI commerce news
- *
- * At a glance: "Here's a news story about AI shopping + our take on it."
+ * News React — AI commerce news + our perspective on what it means
  */
 
 import React from "react";
-import { ImageFrame, Tag, COLORS } from "./shared";
+import { ImageFrame, COLORS } from "./shared";
 
 export interface NewsReactData {
   headline: string;
@@ -16,32 +14,34 @@ export interface NewsReactData {
 
 export function NewsReactImage({ data }: { data: NewsReactData }) {
   return (
-    <ImageFrame>
+    <ImageFrame whyItMatters="AI agents are becoming your next customers. Every week brings new shopping bots, protocols, and platforms. If your site isn't ready, you're invisible to this new channel.">
       <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 16 }}>
-        {/* Tags */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <Tag label="AI Commerce News" color={COLORS.mustard} />
+        {/* Type + source */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <span style={{ fontFamily: "JetBrains Mono", fontSize: 11, fontWeight: 700, color: COLORS.mustard, letterSpacing: "0.1em", backgroundColor: COLORS.mustard + "15", padding: "4px 10px", borderRadius: 4, display: "flex" }}>
+            AI COMMERCE NEWS
+          </span>
           {data.source && (
-            <Tag label={data.source} color={COLORS.cobalt} />
+            <span style={{ fontFamily: "JetBrains Mono", fontSize: 11, fontWeight: 700, color: COLORS.cobalt, letterSpacing: "0.1em", backgroundColor: COLORS.cobalt + "15", padding: "4px 10px", borderRadius: 4, display: "flex" }}>
+              {data.source.toUpperCase()}
+            </span>
           )}
         </div>
 
         {/* Headline */}
-        <span style={{ fontFamily: "Inter", fontSize: 36, fontWeight: 900, color: COLORS.navy, letterSpacing: "-0.02em", lineHeight: 1.2, maxWidth: 900 }}>
+        <span style={{ fontSize: 32, fontWeight: 900, color: COLORS.navy, lineHeight: 1.2, letterSpacing: "-0.02em", maxWidth: 950 }}>
           {data.headline}
         </span>
 
         {/* Divider */}
-        <div style={{ display: "flex", height: 3, backgroundColor: COLORS.lightGray, borderRadius: 2 }}>
-          <div style={{ width: 60, height: 3, backgroundColor: COLORS.mustard, borderRadius: 2, display: "flex" }} />
-        </div>
+        <div style={{ display: "flex", height: 3, width: 60, backgroundColor: COLORS.mustard, borderRadius: 2 }} />
 
         {/* Commentary */}
         {data.commentary && (
-          <div style={{ display: "flex", padding: "20px 24px", backgroundColor: COLORS.white, borderRadius: 12, border: `1px solid ${COLORS.lightGray}`, borderLeft: `4px solid ${COLORS.coral}`, flex: 1, maxHeight: 200 }}>
+          <div style={{ display: "flex", padding: "20px 24px", backgroundColor: COLORS.white, borderRadius: 12, border: `1px solid ${COLORS.lightGray}`, borderLeft: `4px solid ${COLORS.coral}`, flex: 1, maxHeight: 180 }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               <span style={{ fontFamily: "JetBrains Mono", fontSize: 11, fontWeight: 700, color: COLORS.coral, letterSpacing: "0.1em" }}>
-                OUR TAKE
+                WHAT THIS MEANS FOR E-COMMERCE
               </span>
               <span style={{ fontSize: 16, color: COLORS.navy, lineHeight: 1.6 }}>
                 {data.commentary}
@@ -50,15 +50,13 @@ export function NewsReactImage({ data }: { data: NewsReactData }) {
           </div>
         )}
 
-        {/* What this means */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: "auto" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, backgroundColor: COLORS.cobalt, borderRadius: 6 }}>
-            <span style={{ color: COLORS.white, fontSize: 16 }}>?</span>
+        {!data.commentary && (
+          <div style={{ display: "flex", flex: 1, alignItems: "center", justifyContent: "center" }}>
+            <span style={{ fontSize: 18, color: COLORS.gray, textAlign: "center", maxWidth: 600, lineHeight: 1.6 }}>
+              The AI shopping landscape is evolving fast. New agents, new protocols, new ways for customers to buy without ever visiting your site.
+            </span>
           </div>
-          <span style={{ fontSize: 13, color: COLORS.gray }}>
-            What does this mean for your site? Check your AI agent readiness score at robotshopper.com
-          </span>
-        </div>
+        )}
       </div>
     </ImageFrame>
   );

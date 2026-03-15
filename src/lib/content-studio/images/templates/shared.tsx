@@ -1,13 +1,14 @@
 /**
- * Shared Image Frame — Light-themed infographic style
+ * Shared Image Frame — Every image tells a complete story
  *
- * Cream background, bold brand colors, fun & funky Robot Shopper vibe.
- * Every image should tell the whole story at a glance.
+ * Formula:
+ * 1. WHO WE ARE (one-liner at top)
+ * 2. THE INSIGHT (headline + data)
+ * 3. WHY IT MATTERS (callout at bottom)
+ * 4. BRANDING (Robot Shopper footer)
  */
 
 import React from "react";
-
-// ── Brand Colors ──────────────────────────────────────────────────
 
 export const COLORS = {
   navy: "#0A1628",
@@ -41,12 +42,22 @@ export function getGradeForScore(score: number): string {
   return "F";
 }
 
-// ── Image Frame Wrapper ──────────────────────────────────────────
+export function getReadiness(score: number): string {
+  if (score >= 85) return "Agent-Ready";
+  if (score >= 70) return "Mostly Ready";
+  if (score >= 50) return "Needs Work";
+  if (score >= 30) return "Poor";
+  return "Not Ready";
+}
+
+// ── Image Frame ──────────────────────────────────────────────
 
 export function ImageFrame({
   children,
+  whyItMatters,
 }: {
   children: React.ReactNode;
+  whyItMatters?: string;
 }) {
   return (
     <div
@@ -61,8 +72,8 @@ export function ImageFrame({
         fontFamily: "Inter",
       }}
     >
-      {/* Top color strip — cassette tape edge */}
-      <div style={{ display: "flex", height: 6, width: "100%" }}>
+      {/* Top color strip */}
+      <div style={{ display: "flex", height: 5, width: "100%" }}>
         <div style={{ flex: 1, backgroundColor: COLORS.coral, display: "flex" }} />
         <div style={{ flex: 1, backgroundColor: COLORS.mustard, display: "flex" }} />
         <div style={{ flex: 1, backgroundColor: COLORS.cobalt, display: "flex" }} />
@@ -70,176 +81,66 @@ export function ImageFrame({
         <div style={{ flex: 1, backgroundColor: COLORS.emerald, display: "flex" }} />
       </div>
 
+      {/* Context bar — WHO WE ARE */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 48px", backgroundColor: COLORS.white, borderBottom: `1px solid ${COLORS.lightGray}` }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, backgroundColor: COLORS.coral }}>
+            <span style={{ fontFamily: "JetBrains Mono", fontSize: 10, fontWeight: 700, color: COLORS.white }}>RS</span>
+          </div>
+          <span style={{ fontSize: 13, fontWeight: 800, color: COLORS.navy }}>Robot Shopper</span>
+          <span style={{ fontSize: 11, color: COLORS.gray }}>|</span>
+          <span style={{ fontSize: 11, color: COLORS.gray }}>We send AI bots to shop real websites and score what breaks</span>
+        </div>
+        <span style={{ fontFamily: "JetBrains Mono", fontSize: 10, color: COLORS.gray, letterSpacing: "0.05em" }}>robotshopper.com</span>
+      </div>
+
       {/* Content area */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          flex: 1,
-          padding: "32px 48px 20px",
-          position: "relative",
-        }}
-      >
+      <div style={{ display: "flex", flexDirection: "column", flex: 1, padding: "24px 48px 16px" }}>
         {children}
       </div>
 
-      {/* Bottom bar */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "12px 48px",
-          backgroundColor: COLORS.navy,
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          {/* Logo mark */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: 28,
-              height: 28,
-              backgroundColor: COLORS.coral,
-            }}
-          >
-            <span
-              style={{
-                fontFamily: "JetBrains Mono",
-                fontSize: 12,
-                fontWeight: 700,
-                color: COLORS.white,
-              }}
-            >
-              RS
-            </span>
+      {/* WHY IT MATTERS callout */}
+      {whyItMatters && (
+        <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 48px", backgroundColor: COLORS.navy }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 28, height: 28, backgroundColor: COLORS.coral, borderRadius: 4, flexShrink: 0 }}>
+            <span style={{ fontSize: 14, color: COLORS.white, fontWeight: 800 }}>!</span>
           </div>
-          <span
-            style={{
-              fontFamily: "Inter",
-              fontSize: 14,
-              fontWeight: 900,
-              color: COLORS.white,
-              letterSpacing: "-0.02em",
-            }}
-          >
-            Robot Shopper
+          <span style={{ fontSize: 13, color: COLORS.cream, fontWeight: 500, lineHeight: 1.4 }}>
+            {whyItMatters}
           </span>
         </div>
-        <span
-          style={{
-            fontFamily: "JetBrains Mono",
-            fontSize: 11,
-            fontWeight: 700,
-            color: "rgba(255,255,255,0.4)",
-            letterSpacing: "0.05em",
-          }}
-        >
-          robotshopper.com
-        </span>
-      </div>
+      )}
+
+      {/* Bottom bar — if no whyItMatters */}
+      {!whyItMatters && (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "10px 48px", backgroundColor: COLORS.navy }}>
+          <span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>
+            See how your site scores at robotshopper.com
+          </span>
+        </div>
+      )}
     </div>
   );
 }
 
-// ── Reusable Components ──────────────────────────────────────────
+// ── Reusable Components ──────────────────────────────────────
 
-export function ScoreBar({
-  score,
-  width = 300,
-  height = 14,
-}: {
-  score: number;
-  width?: number;
-  height?: number;
-}) {
+export function ScoreBar({ score, width = 300, height = 14 }: { score: number; width?: number; height?: number }) {
   const fillWidth = Math.round((score / 100) * width);
-  const color = getScoreColor(score);
-
   return (
-    <div
-      style={{
-        display: "flex",
-        width,
-        height,
-        backgroundColor: COLORS.lightGray,
-        borderRadius: 4,
-        overflow: "hidden",
-      }}
-    >
-      <div
-        style={{
-          width: fillWidth,
-          height,
-          backgroundColor: color,
-          borderRadius: 4,
-          display: "flex",
-        }}
-      />
+    <div style={{ display: "flex", width, height, backgroundColor: COLORS.lightGray, borderRadius: 4, overflow: "hidden" }}>
+      <div style={{ width: fillWidth, height, backgroundColor: getScoreColor(score), borderRadius: 4, display: "flex" }} />
     </div>
   );
 }
 
-export function GradeBadge({
-  grade,
-  size = "md",
-}: {
-  grade: string;
-  size?: "sm" | "md" | "lg";
-}) {
-  const color = getScoreColor(
-    grade === "A" ? 90 : grade === "B" ? 75 : grade === "C" ? 55 : grade === "D" ? 35 : 15
-  );
-
-  const dims = size === "lg" ? 56 : size === "md" ? 36 : 24;
-  const fontSize = size === "lg" ? 28 : size === "md" ? 18 : 12;
-
+export function GradeBadge({ grade, size = "md" }: { grade: string; size?: "sm" | "md" | "lg" }) {
+  const color = getScoreColor(grade === "A" ? 90 : grade === "B" ? 75 : grade === "C" ? 55 : grade === "D" ? 35 : 15);
+  const dims = size === "lg" ? 48 : size === "md" ? 32 : 22;
+  const fontSize = size === "lg" ? 24 : size === "md" ? 16 : 11;
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        width: dims,
-        height: dims,
-        backgroundColor: color,
-        borderRadius: 4,
-        fontFamily: "JetBrains Mono",
-        fontSize,
-        fontWeight: 700,
-        color: COLORS.white,
-      }}
-    >
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: dims, height: dims, backgroundColor: color, borderRadius: 4, fontFamily: "JetBrains Mono", fontSize, fontWeight: 700, color: COLORS.white }}>
       {grade}
     </div>
-  );
-}
-
-export function Tag({
-  label,
-  color = COLORS.coral,
-}: {
-  label: string;
-  color?: string;
-}) {
-  return (
-    <span
-      style={{
-        display: "flex",
-        fontFamily: "JetBrains Mono",
-        fontSize: 11,
-        fontWeight: 700,
-        color,
-        letterSpacing: "0.1em",
-        textTransform: "uppercase",
-        backgroundColor: color + "15",
-        padding: "4px 10px",
-        borderRadius: 4,
-      }}
-    >
-      {label}
-    </span>
   );
 }
