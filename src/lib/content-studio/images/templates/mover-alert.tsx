@@ -1,5 +1,5 @@
 /**
- * Mover Alert — "[Brand] just dropped/gained X points. Here's what changed."
+ * Mover Alert — Big, bold score change story
  */
 
 import React from "react";
@@ -16,70 +16,89 @@ export interface MoverAlertData {
 
 export function MoverAlertImage({ data }: { data: MoverAlertData }) {
   const isUp = data.delta > 0;
+  const absDelta = Math.abs(data.delta);
   const deltaColor = isUp ? COLORS.emerald : COLORS.coral;
   const afterColor = getScoreColor(data.scoreAfter);
   const grade = data.grade || getGradeForScore(data.scoreAfter);
-  const topChanges = (data.topChanges || []).slice(0, 4);
+  const topChanges = (data.topChanges || []).slice(0, 3);
 
   return (
-    <ImageFrame whyItMatters={isUp
-      ? `${data.brandName} is becoming more accessible to AI shopping agents. As more customers delegate buying to AI, this improvement means more completed purchases.`
-      : `${data.brandName} is getting harder for AI agents to shop. Every point lost means more failed purchases from customers who sent an AI to buy for them.`
-    }>
-      <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 16 }}>
-        {/* Headline */}
-        <span style={{ fontSize: 28, fontWeight: 900, color: COLORS.navy, lineHeight: 1.15, letterSpacing: "-0.02em" }}>
-          {data.brandName}{" "}
-          <span style={{ color: deltaColor }}>
-            {isUp ? `gained ${data.delta} points` : `dropped ${Math.abs(data.delta)} points`}
-          </span>{" "}
-          in AI agent readiness
-        </span>
-        <span style={{ fontSize: 14, color: COLORS.gray }}>
-          We scan {data.brandName} daily with 5 AI shopping bots. {isUp ? "Things just got better." : "Something just broke."}
-        </span>
+    <ImageFrame>
+      {/* Left + Right layout */}
+      <div style={{ display: "flex", flex: 1, gap: 40 }}>
+        {/* Left — The story */}
+        <div style={{ display: "flex", flexDirection: "column", flex: 1, justifyContent: "center", gap: 20 }}>
+          {/* Tag */}
+          <span style={{ fontFamily: "JetBrains Mono", fontSize: 14, fontWeight: 700, color: deltaColor, letterSpacing: "0.08em" }}>
+            {isUp ? "▲ SCORE ALERT" : "▼ SCORE ALERT"}
+          </span>
 
-        {/* Before → After visual */}
-        <div style={{ display: "flex", alignItems: "center", gap: 20, padding: "20px 28px", backgroundColor: COLORS.white, borderRadius: 12, border: `1px solid ${COLORS.lightGray}` }}>
-          {/* Before */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, flex: 1 }}>
-            <span style={{ fontFamily: "JetBrains Mono", fontSize: 10, color: COLORS.gray, letterSpacing: "0.1em" }}>BEFORE</span>
-            <span style={{ fontFamily: "JetBrains Mono", fontSize: 52, fontWeight: 700, color: COLORS.gray + "60", lineHeight: 1 }}>{data.scoreBefore}</span>
-            <span style={{ fontSize: 11, color: COLORS.gray }}>{getReadiness(data.scoreBefore)}</span>
-          </div>
+          {/* Brand + headline */}
+          <span style={{ fontSize: 40, fontWeight: 900, color: COLORS.navy, lineHeight: 1.1, letterSpacing: "-0.02em" }}>
+            {data.brandName}
+          </span>
 
-          {/* Delta */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: "16px 24px", backgroundColor: deltaColor + "10", borderRadius: 12, border: `2px solid ${deltaColor}25` }}>
-            <span style={{ fontSize: 20, color: deltaColor }}>{isUp ? "▲" : "▼"}</span>
-            <span style={{ fontFamily: "JetBrains Mono", fontSize: 36, fontWeight: 700, color: deltaColor, lineHeight: 1 }}>
-              {isUp ? "+" : ""}{data.delta}
-            </span>
-          </div>
+          <span style={{ fontSize: 22, fontWeight: 700, color: deltaColor, lineHeight: 1.3 }}>
+            {isUp
+              ? `Just gained ${absDelta} points in AI agent readiness`
+              : `Just dropped ${absDelta} points in AI agent readiness`
+            }
+          </span>
 
-          {/* After */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, flex: 1 }}>
-            <span style={{ fontFamily: "JetBrains Mono", fontSize: 10, color: COLORS.gray, letterSpacing: "0.1em" }}>AFTER</span>
-            <span style={{ fontFamily: "JetBrains Mono", fontSize: 52, fontWeight: 700, color: afterColor, lineHeight: 1 }}>{data.scoreAfter}</span>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <GradeBadge grade={grade} size="sm" />
-              <span style={{ fontSize: 11, color: afterColor, fontWeight: 600 }}>{getReadiness(data.scoreAfter)}</span>
-            </div>
-          </div>
+          {/* What this means */}
+          <span style={{ fontSize: 16, color: COLORS.gray, lineHeight: 1.5 }}>
+            {isUp
+              ? "AI shopping bots can now complete more of the purchase journey on this site."
+              : "AI shopping bots are hitting new barriers — failed checkouts, broken navigation, or blocked access."
+            }
+          </span>
 
           {/* Category changes */}
           {topChanges.length > 0 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1.5, borderLeft: `2px solid ${COLORS.lightGray}`, paddingLeft: 24 }}>
-              <span style={{ fontFamily: "JetBrains Mono", fontSize: 10, color: COLORS.gray, letterSpacing: "0.1em" }}>WHAT CHANGED</span>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6, padding: "14px 18px", backgroundColor: COLORS.white, borderRadius: 12, border: `1px solid ${COLORS.lightGray}` }}>
+              <span style={{ fontFamily: "JetBrains Mono", fontSize: 12, color: COLORS.gray, letterSpacing: "0.08em" }}>WHAT CHANGED</span>
               {topChanges.map((c) => (
                 <div key={c.category} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <span style={{ fontSize: 13, color: COLORS.navy }}>{c.category}</span>
-                  <span style={{ fontFamily: "JetBrains Mono", fontSize: 13, fontWeight: 700, color: c.delta > 0 ? COLORS.emerald : COLORS.coral }}>
+                  <span style={{ fontSize: 15, fontWeight: 600, color: COLORS.navy }}>{c.category}</span>
+                  <span style={{ fontFamily: "JetBrains Mono", fontSize: 16, fontWeight: 700, color: c.delta > 0 ? COLORS.emerald : COLORS.coral }}>
                     {c.delta > 0 ? "+" : ""}{c.delta}
                   </span>
                 </div>
               ))}
             </div>
           )}
+        </div>
+
+        {/* Right — Big visual score */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: 380, gap: 20 }}>
+          {/* Delta circle */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 160, height: 160, borderRadius: 80, backgroundColor: deltaColor + "12", border: `4px solid ${deltaColor}` }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <span style={{ fontFamily: "JetBrains Mono", fontSize: 56, fontWeight: 700, color: deltaColor, lineHeight: 1 }}>
+                {isUp ? "+" : ""}{data.delta}
+              </span>
+              <span style={{ fontFamily: "JetBrains Mono", fontSize: 14, color: deltaColor, letterSpacing: "0.05em" }}>POINTS</span>
+            </div>
+          </div>
+
+          {/* Before → After row */}
+          <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+              <span style={{ fontFamily: "JetBrains Mono", fontSize: 12, color: COLORS.gray }}>BEFORE</span>
+              <span style={{ fontFamily: "JetBrains Mono", fontSize: 32, fontWeight: 700, color: COLORS.gray + "80" }}>{data.scoreBefore || "—"}</span>
+            </div>
+            <span style={{ fontSize: 24, color: COLORS.gray }}>→</span>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+              <span style={{ fontFamily: "JetBrains Mono", fontSize: 12, color: COLORS.gray }}>AFTER</span>
+              <span style={{ fontFamily: "JetBrains Mono", fontSize: 32, fontWeight: 700, color: afterColor }}>{data.scoreAfter || "—"}</span>
+            </div>
+          </div>
+
+          {/* Grade + readiness */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <GradeBadge grade={grade} size="md" />
+            <span style={{ fontSize: 16, fontWeight: 700, color: afterColor }}>{getReadiness(data.scoreAfter)}</span>
+          </div>
         </div>
       </div>
     </ImageFrame>
