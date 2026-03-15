@@ -9,7 +9,7 @@ import { FeedAgentDiagram, BrowserAgentDiagram } from "@/components/agents/parad
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "AI Shopping Agent Landscape — ARC Score",
+  title: "AI Shopping Agent Landscape — Robot Shopper",
   description: "Explore the 10 AI shopping agents reshaping e-commerce. Learn how feed-based and browser-automation agents interact with online stores differently.",
 };
 
@@ -64,7 +64,7 @@ function AgentCard({ agent }: { agent: AIAgentProfile }) {
       </div>
 
       <div className="mb-3">
-        <p className="text-[10px] font-semibold text-foreground uppercase tracking-wider mb-1.5">Key ARC Score categories</p>
+        <p className="text-[10px] font-semibold text-foreground uppercase tracking-wider mb-1.5">Key Robot Shopper categories</p>
         <div className="flex flex-wrap gap-1.5">
           {topWeights.map(([catId, weight]) => (
             <span
@@ -301,13 +301,13 @@ export default function AgentsPage() {
           </div>
         </section>
 
-        {/* Connection to ARC Score */}
+        {/* Connection to Robot Shopper */}
         <section className="mb-8">
           <h2 className="text-lg font-semibold text-foreground mb-2">
-            How ARC Score Measures Agent Readiness
+            How Robot Shopper Measures Agent Readiness
           </h2>
           <p className="text-sm text-muted-foreground mb-4 max-w-2xl leading-relaxed">
-            ARC Score tests whether AI agents <em>could</em> successfully shop on your site — without
+            Robot Shopper tests whether AI agents <em>could</em> successfully shop on your site — without
             actually making purchases. We test the full journey: product discovery, data readability,
             navigation, add-to-cart, and checkout reachability. Each AI agent weights these
             categories differently. A brand scoring 85 overall might be excellent for feed-based
@@ -319,15 +319,15 @@ export default function AgentsPage() {
               <h3 className="text-sm font-semibold text-foreground">Per-Agent Compatibility Scores</h3>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed mb-3">
-              Every brand report on ARC Score includes compatibility scores for all {AI_AGENT_PROFILES.length} agents.
+              Every brand report on Robot Shopper includes compatibility scores for all {AI_AGENT_PROFILES.length} agents.
               Each score reflects how well that specific agent could navigate and interact with the site,
-              based on its unique weight profile applied to the 7 ARC Score categories.
+              based on its unique weight profile applied to the 7 scoring categories.
             </p>
             <a
               href="/"
               className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#FF6648] hover:underline"
             >
-              View the ARC Score Index <ExternalLink size={10} />
+              View the Robot Shopper Index <ExternalLink size={10} />
             </a>
           </div>
         </section>

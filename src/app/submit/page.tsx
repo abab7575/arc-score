@@ -51,7 +51,7 @@ export default function SubmitPage() {
           Submit Your Site
         </h1>
         <p className="text-sm text-muted-foreground mb-8">
-          Want to see your brand on the ARC Score index? Submit it here and we&apos;ll add it to our daily scanning queue.
+          Want to see your brand on the Robot Shopper index? Submit it here and we&apos;ll add it to our daily scanning queue.
         </p>
 
         {submitted ? (

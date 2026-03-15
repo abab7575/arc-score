@@ -124,7 +124,7 @@ export function ImageFrame({
             letterSpacing: "0.15em",
           }}
         >
-          ARC SCORE
+          ROBOT SHOPPER
         </span>
       </div>
 

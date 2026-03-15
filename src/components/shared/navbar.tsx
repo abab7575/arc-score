@@ -13,14 +13,14 @@ export function Navbar() {
             {/* Retro logo mark */}
             <div className="relative">
               <div className="w-7 h-7 bg-[#0259DD] flex items-center justify-center group-hover:bg-[#FF6648] transition-colors">
-                <span className="text-[11px] font-black text-white font-mono">A</span>
+                <span className="text-[11px] font-black text-white font-mono">RS</span>
               </div>
               {/* Offset shadow */}
               <div className="absolute inset-0 w-7 h-7 bg-[#FF6648] -z-10 translate-x-[2px] translate-y-[2px] group-hover:bg-[#0259DD] transition-colors" />
             </div>
             <div className="flex items-baseline gap-1.5">
               <span className="text-[15px] font-black text-foreground tracking-tight">
-                ARC Score
+                Robot Shopper
               </span>
               <span className="spec-label text-muted-foreground hidden sm:inline">v1.0</span>
             </div>

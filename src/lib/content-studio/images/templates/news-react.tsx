@@ -91,7 +91,7 @@ export function NewsReactImage({ data }: { data: NewsReactData }) {
               color: COLORS.gray,
             }}
           >
-            AI Agent Readiness perspective · arcscore.com
+            AI Agent Readiness perspective · robotshopper.com
           </span>
         </div>
       </div>

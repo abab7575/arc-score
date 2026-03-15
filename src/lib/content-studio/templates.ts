@@ -65,7 +65,7 @@ export function categoryLeaderboardTemplate(
       .map((b) => `${gradeEmoji(b.grade)} ${ordinalSuffix(b.rank)} ${b.name} (${b.score}/100)`)
       .join("\n");
     return truncate(
-      `${categoryName} AI Agent Readiness Leaderboard\n\n${lines}\n\nScored across ${totalBrands} brands on arcscore.com`,
+      `${categoryName} AI Agent Readiness Leaderboard\n\n${lines}\n\nScored across ${totalBrands} brands on robotshopper.com`,
       280
     );
   }
@@ -77,7 +77,7 @@ export function categoryLeaderboardTemplate(
           `${gradeEmoji(b.grade)} ${ordinalSuffix(b.rank)}. ${b.name} \u2014 ${b.score}/100 (Grade ${b.grade})`
       )
       .join("\n");
-    return `${categoryName} \u2014 AI Agent Readiness Leaderboard\n\nWhich ${categoryName.toLowerCase()} brands are best prepared for AI shopping agents? Here's how the top performers stack up:\n\n${lines}\n\nWe score brands across 7 categories \u2014 from discoverability and product data to cart/checkout and agentic commerce protocols.\n\n${totalBrands} brands tracked and scored weekly.\n\nFull rankings: arcscore.com\n\n#AICommerce #Ecommerce #RetailTech #ARC`;
+    return `${categoryName} \u2014 AI Agent Readiness Leaderboard\n\nWhich ${categoryName.toLowerCase()} brands are best prepared for AI shopping agents? Here's how the top performers stack up:\n\n${lines}\n\nWe score brands across 7 categories \u2014 from discoverability and product data to cart/checkout and agentic commerce protocols.\n\n${totalBrands} brands tracked and scored weekly.\n\nFull rankings: robotshopper.com\n\n#AICommerce #Ecommerce #RetailTech #RobotShopper`;
   }
 
   // newsletter
@@ -87,7 +87,7 @@ export function categoryLeaderboardTemplate(
         `| ${b.rank} | ${b.name} | ${b.score} | ${b.grade} |`
     )
     .join("\n");
-  return `## ${categoryName} \u2014 AI Agent Readiness Leaderboard\n\n| Rank | Brand | Score | Grade |\n|------|-------|-------|-------|\n${rows}\n\n*${totalBrands} brands tracked. Scores updated weekly across 7 categories.*\n\n[View full rankings \u2192](https://arcscore.com)`;
+  return `## ${categoryName} \u2014 AI Agent Readiness Leaderboard\n\n| Rank | Brand | Score | Grade |\n|------|-------|-------|-------|\n${rows}\n\n*${totalBrands} brands tracked. Scores updated weekly across 7 categories.*\n\n[View full rankings \u2192](https://robotshopper.com)`;
 }
 
 // ── Score Spotlight ──────────────────────────────────────────────────
@@ -124,7 +124,7 @@ export function scoreSpotlightTemplate(
       .map((c) => `${c.name}: ${c.score}`)
       .join(" | ");
     return truncate(
-      `${gradeEmoji(grade)} ${brandName} scores ${overallScore}/100${deltaStr} on AI Agent Readiness\n\n${top}\n\nFull breakdown: arcscore.com/brand/${data.brandSlug}`,
+      `${gradeEmoji(grade)} ${brandName} scores ${overallScore}/100${deltaStr} on AI Agent Readiness\n\n${top}\n\nFull breakdown: robotshopper.com/brand/${data.brandSlug}`,
       280
     );
   }
@@ -134,14 +134,14 @@ export function scoreSpotlightTemplate(
       .sort((a, b) => b.score - a.score)
       .map((c) => `${gradeEmoji(c.grade)} ${c.name}: ${c.score}/100`)
       .join("\n");
-    return `ARC Score Spotlight: ${brandName}\n\n${gradeEmoji(grade)} Overall: ${overallScore}/100 (Grade ${grade})${deltaStr}\n\nCategory Breakdown:\n${breakdown}\n\nThe ARC Score measures how well e-commerce sites work with AI shopping agents \u2014 from ChatGPT Shopping to browser-automation agents like Operator.\n\nFull report: arcscore.com/brand/${data.brandSlug}\n\n#AICommerce #Ecommerce #ARC`;
+    return `Robot Shopper Spotlight: ${brandName}\n\n${gradeEmoji(grade)} Overall: ${overallScore}/100 (Grade ${grade})${deltaStr}\n\nCategory Breakdown:\n${breakdown}\n\nThe Robot Shopper measures how well e-commerce sites work with AI shopping agents \u2014 from ChatGPT Shopping to browser-automation agents like Operator.\n\nFull report: robotshopper.com/brand/${data.brandSlug}\n\n#AICommerce #Ecommerce #RobotShopper`;
   }
 
   // newsletter
   const rows = categoryBreakdown
     .map((c) => `| ${c.name} | ${scoreBar(c.score)} | ${c.score} | ${c.grade} |`)
     .join("\n");
-  return `## ARC Score Spotlight: ${brandName}\n\n**Overall: ${overallScore}/100 (Grade ${grade})**${deltaStr}\n\n| Category | | Score | Grade |\n|----------|---|-------|-------|\n${rows}\n\n[View full report \u2192](https://arcscore.com/brand/${data.brandSlug})`;
+  return `## Robot Shopper Spotlight: ${brandName}\n\n**Overall: ${overallScore}/100 (Grade ${grade})**${deltaStr}\n\n| Category | | Score | Grade |\n|----------|---|-------|-------|\n${rows}\n\n[View full report \u2192](https://robotshopper.com/brand/${data.brandSlug})`;
 }
 
 // ── Biggest Movers ──────────────────────────────────────────────────
@@ -180,7 +180,7 @@ export function biggestMoversTemplate(
       })
       .join("\n");
     return truncate(
-      `AI Agent Readiness \u2014 ${label} This Week\n\n${lines}\n\narcscore.com`,
+      `AI Agent Readiness \u2014 ${label} This Week\n\n${lines}\n\nrobotshopper.com`,
       280
     );
   }
@@ -192,7 +192,7 @@ export function biggestMoversTemplate(
         return `${arrow} ${m.name}: ${m.previousScore} \u2192 ${m.score} (${m.delta > 0 ? "+" : ""}${m.delta})`;
       })
       .join("\n");
-    return `AI Agent Readiness \u2014 ${label} This Week\n\nWhich brands made the biggest score changes?\n\n${lines}\n\nScores shift as brands improve (or regress) on structured data, checkout flows, and AI agent compatibility.\n\nTrack the full index: arcscore.com\n\n#AICommerce #Ecommerce #RetailTech`;
+    return `AI Agent Readiness \u2014 ${label} This Week\n\nWhich brands made the biggest score changes?\n\n${lines}\n\nScores shift as brands improve (or regress) on structured data, checkout flows, and AI agent compatibility.\n\nTrack the full index: robotshopper.com\n\n#AICommerce #Ecommerce #RetailTech`;
   }
 
   // newsletter
@@ -227,7 +227,7 @@ export function agentReadinessTemplate(
       .map((b) => `${gradeEmoji(b.grade)} ${b.name}: ${b.score}`)
       .join("\n");
     return truncate(
-      `Top brands ready for ${agentName} (${agentType})\n\n${lines}\n\narcscore.com/agents`,
+      `Top brands ready for ${agentName} (${agentType})\n\n${lines}\n\nrobotshopper.com/agents`,
       280
     );
   }
@@ -239,7 +239,7 @@ export function agentReadinessTemplate(
           `${gradeEmoji(b.grade)} ${ordinalSuffix(b.rank)}. ${b.name} \u2014 ${b.score}/100`
       )
       .join("\n");
-    return `Which brands are most ready for ${agentName}?\n\n${agentName} is a ${agentType}-based AI shopping agent from ${data.agentCompany}. ${agentType === "feed" ? "It reads structured data and product feeds." : "It navigates sites with browser automation."}\n\nTop compatible brands:\n\n${lines}\n\nEach agent has unique needs \u2014 we score ${totalBrands} brands through 10 different agent lenses.\n\nExplore all agents: arcscore.com/agents\n\n#AICommerce #AIAgents #Ecommerce`;
+    return `Which brands are most ready for ${agentName}?\n\n${agentName} is a ${agentType}-based AI shopping agent from ${data.agentCompany}. ${agentType === "feed" ? "It reads structured data and product feeds." : "It navigates sites with browser automation."}\n\nTop compatible brands:\n\n${lines}\n\nEach agent has unique needs \u2014 we score ${totalBrands} brands through 10 different agent lenses.\n\nExplore all agents: robotshopper.com/agents\n\n#AICommerce #AIAgents #Ecommerce`;
   }
 
   // newsletter
@@ -272,7 +272,7 @@ export function weeklyRoundupTemplate(
       .map((b) => `${gradeEmoji(b.grade)} ${b.name}: ${b.score}`)
       .join("\n");
     return truncate(
-      `ARC Score Weekly Roundup\n\n${totalBrands} brands tracked | Avg: ${avgScore}/100\n\nTop 3:\n${top3}\n\narcscore.com`,
+      `Robot Shopper Weekly Roundup\n\n${totalBrands} brands tracked | Avg: ${avgScore}/100\n\nTop 3:\n${top3}\n\nrobotshopper.com`,
       280
     );
   }
@@ -292,7 +292,7 @@ export function weeklyRoundupTemplate(
             )
             .join("\n")
         : "No major movements this week.";
-    return `ARC Score \u2014 Weekly Roundup\n\n${totalBrands} brands tracked | Average score: ${avgScore}/100\n\nTop Performers:\n${topList}\n\nBiggest Moves:\n${moverList}\n\nAI shopping agents are reshaping e-commerce. Is your site ready?\n\narcscore.com\n\n#AICommerce #Ecommerce #WeeklyRoundup`;
+    return `Robot Shopper \u2014 Weekly Roundup\n\n${totalBrands} brands tracked | Average score: ${avgScore}/100\n\nTop Performers:\n${topList}\n\nBiggest Moves:\n${moverList}\n\nAI shopping agents are reshaping e-commerce. Is your site ready?\n\nrobotshopper.com\n\n#AICommerce #Ecommerce #WeeklyRoundup`;
   }
 
   // newsletter
@@ -317,7 +317,7 @@ export function weeklyRoundupTemplate(
           .join("\n")
       : "- *No news highlights this week*";
 
-  return `## ARC Score \u2014 Weekly Roundup\n\n**${totalBrands} brands tracked** | Average score: **${avgScore}/100**\n\n### Top Performers\n\n| Rank | Brand | Score | Grade |\n|------|-------|-------|-------|\n${topRows}\n\n### Biggest Movers\n\n| Brand | Change | Current |\n|-------|--------|--------|\n${moverRows}\n\n### News Highlights\n\n${newsItems}\n\n---\n\n[Explore the full index \u2192](https://arcscore.com)`;
+  return `## Robot Shopper \u2014 Weekly Roundup\n\n**${totalBrands} brands tracked** | Average score: **${avgScore}/100**\n\n### Top Performers\n\n| Rank | Brand | Score | Grade |\n|------|-------|-------|-------|\n${topRows}\n\n### Biggest Movers\n\n| Brand | Change | Current |\n|-------|--------|--------|\n${moverRows}\n\n### News Highlights\n\n${newsItems}\n\n---\n\n[Explore the full index \u2192](https://robotshopper.com)`;
 }
 
 // ── News Reaction ───────────────────────────────────────────────────
@@ -346,7 +346,7 @@ export function newsReactionTemplate(
       ? commentary
       : `Interesting: "${firstArticle.title}"`;
     const tagline = "Here's what this means for AI agent readiness.";
-    return truncate(`${intro}\n\n${tagline}\n\narcscore.com`, 280);
+    return truncate(`${intro}\n\n${tagline}\n\nrobotshopper.com`, 280);
   }
 
   if (platform === "linkedin") {
@@ -356,7 +356,7 @@ export function newsReactionTemplate(
     const commentBlock = commentary
       ? `\n${commentary}\n`
       : "\nThis matters for AI agent readiness because it signals how the industry is adapting to AI-powered shopping.\n";
-    return `In the news:\n\n${articleList}\n${commentBlock}\nAt ARC Score, we track how ${articles.length > 1 ? "developments like these" : "this"} impacts the ability of AI agents to shop on e-commerce sites.\n\nLearn more: arcscore.com\n\n#AICommerce #Ecommerce #RetailNews`;
+    return `In the news:\n\n${articleList}\n${commentBlock}\nAt Robot Shopper, we track how ${articles.length > 1 ? "developments like these" : "this"} impacts the ability of AI agents to shop on e-commerce sites.\n\nLearn more: robotshopper.com\n\n#AICommerce #Ecommerce #RetailNews`;
   }
 
   // newsletter
@@ -368,5 +368,5 @@ export function newsReactionTemplate(
   const commentBlock = commentary
     ? `\n\n**Our take:** ${commentary}`
     : "";
-  return `## News Reaction\n\n${articleBlocks}${commentBlock}\n\n---\n\n*How does this affect AI agent readiness? [See the data \u2192](https://arcscore.com)*`;
+  return `## News Reaction\n\n${articleBlocks}${commentBlock}\n\n---\n\n*How does this affect AI agent readiness? [See the data \u2192](https://robotshopper.com)*`;
 }

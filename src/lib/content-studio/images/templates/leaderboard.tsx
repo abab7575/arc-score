@@ -109,7 +109,7 @@ export function LeaderboardImage({ data }: { data: LeaderboardData }) {
               color: COLORS.gray,
             }}
           >
-            {data.totalBrands} brands tracked · arcscore.com
+            {data.totalBrands} brands tracked · robotshopper.com
           </span>
         </div>
       </div>

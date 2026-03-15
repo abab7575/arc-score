@@ -1,5 +1,5 @@
 /**
- * Centralized feed source definitions for the ARC Score intel system.
+ * Centralized feed source definitions for the Robot Shopper intel system.
  * Import this in seed scripts and anywhere feed lists are needed.
  */
 

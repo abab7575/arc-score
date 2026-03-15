@@ -93,12 +93,12 @@ export function InfoTooltip({
 }
 
 /**
- * Pre-built explainer definitions for common ARC Score terms.
+ * Pre-built explainer definitions for common Robot Shopper terms.
  * Use: <InfoTooltip content={EXPLAINERS.acp} />
  */
 export const EXPLAINERS = {
   arcScore:
-    "ARC Score measures how easily AI shopping agents (like ChatGPT, Perplexity, or Google AI) can browse, understand products, and complete purchases on a website. Scored 0–100.",
+    "Robot Shopper measures how easily AI shopping agents (like ChatGPT, Perplexity, or Google AI) can browse, understand products, and complete purchases on a website. Scored 0–100.",
 
   acpSupport:
     "ACP (Agentic Commerce Protocol) is an open standard that lets AI agents create checkout sessions and complete purchases programmatically — without needing to click through a browser.",
@@ -145,7 +145,7 @@ export const EXPLAINERS = {
   effort:
     "Estimated developer effort to implement this fix. Low = under 2 hours. Medium = 2–8 hours. High = 1–2 weeks.",
   pointsGain:
-    "Estimated ARC Score improvement (out of 100) if this issue is fixed. Your total score is a weighted average across all categories.",
+    "Estimated score improvement (out of 100) if this issue is fixed. Your total score is a weighted average across all categories.",
 
   evidence:
     "Key observations from our automated scan. These are specific signals our agents detected while testing this site's commerce capabilities.",
@@ -170,7 +170,7 @@ export const EXPLAINERS = {
     "The primary method failed, but the agent found an alternative way to complete the action. This works but is fragile and may break.",
 
   scoreTrend:
-    "How this site's ARC Score has changed over the past 30 days. Score improvements typically result from fixing issues identified in previous scans.",
+    "How this site's score has changed over the past 30 days. Score improvements typically result from fixing issues identified in previous scans.",
   delta:
     "Score change compared to the previous scan. A positive number means the site has improved its agent readiness since the last test.",
 

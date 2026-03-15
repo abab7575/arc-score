@@ -4,7 +4,7 @@ import { LandscapeContent } from "@/components/landscape/landscape-content";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "The Agentic Commerce Landscape — ARC Score",
+  title: "The Agentic Commerce Landscape — Robot Shopper",
   description:
     "An interactive guide to the AI shopping revolution. Explore how AI agents discover, compare, and buy products — and what it means for your e-commerce site.",
 };

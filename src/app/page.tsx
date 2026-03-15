@@ -81,10 +81,10 @@ export default function HomePage() {
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "ARC Score",
+    name: "Robot Shopper",
     url: "https://arcscore.com",
     description:
-      "The Agent Readiness Index for E-Commerce. We score how well AI shopping agents can navigate and buy from e-commerce sites.",
+      "The AI Agent Readiness Index for E-Commerce. We score how well AI shopping agents can navigate and buy from e-commerce sites.",
     sameAs: [],
   };
 

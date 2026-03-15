@@ -97,7 +97,7 @@ export function EducationalImage({ data }: { data: EducationalData }) {
               color: COLORS.gray,
             }}
           >
-            Learn more at arcscore.com
+            Learn more at robotshopper.com
           </span>
         </div>
       </div>

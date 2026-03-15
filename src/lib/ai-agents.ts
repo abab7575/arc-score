@@ -2,7 +2,7 @@
  * AI Agent Profiles & Per-Agent Compatibility Scoring
  *
  * Each real-world AI shopping agent gets a weighted "lens" applied to
- * the same 7 ARC Score categories. Feed/API agents care about structured
+ * the same 7 Robot Shopper categories. Feed/API agents care about structured
  * data; browser-automation agents care about navigation and checkout UX.
  */
 

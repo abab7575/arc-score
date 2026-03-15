@@ -336,7 +336,7 @@ async function checkRobotsTxt(
     const res = await fetch(`${baseUrl}/robots.txt`, {
       headers: {
         "User-Agent":
-          "Mozilla/5.0 (compatible; ARC-Score-Scanner/1.0; +https://arcscore.ai)",
+          "Mozilla/5.0 (compatible; RobotShopper-Scanner/1.0; +https://robotshopper.com)",
       },
       redirect: "follow",
       signal: AbortSignal.timeout(10000),
@@ -417,7 +417,7 @@ async function checkSitemap(
   for (const sitemapUrl of uniqueUrls) {
     try {
       const res = await fetch(sitemapUrl, {
-        headers: { "User-Agent": "ARC-Score-Scanner/1.0" },
+        headers: { "User-Agent": "RobotShopper-Scanner/1.0" },
         redirect: "follow",
         signal: AbortSignal.timeout(10000),
       });
@@ -475,7 +475,7 @@ async function probeApiEndpoints(
     try {
       const res = await fetch(`${baseUrl}${endpoint}`, {
         headers: {
-          "User-Agent": "ARC-Score-Scanner/1.0",
+          "User-Agent": "RobotShopper-Scanner/1.0",
           Accept: "application/json",
         },
       });
@@ -509,7 +509,7 @@ async function checkAcpEndpoints(
   for (const path of discoveryPaths) {
     try {
       const res = await fetch(`${baseUrl}${path}`, {
-        headers: { "User-Agent": "ARC-Score-Scanner/1.0", Accept: "application/json" },
+        headers: { "User-Agent": "RobotShopper-Scanner/1.0", Accept: "application/json" },
       });
       const contentType = res.headers.get("content-type") || "";
       probes.push({
@@ -535,7 +535,7 @@ async function checkAcpEndpoints(
     try {
       const optRes = await fetch(`${baseUrl}${path}`, {
         method: "OPTIONS",
-        headers: { "User-Agent": "ARC-Score-Scanner/1.0" },
+        headers: { "User-Agent": "RobotShopper-Scanner/1.0" },
       });
       const ct = optRes.headers.get("content-type") || "";
       probes.push({
@@ -552,7 +552,7 @@ async function checkAcpEndpoints(
     // GET probe with non-existent ID (expect 404 with JSON content-type)
     try {
       const getRes = await fetch(`${baseUrl}${path}/does-not-exist`, {
-        headers: { "User-Agent": "ARC-Score-Scanner/1.0", Accept: "application/json" },
+        headers: { "User-Agent": "RobotShopper-Scanner/1.0", Accept: "application/json" },
       });
       const ct = getRes.headers.get("content-type") || "";
       let bodyKeys: string[] | undefined;
@@ -607,7 +607,7 @@ async function probeCommerceApis(
   for (const ep of cartEndpoints) {
     try {
       const res = await fetch(`${baseUrl}${ep}`, {
-        headers: { "User-Agent": "ARC-Score-Scanner/1.0", Accept: "application/json" },
+        headers: { "User-Agent": "RobotShopper-Scanner/1.0", Accept: "application/json" },
       });
       if (res.headers.get("content-type")?.includes("json")) {
         cartApiFound = true;
@@ -621,7 +621,7 @@ async function probeCommerceApis(
   for (const ep of checkoutEndpoints) {
     try {
       const res = await fetch(`${baseUrl}${ep}`, {
-        headers: { "User-Agent": "ARC-Score-Scanner/1.0", Accept: "application/json" },
+        headers: { "User-Agent": "RobotShopper-Scanner/1.0", Accept: "application/json" },
       });
       const ct = res.headers.get("content-type") || "";
       if (ct.includes("json") || (res.status === 401 && ct.includes("json"))) {
@@ -637,7 +637,7 @@ async function probeCommerceApis(
     const res = await fetch(`${baseUrl}/graphql`, {
       method: "POST",
       headers: {
-        "User-Agent": "ARC-Score-Scanner/1.0",
+        "User-Agent": "RobotShopper-Scanner/1.0",
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -665,7 +665,7 @@ async function probeCommerceApis(
 async function checkUcpFile(baseUrl: string): Promise<{ found: boolean; content?: string }> {
   try {
     const res = await fetch(`${baseUrl}/.well-known/ucp`, {
-      headers: { "User-Agent": "ARC-Score-Scanner/1.0" },
+      headers: { "User-Agent": "RobotShopper-Scanner/1.0" },
     });
     if (!res.ok) return { found: false };
     const content = await res.text();
@@ -678,7 +678,7 @@ async function checkUcpFile(baseUrl: string): Promise<{ found: boolean; content?
 async function checkLlmsTxt(baseUrl: string): Promise<{ found: boolean; content?: string }> {
   try {
     const res = await fetch(`${baseUrl}/llms.txt`, {
-      headers: { "User-Agent": "ARC-Score-Scanner/1.0" },
+      headers: { "User-Agent": "RobotShopper-Scanner/1.0" },
     });
     if (!res.ok) return { found: false };
     const content = await res.text();

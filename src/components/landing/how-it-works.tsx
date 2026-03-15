@@ -260,7 +260,7 @@ export function HowItWorks() {
         viewport={{ once: true }}
       >
         <p className="text-sm font-bold text-gray-900 mb-1.5">
-          Your ARC Score: 0 &ndash; 100
+          Your Score: 0 &ndash; 100
         </p>
         <p className="text-xs text-gray-500 leading-relaxed mb-5 max-w-sm mx-auto">
           A single number that tells you how ready your store is for AI-powered

@@ -29,7 +29,7 @@ export function UrlInput() {
           type="submit"
           className="absolute right-1.5 top-1.5 h-10 sm:h-11 px-5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium flex items-center gap-2 transition-colors shadow-sm"
         >
-          Get Your ARC Score
+          Get Your Score
           <ArrowRight size={14} />
         </button>
       </div>
