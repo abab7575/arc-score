@@ -2,7 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import Link from "next/link";
-import { Search, ShoppingCart, Eye, Database, ArrowRight, TrendingUp, AlertTriangle, Zap, Mail, Bot, XCircle, CheckCircle2, ChevronRight } from "lucide-react";
+import { Search, ShoppingCart, Eye, Database, ArrowRight, TrendingUp, AlertTriangle, Zap, Mail, Bot, XCircle, CheckCircle2 } from "lucide-react";
 
 interface IndexHeroProps {
   onSearch: (query: string) => void;
@@ -43,111 +43,64 @@ export function IndexHero({ onSearch }: IndexHeroProps) {
         <div className="absolute bottom-32 right-[8%] w-2 h-2 rounded-full bg-[#0259DD] z-[1]" style={{ boxShadow: "0 0 8px rgba(2,89,221,0.3)" }} />
 
         {/* Content */}
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14 pb-10 sm:pb-14">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 pb-8 sm:pb-12">
 
-          {/* Top spec line */}
-          <div className="flex items-center gap-3 mb-8 opacity-60">
-            <div className="flex-1 h-px" style={{ background: "repeating-linear-gradient(90deg, rgba(10,22,40,0.15), rgba(10,22,40,0.15) 4px, transparent 4px, transparent 8px)" }} />
-            <span className="spec-label text-[#0A1628]/50">LIVE — SCANNING DAILY</span>
-            <span className="w-2 h-2 rounded-full bg-[#059669] blink" />
-            <div className="flex-1 h-px" style={{ background: "repeating-linear-gradient(90deg, rgba(10,22,40,0.15), rgba(10,22,40,0.15) 4px, transparent 4px, transparent 8px)" }} />
-          </div>
+          {/* Two-column layout — tight */}
+          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
 
-          {/* Two-column layout */}
-          <div className="flex flex-col lg:flex-row items-start gap-10 lg:gap-14">
-
-            {/* Left — Message */}
-            <div className="flex-1 text-center lg:text-left pt-2">
-              <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-black text-[#0A1628] tracking-tighter leading-[0.92] mb-5"
+            {/* Left — Message: big, bold, clear */}
+            <div className="flex-1 text-center lg:text-left">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-[#0A1628] tracking-tighter leading-[0.88] mb-5"
                 style={{
-                  textShadow: "2px 2px 0 rgba(255,102,72,0.15), 3px 3px 0 rgba(2,89,221,0.06)",
+                  textShadow: "2px 2px 0 rgba(255,102,72,0.12), 3px 3px 0 rgba(2,89,221,0.05)",
                 }}
               >
-                Can AI Agents<br />
-                Shop Your<br />
-                Store?
+                AI agents are<br />
+                shopping for<br />
+                your customers.
               </h1>
 
-              <p className="text-sm sm:text-base text-[#0A1628]/65 max-w-md leading-relaxed mb-2 mx-auto lg:mx-0">
-                Your customers are sending{" "}
-                <span className="font-semibold text-[#0A1628]">ChatGPT, Perplexity, and Google AI</span>{" "}
-                to buy for them. If your site isn&apos;t ready, you lose the sale — silently.
+              <p className="text-lg sm:text-xl text-[#0A1628]/70 max-w-lg leading-relaxed mb-6 mx-auto lg:mx-0">
+                <strong className="text-[#0A1628]">84 million shopping queries</strong> hit ChatGPT every week.
+                We send AI agents to your store and show you exactly where they fail — with screenshots, cursor replays, and a fix list.
               </p>
-              <p className="text-sm text-[#0A1628]/45 max-w-md leading-relaxed mb-6 mx-auto lg:mx-0">
-                We send 5 robot shoppers to your store. They try to find products, add to cart, and check out.
-                You get a score, the findings, and exactly how to fix it.
-              </p>
-
-              {/* Value props — compact, punchy */}
-              <div className="flex flex-col sm:flex-row gap-3 mb-6 max-w-md mx-auto lg:mx-0">
-                <div className="flex items-center gap-2 text-xs text-[#0A1628]/50">
-                  <div className="w-5 h-5 bg-[#FF6648] flex items-center justify-center shrink-0">
-                    <Eye size={11} className="text-white" />
-                  </div>
-                  <span><strong className="text-[#0A1628]/70">Watch</strong> agents shop your site</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-[#0A1628]/50">
-                  <div className="w-5 h-5 bg-[#0259DD] flex items-center justify-center shrink-0">
-                    <AlertTriangle size={11} className="text-white" />
-                  </div>
-                  <span><strong className="text-[#0A1628]/70">See</strong> where they get stuck</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-[#0A1628]/50">
-                  <div className="w-5 h-5 bg-[#059669] flex items-center justify-center shrink-0">
-                    <Zap size={11} className="text-white" />
-                  </div>
-                  <span><strong className="text-[#0A1628]/70">Fix</strong> it in hours</span>
-                </div>
-              </div>
 
               {/* Search */}
-              <div className="max-w-md relative group mx-auto lg:mx-0">
+              <div className="max-w-lg relative group mx-auto lg:mx-0 mb-4">
                 <Search
-                  size={15}
+                  size={16}
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-[#0A1628]/25 group-focus-within:text-[#FF6648] transition-colors"
                 />
                 <input
                   type="text"
-                  placeholder="Search 276 brands..."
+                  placeholder="Check your brand's score..."
                   value={query}
                   onChange={(e) => {
                     setQuery(e.target.value);
                     onSearch(e.target.value);
                   }}
-                  className="w-full pl-11 pr-24 py-3.5 border-2 border-[#0A1628]/10 bg-white text-sm text-[#0A1628] placeholder:text-[#0A1628]/25 focus:outline-none focus:border-[#FF6648] focus:shadow-[0_0_0_3px_rgba(255,102,72,0.1)] transition-all font-mono"
+                  className="w-full pl-12 pr-32 py-4 border-2 border-[#0A1628]/12 bg-white text-base text-[#0A1628] placeholder:text-[#0A1628]/30 focus:outline-none focus:border-[#FF6648] focus:shadow-[0_0_0_4px_rgba(255,102,72,0.1)] transition-all"
                 />
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 spec-label text-[#0A1628]/15">SEARCH</span>
+                <button
+                  className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 bg-[#FF6648] text-white text-sm font-bold hover:bg-[#e85a3f] transition-colors"
+                >
+                  Search
+                </button>
               </div>
 
-              {/* CTA row */}
-              <div className="flex items-center gap-3 mt-4 justify-center lg:justify-start">
-                <Link
-                  href="/submit"
-                  className="flex items-center gap-2 px-5 py-2.5 bg-[#FF6648] text-white text-sm font-bold hover:bg-[#e85a3f] transition-colors"
-                  style={{ boxShadow: "3px 3px 0 rgba(10,22,40,0.08)" }}
-                >
-                  Submit Your Site
-                  <ArrowRight size={14} />
-                </Link>
-                <Link
-                  href="/pricing"
-                  className="text-sm font-medium text-[#0A1628]/50 hover:text-[#0A1628] transition-colors"
-                >
-                  View Plans →
-                </Link>
+              <div className="flex items-center gap-4 justify-center lg:justify-start text-xs text-[#0A1628]/40">
+                <span>276 brands scored</span>
+                <span className="w-1 h-1 rounded-full bg-[#0A1628]/20" />
+                <span>Updated weekly</span>
+                <span className="w-1 h-1 rounded-full bg-[#0A1628]/20" />
+                <span>Free to check</span>
               </div>
             </div>
 
-            {/* Right — Agent Replay Preview + Report */}
-            <div className="w-full max-w-sm lg:max-w-[420px] shrink-0 space-y-3">
+            {/* Right — Agent Replay: the "oh shit" moment */}
+            <div className="w-full max-w-md lg:max-w-[440px] shrink-0">
               <AgentReplayPreview />
-              <ReportPreview />
             </div>
-          </div>
-
-          {/* Bottom spec line */}
-          <div className="mt-10 opacity-30">
-            <div className="h-px" style={{ background: "repeating-linear-gradient(90deg, rgba(10,22,40,0.15), rgba(10,22,40,0.15) 4px, transparent 4px, transparent 8px)" }} />
           </div>
         </div>
 
@@ -323,119 +276,10 @@ function AgentReplayPreview() {
   );
 }
 
-/* ── Report Preview — "this is what you get" ─────────────────────────── */
-
-function ReportPreview() {
-  return (
-    <div
-      className="bg-white border-2 border-[#0A1628]/10 overflow-hidden relative"
-      style={{ boxShadow: "6px 6px 0 rgba(10,22,40,0.06)" }}
-    >
-      {/* Browser chrome */}
-      <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#0A1628]/8 bg-[#FAFAF8]">
-        <div className="flex gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-[#FF6648]/60" />
-          <div className="w-2.5 h-2.5 rounded-full bg-[#FBBA16]/60" />
-          <div className="w-2.5 h-2.5 rounded-full bg-[#059669]/60" />
-        </div>
-        <div className="flex-1 flex items-center justify-center">
-          <span className="spec-label text-[8px] text-[#0A1628]/30">robotshopper.com/brand/nike</span>
-        </div>
-      </div>
-
-      {/* Score section */}
-      <div className="px-5 pt-5 pb-3 text-center border-b border-[#0A1628]/5">
-        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full border-[3px] border-[#d97706] mb-2" style={{ boxShadow: "0 0 20px rgba(217,119,6,0.1)" }}>
-          <span className="data-num text-3xl font-black text-[#d97706]">67</span>
-        </div>
-        <div className="text-xs font-bold text-[#0A1628]">Nike</div>
-        <div className="spec-label text-[8px] text-[#d97706] mt-0.5">GRADE C — NEEDS WORK</div>
-      </div>
-
-      {/* Category bars preview */}
-      <div className="px-5 py-3 border-b border-[#0A1628]/5">
-        <div className="spec-label text-[7px] text-[#0A1628]/30 mb-2">SCORE BREAKDOWN</div>
-        <div className="space-y-1.5">
-          <MiniBar label="DISCOVER" score={100} color="#059669" />
-          <MiniBar label="CART" score={85} color="#059669" />
-          <MiniBar label="DATA" score={70} color="#0259DD" />
-          <MiniBar label="NAVIGATE" score={55} color="#d97706" />
-          <MiniBar label="AGENT API" score={20} color="#dc2626" />
-        </div>
-      </div>
-
-      {/* Finding preview — shows the "diagnostic" value */}
-      <div className="px-5 py-3 border-b border-[#0A1628]/5">
-        <div className="spec-label text-[7px] text-[#0A1628]/30 mb-2">FINDING DETECTED</div>
-        <div className="flex items-start gap-2 px-3 py-2.5 bg-[#FFF8F0] border-l-2 border-[#ea580c]">
-          <AlertTriangle size={12} className="text-[#ea580c] shrink-0 mt-0.5" />
-          <div>
-            <div className="text-[11px] font-semibold text-[#0A1628]">Missing product schema markup</div>
-            <div className="text-[10px] text-[#0A1628]/45 mt-0.5">Feed agents can&apos;t read prices or availability</div>
-            <div className="flex items-center gap-1.5 mt-1.5">
-              <span className="spec-label text-[7px] px-1.5 py-0.5 bg-[#ea580c]/10 text-[#ea580c]">HIGH</span>
-              <span className="spec-label text-[7px] px-1.5 py-0.5 bg-[#059669]/10 text-[#059669]">+12 PTS IF FIXED</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Action plan preview */}
-      <div className="px-5 py-3">
-        <div className="spec-label text-[7px] text-[#0A1628]/30 mb-2">ACTION PLAN</div>
-        <div className="flex items-center justify-between mb-1.5">
-          <div className="flex items-center gap-2">
-            <span className="data-num text-sm font-bold text-[#d97706]">67</span>
-            <ArrowRight size={10} className="text-[#0A1628]/20" />
-            <span className="data-num text-sm font-bold text-[#059669]">84</span>
-          </div>
-          <span className="spec-label text-[7px] text-[#059669]">+17 POINTS POSSIBLE</span>
-        </div>
-        <div className="space-y-1">
-          <ActionRow num="1" text="Add JSON-LD product schema" pts="+12" />
-          <ActionRow num="2" text="Enable guest checkout" pts="+8" />
-          <ActionRow num="3" text="Allow GPTBot in robots.txt" pts="+5" />
-        </div>
-      </div>
-
-      {/* CTA overlay */}
-      <a
-        href="/brand/nike"
-        className="flex items-center justify-center gap-2 py-2.5 bg-[#0259DD] text-white text-xs font-bold hover:bg-[#0249BB] transition-colors"
-      >
-        View Full Report
-        <ChevronRight size={12} />
-      </a>
-    </div>
-  );
-}
-
 function StepDot({ result }: { result: "pass" | "partial" | "fail" }) {
   const color = result === "pass" ? "#059669" : result === "partial" ? "#FBBA16" : "#dc2626";
   return (
     <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
-  );
-}
-
-function ActionRow({ num, text, pts }: { num: string; text: string; pts: string }) {
-  return (
-    <div className="flex items-center gap-2 text-[10px]">
-      <span className="data-num text-[9px] font-bold text-[#0A1628]/25 w-3">{num}</span>
-      <span className="text-[#0A1628]/60 flex-1 truncate">{text}</span>
-      <span className="data-num text-[9px] font-bold text-[#059669]">{pts}</span>
-    </div>
-  );
-}
-
-function MiniBar({ label, score, color }: { label: string; score: number; color: string }) {
-  return (
-    <div className="flex items-center gap-3">
-      <span className="spec-label text-[#0A1628]/25 text-[7px] w-14 text-right shrink-0">{label}</span>
-      <div className="flex-1 h-[4px] bg-[#0A1628]/5 overflow-hidden">
-        <div className="h-full" style={{ width: `${score}%`, backgroundColor: color }} />
-      </div>
-      <span className="data-num text-[9px] font-bold w-6 text-right shrink-0" style={{ color }}>{score}</span>
-    </div>
   );
 }
 
