@@ -78,8 +78,22 @@ export default function HomePage() {
     };
   }, [brands]);
 
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "ARC Score",
+    url: "https://arcscore.com",
+    description:
+      "The Agent Readiness Index for E-Commerce. We score how well AI shopping agents can navigate and buy from e-commerce sites.",
+    sameAs: [],
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+      />
       <Navbar />
       <IndexHero onSearch={setSearchQuery} />
 

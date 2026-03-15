@@ -58,12 +58,6 @@ export function Navbar() {
               Methodology
             </Link>
             <Link
-              href="/about"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              About
-            </Link>
-            <Link
               href="/pricing"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >

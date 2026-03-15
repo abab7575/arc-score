@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 import Link from "next/link";
-import { Search, ShoppingCart, Eye, Database, ArrowRight, TrendingUp, AlertTriangle, Zap } from "lucide-react";
+import { Search, ShoppingCart, Eye, Database, ArrowRight, TrendingUp, AlertTriangle, Zap, Mail } from "lucide-react";
 
 interface IndexHeroProps {
   onSearch: (query: string) => void;
@@ -122,6 +122,9 @@ export function IndexHero({ onSearch }: IndexHeroProps) {
 
       {/* ── Brand Logo Ticker ────────────────────────────────────────── */}
       <BrandLogoTicker />
+
+      {/* ── Email Capture ──────────────────────────────────────────── */}
+      <EmailCapture />
 
       {/* ── How We Score — explainer strip ────────────────────────────── */}
       <HowWeScore />
@@ -274,6 +277,104 @@ function BrandLogoTicker() {
           100% { transform: translateX(-50%); }
         }
       `}</style>
+    </div>
+  );
+}
+
+/* ── Email Capture ─────────────────────────────────────────────────── */
+
+function EmailCapture() {
+  const [email, setEmail] = useState("");
+  const [brandUrl, setBrandUrl] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    if (!email) return;
+    setLoading(true);
+    try {
+      await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, brandUrl: brandUrl || undefined }),
+      });
+      setSubmitted(true);
+    } catch {
+      // silently fail for now
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div style={{ backgroundColor: "#FFF8F0" }} className="border-b border-[#E8E0D8]">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+        {/* Section label */}
+        <div className="flex items-center gap-3 mb-5">
+          <Mail size={12} className="text-[#FF6648]" />
+          <span className="spec-label text-muted-foreground text-[9px]">GET NOTIFIED</span>
+          <div className="flex-1 h-px bg-[#E8E0D8]" />
+        </div>
+
+        <div className="border border-[#E8E0D8] bg-white p-5 sm:p-6">
+          {submitted ? (
+            <div className="text-center py-4">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#059669]/10 border border-[#059669]/20 mb-3">
+                <span className="w-2 h-2 rounded-full bg-[#059669]" />
+                <span className="spec-label text-[#059669] text-[10px]">CONFIRMED</span>
+              </div>
+              <h3 className="text-lg font-bold text-foreground mb-1">We&apos;ll be in touch!</h3>
+              <p className="text-xs text-muted-foreground">You&apos;ll hear from us as soon as your score is ready.</p>
+            </div>
+          ) : (
+            <>
+              <h3 className="text-base sm:text-lg font-bold text-foreground mb-1">
+                Get notified when we scan your brand
+              </h3>
+              <p className="text-xs text-muted-foreground mb-5">
+                Enter your email and brand URL. We&apos;ll alert you when your score is ready.
+              </p>
+
+              <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3">
+                {/* Email */}
+                <div className="flex-1 min-w-0">
+                  <label className="spec-label text-[9px] text-muted-foreground mb-1.5 block">EMAIL *</label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="you@company.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-3 py-2.5 border border-[#E8E0D8] bg-[#FFF8F0] text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-[#FF6648]/50 transition-colors font-mono"
+                  />
+                </div>
+
+                {/* Brand URL */}
+                <div className="flex-1 min-w-0">
+                  <label className="spec-label text-[9px] text-muted-foreground mb-1.5 block">BRAND URL <span className="text-muted-foreground/40">(OPTIONAL)</span></label>
+                  <input
+                    type="url"
+                    placeholder="https://yourbrand.com"
+                    value={brandUrl}
+                    onChange={(e) => setBrandUrl(e.target.value)}
+                    className="w-full px-3 py-2.5 border border-[#E8E0D8] bg-[#FFF8F0] text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-[#FF6648]/50 transition-colors font-mono"
+                  />
+                </div>
+
+                {/* Submit */}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="px-6 py-2.5 bg-[#FF6648] text-white text-sm font-bold hover:bg-[#e85a3f] transition-colors disabled:opacity-50 whitespace-nowrap shrink-0"
+                >
+                  {loading ? "Sending..." : "Notify Me"}
+                </button>
+              </form>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

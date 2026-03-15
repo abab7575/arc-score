@@ -85,8 +85,39 @@ export default async function BrandPage({ params }: BrandPageProps) {
     // Auth check failed — show free version
   }
 
+  const jsonLd = latestScan
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Review",
+        name: `${brand.name} ARC Score`,
+        reviewBody: latestScan.verdict,
+        author: {
+          "@type": "Organization",
+          name: "ARC Score",
+          url: "https://arcscore.com",
+        },
+        itemReviewed: {
+          "@type": "WebSite",
+          name: brand.name,
+          url: brand.url,
+        },
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: String(latestScan.overallScore),
+          bestRating: "100",
+          worstRating: "0",
+        },
+      }
+    : null;
+
   return (
     <div className="min-h-screen bg-background">
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
       <Navbar />
       <main className="max-w-4xl mx-auto px-4 sm:px-6">
         <BrandHeader

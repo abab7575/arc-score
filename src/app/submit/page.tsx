@@ -76,7 +76,7 @@ export default function SubmitPage() {
                 value={form.brandName}
                 onChange={(e) => setForm({ ...form, brandName: e.target.value })}
                 placeholder="e.g. Nike"
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6648] focus:border-transparent"
               />
             </div>
 
@@ -89,9 +89,18 @@ export default function SubmitPage() {
                 required
                 value={form.url}
                 onChange={(e) => setForm({ ...form, url: e.target.value })}
+                onBlur={() => {
+                  const v = form.url.trim();
+                  if (v && !/^https?:\/\//i.test(v)) {
+                    setForm({ ...form, url: "https://" + v });
+                  }
+                }}
                 placeholder="https://www.nike.com"
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6648] focus:border-transparent"
               />
+              <p className="text-[10px] text-muted-foreground mt-1">
+                Include https:// — e.g. https://www.nike.com
+              </p>
             </div>
 
             <div>
@@ -103,7 +112,7 @@ export default function SubmitPage() {
                 value={form.productUrl}
                 onChange={(e) => setForm({ ...form, productUrl: e.target.value })}
                 placeholder="https://www.nike.com/t/some-shoe-..."
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6648] focus:border-transparent"
               />
             </div>
 
@@ -114,7 +123,7 @@ export default function SubmitPage() {
               <select
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6648] focus:border-transparent"
               >
                 <option value="">Select a category</option>
                 {categories.map((cat) => (
@@ -134,7 +143,7 @@ export default function SubmitPage() {
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 placeholder="you@company.com"
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6648] focus:border-transparent"
               />
               <p className="text-[10px] text-muted-foreground mt-1">
                 We&apos;ll notify you when your brand is added.
@@ -148,13 +157,39 @@ export default function SubmitPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
+              style={{ backgroundColor: submitting ? "#e85a3f" : "#FF6648" }}
+              onMouseEnter={(e) => { if (!submitting) (e.currentTarget.style.backgroundColor = "#e85a3f"); }}
+              onMouseLeave={(e) => { if (!submitting) (e.currentTarget.style.backgroundColor = "#FF6648"); }}
             >
               <Send size={14} />
               {submitting ? "Submitting..." : "Submit Brand"}
             </button>
           </form>
         )}
+
+        {/* What happens next */}
+        <div className="mt-12 border-t border-gray-100 pt-8">
+          <h3 className="spec-label text-xs tracking-widest uppercase text-muted-foreground mb-4">
+            What happens next
+          </h3>
+          <div className="grid grid-cols-3 gap-4">
+            {[
+              { n: "01", text: "We review your submission" },
+              { n: "02", text: "Your brand enters our scanning queue" },
+              { n: "03", text: "Score appears on the index within 48 hours" },
+            ].map((step) => (
+              <div key={step.n} className="text-center">
+                <span className="data-num text-lg font-bold" style={{ color: "#FF6648" }}>
+                  {step.n}
+                </span>
+                <p className="text-[11px] text-muted-foreground mt-1 leading-snug">
+                  {step.text}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
       </main>
       <Footer />
     </div>
