@@ -62,6 +62,8 @@ export function ContentFeed() {
     fetchQueue();
   }, [fetchQueue]);
 
+  const [regenerating, setRegenerating] = useState(false);
+
   async function handleGenerate() {
     setGenerating(true);
     try {
@@ -73,6 +75,20 @@ export function ContentFeed() {
       // silent fail
     } finally {
       setGenerating(false);
+    }
+  }
+
+  async function handleRegenerateImages() {
+    setRegenerating(true);
+    try {
+      const res = await fetch("/api/admin/content-queue/render-images?regenerate=true", { method: "POST" });
+      const data = await res.json();
+      console.log("Regenerated images:", data);
+      await fetchQueue();
+    } catch {
+      // silent fail
+    } finally {
+      setRegenerating(false);
     }
   }
 
@@ -142,27 +158,50 @@ export function ContentFeed() {
           )}
         </div>
 
-        <button
-          onClick={handleGenerate}
-          disabled={generating}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50"
-          style={{
-            backgroundColor: "#0259DD",
-            color: "#FFFFFF",
-          }}
-        >
-          {generating ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Generating...
-            </>
-          ) : (
-            <>
-              <Zap className="w-4 h-4" />
-              Generate Fresh
-            </>
-          )}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleRegenerateImages}
+            disabled={regenerating}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50"
+            style={{
+              backgroundColor: "#FF6648",
+              color: "#FFFFFF",
+            }}
+          >
+            {regenerating ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Rendering...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="w-4 h-4" />
+                Regenerate Images
+              </>
+            )}
+          </button>
+          <button
+            onClick={handleGenerate}
+            disabled={generating}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50"
+            style={{
+              backgroundColor: "#0259DD",
+              color: "#FFFFFF",
+            }}
+          >
+            {generating ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <Zap className="w-4 h-4" />
+                Generate Fresh
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
