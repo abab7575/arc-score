@@ -2,7 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import Link from "next/link";
-import { Search, ShoppingCart, Eye, Database, ArrowRight, TrendingUp, AlertTriangle, Zap, Mail, Bot, XCircle, CheckCircle2 } from "lucide-react";
+import { Search, ShoppingCart, Eye, Database, ArrowRight, TrendingUp, AlertTriangle, Zap, Mail, XCircle, CheckCircle2 } from "lucide-react";
 
 interface IndexHeroProps {
   onSearch: (query: string) => void;
@@ -99,7 +99,7 @@ export function IndexHero({ onSearch }: IndexHeroProps) {
 
             {/* Right — Agent Replay: the "oh shit" moment */}
             <div className="w-full max-w-md lg:max-w-[440px] shrink-0">
-              <AgentReplayPreview />
+              <ProductPreview />
             </div>
           </div>
         </div>
@@ -130,156 +130,103 @@ export function IndexHero({ onSearch }: IndexHeroProps) {
   );
 }
 
-/* ── Agent Replay Preview — the "oh shit" moment ─────────────────────── */
+/* ── Product Dashboard Preview — show what they get ──────────────────── */
 
-function AgentReplayPreview() {
+function ProductPreview() {
   return (
-    <div className="relative overflow-hidden bg-[#0A1628] border-2 border-[#0A1628]/20" style={{ boxShadow: "6px 6px 0 rgba(10,22,40,0.08)" }}>
-      {/* Browser chrome */}
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-white/10 bg-[#0A1628]">
-        <div className="flex gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-[#FF6648]/60" />
-          <div className="w-2 h-2 rounded-full bg-[#FBBA16]/60" />
-          <div className="w-2 h-2 rounded-full bg-[#059669]/60" />
-        </div>
-        <div className="flex-1 flex items-center justify-center">
-          <span className="spec-label text-[7px] text-white/25">nike.com/checkout</span>
-        </div>
-      </div>
+    <div className="bg-white border border-[#E8E0D8] rounded-lg overflow-hidden" style={{ boxShadow: "0 20px 60px rgba(10,22,40,0.1), 0 2px 8px rgba(10,22,40,0.06)" }}>
 
-      {/* Fake website screenshot area */}
-      <div className="relative" style={{ height: 200, background: "linear-gradient(180deg, #1a1a2e 0%, #16213e 100%)" }}>
-        {/* Fake checkout form elements */}
-        <div className="absolute inset-0 p-4">
-          {/* Fake nav bar */}
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-12 h-3 bg-white/10 rounded" />
-            <div className="flex-1" />
-            <div className="w-6 h-3 bg-white/8 rounded" />
-            <div className="w-6 h-3 bg-white/8 rounded" />
-          </div>
-          {/* Fake form */}
-          <div className="max-w-[200px] mx-auto space-y-2">
-            <div className="w-20 h-2.5 bg-white/15 rounded" />
-            <div className="w-full h-5 bg-white/8 rounded border border-white/10" />
-            <div className="w-16 h-2.5 bg-white/15 rounded" />
-            <div className="w-full h-5 bg-white/8 rounded border border-white/10" />
-            <div className="flex gap-2">
-              <div className="flex-1 h-5 bg-white/8 rounded border border-white/10" />
-              <div className="w-16 h-5 bg-white/8 rounded border border-white/10" />
-            </div>
-            <div className="w-24 h-2.5 bg-white/15 rounded mt-1" />
-            <div className="w-full h-7 bg-white/5 rounded border border-white/10 flex items-center justify-center">
-              <span className="text-[8px] text-white/20">Sign in to continue</span>
-            </div>
+      {/* Score hero */}
+      <div className="px-5 pt-5 pb-4 flex items-center gap-4 border-b border-[#E8E0D8]">
+        <div className="w-16 h-16 rounded-full border-[3px] border-[#d97706] flex items-center justify-center shrink-0" style={{ boxShadow: "0 0 16px rgba(217,119,6,0.1)" }}>
+          <span className="data-num text-2xl font-black text-[#d97706]">67</span>
+        </div>
+        <div>
+          <div className="text-base font-bold text-[#0A1628]">Nike</div>
+          <div className="spec-label text-[9px] text-[#d97706]">GRADE C — NEEDS WORK</div>
+          <div className="flex gap-1.5 mt-1.5">
+            <span className="spec-label text-[7px] px-1.5 py-0.5 bg-[#dc2626]/8 text-[#dc2626]">3 CRITICAL ISSUES</span>
+            <span className="spec-label text-[7px] px-1.5 py-0.5 bg-[#059669]/8 text-[#059669]">+17 PTS POSSIBLE</span>
           </div>
         </div>
-
-        {/* Vignette/spotlight effect */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: "radial-gradient(circle 60px at 65% 72%, transparent 0%, rgba(10,22,40,0.7) 100%)",
-          }}
-        />
-
-        {/* Cursor */}
-        <div className="absolute" style={{ left: "63%", top: "68%", transform: "translate(-2px, -2px)" }}>
-          {/* Cursor arrow */}
-          <svg width="14" height="18" viewBox="0 0 14 18" fill="none" style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }}>
-            <path d="M1 1L1 15L5 11L9 17L11 16L7 10L13 9L1 1Z" fill="#4f46e5" stroke="white" strokeWidth="1.5" />
-          </svg>
-          {/* Red ripple */}
-          <div
-            className="absolute rounded-full border-2 border-[#dc2626]"
-            style={{
-              width: 24, height: 24, top: -4, left: -4,
-              opacity: 0.5,
-              animation: "pulse-ring 2s ease-out infinite",
-            }}
-          />
-        </div>
-
-        {/* STUCK label with glitch effect */}
-        <div className="absolute" style={{ left: "53%", top: "52%", transform: "translateX(-50%)" }}>
-          <span
-            className="font-mono text-sm font-bold tracking-widest text-[#dc2626]"
-            style={{
-              textShadow: "2px 0 #FF6648, -2px 0 #0259DD",
-              animation: "glitch 3s infinite",
-            }}
-          >
-            STUCK
-          </span>
-        </div>
-
-        {/* Thought bubble */}
-        <div className="absolute bg-white/95 backdrop-blur-sm rounded-lg border border-[#dc2626]/30 px-2.5 py-1.5 max-w-[160px]"
-          style={{ right: 12, top: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}
-        >
-          <span className="text-[9px] leading-relaxed">
-            <strong className="text-[#dc2626]">Agent:</strong>{" "}
-            <span className="text-[#0A1628]/70">Looking for guest checkout... no option found. Login required.</span>
-          </span>
-        </div>
       </div>
 
-      {/* Step progress bar */}
-      <div className="px-3 py-2.5 border-t border-white/10 flex items-center gap-3">
-        <div className="flex items-center gap-1">
-          <StepDot result="pass" />
-          <StepDot result="pass" />
-          <StepDot result="pass" />
-          <StepDot result="partial" />
-          <StepDot result="fail" />
+      {/* Agent journey — the star */}
+      <div className="px-5 py-3 border-b border-[#E8E0D8] bg-[#FAFAF8]">
+        <div className="flex items-center justify-between mb-2.5">
+          <span className="spec-label text-[8px] text-[#0A1628]/40">AGENT JOURNEY — CHATGPT OPERATOR</span>
+          <span className="spec-label text-[7px] text-[#dc2626]">BLOCKED AT CHECKOUT</span>
         </div>
-        <div className="flex-1 min-w-0">
-          <span className="text-[9px] font-semibold text-white/70">ChatGPT Operator</span>
-          <span className="text-[9px] text-white/30 ml-1">· Step 5/5</span>
-        </div>
-        <span className="spec-label text-[7px] text-[#dc2626]">BLOCKED</span>
-      </div>
-
-      {/* Human vs Agent gap */}
-      <div className="px-3 py-2.5 border-t border-white/10 bg-[#0A1628]">
-        <div className="flex items-center gap-1.5 mb-2">
-          <Eye size={9} className="text-[#FBBA16]" />
-          <span className="spec-label text-[7px] text-[#FBBA16]">HUMAN VS AGENT GAP</span>
-        </div>
+        {/* Journey steps */}
         <div className="space-y-1.5">
-          <div className="flex items-start gap-1.5">
-            <CheckCircle2 size={9} className="text-[#059669] shrink-0 mt-0.5" />
-            <span className="text-[9px] text-white/50">Human sees a login form and creates an account</span>
-          </div>
-          <div className="flex items-start gap-1.5">
-            <XCircle size={9} className="text-[#dc2626] shrink-0 mt-0.5" />
-            <span className="text-[9px] text-white/50">Agent can&apos;t create accounts — needs guest checkout</span>
+          <JourneyStep num={1} action="Search for running shoes" result="pass" />
+          <JourneyStep num={2} action="Open product page" result="pass" />
+          <JourneyStep num={3} action="Select size + add to cart" result="pass" />
+          <JourneyStep num={4} action="Navigate to checkout" result="partial" time="3.2s" />
+          <JourneyStep num={5} action="Complete purchase" result="fail" detail="No guest checkout — login wall blocks agent" />
+        </div>
+      </div>
+
+      {/* Top finding */}
+      <div className="px-5 py-3 border-b border-[#E8E0D8]">
+        <div className="flex items-start gap-2.5">
+          <div className="w-1 h-full bg-[#dc2626] rounded shrink-0 self-stretch" />
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-0.5">
+              <span className="text-xs font-semibold text-[#0A1628]">No guest checkout available</span>
+              <span className="spec-label text-[6px] px-1 py-0.5 bg-[#dc2626]/8 text-[#dc2626]">CRITICAL</span>
+            </div>
+            <p className="text-[10px] text-[#0A1628]/50 leading-relaxed">Browser agents cannot create accounts. Forced login blocks ChatGPT Operator, Amazon Buy For Me, and all browser-based agents at checkout.</p>
+            <div className="flex items-center gap-3 mt-1.5">
+              <span className="spec-label text-[7px] text-[#059669]">+8 PTS IF FIXED</span>
+              <span className="spec-label text-[7px] text-[#0A1628]/30">EFFORT: LOW</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <style jsx>{`
-        @keyframes pulse-ring {
-          0% { transform: scale(1); opacity: 0.5; }
-          50% { transform: scale(2); opacity: 0; }
-          100% { transform: scale(1); opacity: 0; }
-        }
-        @keyframes glitch {
-          0%, 90%, 100% { transform: translateX(-50%); }
-          92% { transform: translateX(calc(-50% + 2px)); }
-          94% { transform: translateX(calc(-50% - 3px)); }
-          96% { transform: translateX(calc(-50% + 1px)); }
-          98% { transform: translateX(-50%); }
-        }
-      `}</style>
+      {/* Action plan summary */}
+      <div className="px-5 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="data-num text-lg font-bold text-[#d97706]">67</span>
+            <ArrowRight size={12} className="text-[#0A1628]/20" />
+            <span className="data-num text-lg font-bold text-[#059669]">84</span>
+          </div>
+          <a href="/brand/nike" className="text-xs font-bold text-[#0259DD] hover:text-[#0A1628] transition-colors">
+            View full report →
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
 
-function StepDot({ result }: { result: "pass" | "partial" | "fail" }) {
-  const color = result === "pass" ? "#059669" : result === "partial" ? "#FBBA16" : "#dc2626";
+function JourneyStep({ num, action, result, detail, time }: {
+  num: number; action: string; result: "pass" | "partial" | "fail"; detail?: string; time?: string;
+}) {
+  const colors = {
+    pass: { dot: "bg-[#059669]", text: "text-[#059669]", icon: "text-[#059669]" },
+    partial: { dot: "bg-[#FBBA16]", text: "text-[#FBBA16]", icon: "text-[#FBBA16]" },
+    fail: { dot: "bg-[#dc2626]", text: "text-[#dc2626]", icon: "text-[#dc2626]" },
+  };
+  const c = colors[result];
+
   return (
-    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
+    <div className={`flex items-start gap-2.5 px-2.5 py-1.5 rounded ${result === "fail" ? "bg-[#dc2626]/5 border border-[#dc2626]/10" : ""}`}>
+      <div className={`w-4 h-4 rounded-full ${c.dot} flex items-center justify-center shrink-0 mt-0.5`}>
+        {result === "pass" && <CheckCircle2 size={10} className="text-white" />}
+        {result === "partial" && <AlertTriangle size={8} className="text-white" />}
+        {result === "fail" && <XCircle size={10} className="text-white" />}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <span className={`text-[10px] font-semibold ${result === "fail" ? "text-[#dc2626]" : "text-[#0A1628]/70"}`}>{action}</span>
+          {time && <span className="spec-label text-[7px] text-[#0A1628]/25">{time}</span>}
+        </div>
+        {detail && <p className="text-[9px] text-[#dc2626]/70 mt-0.5">{detail}</p>}
+      </div>
+    </div>
   );
 }
 
