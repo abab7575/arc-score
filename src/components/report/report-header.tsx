@@ -28,7 +28,7 @@ export function ReportHeader({ url, scannedAt }: ReportHeaderProps) {
       <div>
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold text-foreground">
-            Robot Shopper Report
+            ARC Report
           </span>
         </div>
         <div className="flex items-center gap-3 mt-1">

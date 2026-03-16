@@ -108,7 +108,7 @@ async function main() {
   // Output CSV
   const csvHeader = "Name,URL,Category,Score,Grade,Issues,Top Issues,Subject Line,Report URL";
   const csvRows = rows.map((r) =>
-    `"${r.name}","${r.url}","${r.category}",${r.score},${r.grade},${r.issueCount},"${r.topIssues.replace(/"/g, '""')}","${r.subject.replace(/"/g, '""')}","https://robotshopper.com/brand/${r.slug}"`
+    `"${r.name}","${r.url}","${r.category}",${r.score},${r.grade},${r.issueCount},"${r.topIssues.replace(/"/g, '""')}","${r.subject.replace(/"/g, '""')}","https://arcreport.ai/brand/${r.slug}"`
   );
 
   const csv = [csvHeader, ...csvRows].join("\n");
@@ -136,7 +136,7 @@ Subject: {{subject}}
 
 Hey —
 
-We ran {{brand}} through our AI shopping agent test (robotshopper.com).
+We ran {{brand}} through our AI shopping agent test (arcreport.ai).
 
 Your score: {{score}}/100.
 
@@ -157,7 +157,7 @@ to check right now.
 
 Best,
 [Your name]
-Robot Shopper — robotshopper.com
+ARC Report — arcreport.ai
 
 ---
 
@@ -192,7 +192,7 @@ Score: {{score}}/100. Free breakdown: {{reportUrl}}
 Most fixes take hours, not weeks.
 
 [Your name]
-robotshopper.com
+arcreport.ai
 
 ---
 
@@ -215,7 +215,7 @@ robotshopper.com
 
 ## Sending Tips
 
-- Send from your personal email (you@robotshopper.com)
+- Send from your personal email (you@arcreport.ai)
 - 10-20/day max (keeps you under spam radar)
 - Best time: Tuesday-Thursday, 8-10am their timezone
 - Follow up once after 3 days if no reply — then move on

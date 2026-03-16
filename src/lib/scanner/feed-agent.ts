@@ -72,7 +72,7 @@ async function fetchWithTimeout(url: string, timeoutMs = 10000): Promise<Respons
     const response = await fetch(url, {
       signal: controller.signal,
       headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; RobotShopper-Bot/1.0; +https://robotshopper.com)",
+        "User-Agent": "Mozilla/5.0 (compatible; ARCReport-Bot/1.0; +https://arcreport.ai)",
         Accept: "application/xml, application/rss+xml, text/xml, application/json, */*",
       },
       redirect: "follow",

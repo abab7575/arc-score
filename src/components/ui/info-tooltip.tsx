@@ -93,12 +93,12 @@ export function InfoTooltip({
 }
 
 /**
- * Pre-built explainer definitions for common Robot Shopper terms.
+ * Pre-built explainer definitions for common ARC Report terms.
  * Use: <InfoTooltip content={EXPLAINERS.acp} />
  */
 export const EXPLAINERS = {
   arcScore:
-    "Robot Shopper measures how easily AI shopping agents (like ChatGPT, Perplexity, or Google AI) can browse, understand products, and complete purchases on a website. Scored 0–100.",
+    "ARC Score measures how easily AI shopping agents (like ChatGPT, Perplexity, or Google AI) can browse, understand products, and complete purchases on a website. Scored 0–100.",
 
   acpSupport:
     "ACP (Agentic Commerce Protocol) is an open standard that lets AI agents create checkout sessions and complete purchases programmatically — without needing to click through a browser.",

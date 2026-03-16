@@ -32,6 +32,7 @@ interface OutreachItem {
 
 interface Stats {
   total: number;
+  review: number;
   queued: number;
   ready: number;
   sent: number;
@@ -42,6 +43,7 @@ interface Stats {
 
 const STATUS_COLORS: Record<string, string> = {
   queued: "bg-gray-100 text-gray-600",
+  needs_review: "bg-red-100 text-red-700",
   email_found: "bg-blue-100 text-blue-700",
   ready: "bg-emerald-100 text-emerald-700",
   sent: "bg-amber-100 text-amber-700",
@@ -90,9 +92,18 @@ export default function OutreachPage() {
     setGenerating(true);
     try {
       const res = await fetch("/api/admin/outreach", { method: "POST" });
-      if (res.ok) await fetchItems();
-    } catch { /* ignore */ }
-    finally { setGenerating(false); }
+      const data = await res.json();
+      if (res.ok) {
+        await fetchItems();
+        alert(data.message || `Generated ${data.generated} items`);
+      } else {
+        alert(`Error: ${data.error}`);
+      }
+    } catch {
+      alert("Failed to connect to outreach API");
+    } finally {
+      setGenerating(false);
+    }
   }
 
   async function updateStatus(id: number, status: string) {
@@ -149,10 +160,26 @@ export default function OutreachPage() {
 
   const readyCount = items.filter((i) => i.status === "ready").length;
   const queuedCount = items.filter((i) => i.status === "queued").length;
+  const reviewCount = items.filter((i) => i.status === "needs_review").length;
 
   return (
     <div className="space-y-6">
       {/* Quick-start guide — only show when queue is empty or has actionable items */}
+      {reviewCount > 0 && (
+        <div className="flex items-center gap-3 px-4 py-3 bg-red-50 border border-red-200">
+          <span className="text-sm">
+            <strong className="text-red-700">{reviewCount} email{reviewCount !== 1 ? "s" : ""} flagged for accuracy review.</strong>
+            {" "}Expand to see issues and approve or skip.
+          </span>
+          <button
+            onClick={() => setFilter("needs_review")}
+            className="ml-auto px-3 py-1 bg-red-600 text-white text-xs font-bold hover:bg-red-700"
+          >
+            Show Flagged
+          </button>
+        </div>
+      )}
+
       {items.length === 0 ? (
         <div className="border-2 border-dashed border-[#FF6648]/30 bg-[#FF6648]/5 p-6">
           <h2 className="text-base font-bold text-foreground mb-3">Get started in 3 steps</h2>
@@ -236,7 +263,7 @@ export default function OutreachPage() {
 
       {/* Stats */}
       {stats && (
-        <div className="grid grid-cols-7 gap-2">
+        <div className="grid grid-cols-8 gap-2">
           {Object.entries(stats).map(([key, value]) => (
             <button
               key={key}
@@ -299,6 +326,34 @@ export default function OutreachPage() {
               {/* Expanded detail */}
               {isExpanded && (
                 <div className="border-t border-gray-100 px-4 py-4 space-y-4">
+                  {/* Validation warnings — needs_review items */}
+                  {item.status === "needs_review" && item.notes && (
+                    <div className="bg-red-50 border border-red-200 px-4 py-3 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-red-700">REVIEW REQUIRED — Potential accuracy issues</span>
+                      </div>
+                      <ul className="list-disc list-inside space-y-1">
+                        {item.notes.replace("[AUTO] Needs review: ", "").split("; ").map((w, i) => (
+                          <li key={i} className="text-xs text-red-600">{w}</li>
+                        ))}
+                      </ul>
+                      <div className="flex gap-2 pt-1">
+                        <button
+                          onClick={() => updateStatus(item.id, "queued")}
+                          className="px-3 py-1 bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700"
+                        >
+                          Approve — Looks Correct
+                        </button>
+                        <button
+                          onClick={() => updateStatus(item.id, "skipped")}
+                          className="px-3 py-1 border border-gray-300 text-xs text-gray-600 hover:bg-gray-50"
+                        >
+                          Skip — Don&apos;t Send
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Email address */}
                   <div className="flex items-center gap-3">
                     <Mail size={14} className="text-muted-foreground shrink-0" />

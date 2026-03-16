@@ -68,10 +68,17 @@ export function ContentFeed() {
     try {
       const res = await fetch("/api/admin/content-queue/generate", { method: "POST" });
       const data = await res.json();
-      console.log("Generated:", data);
+      if (data.error) {
+        alert(`Content generation error: ${data.error}`);
+      } else {
+        const imgInfo = data.images
+          ? ` | ${data.images.generated} images rendered${data.images.failed > 0 ? `, ${data.images.failed} failed` : ""}`
+          : "";
+        alert(`${data.generated} posts from ${data.stories} stories${imgInfo}`);
+      }
       await fetchQueue();
-    } catch {
-      // silent fail
+    } catch (err) {
+      alert("Failed to connect to content generation API");
     } finally {
       setGenerating(false);
     }
@@ -80,7 +87,7 @@ export function ContentFeed() {
   async function handleRegenerateImages() {
     setRegenerating(true);
     try {
-      const res = await fetch("/api/admin/content-queue/render-images?limit=20", { method: "POST" });
+      const res = await fetch("/api/admin/content-queue/render-images?limit=10", { method: "POST" });
       const data = await res.json();
       if (data.error) {
         alert(`Image generation error: ${data.detail || data.error}`);

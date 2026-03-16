@@ -84,7 +84,7 @@ const PLANS = [
       { text: "Custom scan scheduling", included: true },
     ],
     cta: "Contact Us",
-    ctaHref: "mailto:hello@robotshopper.com",
+    ctaHref: "mailto:hello@arcreport.ai",
     highlighted: false,
   },
 ];
@@ -217,7 +217,7 @@ export default function PricingPage() {
         <div className="mt-12 text-center">
           <p className="text-sm text-muted-foreground max-w-xl mx-auto">
             All plans include access to the full public index. Cancel anytime.
-            Need something custom? <a href="mailto:hello@robotshopper.com" className="text-[#0259DD] hover:underline">Get in touch</a>.
+            Need something custom? <a href="mailto:hello@arcreport.ai" className="text-[#0259DD] hover:underline">Get in touch</a>.
           </p>
         </div>
       </main>

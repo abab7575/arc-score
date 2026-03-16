@@ -55,7 +55,7 @@ export default function SubmitPage() {
             Get Your AI Agent Readiness Score
           </h1>
           <p className="text-base text-muted-foreground max-w-xl mx-auto">
-            We send 5 robot shoppers to your site. They try to find products,
+            We send 5 AI shopping agents to your site. They try to find products,
             add to cart, and check out. You get a score, the findings, and
             exactly how to fix it.
           </p>

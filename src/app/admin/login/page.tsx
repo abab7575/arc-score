@@ -61,7 +61,7 @@ export default function AdminLoginPage() {
                 className="w-8 h-8 flex items-center justify-center"
                 style={{ backgroundColor: "#FF6648" }}
               >
-                <span className="text-xs font-black text-white font-mono">RS</span>
+                <span className="text-xs font-black text-white font-mono">AR</span>
               </div>
             </div>
             <h1
@@ -74,7 +74,7 @@ export default function AdminLoginPage() {
               className="font-mono text-[10px] uppercase tracking-widest mt-1"
               style={{ color: "#9CA3AF" }}
             >
-              Robot Shopper Admin
+              ARC Report Admin
             </p>
           </div>
 

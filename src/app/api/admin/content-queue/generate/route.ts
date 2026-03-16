@@ -18,12 +18,12 @@ function generateTextForStory(story: StoryCandidate, platform: Platform): string
 
     if (platform === "x") {
       const bullets = topic.bullets.slice(0, 3).map((b) => `• ${b}`).join("\n");
-      const text = `${topic.title}\n\n${bullets}\n\nrobotshopper.com`;
+      const text = `${topic.title}\n\n${bullets}\n\narcreport.ai`;
       return text.length > 280 ? text.slice(0, 279) + "…" : text;
     }
 
     const bullets = topic.bullets.map((b) => `• ${b}`).join("\n");
-    return `${topic.title}\n\n${topic.subtitle}\n\n${bullets}\n\nLearn more at robotshopper.com\n\n#AICommerce #Ecommerce #RobotShopper`;
+    return `${topic.title}\n\n${topic.subtitle}\n\n${bullets}\n\nLearn more at arcreport.ai\n\n#AICommerce #Ecommerce #ARCReport`;
   }
 
   const result = generateContent({
@@ -79,19 +79,19 @@ export async function POST() {
       }
     }
 
-    // Generate images in the background (don't block response)
-    generatePendingImages()
-      .then((imgResult) => {
-        console.log(`[Content Gen] Image rendering: ${imgResult.generated} generated, ${imgResult.failed} failed`);
-      })
-      .catch((err) => {
-        console.error("[Content Gen] Image rendering error:", err);
-      });
+    // Generate images synchronously — don't fire-and-forget, it's fast with Satori
+    let imgResult = { generated: 0, failed: 0, skipped: 0, remaining: 0 };
+    try {
+      imgResult = await generatePendingImages({ limit: 10 });
+    } catch (err) {
+      console.error("[Content Gen] Image rendering error:", err);
+    }
 
     return NextResponse.json({
       generated,
       stories: stories.length,
-      message: `Generated ${generated} queue items from ${stories.length} stories. Images rendering in background.`,
+      images: imgResult,
+      message: `Generated ${generated} queue items from ${stories.length} stories. ${imgResult.generated} images rendered${imgResult.failed > 0 ? `, ${imgResult.failed} failed` : ""}.`,
     });
   } catch (error) {
     console.error("Error generating content:", error);

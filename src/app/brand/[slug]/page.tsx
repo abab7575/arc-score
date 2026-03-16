@@ -35,13 +35,13 @@ export async function generateMetadata({ params }: BrandPageProps): Promise<Meta
   const latestScan = getLatestScanForBrand(brand.id);
   if (latestScan) {
     return {
-      title: `${brand.name} Robot Shopper Score — ${latestScan.overallScore}/100 (Grade ${latestScan.grade})`,
-      description: `${brand.name} scores ${latestScan.overallScore}/100 on the Robot Shopper Agent Readiness Index. Grade ${latestScan.grade}: ${getGradeLabel(latestScan.grade as Grade)}.`,
+      title: `${brand.name} ARC Score — ${latestScan.overallScore}/100 (Grade ${latestScan.grade})`,
+      description: `${brand.name} scores ${latestScan.overallScore}/100 on the ARC Report Agent Readiness Index. Grade ${latestScan.grade}: ${getGradeLabel(latestScan.grade as Grade)}.`,
     };
   }
 
   return {
-    title: `${brand.name} — Robot Shopper`,
+    title: `${brand.name} — ARC Report`,
     description: `Agent readiness score for ${brand.name}. See how well AI agents can navigate ${brand.url}.`,
   };
 }
@@ -89,11 +89,11 @@ export default async function BrandPage({ params }: BrandPageProps) {
     ? {
         "@context": "https://schema.org",
         "@type": "Review",
-        name: `${brand.name} Robot Shopper Score`,
+        name: `${brand.name} ARC Score`,
         reviewBody: latestScan.verdict || `${brand.name} scores ${latestScan.overallScore}/100 on agent readiness.`,
         author: {
           "@type": "Organization",
-          name: "Robot Shopper",
+          name: "ARC Report",
           url: "https://arcscore.com",
         },
         itemReviewed: {

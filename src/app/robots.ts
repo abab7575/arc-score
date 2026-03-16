@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const BASE_URL = process.env.BASE_URL || "https://robotshopper.com";
+const BASE_URL = process.env.BASE_URL || "https://arcreport.ai";
 
 export default function robots(): MetadataRoute.Robots {
   return {

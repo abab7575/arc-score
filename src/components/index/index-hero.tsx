@@ -458,7 +458,7 @@ function WhyItMatters() {
 
 function HowWeScore() {
   const steps = [
-    { icon: Eye, number: "01", color: "#FF6648", title: "We send robot shoppers", desc: "Five AI agents visit your site — one browses like a customer, one reads data feeds, one tests accessibility, one uses AI vision, and one checks your product feeds." },
+    { icon: Eye, number: "01", color: "#FF6648", title: "We send AI shopping agents", desc: "Five AI agents visit your site — one browses like a customer, one reads data feeds, one tests accessibility, one uses AI vision, and one checks your product feeds." },
     { icon: ShoppingCart, number: "02", color: "#0259DD", title: "Watch them try to buy", desc: "You get a step-by-step replay of each agent's journey — with screenshots, cursor tracking, and the exact moment they get stuck. See the gap between what a human sees and what the agent can't do." },
     { icon: Database, number: "03", color: "#059669", title: "Get the fix list", desc: "Every issue ranked by severity and impact. 'Fix this one thing and gain +12 points.' Hand it to your dev team — most fixes take hours, not months." },
   ];

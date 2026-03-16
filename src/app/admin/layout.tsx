@@ -3,7 +3,7 @@ import { Footer } from "@/components/shared/footer";
 import { AdminSidebar } from "@/components/admin/sidebar";
 
 export const metadata = {
-  title: "Mission Control — Robot Shopper",
+  title: "Mission Control — ARC Report",
   robots: "noindex, nofollow",
 };
 

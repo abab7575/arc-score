@@ -58,6 +58,7 @@ export async function GET(request: NextRequest) {
     const all = db.select({ status: schema.outreach.status }).from(schema.outreach).all();
     const stats = {
       total: all.length,
+      review: all.filter((r: { status: string }) => r.status === "needs_review").length,
       queued: all.filter((r: { status: string }) => r.status === "queued").length,
       ready: all.filter((r: { status: string }) => r.status === "ready" || r.status === "email_found").length,
       sent: all.filter((r: { status: string }) => r.status === "sent").length,
@@ -84,8 +85,9 @@ export async function POST(request: NextRequest) {
     const limit = body.limit ?? 50;
 
     const { generateOutreachQueue, insertOutreachItems } = await import("@/lib/outreach/generate");
-    const items = generateOutreachQueue({ maxScore, category, limit });
-    const inserted = insertOutreachItems(items);
+    const { items, stats: genStats } = generateOutreachQueue({ maxScore, category, limit });
+    const insertResult = insertOutreachItems(items);
+    const inserted = insertResult.inserted;
 
     // Auto-find emails via Apollo in the background (don't block response)
     if (process.env.APOLLO_API_KEY && inserted > 0) {
@@ -142,11 +144,23 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // Build detailed status message
+    const parts = [`Generated ${items.length} outreach emails, inserted ${inserted} new`];
+    if (insertResult.needsReview > 0) parts.push(`${insertResult.needsReview} flagged for review`);
+    if (insertResult.duplicates > 0) parts.push(`${insertResult.duplicates} already in queue`);
+    if (genStats.skippedStale > 0) parts.push(`${genStats.skippedStale} skipped (stale scans)`);
+    if (genStats.skippedNoFindings > 0) parts.push(`${genStats.skippedNoFindings} skipped (no findings)`);
+    if (process.env.APOLLO_API_KEY) parts.push("Finding emails via Apollo in background...");
+
     return NextResponse.json({
       generated: items.length,
       inserted,
+      needsReview: insertResult.needsReview,
+      duplicates: insertResult.duplicates,
+      insertErrors: insertResult.errors,
+      generationStats: genStats,
       apolloEnabled: !!process.env.APOLLO_API_KEY,
-      message: `Generated ${items.length} outreach items, inserted ${inserted} new${process.env.APOLLO_API_KEY ? ". Finding emails via Apollo in background..." : ""}`,
+      message: parts.join(". ") + ".",
     });
   } catch (error) {
     console.error("Error generating outreach:", error);

@@ -100,7 +100,7 @@ export async function runNewsScan(): Promise<ScanResult> {
   const parser = new RssParser({
     timeout: 15000,
     headers: {
-      "User-Agent": "RobotShopper-Bot/1.0 (+https://robotshopper.com)",
+      "User-Agent": "ARCReport-Bot/1.0 (+https://arcreport.ai)",
     },
   });
 

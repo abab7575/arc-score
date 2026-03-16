@@ -3,7 +3,7 @@
  *
  * RULES:
  * 1. LIGHT cream background — matches the website
- * 2. robotshopper.com must be BIG and prominent
+ * 2. arcreport.ai must be BIG and prominent
  * 3. No text under 14px
  * 4. CTA to visit the site must be obvious
  */
@@ -91,14 +91,14 @@ export function ImageFrame({ children }: { children: React.ReactNode }) {
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, backgroundColor: COLORS.coral, borderRadius: 4 }}>
-            <span style={{ fontFamily: "JetBrains Mono", fontSize: 13, fontWeight: 700, color: COLORS.white }}>RS</span>
+            <span style={{ fontFamily: "JetBrains Mono", fontSize: 13, fontWeight: 700, color: COLORS.white }}>AR</span>
           </div>
-          <span style={{ fontSize: 18, fontWeight: 800, color: COLORS.white }}>Robot Shopper</span>
+          <span style={{ fontSize: 18, fontWeight: 800, color: COLORS.white }}>ARC Report</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <span style={{ fontSize: 16, color: "rgba(255,248,240,0.6)" }}>Check your site&apos;s score →</span>
           <div style={{ display: "flex", alignItems: "center", padding: "8px 20px", backgroundColor: COLORS.coral, borderRadius: 6 }}>
-            <span style={{ fontFamily: "JetBrains Mono", fontSize: 16, fontWeight: 700, color: COLORS.white, letterSpacing: "0.02em" }}>robotshopper.com</span>
+            <span style={{ fontFamily: "JetBrains Mono", fontSize: 16, fontWeight: 700, color: COLORS.white, letterSpacing: "0.02em" }}>arcreport.ai</span>
           </div>
         </div>
       </div>

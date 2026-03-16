@@ -139,7 +139,7 @@ export const EDUCATIONAL_TOPICS: EducationalTopic[] = [
   // ── Methodology ─────────────────────────────────────────────────
   {
     id: "method-how-scoring-works",
-    title: "How Robot Shopper Scoring Works",
+    title: "How ARC Score Scoring Works",
     subtitle: "We test every brand across 7 categories using automated agents, then weight the scores based on each AI agent's unique priorities.",
     bullets: [
       "Automated scanning with Puppeteer + structured data parsing",
@@ -151,7 +151,7 @@ export const EDUCATIONAL_TOPICS: EducationalTopic[] = [
   },
   {
     id: "method-grade-scale",
-    title: "Understanding Robot Shopper Grades",
+    title: "Understanding ARC Score Grades",
     subtitle: "From A to F — here's what each grade means for your brand's AI agent readiness and what it takes to level up.",
     bullets: [
       "Grade A (85-100): Agent-Ready — AI agents can shop your site effectively",
@@ -190,7 +190,7 @@ export const EDUCATIONAL_TOPICS: EducationalTopic[] = [
   {
     id: "industry-quick-wins",
     title: "5 Quick Wins for AI Agent Readiness",
-    subtitle: "These high-impact, low-effort changes can boost your Robot Shopper score within a week.",
+    subtitle: "These high-impact, low-effort changes can boost your ARC Score score within a week.",
     bullets: [
       "Add JSON-LD Product schema to every product page",
       "Update robots.txt to allow GPTBot, PerplexityBot, and ClaudeBot",

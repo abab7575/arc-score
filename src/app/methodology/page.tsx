@@ -8,9 +8,9 @@ import type { CategoryId } from "@/types/report";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Methodology — Robot Shopper",
+  title: "Methodology — ARC Report",
   description:
-    "How Robot Shopper measures AI agent readiness. Our scoring methodology, category weights, agent profiles, fail gates, and grading philosophy — fully transparent.",
+    "How ARC Report measures AI agent readiness. Our scoring methodology, category weights, agent profiles, fail gates, and grading philosophy — fully transparent.",
 };
 
 export const dynamic = "force-dynamic";

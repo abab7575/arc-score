@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 export async function POST(request: NextRequest) {
   try {
     const regenerate = request.nextUrl.searchParams.get("regenerate") === "true";
-    const limit = parseInt(request.nextUrl.searchParams.get("limit") ?? "5");
+    const limit = parseInt(request.nextUrl.searchParams.get("limit") ?? "10");
 
     // Clear existing image data if regenerating
     if (regenerate) {

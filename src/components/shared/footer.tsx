@@ -23,13 +23,13 @@ export function Footer() {
             <div>
               <div className="flex items-center gap-2.5 mb-3">
                 <div className="w-6 h-6 bg-[#FF6648] flex items-center justify-center">
-                  <span className="text-[9px] font-black text-white font-mono">RS</span>
+                  <span className="text-[9px] font-black text-white font-mono">AR</span>
                 </div>
-                <span className="text-sm font-black text-white tracking-tight">Robot Shopper</span>
+                <span className="text-sm font-black text-white tracking-tight">ARC Report</span>
               </div>
               <div className="space-y-1">
                 <p className="spec-label text-white/25 text-[9px]">
-                  &copy; {new Date().getFullYear()} ROBOT SHOPPER — ALL RIGHTS RESERVED
+                  &copy; {new Date().getFullYear()} ARC REPORT — ALL RIGHTS RESERVED
                 </p>
                 <p className="spec-label text-white/25 text-[9px]">
                   THE AI SHOPPING AGENT TESTING PLATFORM

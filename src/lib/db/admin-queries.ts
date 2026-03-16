@@ -491,11 +491,16 @@ export function getContentQueue(filters?: {
       ? desc(schema.contentQueue.createdAt)
       : desc(schema.contentQueue.priorityScore);
 
+  // Items with images always sort to the top so the user sees ready-to-post content first
   return db
     .select()
     .from(schema.contentQueue)
     .where(where)
-    .orderBy(orderBy, desc(schema.contentQueue.createdAt))
+    .orderBy(
+      sql`CASE WHEN ${schema.contentQueue.imageData} IS NOT NULL THEN 0 ELSE 1 END`,
+      orderBy,
+      desc(schema.contentQueue.createdAt),
+    )
     .limit(filters?.limit ?? 50)
     .offset(filters?.offset ?? 0)
     .all();

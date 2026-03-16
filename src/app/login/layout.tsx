@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Log In — Robot Shopper",
+  title: "Log In — ARC Report",
   description:
-    "Log in to your Robot Shopper account to access reports, monitoring dashboards, and agent journey replays.",
+    "Log in to your ARC Report account to access reports, monitoring dashboards, and agent journey replays.",
 };
 
 export default function LoginLayout({

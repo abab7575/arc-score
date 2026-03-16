@@ -27,12 +27,12 @@ function generateTextForStory(story: StoryCandidate, platform: Platform): string
 
     if (platform === "x") {
       const bullets = topic.bullets.slice(0, 3).map((b) => `• ${b}`).join("\n");
-      const text = `${topic.title}\n\n${bullets}\n\nrobotshopper.com`;
+      const text = `${topic.title}\n\n${bullets}\n\narcreport.ai`;
       return text.length > 280 ? text.slice(0, 279) + "…" : text;
     }
 
     const bullets = topic.bullets.map((b) => `• ${b}`).join("\n");
-    return `${topic.title}\n\n${topic.subtitle}\n\n${bullets}\n\nLearn more at robotshopper.com\n\n#AICommerce #Ecommerce #RobotShopper`;
+    return `${topic.title}\n\n${topic.subtitle}\n\n${bullets}\n\nLearn more at arcreport.ai\n\n#AICommerce #Ecommerce #ARCReport`;
   }
 
   const result = generateContent({

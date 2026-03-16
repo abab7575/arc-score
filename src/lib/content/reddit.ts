@@ -19,7 +19,7 @@ export interface RedditPost {
 export async function fetchRedditPosts(jsonUrl: string): Promise<RedditPost[]> {
   const response = await fetch(jsonUrl, {
     headers: {
-      "User-Agent": "RobotShopper-Bot/1.0 (+https://robotshopper.com)",
+      "User-Agent": "ARCReport-Bot/1.0 (+https://arcreport.ai)",
     },
   });
 

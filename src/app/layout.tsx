@@ -14,9 +14,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Robot Shopper — The AI Agent Readiness Index for E-Commerce",
+  title: "ARC Report — The AI Agent Readiness Index for E-Commerce",
   description:
-    "Can an AI agent navigate your site? Robot Shopper tracks 100+ e-commerce brands daily, measuring how well they support personal AI agent interactions.",
+    "Can an AI agent navigate your site? ARC Report tracks 100+ e-commerce brands daily, measuring how well they support personal AI agent interactions.",
 };
 
 export default function RootLayout({

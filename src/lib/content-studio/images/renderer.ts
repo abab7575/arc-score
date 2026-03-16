@@ -14,7 +14,7 @@ CRITICAL DESIGN REQUIREMENTS — follow these EXACTLY:
 - Primary text: Dark navy (#0A1628)
 - Accent colors: Coral red (#FF6648), Cobalt blue (#0259DD), Mustard yellow (#FBBA16), Emerald green (#059669), Violet (#7C3AED)
 - Top edge: A thin 5px multi-color stripe across the full width (coral, mustard, cobalt, violet, emerald — left to right)
-- Bottom bar: Navy (#0A1628) footer with "Robot Shopper" in white and "robotshopper.com" in coral
+- Bottom bar: Navy (#0A1628) footer with "ARC Report" in white and "arcreport.ai" in coral
 - Typography: Clean sans-serif. Headlines must be LARGE and BOLD (like 40pt+). Body text at least 16pt.
 - Layout: Use the FULL canvas. No dead space. Fill the frame.
 - Dimensions: Landscape 16:9 aspect ratio

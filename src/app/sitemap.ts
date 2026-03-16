@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { db, schema } from "@/lib/db";
 import { eq, desc } from "drizzle-orm";
 
-const BASE_URL = process.env.BASE_URL || "https://robotshopper.com";
+const BASE_URL = process.env.BASE_URL || "https://arcreport.ai";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Static pages
