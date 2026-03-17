@@ -43,6 +43,10 @@ export interface BrowserAgentResult {
   captchaDetected: boolean;
   cookieConsentFound: boolean;
   addToCartSuccess: boolean;
+  /** Whether the cart was verified to contain the item after clicking add-to-cart */
+  cartVerified: boolean;
+  /** How the cart was verified: "badge" | "confirmation" | "cart-page" | null */
+  cartVerificationMethod: string | null;
   checkoutReached: boolean;
   guestCheckoutAvailable: boolean;
   /** Rendered product page HTML for data agent schema detection */
@@ -387,6 +391,8 @@ export async function runBrowserAgent(
   let captchaDetected = false;
   let cookieConsentFound = false;
   let addToCartSuccess = false;
+  let cartVerified = false;
+  let cartVerificationMethod: string | null = null;
   let checkoutReached = false;
   let guestCheckoutAvailable = false;
   let renderedProductHtml: string | undefined;

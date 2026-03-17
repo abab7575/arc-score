@@ -16,7 +16,9 @@ import type { BrowserAgentResult } from "./browser-agent";
 import type { AccessibilityAgentResult } from "./accessibility-agent";
 import type { VisualAgentResult } from "./visual-agent";
 import type { FeedAgentResult } from "./feed-agent";
-import { computeAllAgentScores } from "@/lib/ai-agents";
+import { computeAllAgentScores, AI_AGENT_PROFILES } from "@/lib/ai-agents";
+import { formatPercentileComparison } from "@/lib/db/queries";
+import type { UserAgentTestResult } from "./data-agent";
 
 export function getGrade(score: number): Grade {
   if (score >= 85) return "A";
@@ -57,19 +59,22 @@ export function buildReport(
   const estimatedGain = topFixes.reduce((sum, f) => sum + f.estimatedPointsGain, 0);
   const estimatedScoreAfterFixes = Math.min(100, overallScore + estimatedGain);
 
-  const aiAgentScores = computeAllAgentScores(categories);
+  // Pass UA test results to per-agent scoring for real differentiation
+  const uaTests = data.userAgentTests?.map((t) => ({
+    userAgent: t.userAgent,
+    pageType: t.pageType,
+    statusCode: t.statusCode,
+    botBlockDetected: t.botBlockDetected,
+    contentStripped: t.contentStripped,
+    contentLength: t.contentLength,
+    responseTimeMs: t.responseTimeMs,
+    verdict: t.verdict,
+    note: t.note,
+  }));
+  const aiAgentScores = computeAllAgentScores(categories, uaTests);
 
   const verdict = buildVerdict(overallScore, grade, browser);
-  const comparison =
-    overallScore >= 85
-      ? "You're in the top 10% of ecommerce sites we've scanned"
-      : overallScore >= 70
-        ? "You're in the top 25% of ecommerce sites we've scanned"
-        : overallScore >= 50
-          ? "You're in the middle of the pack compared to similar sites"
-          : overallScore >= 30
-            ? "You're in the bottom 30% of ecommerce sites we've scanned"
-            : "You're in the bottom 10% of ecommerce sites we've scanned";
+  const comparison = formatPercentileComparison(overallScore);
 
   return {
     id,
@@ -286,7 +291,24 @@ function scorePerformance(browser: BrowserAgentResult, data: DataAgentResult): C
   if (data.meta.htmlSize > 1000) score += 20;
   else if (data.meta.htmlSize > 0) score += 10;
 
+  // UA test penalty: if many agent UA strings are blocked, penalize the overall score
+  if (data.userAgentTests && data.userAgentTests.length > 0) {
+    const blockedCount = data.userAgentTests.filter((t) => t.verdict === "blocked").length;
+    const totalCount = data.userAgentTests.length;
+    const blockRate = blockedCount / totalCount;
+    // If >50% of UA tests are blocked, deduct up to 15 points
+    if (blockRate > 0.5) score = Math.max(0, score - 15);
+    else if (blockRate > 0.25) score = Math.max(0, score - 8);
+    else if (blockRate > 0) score = Math.max(0, score - 3);
+  }
+
   const grade = getGrade(score);
+
+  // Build summary incorporating UA test results
+  const blockedUAs = data.userAgentTests
+    ? [...new Set(data.userAgentTests.filter((t) => t.verdict === "blocked").map((t) => t.userAgent))]
+    : [];
+
   return {
     id: "performance-resilience",
     name: "Performance & Resilience",
@@ -295,9 +317,11 @@ function scorePerformance(browser: BrowserAgentResult, data: DataAgentResult): C
     grade,
     summary: browser.blockedByBot
       ? "The site blocks automated agents with bot detection."
-      : score >= 70
-        ? "No bot blocking detected. Pages load within acceptable time."
-        : "Some performance or resilience issues for agent access.",
+      : blockedUAs.length > 0
+        ? `Site blocks ${blockedUAs.length} AI agent user-agent(s): ${blockedUAs.join(", ")}. ${score >= 70 ? "Other agents can still access the site." : "This limits agent compatibility."}`
+        : score >= 70
+          ? "No bot blocking detected. Pages load within acceptable time."
+          : "Some performance or resilience issues for agent access.",
     agentsCovered: ["browser", "data"],
   };
 }
@@ -735,6 +759,74 @@ function buildFindings(
       fix: { summary: "Selectively allow AI agents on product pages.", technicalDetail: "Update robots.txt to allow AI agents on product and category pages.", effortEstimate: "15 minutes" },
       priority: priority++, effort: "low", estimatedPointsGain: 3,
     });
+  }
+
+  // ── Per-Agent User-Agent Blocking Findings ──
+  if (data.userAgentTests && data.userAgentTests.length > 0) {
+    // Group blocked tests by user-agent string
+    const blockedByUA = new Map<string, UserAgentTestResult[]>();
+    for (const test of data.userAgentTests) {
+      if (test.verdict === "blocked") {
+        const existing = blockedByUA.get(test.userAgent) || [];
+        existing.push(test);
+        blockedByUA.set(test.userAgent, existing);
+      }
+    }
+
+    // Map UA strings to affected agent names for findings
+    const uaToAgentNames = new Map<string, string[]>();
+    for (const profile of AI_AGENT_PROFILES) {
+      for (const ua of profile.userAgentStrings) {
+        const existing = uaToAgentNames.get(ua) || [];
+        existing.push(profile.name);
+        uaToAgentNames.set(ua, existing);
+      }
+    }
+
+    for (const [ua, tests] of blockedByUA) {
+      const agentNames = uaToAgentNames.get(ua) || [ua];
+      const pages = tests.map((t) => t.pageType).join(" and ");
+      const statusCodes = [...new Set(tests.map((t) => t.statusCode > 0 ? `HTTP ${t.statusCode}` : "timeout"))].join(", ");
+
+      findings.push({
+        id: `f${priority}`, severity: "high", category: "performance-resilience",
+        title: `Site blocks ${ua} user-agent (${pages})`,
+        whatHappened: `HTTP requests using the ${ua} user-agent string were blocked on the ${pages} page(s). Server responded with ${statusCodes}.`,
+        whyItMatters: `This directly blocks ${agentNames.join(" and ")} from accessing your site. These agents will not be able to discover, browse, or purchase products on behalf of their users.`,
+        affectedAgents: agentNames.map((name) => ({ name, impact: "blocked" as const })),
+        fix: { summary: `Allow ${ua} in your WAF/CDN configuration or server-side bot detection.`, technicalDetail: `Review your Cloudflare/Akamai/WAF rules and ensure ${ua} is not on the block list. If using robots.txt blocking, note that WAF-level blocking prevents the agent from even reading robots.txt directives.`, effortEstimate: "30 minutes" },
+        priority: priority++, effort: "low", estimatedPointsGain: 5,
+      });
+    }
+
+    // Also report degraded user-agents (content stripping)
+    const degradedByUA = new Map<string, UserAgentTestResult[]>();
+    for (const test of data.userAgentTests) {
+      if (test.verdict === "degraded" && !blockedByUA.has(test.userAgent)) {
+        const existing = degradedByUA.get(test.userAgent) || [];
+        existing.push(test);
+        degradedByUA.set(test.userAgent, existing);
+      }
+    }
+
+    if (degradedByUA.size > 0) {
+      const degradedUAs = [...degradedByUA.keys()];
+      const allAffectedAgents: string[] = [];
+      for (const ua of degradedUAs) {
+        const names = uaToAgentNames.get(ua) || [ua];
+        allAffectedAgents.push(...names);
+      }
+
+      findings.push({
+        id: `f${priority}`, severity: "medium", category: "performance-resilience",
+        title: `Site serves stripped content to ${degradedUAs.length} AI user-agent(s)`,
+        whatHappened: `The following user-agents receive significantly less content than a normal Chrome browser: ${degradedUAs.join(", ")}. Content was >50% smaller than the Chrome baseline.`,
+        whyItMatters: `Affected agents (${[...new Set(allAffectedAgents)].join(", ")}) may see incomplete product data, missing prices, or broken layouts, leading to poor shopping experiences.`,
+        affectedAgents: [...new Set(allAffectedAgents)].map((name) => ({ name, impact: "degraded" as const })),
+        fix: { summary: "Serve the same content to AI agent user-agents as to Chrome browsers.", technicalDetail: "Check your CDN/server configuration for user-agent-based content stripping or conditional rendering that reduces content for known bot user-agents.", effortEstimate: "1-2 hours" },
+        priority: priority++, effort: "medium", estimatedPointsGain: 4,
+      });
+    }
   }
 
   if (!data.sitemap.found) {

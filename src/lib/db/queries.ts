@@ -245,6 +245,36 @@ export function insertSubmission(data: {
     .get();
 }
 
+/**
+ * Compute real percentile for a given score against all latest scans in the DB.
+ * Returns { totalBrands, brandsBelowScore } so the caller can format it.
+ */
+export function getPercentileData(overallScore: number): { totalBrands: number; brandsBelowScore: number } {
+  const result = db
+    .select({
+      totalBrands: sql<number>`COUNT(*)`,
+      brandsBelowScore: sql<number>`COUNT(CASE WHEN overall_score < ${overallScore} THEN 1 END)`,
+    })
+    .from(schema.scans)
+    .where(
+      sql`id IN (SELECT MAX(id) FROM ${schema.scans} GROUP BY brand_id)`
+    )
+    .get();
+
+  return {
+    totalBrands: result?.totalBrands ?? 0,
+    brandsBelowScore: result?.brandsBelowScore ?? 0,
+  };
+}
+
+export function formatPercentileComparison(overallScore: number): string {
+  const { totalBrands, brandsBelowScore } = getPercentileData(overallScore);
+  if (totalBrands <= 1) {
+    return "First brand scanned — more comparisons coming soon";
+  }
+  return `Scored higher than ${brandsBelowScore} of ${totalBrands} brands we've scanned`;
+}
+
 export function getAllScansForBrand(brandId: number) {
   return db
     .select({

@@ -3,6 +3,26 @@
  * No browser needed, just HTTP requests.
  */
 
+export interface UserAgentTestResult {
+  userAgent: string;
+  /** Which page was tested: "homepage" or "product" */
+  pageType: "homepage" | "product";
+  /** HTTP status code, or 0 for network/timeout errors */
+  statusCode: number;
+  /** Whether response contains bot-blocking indicators (CAPTCHA, "access denied", etc.) */
+  botBlockDetected: boolean;
+  /** Whether content is significantly stripped (>50% smaller than Chrome baseline) */
+  contentStripped: boolean;
+  /** Response body size in bytes */
+  contentLength: number;
+  /** Response time in milliseconds */
+  responseTimeMs: number;
+  /** Overall verdict for this test */
+  verdict: "allowed" | "blocked" | "degraded" | "unknown";
+  /** Human-readable note about what was detected */
+  note: string;
+}
+
 export interface DataAgentResult {
   schemaOrg: {
     found: boolean;
@@ -60,6 +80,7 @@ export interface DataAgentResult {
     headlessSignals: string[];
     endpoints: string[];
   };
+  userAgentTests: UserAgentTestResult[];
   meta: {
     title?: string;
     description?: string;
@@ -155,6 +176,10 @@ export async function runDataAgent(
   console.log("[Data Agent] Checking /llms.txt...");
   const llmsTxt = await checkLlmsTxt(baseUrl);
 
+  // 7f. Test per-agent user-agent access
+  console.log("[Data Agent] Testing per-agent user-agent access...");
+  const userAgentTests = await testUserAgentAccess(baseUrl, targetProductUrl);
+
   // 8. Extract meta
   const title = html.match(/<title[^>]*>(.*?)<\/title>/i)?.[1]?.trim();
   const description = html.match(
@@ -177,6 +202,7 @@ export async function runDataAgent(
     llmsTxt,
     acpSupport,
     commerceApis,
+    userAgentTests,
     meta: { title, description, htmlSize, hasProductData },
   };
 }
@@ -688,4 +714,184 @@ async function checkLlmsTxt(baseUrl: string): Promise<{ found: boolean; content?
   } catch {
     return { found: false };
   }
+}
+
+// ---- Per-Agent User-Agent Testing ----
+
+const USER_AGENT_STRINGS: { ua: string; label: string }[] = [
+  { ua: "GPTBot/1.0", label: "GPTBot" },
+  { ua: "ChatGPT-User/1.0", label: "ChatGPT-User" },
+  { ua: "PerplexityBot/1.0", label: "PerplexityBot" },
+  { ua: "ClaudeBot/1.0", label: "ClaudeBot" },
+  { ua: "Google-Extended", label: "Google-Extended" },
+  { ua: "Amazonbot/1.0", label: "Amazonbot" },
+  { ua: "CCBot/2.0", label: "CCBot" },
+  { ua: "Bingbot/2.0", label: "Bingbot" },
+];
+
+const BOT_BLOCK_PATTERNS = [
+  /captcha/i,
+  /access[\s-]?denied/i,
+  /\bblocked\b/i,
+  /challenge[\s-]?page/i,
+  /please verify/i,
+  /are you a (human|robot)/i,
+  /bot[\s-]?detected/i,
+  /automated[\s-]?access/i,
+  /cf-challenge/i,
+  /ray[\s-]?id/i,
+  /checking your browser/i,
+  /just a moment/i,
+  /enable javascript and cookies/i,
+  /cloudflare/i,
+  /datadome/i,
+  /perimeterx/i,
+  /distil/i,
+  /incapsula/i,
+  /imperva/i,
+];
+
+/**
+ * Fetch a single URL with a given user-agent string and measure the response.
+ */
+async function fetchWithUserAgent(
+  url: string,
+  userAgent: string,
+  chromeBaseline: number
+): Promise<Omit<UserAgentTestResult, "userAgent" | "pageType">> {
+  const start = Date.now();
+  try {
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent": userAgent,
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+      redirect: "follow",
+      signal: AbortSignal.timeout(5000),
+    });
+
+    const responseTimeMs = Date.now() - start;
+    const body = await res.text();
+    const contentLength = body.length;
+    const statusCode = res.status;
+
+    // Check for bot-blocking indicators in the response body
+    const botBlockDetected =
+      (statusCode === 403 || statusCode === 429 || statusCode === 503) ||
+      BOT_BLOCK_PATTERNS.some((pattern) => pattern.test(body.substring(0, 5000)));
+
+    // Check if content is significantly stripped compared to Chrome baseline
+    const contentStripped =
+      chromeBaseline > 0 && contentLength < chromeBaseline * 0.5;
+
+    // Determine verdict
+    let verdict: UserAgentTestResult["verdict"];
+    let note: string;
+
+    if (statusCode === 403 || statusCode === 429) {
+      verdict = "blocked";
+      note = `HTTP ${statusCode} — site explicitly rejected this user-agent.`;
+    } else if (statusCode === 503 && botBlockDetected) {
+      verdict = "blocked";
+      note = "HTTP 503 with bot-challenge page detected.";
+    } else if (botBlockDetected) {
+      verdict = "blocked";
+      note = `HTTP ${statusCode} but response contains bot-blocking indicators (CAPTCHA, challenge page, etc.).`;
+    } else if (contentStripped) {
+      verdict = "degraded";
+      note = `Content significantly stripped (${Math.round(contentLength / 1024)}KB vs ${Math.round(chromeBaseline / 1024)}KB Chrome baseline — ${Math.round((contentLength / chromeBaseline) * 100)}% of normal).`;
+    } else if (statusCode >= 200 && statusCode < 400) {
+      verdict = "allowed";
+      note = `HTTP ${statusCode} — full content served (${Math.round(contentLength / 1024)}KB).`;
+    } else {
+      verdict = "unknown";
+      note = `HTTP ${statusCode} — unexpected status code.`;
+    }
+
+    return {
+      statusCode,
+      botBlockDetected,
+      contentStripped,
+      contentLength,
+      responseTimeMs,
+      verdict,
+      note,
+    };
+  } catch (e) {
+    const responseTimeMs = Date.now() - start;
+    const isTimeout = e instanceof DOMException && e.name === "AbortError";
+    return {
+      statusCode: 0,
+      botBlockDetected: false,
+      contentStripped: false,
+      contentLength: 0,
+      responseTimeMs,
+      verdict: "unknown",
+      note: isTimeout
+        ? "Request timed out after 5 seconds."
+        : `Network error: ${e instanceof Error ? e.message : "unknown"}`,
+    };
+  }
+}
+
+/**
+ * Test how each AI agent's user-agent string is treated by the target site.
+ * Makes requests to both homepage and product page for each UA string.
+ * Runs all requests in parallel for speed.
+ */
+async function testUserAgentAccess(
+  baseUrl: string,
+  productUrl: string
+): Promise<UserAgentTestResult[]> {
+  // First, get Chrome baselines for both pages to compare content sizes
+  const [chromeHomepage, chromeProduct] = await Promise.all([
+    fetchWithUserAgent(
+      baseUrl,
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      0
+    ),
+    fetchWithUserAgent(
+      productUrl,
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      0
+    ),
+  ]);
+
+  const chromeHomepageSize = chromeHomepage.contentLength;
+  const chromeProductSize = chromeProduct.contentLength;
+
+  console.log(
+    `[Data Agent] Chrome baselines: homepage=${Math.round(chromeHomepageSize / 1024)}KB, product=${Math.round(chromeProductSize / 1024)}KB`
+  );
+
+  // Run all UA tests in parallel
+  const tests = USER_AGENT_STRINGS.flatMap(({ ua, label }) => [
+    { ua, label, url: baseUrl, pageType: "homepage" as const, baseline: chromeHomepageSize },
+    { ua, label, url: productUrl, pageType: "product" as const, baseline: chromeProductSize },
+  ]);
+
+  const results = await Promise.all(
+    tests.map(async ({ ua, label, url, pageType, baseline }) => {
+      const result = await fetchWithUserAgent(url, ua, baseline);
+      return {
+        userAgent: label,
+        pageType,
+        ...result,
+      } as UserAgentTestResult;
+    })
+  );
+
+  // Log summary
+  const blocked = results.filter((r) => r.verdict === "blocked");
+  const degraded = results.filter((r) => r.verdict === "degraded");
+  console.log(
+    `[Data Agent] UA test results: ${results.length} tests, ${blocked.length} blocked, ${degraded.length} degraded`
+  );
+  if (blocked.length > 0) {
+    const blockedUAs = [...new Set(blocked.map((r) => r.userAgent))];
+    console.log(`[Data Agent] Blocked user-agents: ${blockedUAs.join(", ")}`);
+  }
+
+  return results;
 }

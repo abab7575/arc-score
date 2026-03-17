@@ -88,11 +88,12 @@ function Card({ title, color, children }: { title: string; color: string; childr
   );
 }
 
-function HonestBadge({ type }: { type: "real" | "modeled" | "gap" }) {
+function HonestBadge({ type }: { type: "real" | "modeled" | "gap" | "partial" }) {
   const config = {
     real: { bg: "#059669", text: "GENUINELY REAL" },
     modeled: { bg: "#D97706", text: "MODELED / PROJECTED" },
     gap: { bg: "#DC2626", text: "GAP — NEEDS FIXING" },
+    partial: { bg: "#0259DD", text: "REAL + MODELED HYBRID" },
   };
   const c = config[type];
   return (
@@ -173,9 +174,10 @@ function BasicLevel() {
 
       <Card title="THE 10 AGENTS — HONEST EXPLANATION" color="#FF6648">
         <p>We say we test compatibility with <strong>10 AI shopping agents</strong>. Here&apos;s what that actually means:</p>
-        <p>We <strong>don&apos;t</strong> send 10 separate robots. We send our 5 testers, which check your site in a general way. Then we <strong>calculate</strong> how each of the 10 real AI agents would likely perform, based on what they care about.</p>
+        <p>We send our 5 testers, which check your site in a general way. Then we <strong>calculate</strong> how each of the 10 real AI agents would likely perform, based on what they care about.</p>
         <p>Think of it like a driving test. You take <strong>one test</strong>, but the examiner can tell you: &ldquo;You&apos;d do great in a sedan, okay in a truck, and struggle with a motorbike.&rdquo; Same test, different vehicles, different results based on what each vehicle needs.</p>
-        <p>That&apos;s what we do — one comprehensive scan, projected across 10 different AI agent types based on their documented capabilities and requirements.</p>
+        <p>But we also <strong>knock on your website&apos;s door wearing each agent&apos;s name tag</strong>. We go: &ldquo;Hi, I&apos;m ChatGPT,&rdquo; &ldquo;Hi, I&apos;m Perplexity,&rdquo; &ldquo;Hi, I&apos;m Claude&rdquo; — and check if your site lets them in or blocks them. Some shops block certain robots but allow others. So the driving test analogy still holds, but now we also check if the door is locked for each specific vehicle before it can even start the test.</p>
+        <p>This means each agent&apos;s score is a combination of the projected driving-test results <strong>and</strong> whether they were actually allowed through the door in the first place.</p>
       </Card>
     </div>
   );
@@ -228,11 +230,15 @@ function IntermediateLevel() {
       </Card>
 
       <Card title="5 SCANNERS → 10 AGENT PROFILES" color="#FF6648">
-        <p>The 10 AI agent &ldquo;compatibility scores&rdquo; are <strong>not</strong> from 10 independent tests. They&apos;re <strong>weighted projections</strong>.</p>
-        <p>Each AI agent profile has a weight vector across the 7 categories. The agent&apos;s score = dot product of category scores × agent weights.</p>
+        <p>The 10 AI agent &ldquo;compatibility scores&rdquo; are now a <strong>combination of two things</strong>:</p>
+        <ol>
+          <li><strong>Weighted projections</strong> — Each agent profile has a weight vector across the 7 categories. The agent&apos;s base score = dot product of category scores × agent weights.</li>
+          <li><strong>Real per-agent access testing</strong> — We test with 8 actual user-agent strings (GPTBot, ChatGPT-User, PerplexityBot, ClaudeBot, Google-Extended, Amazonbot, CCBot, Bingbot) and check whether the site blocks, restricts, or serves different content to each one.</li>
+        </ol>
+        <p>This means the scores are <strong>no longer purely modeled</strong>. They incorporate real differential data — if a site blocks GPTBot but allows PerplexityBot, those agents will get genuinely different scores, not just different weights on the same numbers.</p>
         <p><strong>Feed-based agents</strong> (ChatGPT Shopping, Google AI Mode, Perplexity Shopping, Copilot, Klarna) weight Data Standards and Product Understanding heavily. They don&apos;t care about Navigation.</p>
         <p><strong>Browser-based agents</strong> (Operator, Buy For Me, Comet, Computer Use, OpenClaw) weight Cart &amp; Checkout and Navigation heavily. They don&apos;t care about Agentic Commerce protocols.</p>
-        <p>This is <strong>conceptually sound</strong> — these agent types genuinely have different needs. But all feed agents will score similarly to each other, and all browser agents will score similarly to each other, because the underlying data is the same.</p>
+        <p>This is <strong>conceptually sound and now empirically grounded</strong>. The weighted model captures capability differences between agents, while the user-agent testing captures real access differences. Browser agents that share the same user-agent will still score similarly on access, but their weighted profiles can still differ.</p>
       </Card>
 
       <Card title="WHAT THE BROWSER AGENT ACTUALLY DOES" color="#0259DD">
@@ -304,13 +310,14 @@ function AdvancedLevel() {
           <li><em>Limitation: price consistency check (feed price vs page price) is not yet implemented</em></li>
         </ul>
 
-        <h4 style={{ color: "#D97706", marginTop: 16 }}>10-Agent Compatibility — Modeled <HonestBadge type="modeled" /></h4>
+        <h4 style={{ color: "#0259DD", marginTop: 16 }}>10-Agent Compatibility — Real Access + Modeled Capabilities <HonestBadge type="partial" /></h4>
         <ul>
-          <li>Weight vectors per agent are reasonable approximations of real agent needs</li>
-          <li>Feed agents weight structured data; browser agents weight UX — this is correct</li>
-          <li>But it&apos;s a <strong>model</strong>, not a measurement. Same scan data, different multipliers.</li>
-          <li>We do NOT test with each agent&apos;s actual user-agent string</li>
-          <li>We do NOT simulate each agent&apos;s specific interaction patterns</li>
+          <li>We now test with <strong>8 real user-agent strings</strong>: GPTBot, ChatGPT-User, PerplexityBot, ClaudeBot, Google-Extended, Amazonbot, CCBot, Bingbot</li>
+          <li>For each user-agent, we check: HTTP status codes, bot-blocking indicators (CAPTCHA pages, access-denied responses), and content stripping (does the site serve reduced content to that bot?)</li>
+          <li>If a site blocks GPTBot but allows PerplexityBot, those agents get <strong>genuinely different scores</strong> — this is real differential data, not modeled</li>
+          <li>Weight vectors per agent are still used for capability modeling — feed agents weight structured data, browser agents weight UX interaction</li>
+          <li>The final per-agent score combines real access testing results with the weighted category projections</li>
+          <li>We still do <strong>NOT</strong> simulate each agent&apos;s full interaction patterns (e.g., how Operator clicks through a checkout vs. how Comet does it) — the user-agent test catches blocking/access differences, the weighted model captures capability differences</li>
         </ul>
       </Card>
 
@@ -370,10 +377,12 @@ function CriticalLevel() {
       </Card>
 
       <Card title="THINGS THAT ARE MISLEADING" color="#DC2626">
-        <h4 style={{ color: "#DC2626" }}>1. &ldquo;10 AI Agent Compatibility&rdquo; <HonestBadge type="gap" /></h4>
+        <h4 style={{ color: "#0259DD" }}>1. &ldquo;10 AI Agent Compatibility&rdquo; <HonestBadge type="partial" /></h4>
         <p><strong>What customers think:</strong> We tested their site with ChatGPT Operator, Perplexity Comet, etc. individually.</p>
-        <p><strong>What actually happens:</strong> One generic scan. 10 different weight multipliers applied to the same 7 scores.</p>
-        <p><strong>Fix:</strong> Add real per-agent user-agent testing. Fetch each page as GPTBot, ChatGPT-User, PerplexityBot, ClaudeBot and check for differential blocking or content changes. This would make each agent score genuinely different and is easy to implement — a few HTTP requests per agent.</p>
+        <p><strong>What actually happens now:</strong> One comprehensive scan for the 7 categories, <strong>plus</strong> real per-agent access testing with 8 user-agent strings (GPTBot, ChatGPT-User, PerplexityBot, ClaudeBot, Google-Extended, Amazonbot, CCBot, Bingbot). We check HTTP status, bot-blocking indicators, and content stripping for each. The final agent score combines this real access data with the weighted category projections.</p>
+        <p><strong>What&apos;s now real:</strong> Access testing — if a site blocks GPTBot but allows PerplexityBot, those agents get genuinely different scores based on real HTTP responses.</p>
+        <p><strong>What&apos;s still modeled:</strong> Interaction pattern simulation — we don&apos;t replay how Operator navigates a checkout differently from Comet. The weighted model handles capability differences (feed-based vs. browser-based needs), not behavioral differences.</p>
+        <p><strong>Remaining gap:</strong> Full behavioral simulation per agent. This would require running separate Puppeteer sessions mimicking each agent&apos;s specific navigation strategy, which is a much larger effort. The current hybrid approach covers the most impactful difference (access vs. blocked) while modeling the rest.</p>
 
         <h4 style={{ color: "#DC2626", marginTop: 20 }}>2. &ldquo;Add to Cart Success&rdquo; <HonestBadge type="gap" /></h4>
         <p><strong>What customers think:</strong> The bot successfully added an item to the cart.</p>
@@ -406,9 +415,9 @@ function CriticalLevel() {
 
         <div style={{ marginTop: 16 }}>
           <DiagramBox
-            label="1. ADD USER-AGENT TESTING (1-2 days)"
-            description="Fetch each page as GPTBot, ChatGPT-User, PerplexityBot, ClaudeBot, Amazonbot. Check if the site returns different content, blocks the request, or serves a CAPTCHA. This makes each agent's score genuinely different."
-            color="#FF6648"
+            label="1. ✅ USER-AGENT TESTING (DONE)"
+            description="Now testing with 8 real user-agent strings (GPTBot, ChatGPT-User, PerplexityBot, ClaudeBot, Google-Extended, Amazonbot, CCBot, Bingbot). Checks HTTP status, bot-blocking, and content stripping. Each agent's score now incorporates real differential access data."
+            color="#059669"
           />
           <DiagramBox
             label="2. VERIFY ADD-TO-CART (half day)"
@@ -435,7 +444,7 @@ function CriticalLevel() {
 
       <Card title="WHAT TO SAY WHEN SOMEONE ASKS HARD QUESTIONS" color="#7C3AED">
         <h4 style={{ color: "#FFF8F0" }}>&ldquo;Do you actually test with ChatGPT / Perplexity / Claude?&rdquo;</h4>
-        <p><strong>Honest answer:</strong> &ldquo;We run a comprehensive 5-agent scan that tests the same things these AI agents need — structured data, navigation, cart flow, visual clarity, and feed availability. We then model each agent&apos;s likely compatibility based on their documented capabilities and requirements. Feed-based agents like ChatGPT Shopping need your product data to be machine-readable. Browser-based agents like Operator need your checkout flow to be navigable without human intervention. We test for both.&rdquo;</p>
+        <p><strong>Honest answer:</strong> &ldquo;Yes — we test with each agent&apos;s real user-agent string. We send requests as GPTBot, ChatGPT-User, PerplexityBot, ClaudeBot, and others, and check whether your site lets them in, blocks them, or serves them different content. On top of that, we run a comprehensive 5-agent scan that tests structured data, navigation, cart flow, visual clarity, and feed availability. Each agent&apos;s score combines real access results with a capability model — feed-based agents like ChatGPT Shopping need your product data to be machine-readable, browser-based agents like Operator need your checkout to work without human intervention. We test for both.&rdquo;</p>
 
         <h4 style={{ color: "#FFF8F0", marginTop: 16 }}>&ldquo;How is this different from a Lighthouse audit?&rdquo;</h4>
         <p><strong>Honest answer:</strong> &ldquo;Lighthouse tests performance and accessibility for humans. We test discoverability and usability for AI agents specifically. We check things Lighthouse doesn&apos;t: robots.txt rules for AI bots, Schema.org product markup quality, whether AI can visually identify your buy button, whether your product feeds exist and have complete data, and whether your checkout works without a human clicking through it.&rdquo;</p>
@@ -449,13 +458,13 @@ function CriticalLevel() {
           <strong>Is ARC Report smoke and mirrors?</strong> No. The core scanning is real and valuable. The 5 agents do genuine technical analysis. The Data Agent and Visual Agent are particularly strong differentiators.
         </p>
         <p style={{ fontSize: 16, lineHeight: 1.8 }}>
-          <strong>Is it perfect?</strong> No. The 10-agent compatibility framing overpromises relative to what actually happens. The percentile comparisons are fabricated. Some checks are incomplete (add-to-cart verification, keyboard navigation, price consistency).
+          <strong>Is it perfect?</strong> No. The 10-agent compatibility is now much stronger with real per-agent access testing, but we still don&apos;t simulate each agent&apos;s full interaction patterns. The percentile comparisons are fabricated. Some checks are incomplete (add-to-cart verification, keyboard navigation, price consistency).
         </p>
         <p style={{ fontSize: 16, lineHeight: 1.8 }}>
           <strong>Is it useful?</strong> Yes. No other product gives e-commerce brands a clear, actionable report on AI agent readiness. The scoring framework is sound. The findings and fix list provide real value. The visual agent approach is genuinely novel.
         </p>
         <p style={{ fontSize: 16, lineHeight: 1.8 }}>
-          <strong>What would make it bulletproof?</strong> Add per-agent user-agent testing (the single biggest improvement), verify add-to-cart actually works, and replace fake percentiles with real data. These are 3-4 days of work total.
+          <strong>What would make it bulletproof?</strong> Per-agent user-agent testing is now live (the single biggest improvement). Remaining: verify add-to-cart actually works, replace fake percentiles with real data, and eventually add full per-agent behavioral simulation. These remaining items are 2-3 days of work total.
         </p>
       </Card>
     </div>

@@ -39,6 +39,8 @@ export interface AIAgentProfile {
   weights: Record<CategoryId, number>;
   url: string;
   protocol?: string;
+  /** User-agent strings this agent is known to use (mapped from UA testing) */
+  userAgentStrings: string[];
 }
 
 // ---- Agent Profiles ----
@@ -66,6 +68,7 @@ export const AI_AGENT_PROFILES: AIAgentProfile[] = [
     },
     url: "https://openai.com/index/chatgpt-shopping/",
     protocol: "ACP (Agentic Commerce Protocol)",
+    userAgentStrings: ["GPTBot", "ChatGPT-User"],
   },
   {
     id: "google-ai-mode",
@@ -88,6 +91,7 @@ export const AI_AGENT_PROFILES: AIAgentProfile[] = [
     },
     url: "https://blog.google/products/search/ai-mode-search/",
     protocol: "UCP (Universal Checkout Protocol)",
+    userAgentStrings: ["Google-Extended"],
   },
   {
     id: "perplexity-shopping",
@@ -110,6 +114,7 @@ export const AI_AGENT_PROFILES: AIAgentProfile[] = [
     },
     url: "https://www.perplexity.ai/hub/blog/perplexity-shopping",
     protocol: undefined,
+    userAgentStrings: ["PerplexityBot"],
   },
   {
     id: "microsoft-copilot",
@@ -132,6 +137,7 @@ export const AI_AGENT_PROFILES: AIAgentProfile[] = [
     },
     url: "https://copilot.microsoft.com",
     protocol: undefined,
+    userAgentStrings: ["Bingbot"],
   },
   {
     id: "klarna-ai",
@@ -154,6 +160,7 @@ export const AI_AGENT_PROFILES: AIAgentProfile[] = [
     },
     url: "https://www.klarna.com/international/press/klarna-launches-ai-shopping-assistant/",
     protocol: "Klarna APP",
+    userAgentStrings: ["CCBot"],
   },
 
   // ---- Browser-Automation Agents ----
@@ -178,6 +185,7 @@ export const AI_AGENT_PROFILES: AIAgentProfile[] = [
     },
     url: "https://openai.com/index/introducing-operator/",
     protocol: undefined,
+    userAgentStrings: ["GPTBot"],
   },
   {
     id: "amazon-buyforme",
@@ -200,6 +208,7 @@ export const AI_AGENT_PROFILES: AIAgentProfile[] = [
     },
     url: "https://www.aboutamazon.com/news/retail/amazon-buy-for-me-ai-shopping",
     protocol: undefined,
+    userAgentStrings: ["Amazonbot"],
   },
   {
     id: "perplexity-comet",
@@ -222,6 +231,7 @@ export const AI_AGENT_PROFILES: AIAgentProfile[] = [
     },
     url: "https://www.perplexity.ai",
     protocol: undefined,
+    userAgentStrings: ["PerplexityBot"],
   },
   {
     id: "claude-computer-use",
@@ -244,6 +254,7 @@ export const AI_AGENT_PROFILES: AIAgentProfile[] = [
     },
     url: "https://docs.anthropic.com/en/docs/agents-and-tools/computer-use",
     protocol: undefined,
+    userAgentStrings: ["ClaudeBot"],
   },
   {
     id: "openclaw",
@@ -266,18 +277,76 @@ export const AI_AGENT_PROFILES: AIAgentProfile[] = [
     },
     url: "https://www.openclaw.com",
     protocol: undefined,
+    userAgentStrings: ["CCBot"],
   },
 ];
+
+// ---- UA Test Result Type (imported shape from data-agent) ----
+
+export interface UATestResult {
+  userAgent: string;
+  pageType: "homepage" | "product";
+  statusCode: number;
+  botBlockDetected: boolean;
+  contentStripped: boolean;
+  contentLength: number;
+  responseTimeMs: number;
+  verdict: "allowed" | "blocked" | "degraded" | "unknown";
+  note: string;
+}
 
 // ---- Scoring Functions ----
 
 /**
+ * Determine the per-agent UA penalty based on how the site treats
+ * user-agent strings associated with this agent.
+ *
+ * Returns a negative number (penalty) to subtract from the weighted score.
+ * - Both pages blocked: -15 points
+ * - One page blocked: -10 points
+ * - Both pages degraded: -7 points
+ * - One page degraded: -4 points
+ * - All allowed: 0 (no penalty)
+ */
+function computeUAPenalty(
+  profile: AIAgentProfile,
+  uaTests: UATestResult[]
+): number {
+  if (!uaTests || uaTests.length === 0 || profile.userAgentStrings.length === 0) return 0;
+
+  // Find test results for this agent's UA strings
+  const relevantTests = uaTests.filter((t) =>
+    profile.userAgentStrings.includes(t.userAgent)
+  );
+
+  if (relevantTests.length === 0) return 0;
+
+  const homepageTests = relevantTests.filter((t) => t.pageType === "homepage");
+  const productTests = relevantTests.filter((t) => t.pageType === "product");
+
+  // Check worst-case across all UA strings for this agent
+  const homepageBlocked = homepageTests.some((t) => t.verdict === "blocked");
+  const productBlocked = productTests.some((t) => t.verdict === "blocked");
+  const homepageDegraded = homepageTests.some((t) => t.verdict === "degraded");
+  const productDegraded = productTests.some((t) => t.verdict === "degraded");
+
+  if (homepageBlocked && productBlocked) return -15;
+  if (homepageBlocked || productBlocked) return -10;
+  if (homepageDegraded && productDegraded) return -7;
+  if (homepageDegraded || productDegraded) return -4;
+
+  return 0;
+}
+
+/**
  * Compute a single agent's compatibility score as a weighted dot product
- * of category scores and the agent's weight profile.
+ * of category scores and the agent's weight profile, with per-agent
+ * UA test penalties applied.
  */
 export function computeAgentScore(
   categoryScores: CategoryScore[],
-  agentId: AIAgentId
+  agentId: AIAgentId,
+  uaTests?: UATestResult[]
 ): number {
   const profile = AI_AGENT_PROFILES.find((p) => p.id === agentId);
   if (!profile) return 0;
@@ -290,18 +359,24 @@ export function computeAgentScore(
     weighted += catScore * weight;
   }
 
-  return Math.round(weighted);
+  // Apply per-agent UA penalty
+  const uaPenalty = computeUAPenalty(profile, uaTests ?? []);
+  weighted += uaPenalty;
+
+  return Math.max(0, Math.round(weighted));
 }
 
 /**
  * Compute compatibility scores for all 10 agents at once.
+ * Accepts optional UA test results for per-agent differentiation.
  */
 export function computeAllAgentScores(
-  categoryScores: CategoryScore[]
+  categoryScores: CategoryScore[],
+  uaTests?: UATestResult[]
 ): Record<AIAgentId, number> {
   const result = {} as Record<AIAgentId, number>;
   for (const profile of AI_AGENT_PROFILES) {
-    result[profile.id] = computeAgentScore(categoryScores, profile.id);
+    result[profile.id] = computeAgentScore(categoryScores, profile.id, uaTests);
   }
   return result;
 }
