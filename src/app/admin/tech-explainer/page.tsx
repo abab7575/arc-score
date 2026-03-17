@@ -287,6 +287,23 @@ function AdvancedLevel() {
           <li>Human-agent gap detection: identifies visible elements that programmatic selectors can&apos;t find</li>
         </ul>
 
+        <h4 style={{ color: "#059669", marginTop: 16 }}>Accessibility Agent — Solid Foundation <HonestBadge type="real" /></h4>
+        <ul>
+          <li>Uses Puppeteer&apos;s built-in accessibility tree API — the same tree screen readers use</li>
+          <li>Checks for landmarks (nav, main), headings (h1), and properly labeled interactive elements</li>
+          <li>Identifies unlabeled buttons/links that agents can&apos;t understand (missing aria-label, textContent)</li>
+          <li>Tests whether key shopping elements (add-to-cart, size selector, price) are findable via accessibility selectors</li>
+          <li><em>Limitation: counts focusable elements but doesn&apos;t simulate actual Tab key navigation</em></li>
+        </ul>
+
+        <h4 style={{ color: "#059669", marginTop: 16 }}>Feed Agent — Real Gap Finder <HonestBadge type="real" /></h4>
+        <ul>
+          <li>Probes 9+ common feed paths (Google Merchant XML, Shopify products.json, RSS/Atom)</li>
+          <li>Parses discovered feeds and checks for missing fields (title, price, availability, image, GTIN, brand)</li>
+          <li>Most e-commerce brands don&apos;t know their feeds are broken or missing — this surfaces real blind spots</li>
+          <li><em>Limitation: price consistency check (feed price vs page price) is not yet implemented</em></li>
+        </ul>
+
         <h4 style={{ color: "#D97706", marginTop: 16 }}>10-Agent Compatibility — Modeled <HonestBadge type="modeled" /></h4>
         <ul>
           <li>Weight vectors per agent are reasonable approximations of real agent needs</li>
