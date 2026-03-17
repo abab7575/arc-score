@@ -2,16 +2,18 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Store, Newspaper, Rss, GitBranch, Megaphone, Send, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, Store, Newspaper, Rss, GitBranch, Megaphone, Send, Settings, LogOut, Grid3X3, BookOpen } from "lucide-react";
 
 const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/brands", label: "Brands", icon: Store },
+  { href: "/admin/robots-matrix", label: "Matrix", icon: Grid3X3 },
   { href: "/admin/intel", label: "Intel", icon: Newspaper },
   { href: "/admin/newsfeed", label: "Newsfeed", icon: Rss },
   { href: "/admin/brand-pipeline", label: "Pipeline", icon: GitBranch },
   { href: "/admin/content-studio", label: "Content", icon: Megaphone },
   { href: "/admin/outreach", label: "Outreach", icon: Send },
+  { href: "/admin/tech-explainer", label: "Explainer", icon: BookOpen },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
