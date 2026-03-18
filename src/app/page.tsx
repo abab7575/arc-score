@@ -109,6 +109,8 @@ export default function HomePage() {
           onCategoryChange={setSelectedCategory}
           sortBy={sortBy}
           onSortChange={setSortBy}
+          searchQuery={searchQuery}
+          onSearch={setSearchQuery}
         />
 
         {loading ? (
