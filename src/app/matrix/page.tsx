@@ -129,37 +129,44 @@ export default function PublicMatrixPage() {
             <StatCard value={data.summary.avgBlockedAgents} label="Avg Agents Blocked" color="#FBBA16" />
           </div>
 
-          {/* Controls */}
-          <div style={{ display: "flex", gap: 12, marginBottom: 24, flexWrap: "wrap", alignItems: "center" }}>
-            <input
-              type="text"
-              placeholder="Search brands..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{
-                padding: "8px 14px", borderRadius: 6, border: "1px solid #1E293B",
-                backgroundColor: "#0F1D32", color: "#FFF8F0", fontSize: 13,
-                fontFamily: "JetBrains Mono, monospace", width: 200,
-              }}
-            />
-            <SelectControl value={filter} onChange={(v) => setFilter(v as FilterMode)} options={[
-              { value: "all", label: "All Brands" },
-              { value: "blocking", label: "Blocking Agents" },
-              { value: "open", label: "Fully Open" },
-            ]} />
-            <SelectControl value={selectedCategory} onChange={setSelectedCategory} options={[
-              { value: "all", label: "All Categories" },
-              ...categories.map((c) => ({ value: c, label: c.charAt(0).toUpperCase() + c.slice(1) })),
-            ]} />
-            <SelectControl value={sort} onChange={(v) => setSort(v as SortMode)} options={[
-              { value: "most-blocked", label: "Most Blocked First" },
-              { value: "most-open", label: "Most Open First" },
-              { value: "name", label: "A-Z" },
-              { value: "category", label: "By Category" },
-            ]} />
-            <span style={{ color: "#64748B", fontSize: 12, fontFamily: "JetBrains Mono, monospace" }}>
-              {filtered.length} brands shown
-            </span>
+          {/* Controls + Legend — sticky on scroll */}
+          <div style={{ position: "sticky", top: 0, zIndex: 20, backgroundColor: "#0A1628", paddingTop: 8, paddingBottom: 12 }}>
+            <div style={{ display: "flex", gap: 12, marginBottom: 10, flexWrap: "wrap", alignItems: "center" }}>
+              <input
+                type="text"
+                placeholder="Search brands..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{
+                  padding: "8px 14px", borderRadius: 6, border: "1px solid #1E293B",
+                  backgroundColor: "#0F1D32", color: "#FFF8F0", fontSize: 13,
+                  fontFamily: "JetBrains Mono, monospace", width: 200,
+                }}
+              />
+              <SelectControl value={filter} onChange={(v) => setFilter(v as FilterMode)} options={[
+                { value: "all", label: "All Brands" },
+                { value: "blocking", label: "Blocking Agents" },
+                { value: "open", label: "Fully Open" },
+              ]} />
+              <SelectControl value={selectedCategory} onChange={setSelectedCategory} options={[
+                { value: "all", label: "All Categories" },
+                ...categories.map((c) => ({ value: c, label: c.charAt(0).toUpperCase() + c.slice(1) })),
+              ]} />
+              <SelectControl value={sort} onChange={(v) => setSort(v as SortMode)} options={[
+                { value: "most-blocked", label: "Most Blocked First" },
+                { value: "most-open", label: "Most Open First" },
+                { value: "name", label: "A-Z" },
+                { value: "category", label: "By Category" },
+              ]} />
+              <span style={{ color: "#64748B", fontSize: 12, fontFamily: "JetBrains Mono, monospace" }}>
+                {filtered.length} brands shown
+              </span>
+            </div>
+            <div style={{ display: "flex", gap: 20 }}>
+              <LegendItem color="#059669" label="Explicitly Allowed" />
+              <LegendItem color="#0259DD" label="No Rule (Allowed by Default)" />
+              <LegendItem color="#DC2626" label="Explicitly Blocked" />
+            </div>
           </div>
 
           {/* Agent Header Row */}
