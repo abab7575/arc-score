@@ -46,6 +46,12 @@ export function Navbar() {
               Agents
             </Link>
             <Link
+              href="/matrix"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Matrix
+            </Link>
+            <Link
               href="/landscape"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
@@ -80,7 +86,7 @@ export function Navbar() {
               href="/submit"
               className="text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-4 py-1.5 transition-colors relative group/btn"
             >
-              Submit Your Site
+              Check Your Site
               {/* Offset shadow on button */}
               <span className="absolute inset-0 bg-[#0A1628] -z-10 translate-x-[2px] translate-y-[2px] group-hover/btn:translate-x-[3px] group-hover/btn:translate-y-[3px] transition-transform" />
             </Link>

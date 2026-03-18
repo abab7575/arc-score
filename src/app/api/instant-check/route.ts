@@ -25,8 +25,6 @@ interface StructuredDataResult {
 interface InstantCheckResponse {
   url: string;
   checkedAt: string;
-  score: number;
-  grade: string;
   agentAccess: AgentAccessResult[];
   issues: IssueResult[];
   structuredData: StructuredDataResult;
@@ -37,6 +35,11 @@ interface InstantCheckResponse {
     hasMain: boolean;
     hasH1: boolean;
   };
+  confidence: {
+    robotsTxt: "high" | "medium" | "low";
+    structuredData: "low" | "medium" | "high";
+  };
+  note: string;
 }
 
 // ── Agent definitions for robots.txt checking ──────────────────────────
@@ -431,15 +434,15 @@ function generateIssues(
   if (blockedAgents.length >= 4) {
     issues.push({
       severity: "critical",
-      title: `${blockedAgents.length} of 8 AI agents are blocked in robots.txt`,
-      locked: true,
+      title: `${blockedAgents.length} of 8 AI agents are blocked via robots.txt`,
+      locked: false,
     });
   } else if (blockedAgents.length > 0) {
     const names = blockedAgents.map((a) => a.agent).join(", ");
     issues.push({
       severity: "high",
-      title: `${names} blocked in robots.txt`,
-      locked: true,
+      title: `${names} blocked via robots.txt`,
+      locked: false,
     });
   }
 
@@ -450,8 +453,8 @@ function generateIssues(
   if (gptBotBlocked && blockedAgents.length < 4) {
     issues.push({
       severity: "critical",
-      title: "GPTBot is blocked — invisible to ChatGPT Shopping",
-      locked: true,
+      title: "GPTBot is blocked — this may limit visibility in ChatGPT Shopping",
+      locked: false,
     });
   }
 
@@ -461,41 +464,41 @@ function generateIssues(
   if (googleBlocked && blockedAgents.length < 4) {
     issues.push({
       severity: "high",
-      title: "Google-Extended is blocked — excluded from Google AI Mode",
-      locked: true,
+      title: "Google-Extended is blocked — this may affect Google AI Mode inclusion",
+      locked: false,
     });
   }
 
-  // Structured data issues
+  // Structured data issues (lower confidence — lightweight HTTP check)
   if (!structuredData.hasJsonLd) {
     issues.push({
-      severity: "critical",
-      title: "No JSON-LD structured data found on homepage",
-      locked: true,
+      severity: "medium",
+      title: "Potential issue: JSON-LD structured data was not detected in our quick check",
+      locked: false,
     });
   }
 
   if (!structuredData.hasSchemaProduct) {
     issues.push({
-      severity: "high",
-      title: "No Schema.org Product markup detected",
-      locked: true,
+      severity: "medium",
+      title: "Potential issue: Schema.org Product markup was not detected in our quick check",
+      locked: false,
     });
   }
 
   if (!structuredData.hasOpenGraph) {
     issues.push({
       severity: "medium",
-      title: "Missing Open Graph tags — AI agents can't preview products",
-      locked: true,
+      title: "Potential issue: Open Graph tags were not detected in our quick check",
+      locked: false,
     });
   }
 
   if (!structuredData.hasProductFeed) {
     issues.push({
       severity: "medium",
-      title: "No product feed detected (JSON, XML, or Atom)",
-      locked: true,
+      title: "Potential issue: No product feed (JSON, XML, or Atom) was detected at common paths",
+      locked: false,
     });
   }
 
@@ -503,24 +506,24 @@ function generateIssues(
   if (!semanticHtml.hasNav) {
     issues.push({
       severity: "medium",
-      title: "No <nav> element — browser agents can't identify navigation",
-      locked: true,
+      title: "Potential issue: No <nav> element detected — browser agents may have trouble identifying navigation",
+      locked: false,
     });
   }
 
   if (!semanticHtml.hasMain) {
     issues.push({
       severity: "medium",
-      title: "No <main> element — agents can't distinguish content from chrome",
-      locked: true,
+      title: "Potential issue: No <main> element detected — agents may have trouble distinguishing content",
+      locked: false,
     });
   }
 
   if (!semanticHtml.hasH1) {
     issues.push({
       severity: "medium",
-      title: "No <h1> element found — poor content hierarchy for agents",
-      locked: true,
+      title: "Potential issue: No <h1> element detected — may indicate poor content hierarchy for agents",
+      locked: false,
     });
   }
 
@@ -593,23 +596,24 @@ export async function POST(request: Request) {
       homepageData.semanticHtml
     );
 
-    const { score, grade } = computeScore(
-      agentAccess,
-      structuredData,
-      homepageData.semanticHtml
-    );
+    // Score/grade still computed internally for potential future use,
+    // but not included in the public API response
+    // const { score, grade } = computeScore(agentAccess, structuredData, homepageData.semanticHtml);
 
     const response: InstantCheckResponse = {
       url,
       checkedAt: new Date().toISOString(),
-      score,
-      grade,
       agentAccess,
       issues,
       structuredData,
       blockedAgentCount,
       totalAgentsChecked: AGENTS_TO_CHECK.length,
       semanticHtml: homepageData.semanticHtml,
+      confidence: {
+        robotsTxt: "high",
+        structuredData: "low",
+      },
+      note: "robots.txt results are based on the actual file served by this domain (high confidence). Structured data and markup results are from a lightweight HTTP check that may not detect JavaScript-rendered content (lower confidence). A full scan with a headless browser provides more comprehensive results.",
     };
 
     return NextResponse.json(response);

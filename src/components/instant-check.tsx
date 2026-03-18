@@ -6,14 +6,12 @@ import {
   ShieldAlert,
   ShieldCheck,
   ShieldQuestion,
-  Lock,
   AlertTriangle,
   AlertCircle,
   Info,
   ArrowRight,
   Globe,
   CheckCircle2,
-  XCircle,
   Code2,
   FileJson,
   Loader2,
@@ -45,8 +43,8 @@ interface StructuredData {
 interface InstantCheckResult {
   url: string;
   checkedAt: string;
-  score: number;
-  grade: string;
+  score?: number;
+  grade?: string;
   agentAccess: AgentAccess[];
   issues: Issue[];
   structuredData: StructuredData;
@@ -57,6 +55,11 @@ interface InstantCheckResult {
     hasMain: boolean;
     hasH1: boolean;
   };
+  confidence?: {
+    robotsTxt: string;
+    structuredData: string;
+  };
+  note?: string;
 }
 
 // ── Loading Messages ──────────────────────────────────────────────────
@@ -67,7 +70,7 @@ const LOADING_STEPS = [
   { message: "Analyzing structured data...", icon: FileJson },
   { message: "Scanning for product markup...", icon: Code2 },
   { message: "Testing for product feeds...", icon: Globe },
-  { message: "Computing your score...", icon: CheckCircle2 },
+  { message: "Compiling results...", icon: CheckCircle2 },
 ];
 
 // ── Main Component ────────────────────────────────────────────────────
@@ -166,15 +169,15 @@ export function InstantCheck() {
                 Checking...
               </>
             ) : (
-              <>Check Now</>
+              <>Check AI Agent Access</>
             )}
           </button>
         </div>
 
         <div className="flex items-center gap-4 mt-3 text-xs text-[#0A1628]/40">
-          <span>No account required</span>
+          <span>276 brands tracked</span>
           <span className="w-1 h-1 rounded-full bg-[#0A1628]/20" />
-          <span>Results in ~15 seconds</span>
+          <span>Real data</span>
           <span className="w-1 h-1 rounded-full bg-[#0A1628]/20" />
           <span>100% free</span>
         </div>
@@ -276,24 +279,6 @@ export function InstantCheck() {
 // ── Results Display ────────────────────────────────────────────────────
 
 function ResultsDisplay({ result }: { result: InstantCheckResult }) {
-  const gradeColors: Record<string, { bg: string; text: string; ring: string }> = {
-    A: { bg: "rgba(5,150,105,0.08)", text: "#059669", ring: "#059669" },
-    B: { bg: "rgba(2,89,221,0.08)", text: "#0259DD", ring: "#0259DD" },
-    C: { bg: "rgba(251,186,22,0.08)", text: "#d97706", ring: "#d97706" },
-    D: { bg: "rgba(255,102,72,0.08)", text: "#FF6648", ring: "#FF6648" },
-    F: { bg: "rgba(220,38,38,0.08)", text: "#dc2626", ring: "#dc2626" },
-  };
-
-  const gc = gradeColors[result.grade] || gradeColors.F;
-
-  const gradeLabels: Record<string, string> = {
-    A: "EXCELLENT",
-    B: "GOOD",
-    C: "NEEDS WORK",
-    D: "POOR",
-    F: "CRITICAL",
-  };
-
   const topIssues = result.issues.slice(0, 3);
 
   return (
@@ -304,66 +289,33 @@ function ResultsDisplay({ result }: { result: InstantCheckResult }) {
         boxShadow: "0 20px 60px rgba(10,22,40,0.08), 0 2px 8px rgba(10,22,40,0.04)",
       }}
     >
-      {/* ── Score Header ──────────────────────────────────────── */}
+      {/* ── Results Header ──────────────────────────────────── */}
       <div
         className="p-6 sm:p-8"
         style={{ backgroundColor: "#0A1628" }}
       >
         <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
-          {/* Score circle */}
-          <div className="relative shrink-0">
-            <svg width="120" height="120" viewBox="0 0 120 120">
-              {/* Background ring */}
-              <circle
-                cx="60"
-                cy="60"
-                r="52"
-                fill="none"
-                stroke="rgba(255,255,255,0.08)"
-                strokeWidth="8"
-              />
-              {/* Score ring */}
-              <circle
-                cx="60"
-                cy="60"
-                r="52"
-                fill="none"
-                stroke={gc.ring}
-                strokeWidth="8"
-                strokeLinecap="round"
-                strokeDasharray={`${(result.score / 100) * 327} 327`}
-                transform="rotate(-90 60 60)"
-                style={{ transition: "stroke-dasharray 1s ease-out" }}
-              />
-            </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span
-                className="text-3xl font-black"
-                style={{ color: gc.text, fontFamily: "'JetBrains Mono', monospace" }}
-              >
-                {result.score}
-              </span>
-              <span
-                className="text-[10px] font-bold tracking-wider mt-0.5"
-                style={{ color: gc.text, fontFamily: "'JetBrains Mono', monospace" }}
-              >
-                / 100
-              </span>
-            </div>
+          {/* Summary icon */}
+          <div className="relative shrink-0 w-20 h-20 flex items-center justify-center rounded-sm" style={{ backgroundColor: "rgba(255,255,255,0.05)" }}>
+            {result.blockedAgentCount > 0 ? (
+              <ShieldAlert size={36} className="text-[#FF6648]" />
+            ) : (
+              <ShieldCheck size={36} className="text-[#059669]" />
+            )}
           </div>
 
-          {/* Score info */}
+          {/* Result info */}
           <div className="text-center sm:text-left flex-1">
             <div className="flex items-center gap-3 justify-center sm:justify-start mb-2">
               <span
                 className="text-xs font-bold px-3 py-1 rounded-sm"
                 style={{
-                  backgroundColor: gc.bg,
-                  color: gc.text,
+                  backgroundColor: "rgba(2,89,221,0.15)",
+                  color: "#84AFFB",
                   fontFamily: "'JetBrains Mono', monospace",
                 }}
               >
-                GRADE {result.grade} — {gradeLabels[result.grade]}
+                AI AGENT ACCESS CHECK
               </span>
             </div>
 
@@ -389,16 +341,9 @@ function ResultsDisplay({ result }: { result: InstantCheckResult }) {
                   className="text-xs text-white/60"
                   style={{ fontFamily: "'JetBrains Mono', monospace" }}
                 >
-                  {result.blockedAgentCount}/{result.totalAgentsChecked} agents blocked
+                  {result.blockedAgentCount}/{result.totalAgentsChecked} agents blocked in robots.txt
                 </span>
               </div>
-              <span className="w-1 h-1 rounded-full bg-white/20" />
-              <span
-                className="text-xs text-white/60"
-                style={{ fontFamily: "'JetBrains Mono', monospace" }}
-              >
-                {result.issues.length} issues found
-              </span>
             </div>
           </div>
         </div>
@@ -406,7 +351,7 @@ function ResultsDisplay({ result }: { result: InstantCheckResult }) {
 
       {/* ── Agent Access Grid ─────────────────────────────────── */}
       <div className="p-6 sm:p-8 border-b border-[#E8E0D8]">
-        <div className="flex items-center gap-3 mb-5">
+        <div className="flex items-center gap-3 mb-1">
           <Shield size={14} className="text-[#0259DD]" />
           <span
             className="text-[10px] font-bold text-[#0A1628]/50 tracking-wider"
@@ -415,7 +360,14 @@ function ResultsDisplay({ result }: { result: InstantCheckResult }) {
             AI AGENT ACCESS — ROBOTS.TXT
           </span>
           <div className="flex-1 h-px bg-[#E8E0D8]" />
+          <span
+            className="text-[9px] font-bold text-[#059669] tracking-wider px-2 py-0.5"
+            style={{ fontFamily: "'JetBrains Mono', monospace", backgroundColor: "rgba(5,150,105,0.08)" }}
+          >
+            HIGH CONFIDENCE
+          </span>
         </div>
+        <p className="text-[11px] text-[#0A1628]/40 mb-5">Based on the actual robots.txt file served by this domain.</p>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {result.agentAccess.map((agent) => (
@@ -441,7 +393,7 @@ function ResultsDisplay({ result }: { result: InstantCheckResult }) {
 
       {/* ── Structured Data ───────────────────────────────────── */}
       <div className="p-6 sm:p-8 border-b border-[#E8E0D8]">
-        <div className="flex items-center gap-3 mb-5">
+        <div className="flex items-center gap-3 mb-1">
           <FileJson size={14} className="text-[#7C3AED]" />
           <span
             className="text-[10px] font-bold text-[#0A1628]/50 tracking-wider"
@@ -450,7 +402,14 @@ function ResultsDisplay({ result }: { result: InstantCheckResult }) {
             STRUCTURED DATA & MARKUP
           </span>
           <div className="flex-1 h-px bg-[#E8E0D8]" />
+          <span
+            className="text-[9px] font-bold text-[#d97706] tracking-wider px-2 py-0.5"
+            style={{ fontFamily: "'JetBrains Mono', monospace", backgroundColor: "rgba(217,119,6,0.08)" }}
+          >
+            LIGHTWEIGHT CHECK
+          </span>
         </div>
+        <p className="text-[11px] text-[#0A1628]/40 mb-5">Our quick check may not detect JavaScript-rendered data. A full scan provides more detail.</p>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <DataCheckCard
@@ -472,24 +431,20 @@ function ResultsDisplay({ result }: { result: InstantCheckResult }) {
         </div>
       </div>
 
-      {/* ── Top Issues ────────────────────────────────────────── */}
+      {/* ── Potential Issues ──────────────────────────────────── */}
       {topIssues.length > 0 && (
         <div className="p-6 sm:p-8 border-b border-[#E8E0D8]">
-          <div className="flex items-center gap-3 mb-5">
-            <AlertTriangle size={14} className="text-[#FF6648]" />
+          <div className="flex items-center gap-3 mb-1">
+            <Info size={14} className="text-[#FF6648]" />
             <span
               className="text-[10px] font-bold text-[#0A1628]/50 tracking-wider"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
-              TOP ISSUES
+              POTENTIAL ISSUES
             </span>
             <div className="flex-1 h-px bg-[#E8E0D8]" />
-            {result.issues.length > 3 && (
-              <span className="text-[10px] text-[#0A1628]/30" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                +{result.issues.length - 3} more in full report
-              </span>
-            )}
           </div>
+          <p className="text-[11px] text-[#0A1628]/40 mb-5">Based on our quick check. Some items may require a deeper scan to confirm.</p>
 
           <div className="space-y-3">
             {topIssues.map((issue, i) => (
@@ -499,7 +454,7 @@ function ResultsDisplay({ result }: { result: InstantCheckResult }) {
         </div>
       )}
 
-      {/* ── CTA ───────────────────────────────────────────────── */}
+      {/* ── Learn More ────────────────────────────────────────── */}
       <div
         className="p-6 sm:p-8"
         style={{ backgroundColor: "#0A1628" }}
@@ -507,26 +462,20 @@ function ResultsDisplay({ result }: { result: InstantCheckResult }) {
         <div className="flex flex-col sm:flex-row items-center gap-5">
           <div className="flex-1 text-center sm:text-left">
             <h4 className="text-base font-bold text-white mb-1">
-              Want the full report with fixes?
+              Want to learn more?
             </h4>
             <p className="text-xs text-white/50 leading-relaxed max-w-md">
-              Get detailed findings, priority fix list, agent journey replays, and weekly monitoring.
-              Hand your dev team an exact action plan.
+              Our Guide to Agentic Commerce explains what these results mean, why they matter,
+              and what the smartest brands are doing about it.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
             <Link
-              href="/pricing"
-              className="flex items-center gap-2 px-6 py-3 bg-[#FF6648] text-white text-sm font-bold hover:bg-[#e85a3f] transition-colors"
+              href="/guide"
+              className="flex items-center gap-2 px-6 py-3 bg-[#0259DD] text-white text-sm font-bold hover:bg-[#024BBB] transition-colors"
             >
-              See Full Report Plans
+              Read our Guide to Agentic Commerce
               <ArrowRight size={14} />
-            </Link>
-            <Link
-              href="/submit"
-              className="text-xs text-white/40 hover:text-white/60 transition-colors"
-            >
-              or submit for free scan
             </Link>
           </div>
         </div>
@@ -600,22 +549,22 @@ function DataCheckCard({ label, found }: { label: string; found: boolean }) {
       className={`p-3 border ${
         found
           ? "bg-[#059669]/5 border-[#059669]/15"
-          : "bg-[#dc2626]/5 border-[#dc2626]/15"
+          : "bg-[#0A1628]/3 border-[#0A1628]/8"
       }`}
     >
       <div className="flex items-center gap-2 mb-1">
         {found ? (
           <CheckCircle2 size={14} className="text-[#059669]" />
         ) : (
-          <XCircle size={14} className="text-[#dc2626]" />
+          <ShieldQuestion size={14} className="text-[#0A1628]/30" />
         )}
         <span
           className={`text-[9px] font-bold tracking-wider ${
-            found ? "text-[#059669]" : "text-[#dc2626]"
+            found ? "text-[#059669]" : "text-[#0A1628]/40"
           }`}
           style={{ fontFamily: "'JetBrains Mono', monospace" }}
         >
-          {found ? "FOUND" : "MISSING"}
+          {found ? "DETECTED" : "NOT DETECTED"}
         </span>
       </div>
       <div className="text-xs font-semibold text-[#0A1628]">{label}</div>
@@ -628,25 +577,25 @@ function DataCheckCard({ label, found }: { label: string; found: boolean }) {
 function IssueRow({ issue }: { issue: Issue }) {
   const severityConfig = {
     critical: {
-      color: "#dc2626",
-      bg: "bg-[#dc2626]/8",
-      border: "border-[#dc2626]/15",
-      label: "CRITICAL",
-      icon: <AlertCircle size={14} className="text-[#dc2626]" />,
-    },
-    high: {
       color: "#FF6648",
-      bg: "bg-[#FF6648]/8",
-      border: "border-[#FF6648]/15",
-      label: "HIGH",
+      bg: "bg-[#FF6648]/6",
+      border: "border-[#FF6648]/12",
+      label: "WORTH CHECKING",
       icon: <AlertTriangle size={14} className="text-[#FF6648]" />,
     },
-    medium: {
+    high: {
       color: "#d97706",
-      bg: "bg-[#d97706]/8",
-      border: "border-[#d97706]/15",
-      label: "MEDIUM",
+      bg: "bg-[#d97706]/6",
+      border: "border-[#d97706]/12",
+      label: "WORTH CHECKING",
       icon: <Info size={14} className="text-[#d97706]" />,
+    },
+    medium: {
+      color: "#0A1628",
+      bg: "bg-[#0A1628]/3",
+      border: "border-[#0A1628]/8",
+      label: "NOTE",
+      icon: <Info size={14} className="text-[#0A1628]/40" />,
     },
   };
 
@@ -672,14 +621,6 @@ function IssueRow({ issue }: { issue: Issue }) {
           {issue.title}
         </p>
       </div>
-      {issue.locked && (
-        <div className="shrink-0 flex items-center gap-1 text-[#0A1628]/25 mt-0.5" title="Detailed fix available in full report">
-          <Lock size={12} />
-          <span className="text-[8px] font-bold tracking-wider" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-            FIX
-          </span>
-        </div>
-      )}
     </div>
   );
 }

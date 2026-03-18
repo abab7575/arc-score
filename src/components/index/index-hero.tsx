@@ -59,8 +59,8 @@ export function IndexHero({ onSearch }: IndexHeroProps) {
             </h1>
 
             <p className="text-lg sm:text-xl text-[#0A1628]/70 max-w-xl leading-relaxed mb-8 mx-auto lg:mx-0">
-              <strong className="text-[#0A1628]">84 million shopping queries</strong> hit ChatGPT every week.
-              Check any URL instantly — see which AI agents can access your site and where they get stuck.
+              We track how <strong className="text-[#0A1628]">276 e-commerce brands</strong> are preparing for AI-powered shopping.
+              Free tools, real data, no BS.
             </p>
 
             {/* Instant URL Checker */}
@@ -109,7 +109,7 @@ function BrandLogoTicker() {
     <div className="bg-white border-b border-[#E8E0D8] overflow-hidden py-5">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 mb-4">
         <div className="flex items-center gap-3">
-          <span className="spec-label text-muted-foreground text-[9px]">WE SCORE BRANDS YOU KNOW</span>
+          <span className="spec-label text-muted-foreground text-[9px]">BRANDS WE TRACK</span>
           <div className="flex-1 h-px bg-[#E8E0D8]" />
           <span className="spec-label text-muted-foreground/50 text-[9px]">276+ TRACKED</span>
         </div>
@@ -286,7 +286,7 @@ function WhyItMatters() {
         </div>
 
         <div className="flex items-center gap-3 mb-4">
-          <span className="spec-label text-muted-foreground text-[9px]">WE SCORE AGAINST 10 REAL AI SHOPPING AGENT LENSES</span>
+          <span className="spec-label text-muted-foreground text-[9px]">10 AI SHOPPING AGENTS WE TRACK</span>
           <div className="flex-1 h-px bg-[#E8E0D8]" />
         </div>
 
@@ -301,15 +301,15 @@ function WhyItMatters() {
 
         <div className="flex flex-col sm:flex-row items-center gap-4 pt-4 border-t border-[#E8E0D8]">
           <div className="flex-1">
-            <p className="text-sm text-foreground font-semibold">See how your brand scores — or browse the index below.</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Free scores for every brand. Detailed findings and action plans with a paid plan.</p>
+            <p className="text-sm text-foreground font-semibold">Check your site or explore the data.</p>
+            <p className="text-xs text-muted-foreground mt-0.5">276 brands tracked. Real data. 100% free.</p>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/submit" className="flex items-center gap-2 px-5 py-2.5 bg-[#FF6648] text-white text-sm font-bold hover:bg-[#e85a3f] transition-colors">
-              Submit Your Site <ArrowRight size={14} />
+            <Link href="/matrix" className="flex items-center gap-2 px-5 py-2.5 bg-[#0259DD] text-white text-sm font-bold hover:bg-[#024BBB] transition-colors">
+              View the Matrix <ArrowRight size={14} />
             </Link>
-            <Link href="/pricing" className="flex items-center gap-2 px-5 py-2.5 border border-[#E8E0D8] text-sm font-medium text-foreground hover:bg-gray-50 transition-colors">
-              View Plans
+            <Link href="/guide" className="flex items-center gap-2 px-5 py-2.5 border border-[#E8E0D8] text-sm font-medium text-foreground hover:bg-gray-50 transition-colors">
+              Read the Guide
             </Link>
           </div>
         </div>
