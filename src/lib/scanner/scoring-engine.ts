@@ -249,7 +249,9 @@ function scoreNavigation(browser: BrowserAgentResult, a11y: AccessibilityAgentRe
 
 function scoreCartCheckout(browser: BrowserAgentResult, data: DataAgentResult, visual?: VisualAgentResult): CategoryScore {
   let score = 0;
+  const clickedButUnverified = !browser.addToCartSuccess && browser.steps.some(s => s.details?.clickedButUnverified);
   if (browser.addToCartSuccess) score += 35;
+  else if (clickedButUnverified) score += 15; // clicked but unverified — partial credit
   if (browser.checkoutReached) score += 25;
   if (browser.guestCheckoutAvailable) score += 25;
   else if (browser.checkoutReached) score += 5;
@@ -272,7 +274,9 @@ function scoreCartCheckout(browser: BrowserAgentResult, data: DataAgentResult, v
         : browser.checkoutReached
           ? "Add-to-cart works but checkout requires account creation."
           : "Add-to-cart works but checkout couldn't be reached."
-      : "Agents cannot add products to cart.",
+      : clickedButUnverified
+        ? "Agent clicked add-to-cart but could not verify the item was added."
+        : "Agents cannot add products to cart.",
     agentsCovered: ["browser", "data", "accessibility"],
   };
 }
@@ -699,15 +703,32 @@ function buildFindings(
   }
 
   if (!browser.addToCartSuccess) {
-    findings.push({
-      id: `f${priority}`, severity: "critical", category: "cart-checkout",
-      title: "Add-to-cart button not accessible to agents",
-      whatHappened: "The Browser Agent could not find or click the add-to-cart button.",
-      whyItMatters: "If agents can't add products to cart, they can't complete any purchase.",
-      affectedAgents: [{ name: "Browser Agent", impact: "blocked" }, { name: "Accessibility Agent", impact: "blocked" }],
-      fix: { summary: 'Ensure the add-to-cart button is a standard <button> element with clear labeling.', technicalDetail: 'Use a native <button> element with aria-label="Add to Cart".', effortEstimate: "1-2 hours" },
-      priority: priority++, effort: "low", estimatedPointsGain: 15,
-    });
+    const clickedButUnverified = browser.steps.some(s => s.details?.clickedButUnverified);
+    if (clickedButUnverified) {
+      findings.push({
+        id: `f${priority}`, severity: "high", category: "cart-checkout",
+        title: "Add-to-cart clicked but not verified",
+        whatHappened: "The Browser Agent found and clicked the add-to-cart button, but could not confirm the item was actually added. No cart badge update, confirmation toast, or cart page item was detected.",
+        whyItMatters: "AI agents need clear confirmation that an action succeeded. Without a visible cart count change, toast notification, or cart page update, agents cannot reliably complete purchases.",
+        affectedAgents: [{ name: "Browser Agent", impact: "degraded" }, { name: "Accessibility Agent", impact: "degraded" }],
+        fix: {
+          summary: "Provide a clear cart confirmation signal after add-to-cart.",
+          technicalDetail: 'After adding to cart, update a cart count badge (e.g., <span class="cart-count">1</span>), show a confirmation toast/drawer, or ensure the /cart page reflects the new item. Use aria-live="polite" on the cart count for accessibility.',
+          effortEstimate: "2-4 hours",
+        },
+        priority: priority++, effort: "low", estimatedPointsGain: 10,
+      });
+    } else {
+      findings.push({
+        id: `f${priority}`, severity: "critical", category: "cart-checkout",
+        title: "Add-to-cart button not accessible to agents",
+        whatHappened: "The Browser Agent could not find or click the add-to-cart button.",
+        whyItMatters: "If agents can't add products to cart, they can't complete any purchase.",
+        affectedAgents: [{ name: "Browser Agent", impact: "blocked" }, { name: "Accessibility Agent", impact: "blocked" }],
+        fix: { summary: 'Ensure the add-to-cart button is a standard <button> element with clear labeling.', technicalDetail: 'Use a native <button> element with aria-label="Add to Cart".', effortEstimate: "1-2 hours" },
+        priority: priority++, effort: "low", estimatedPointsGain: 15,
+      });
+    }
   }
 
   if (browser.cookieConsentFound) {

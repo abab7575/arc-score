@@ -1092,11 +1092,153 @@ export async function runBrowserAgent(
         }
       }
 
-      addToCartSuccess = cartClicked;
+      // ── Cart Verification (3 checks) ──
+      if (cartClicked) {
+        // Check 1: Cart count badge — look for badge elements whose number changed
+        const badgeVerified = await page.evaluate(() => {
+          const badgeSelectors = [
+            '[class*="cart-count" i]', '[class*="cart-badge" i]', '[class*="cart-quantity" i]',
+            '[class*="cartCount" i]', '[class*="CartCount" i]', '[class*="bag-count" i]',
+            '[data-test*="cart-count" i]', '[data-testid*="cart-count" i]',
+            '[class*="mini-cart"] [class*="count" i]', '[class*="header-cart"] [class*="count" i]',
+            '[aria-label*="cart" i] [class*="badge" i]', '[class*="cart-icon" i] span',
+          ];
+          for (const sel of badgeSelectors) {
+            const el = document.querySelector(sel);
+            if (el) {
+              const text = el.textContent?.trim() || "";
+              const num = parseInt(text, 10);
+              if (num > 0) return true;
+            }
+          }
+          return false;
+        });
+
+        if (badgeVerified) {
+          cartVerified = true;
+          cartVerificationMethod = "badge";
+        }
+
+        // Check 2: Confirmation signal — detect toast/modal/drawer that appeared after click
+        if (!cartVerified) {
+          const confirmationVerified = await page.evaluate(() => {
+            // Look for common confirmation patterns
+            const confirmSelectors = [
+              '[class*="toast" i]', '[class*="notification" i]', '[class*="snackbar" i]',
+              '[class*="added-to-cart" i]', '[class*="addedToCart" i]', '[class*="cart-confirmation" i]',
+              '[class*="mini-cart" i][class*="open" i]', '[class*="minicart" i][class*="open" i]',
+              '[class*="cart-drawer" i]', '[class*="cartDrawer" i]', '[class*="side-cart" i]',
+              '[class*="cart-modal" i]', '[class*="cart-popup" i]', '[class*="cart-flyout" i]',
+              '[role="dialog"][class*="cart" i]', '[role="alert"]',
+            ];
+            for (const sel of confirmSelectors) {
+              const el = document.querySelector(sel) as HTMLElement;
+              if (el && el.offsetParent !== null) {
+                const text = el.textContent?.toLowerCase() || "";
+                if (text.includes("added") || text.includes("cart") || text.includes("bag") || text.includes("basket")) {
+                  return true;
+                }
+              }
+            }
+            // Also check for any visible element containing "added to cart/bag/basket" text
+            const allElements = document.querySelectorAll("*");
+            for (const el of allElements) {
+              if (el.children.length === 0 && el.textContent) {
+                const text = el.textContent.trim().toLowerCase();
+                if (/added to (cart|bag|basket)/i.test(text) && (el as HTMLElement).offsetParent !== null) {
+                  return true;
+                }
+              }
+            }
+            return false;
+          });
+
+          if (confirmationVerified) {
+            cartVerified = true;
+            cartVerificationMethod = "confirmation";
+          }
+        }
+
+        // Check 3: Cart page verification — navigate to cart and check for items
+        if (!cartVerified) {
+          const cartPageVerified = await page.evaluate(() => {
+            // Try to find a cart link/icon to click
+            const cartLinkSelectors = [
+              'a[href*="/cart"]', 'a[href*="/bag"]', 'a[href*="/basket"]',
+              '[class*="cart-icon" i] a', '[class*="cart-link" i]',
+            ];
+            for (const sel of cartLinkSelectors) {
+              const el = document.querySelector(sel) as HTMLAnchorElement;
+              if (el && el.href) return el.href;
+            }
+            // Fallback: try common cart URLs
+            return null;
+          });
+
+          const currentUrl = page.url();
+          const cartUrl = cartPageVerified || new URL("/cart", currentUrl).toString();
+
+          try {
+            await page.goto(cartUrl, { waitUntil: "domcontentloaded", timeout: 8000 });
+            await delay(1500);
+
+            const hasItems = await page.evaluate(() => {
+              const html = document.body.innerHTML.toLowerCase();
+              // Check that page is not empty cart
+              const emptySignals = ["cart is empty", "bag is empty", "basket is empty", "no items", "your cart", "0 items"];
+              const hasEmptySignal = emptySignals.some((s) => html.includes(s) && !html.includes("1 item") && !html.includes("2 item"));
+
+              // Check for product-like content in cart
+              const itemSelectors = [
+                '[class*="cart-item" i]', '[class*="line-item" i]', '[class*="cart-product" i]',
+                '[class*="basket-item" i]', '[class*="bag-item" i]',
+                'table[class*="cart" i] tbody tr',
+              ];
+              for (const sel of itemSelectors) {
+                const items = document.querySelectorAll(sel);
+                if (items.length > 0) return true;
+              }
+
+              // If there's a quantity/price on the page and no empty signal, likely has items
+              if (!hasEmptySignal && (html.includes("qty") || html.includes("quantity") || html.includes("subtotal"))) {
+                return true;
+              }
+
+              return false;
+            });
+
+            if (hasItems) {
+              cartVerified = true;
+              cartVerificationMethod = "cart-page";
+            }
+
+            // Navigate back to where we were
+            await page.goto(currentUrl, { waitUntil: "domcontentloaded", timeout: 8000 });
+            await delay(1000);
+          } catch {
+            // Cart page navigation failed — not a verification failure, just inconclusive
+          }
+        }
+      }
+
+      // Downgrade from "success" to "clicked but unverified" if no check confirmed
+      addToCartSuccess = cartClicked && cartVerified;
+      const clickedButUnverified = cartClicked && !cartVerified;
+
+      const stepResult: "pass" | "partial" | "fail" = cartClicked
+        ? cartVerified ? "pass" : "partial"
+        : "fail";
+
+      const stepLabel = !cartClicked
+        ? "Could not find add-to-cart button"
+        : cartVerified
+          ? `Added to cart — verified via ${cartVerificationMethod}`
+          : `Clicked add-to-cart ("${buttonText}") but could not verify item was added`;
+
       await injectOverlay(page, {
         step: 7,
-        label: cartClicked ? `Added to cart — "${buttonText}"` : "Could not find add-to-cart button",
-        result: cartClicked ? "pass" : "fail",
+        label: stepLabel,
+        result: stepResult,
         cursorX: clickPos?.x,
         cursorY: clickPos?.y,
       });
@@ -1106,13 +1248,20 @@ export async function runBrowserAgent(
         stepNumber: 7,
         action: "Add to cart",
         description: "Attempting to add product to cart",
-        result: (cartClicked ? "pass" : "fail") as "pass" | "fail",
-        narration: cartClicked
-          ? `I clicked the add-to-cart button ("${buttonText}"). The page responded.`
-          : "I couldn't find or click an add-to-cart button.",
-        thought: cartClicked ? "Cart button clicked." : "Can't find add-to-cart button. This is a problem.",
+        result: stepResult,
+        narration: !cartClicked
+          ? "I couldn't find or click an add-to-cart button."
+          : cartVerified
+            ? `I clicked the add-to-cart button ("${buttonText}") and verified the item was added (${cartVerificationMethod}).`
+            : `I clicked the add-to-cart button ("${buttonText}") but couldn't verify the item was actually added to the cart.`,
+        thought: !cartClicked
+          ? "Can't find add-to-cart button. This is a problem."
+          : cartVerified
+            ? `Cart verified via ${cartVerificationMethod}.`
+            : "Clicked the button but no confirmation signal, cart badge change, or cart page item detected.",
         screenshotPath: screenshot,
         cursorTarget: clickPos,
+        details: clickedButUnverified ? { clickedButUnverified: true } : undefined,
       };
     });
     steps.push(step7);
@@ -1225,7 +1374,7 @@ export async function runBrowserAgent(
     function buildResult(): BrowserAgentResult {
       const totalDuration = steps.reduce((sum, s) => sum + s.duration, 0);
       const narrative = steps.map((s) => s.narration).join(" ");
-      return { steps, overallResult, narrative, pagesLoaded, totalDuration, blockedByBot, captchaDetected, cookieConsentFound, addToCartSuccess, checkoutReached, guestCheckoutAvailable, renderedProductHtml };
+      return { steps, overallResult, narrative, pagesLoaded, totalDuration, blockedByBot, captchaDetected, cookieConsentFound, addToCartSuccess, cartVerified, cartVerificationMethod, checkoutReached, guestCheckoutAvailable, renderedProductHtml };
     }
 
     return buildResult();
@@ -1235,7 +1384,7 @@ export async function runBrowserAgent(
       steps, overallResult: "fail",
       narrative: `Browser Agent encountered a fatal error: ${(e as Error).message}`,
       pagesLoaded, totalDuration: steps.reduce((sum, s) => sum + s.duration, 0),
-      blockedByBot, captchaDetected, cookieConsentFound, addToCartSuccess, checkoutReached, guestCheckoutAvailable, renderedProductHtml,
+      blockedByBot, captchaDetected, cookieConsentFound, addToCartSuccess, cartVerified, cartVerificationMethod, checkoutReached, guestCheckoutAvailable, renderedProductHtml,
     };
   } finally {
     if (browser) await browser.close();

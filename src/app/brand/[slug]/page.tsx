@@ -12,7 +12,7 @@ import { FindingsSection } from "@/components/report/findings-section";
 import { ActionPlan } from "@/components/report/action-plan";
 import { AgentCompatibility } from "@/components/report/agent-compatibility";
 import { PaywallGate } from "@/components/report/paywall-gate";
-import { getBrandBySlug, getLatestScanForBrand, getFullScanReport, getScoreHistory, getAllScansForBrand } from "@/lib/db/queries";
+import { getBrandBySlug, getLatestScanForBrand, getFullScanReport, getScoreHistory, getAllScansForBrand, formatPercentileComparison } from "@/lib/db/queries";
 import { BRANDS } from "@/lib/brands";
 import { verifyCustomerSession, getCustomerById, getClaimedBrands, CUSTOMER_COOKIE_NAME } from "@/lib/customer-auth";
 import { verifySessionToken, SESSION_COOKIE_NAME } from "@/lib/auth";
@@ -134,7 +134,7 @@ export default async function BrandPage({ params }: BrandPageProps) {
               score={report.overallScore ?? 0}
               grade={report.grade ?? "F"}
               verdict={report.verdict ?? "Score data available."}
-              comparison={report.comparison ?? ""}
+              comparison={formatPercentileComparison(report.overallScore ?? 0)}
             />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
