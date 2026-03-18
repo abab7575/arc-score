@@ -46,12 +46,31 @@ export default function RobotsMatrixPage() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     fetch("/api/admin/robots-matrix")
-      .then((r) => r.json())
-      .then(setData)
-      .catch(console.error);
+      .then((r) => {
+        if (!r.ok) throw new Error("Matrix data not found. Run: npx tsx scripts/scan-robots-matrix.ts on the server.");
+        return r.json();
+      })
+      .then((d) => {
+        if (d.error) throw new Error(d.error);
+        setData(d);
+      })
+      .catch((e) => setError(e.message));
   }, []);
+
+  if (error) {
+    return (
+      <div style={{ backgroundColor: "#0A1628", minHeight: "100vh", color: "#FFF8F0", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 16 }}>
+        <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 14, color: "#FF6648" }}>Matrix data not available</div>
+        <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 12, color: "#94A3B8", maxWidth: 400, textAlign: "center" }}>
+          Run <code style={{ backgroundColor: "#0F1D32", padding: "2px 6px", borderRadius: 4 }}>npx tsx scripts/scan-robots-matrix.ts</code> on the server to generate the data.
+        </div>
+      </div>
+    );
+  }
 
   if (!data) {
     return (
