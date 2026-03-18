@@ -89,7 +89,7 @@ export function IndexHero({ onSearch }: IndexHeroProps) {
               </div>
 
               <div className="flex items-center gap-4 justify-center lg:justify-start text-xs text-[#0A1628]/40">
-                <span>276 brands scored</span>
+                <span>276 brands tracked</span>
                 <span className="w-1 h-1 rounded-full bg-[#0A1628]/20" />
                 <span>Updated weekly</span>
                 <span className="w-1 h-1 rounded-full bg-[#0A1628]/20" />

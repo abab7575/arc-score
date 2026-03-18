@@ -16,7 +16,7 @@ on:
         required: false
 
 env:
-  BASE_URL: https://arc-score-production.up.railway.app
+  BASE_URL: https://www.arcreport.ai
 
 jobs:
   trigger-scan:
