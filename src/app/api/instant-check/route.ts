@@ -140,22 +140,21 @@ function checkAgentAccess(
   robotsRules: RobotsRule[],
   agentName: string
 ): "allowed" | "blocked" | "no_rule" {
-  // Check for specific agent rules first
+  // Check for specific agent rules first (agent named explicitly)
   const specificRules = robotsRules.filter(
     (r) => r.userAgent.toLowerCase() === agentName.toLowerCase()
   );
 
   if (specificRules.length > 0) {
-    // If any specific rule blocks, it's blocked
     if (specificRules.some((r) => r.disallowAll)) return "blocked";
     if (specificRules.some((r) => r.allowAll)) return "allowed";
   }
 
-  // Check wildcard rules
+  // Check wildcard rules — but wildcard block = blocked, wildcard allow = no_rule
+  // (we only show green "allowed" when the agent is specifically named)
   const wildcardRules = robotsRules.filter((r) => r.userAgent === "*");
   if (wildcardRules.length > 0) {
     if (wildcardRules.some((r) => r.disallowAll)) return "blocked";
-    if (wildcardRules.some((r) => r.allowAll)) return "allowed";
   }
 
   return "no_rule";
