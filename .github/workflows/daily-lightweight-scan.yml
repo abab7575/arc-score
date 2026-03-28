@@ -1,0 +1,49 @@
+name: Daily Lightweight Scan
+
+on:
+  schedule:
+    # Run at 2 AM UTC every day
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+    inputs:
+      category:
+        description: "Only scan a specific category (e.g. fashion, electronics)"
+        type: string
+        required: false
+      concurrency:
+        description: "Number of concurrent scans"
+        type: string
+        default: "20"
+
+env:
+  BASE_URL: https://www.arcreport.ai
+
+jobs:
+  trigger-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger lightweight scan
+        run: |
+          PARAMS="?concurrency=${{ github.event.inputs.concurrency || '20' }}"
+          if [ -n "${{ github.event.inputs.category }}" ]; then
+            PARAMS="${PARAMS}&category=${{ github.event.inputs.category }}"
+          fi
+
+          echo "Triggering lightweight scan: ${BASE_URL}/api/cron/lightweight-scan${PARAMS}"
+
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            "${BASE_URL}/api/cron/lightweight-scan${PARAMS}" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "Status: $HTTP_CODE"
+          echo "Response: $BODY"
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "::error::Lightweight scan trigger failed with status $HTTP_CODE"
+            exit 1
+          fi

@@ -22,7 +22,7 @@ export function Navbar() {
               <span className="text-[15px] font-black text-foreground tracking-tight">
                 ARC Report
               </span>
-              <span className="spec-label text-muted-foreground hidden sm:inline">v1.0</span>
+              <span className="spec-label text-muted-foreground hidden sm:inline">v2.0</span>
             </div>
           </Link>
 
@@ -32,18 +32,6 @@ export function Navbar() {
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Index
-            </Link>
-            <Link
-              href="/compare"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Compare
-            </Link>
-            <Link
-              href="/agents"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Agents
             </Link>
             <Link
               href="/matrix"
@@ -58,16 +46,10 @@ export function Navbar() {
               Landscape
             </Link>
             <Link
-              href="/methodology"
+              href="/changelog"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              Methodology
-            </Link>
-            <Link
-              href="/guide"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Guide
+              Changelog
             </Link>
             <Link
               href="/pricing"
@@ -81,14 +63,6 @@ export function Navbar() {
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Log In
-            </Link>
-            <Link
-              href="/submit"
-              className="text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-4 py-1.5 transition-colors relative group/btn"
-            >
-              Check Your Site
-              {/* Offset shadow on button */}
-              <span className="absolute inset-0 bg-[#0A1628] -z-10 translate-x-[2px] translate-y-[2px] group-hover/btn:translate-x-[3px] group-hover/btn:translate-y-[3px] transition-transform" />
             </Link>
           </div>
         </div>

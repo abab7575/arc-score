@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
 export const brands = sqliteTable("brands", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -211,5 +211,64 @@ export const brandDiscoveries = sqliteTable("brand_discoveries", {
   status: text("status").notNull().default("pending"), // pending, tracking, skipped, review_later
   notes: text("notes"),
   reviewedAt: text("reviewed_at"),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+// ── Lightweight Scans (HTTP-only, no Puppeteer) ─────────────────────
+
+export const lightweightScans = sqliteTable("lightweight_scans", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  brandId: integer("brand_id").notNull().references(() => brands.id),
+
+  // Extracted columns for fast matrix queries
+  robotsTxtFound: integer("robots_txt_found", { mode: "boolean" }).notNull().default(false),
+  blockedAgentCount: integer("blocked_agent_count").notNull().default(0),
+  allowedAgentCount: integer("allowed_agent_count").notNull().default(0),
+  platform: text("platform"), // shopify, bigcommerce, magento, woocommerce, salesforce, custom, unknown
+  cdn: text("cdn"), // cloudflare, fastly, akamai, cloudfront, vercel, unknown
+  waf: text("waf"), // cloudflare, datadome, perimeterx, akamai, incapsula, none-detected
+  hasJsonLd: integer("has_json_ld", { mode: "boolean" }).notNull().default(false),
+  hasSchemaProduct: integer("has_schema_product", { mode: "boolean" }).notNull().default(false),
+  hasOpenGraph: integer("has_open_graph", { mode: "boolean" }).notNull().default(false),
+  hasSitemap: integer("has_sitemap", { mode: "boolean" }).notNull().default(false),
+  hasProductFeed: integer("has_product_feed", { mode: "boolean" }).notNull().default(false),
+  hasLlmsTxt: integer("has_llms_txt", { mode: "boolean" }).notNull().default(false),
+  hasUcp: integer("has_ucp", { mode: "boolean" }).notNull().default(false),
+  homepageResponseMs: integer("homepage_response_ms"),
+
+  // Full result as JSON for detail view
+  resultJson: text("result_json").notNull(),
+
+  // Per-agent status as compact JSON: Record<agentLabel, "allowed"|"blocked"|"no_rule">
+  agentStatusJson: text("agent_status_json").notNull(),
+
+  scannedAt: text("scanned_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+// ── Changelog Entries (daily diffs between scans) ───────────────────
+
+export const changelogEntries = sqliteTable("changelog_entries", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  brandId: integer("brand_id").notNull().references(() => brands.id),
+  field: text("field").notNull(), // robots_txt, platform, cdn, waf, structured_data, feeds, agent_access, etc.
+  oldValue: text("old_value"),
+  newValue: text("new_value"),
+  detectedAt: text("detected_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+// ── Validation: ARC Prediction vs Real Agent Results ─────────────────
+
+export const validationResults = sqliteTable("validation_results", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  brandId: integer("brand_id").notNull().references(() => brands.id),
+  scanId: integer("scan_id").references(() => scans.id),
+  arcScore: integer("arc_score").notNull(),
+  arcPrediction: text("arc_prediction").notNull(), // "success" | "partial" | "fail"
+  actualAgent: text("actual_agent").notNull(), // e.g. "chatgpt-operator", "perplexity-comet"
+  actualResult: text("actual_result").notNull(), // "success" | "fail"
+  failurePoint: text("failure_point"), // e.g. "checkout-email-verification", "cart-empty"
+  match: text("match").notNull(), // "match" | "mismatch"
+  notes: text("notes"),
+  testedAt: text("tested_at").notNull().$defaultFn(() => new Date().toISOString()),
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });

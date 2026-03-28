@@ -32,7 +32,7 @@ export function Footer() {
                   &copy; {new Date().getFullYear()} ARC REPORT — ALL RIGHTS RESERVED
                 </p>
                 <p className="spec-label text-white/25 text-[9px]">
-                  THE AI SHOPPING AGENT TESTING PLATFORM
+                  AI AGENT INTELLIGENCE FOR E-COMMERCE
                 </p>
               </div>
             </div>
@@ -41,9 +41,10 @@ export function Footer() {
             <div className="flex items-center gap-0 border border-white/10 divide-x divide-white/10">
               {[
                 { href: "/", label: "INDEX" },
-                { href: "/compare", label: "COMPARE" },
-                { href: "/about", label: "ABOUT" },
-                { href: "/submit", label: "SUBMIT" },
+                { href: "/matrix", label: "MATRIX" },
+                { href: "/guide", label: "GUIDE" },
+                { href: "/methodology", label: "METHODOLOGY" },
+                { href: "/pricing", label: "PRICING" },
               ].map((link) => (
                 <Link
                   key={link.href}

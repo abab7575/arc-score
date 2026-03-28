@@ -83,7 +83,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const sub = await stripe.subscriptions.retrieve(subscriptionId);
   const priceId = sub.items.data[0]?.price.id ?? "";
   const plan = getPlanByPriceId(priceId);
-  const planId = plan?.id ?? "monitor";
+  const planId = plan?.id ?? "pro";
 
   // Find or link the customer
   let customer = getCustomerByStripeId(stripeCustomerId);
@@ -115,7 +115,7 @@ function handleSubscriptionUpdated(sub: Stripe.Subscription) {
 
   const priceId = sub.items.data[0]?.price.id ?? "";
   const plan = getPlanByPriceId(priceId);
-  const planId = plan?.id ?? "monitor";
+  const planId = plan?.id ?? "pro";
 
   const isActive = ["active", "trialing"].includes(sub.status);
   updateCustomerPlan(customer.id, isActive ? planId : "free");

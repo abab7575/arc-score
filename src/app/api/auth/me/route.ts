@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
         name: customer.name,
         plan: customer.plan,
         planName: plan.name,
-        brandLimit: plan.brandLimit,
+        isPro: customer.plan === "pro",
       },
       subscription: subscription
         ? {

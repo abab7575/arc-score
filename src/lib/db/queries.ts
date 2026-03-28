@@ -1,6 +1,7 @@
 import { db, schema } from "./index";
-import { eq, desc, sql, and, gte } from "drizzle-orm";
+import { eq, desc, sql, and, gte, lt } from "drizzle-orm";
 import type { ScanReport } from "@/types/report";
+import type { LightweightScanResult } from "@/lib/scanner/lightweight-scanner";
 
 export interface BrandWithLatestScore {
   id: number;
@@ -287,4 +288,163 @@ export function getAllScansForBrand(brandId: number) {
     .where(eq(schema.scans.brandId, brandId))
     .orderBy(desc(schema.scans.scannedAt))
     .all();
+}
+
+// ── Lightweight Scan Queries ────────────────────────────────────────
+
+export function insertLightweightScan(brandId: number, result: LightweightScanResult) {
+  const agentStatus: Record<string, string> = {};
+  for (const agent of result.robotsTxt.allowedAgents) {
+    agentStatus[agent] = "allowed";
+  }
+  for (const agent of result.robotsTxt.blockedAgents) {
+    agentStatus[agent] = "blocked";
+  }
+  // Agents not mentioned get "no_rule"
+  const allAgents = ["GPTBot", "ChatGPT-User", "ClaudeBot", "Claude-Web", "PerplexityBot", "Google-Extended", "CCBot", "Amazonbot"];
+  for (const agent of allAgents) {
+    if (!agentStatus[agent]) {
+      agentStatus[agent] = "no_rule";
+    }
+  }
+
+  // Enrich agent status with UA test results (more authoritative than robots.txt)
+  for (const test of result.userAgentTests) {
+    if (test.verdict === "blocked" && agentStatus[test.userAgent] !== "blocked") {
+      agentStatus[test.userAgent] = "blocked";
+    }
+  }
+
+  const blockedCount = Object.values(agentStatus).filter(v => v === "blocked").length;
+  const allowedCount = Object.values(agentStatus).filter(v => v !== "blocked").length;
+
+  return db
+    .insert(schema.lightweightScans)
+    .values({
+      brandId,
+      robotsTxtFound: result.robotsTxt.found,
+      blockedAgentCount: blockedCount,
+      allowedAgentCount: allowedCount,
+      platform: result.platform.platform,
+      cdn: result.cdn.cdn,
+      waf: result.waf.waf,
+      hasJsonLd: result.jsonLd.found,
+      hasSchemaProduct: result.schemaOrg.found,
+      hasOpenGraph: result.openGraph.found,
+      hasSitemap: result.sitemap.found,
+      hasProductFeed: result.feeds.some(f => f.found),
+      hasLlmsTxt: result.llmsTxt.found,
+      hasUcp: result.ucpFile.found,
+      homepageResponseMs: result.responseTime.homepage,
+      resultJson: JSON.stringify(result),
+      agentStatusJson: JSON.stringify(agentStatus),
+      scannedAt: result.scannedAt,
+    })
+    .returning({ id: schema.lightweightScans.id })
+    .get();
+}
+
+export function getLatestLightweightScan(brandId: number) {
+  return db
+    .select()
+    .from(schema.lightweightScans)
+    .where(eq(schema.lightweightScans.brandId, brandId))
+    .orderBy(desc(schema.lightweightScans.scannedAt))
+    .limit(1)
+    .get();
+}
+
+export function getLightweightScanHistory(brandId: number, days: number = 90) {
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days);
+
+  return db
+    .select()
+    .from(schema.lightweightScans)
+    .where(
+      and(
+        eq(schema.lightweightScans.brandId, brandId),
+        gte(schema.lightweightScans.scannedAt, cutoff.toISOString())
+      )
+    )
+    .orderBy(desc(schema.lightweightScans.scannedAt))
+    .all();
+}
+
+export function getMatrixData() {
+  // Get the latest lightweight scan for each brand using a subquery
+  const latestScans = db
+    .select()
+    .from(schema.lightweightScans)
+    .where(
+      sql`id IN (SELECT MAX(id) FROM lightweight_scans GROUP BY brand_id)`
+    )
+    .all();
+
+  const brands = db
+    .select()
+    .from(schema.brands)
+    .where(eq(schema.brands.active, true))
+    .all();
+
+  const scanByBrandId = new Map(latestScans.map(s => [s.brandId, s]));
+
+  return brands.map(brand => ({
+    brand: {
+      id: brand.id,
+      slug: brand.slug,
+      name: brand.name,
+      url: brand.url,
+      category: brand.category,
+    },
+    scan: scanByBrandId.get(brand.id) ?? null,
+  }));
+}
+
+export function getRecentChangelog(limit: number = 50) {
+  return db
+    .select({
+      id: schema.changelogEntries.id,
+      brandId: schema.changelogEntries.brandId,
+      field: schema.changelogEntries.field,
+      oldValue: schema.changelogEntries.oldValue,
+      newValue: schema.changelogEntries.newValue,
+      detectedAt: schema.changelogEntries.detectedAt,
+    })
+    .from(schema.changelogEntries)
+    .orderBy(desc(schema.changelogEntries.detectedAt))
+    .limit(limit)
+    .all();
+}
+
+export function getChangelogForBrand(brandId: number, limit: number = 50) {
+  return db
+    .select()
+    .from(schema.changelogEntries)
+    .where(eq(schema.changelogEntries.brandId, brandId))
+    .orderBy(desc(schema.changelogEntries.detectedAt))
+    .limit(limit)
+    .all();
+}
+
+export function insertChangelogEntry(brandId: number, field: string, oldValue: string | null, newValue: string | null) {
+  return db
+    .insert(schema.changelogEntries)
+    .values({ brandId, field, oldValue, newValue })
+    .run();
+}
+
+export function getPreviousLightweightScan(brandId: number, beforeDate: string) {
+  return db
+    .select()
+    .from(schema.lightweightScans)
+    .where(
+      and(
+        eq(schema.lightweightScans.brandId, brandId),
+        lt(schema.lightweightScans.scannedAt, beforeDate)
+      )
+    )
+    .orderBy(desc(schema.lightweightScans.scannedAt))
+    .limit(1)
+    .get();
 }

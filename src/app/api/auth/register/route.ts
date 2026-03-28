@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
           const sub = await stripe.subscriptions.retrieve(session.subscription as string);
           const priceId = sub.items.data[0]?.price.id ?? "";
           const planConfig = getPlanByPriceId(priceId);
-          plan = planConfig?.id ?? "monitor";
+          plan = planConfig?.id ?? "pro";
         }
       } catch {
         // Stripe session may have expired — still create the account

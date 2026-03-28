@@ -66,5 +66,42 @@ sqlite.exec(`
   )
 `);
 
+// Auto-migrate: ensure lightweight_scans table exists
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS lightweight_scans (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    brand_id INTEGER NOT NULL REFERENCES brands(id),
+    robots_txt_found INTEGER NOT NULL DEFAULT 0,
+    blocked_agent_count INTEGER NOT NULL DEFAULT 0,
+    allowed_agent_count INTEGER NOT NULL DEFAULT 0,
+    platform TEXT,
+    cdn TEXT,
+    waf TEXT,
+    has_json_ld INTEGER NOT NULL DEFAULT 0,
+    has_schema_product INTEGER NOT NULL DEFAULT 0,
+    has_open_graph INTEGER NOT NULL DEFAULT 0,
+    has_sitemap INTEGER NOT NULL DEFAULT 0,
+    has_product_feed INTEGER NOT NULL DEFAULT 0,
+    has_llms_txt INTEGER NOT NULL DEFAULT 0,
+    has_ucp INTEGER NOT NULL DEFAULT 0,
+    homepage_response_ms INTEGER,
+    result_json TEXT NOT NULL,
+    agent_status_json TEXT NOT NULL,
+    scanned_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+
+// Auto-migrate: ensure changelog_entries table exists
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS changelog_entries (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    brand_id INTEGER NOT NULL REFERENCES brands(id),
+    field TEXT NOT NULL,
+    old_value TEXT,
+    new_value TEXT,
+    detected_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+
 export const db = drizzle(sqlite, { schema });
 export { schema };
