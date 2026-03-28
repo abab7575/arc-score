@@ -58,6 +58,10 @@ COPY --from=builder /app/tsconfig.json ./tsconfig.json
 # Copy seeded database as fallback (entrypoint will skip seed if volume DB exists)
 COPY --from=builder /app/data ./data.seed
 
+# Copy brand CSVs to a separate dir (data/ is a volume mount and overwrites build files)
+COPY --from=builder /app/data/seed-brands.csv ./brand-csvs/seed-brands.csv
+COPY --from=builder /app/data/brands-500.csv ./brand-csvs/brands-500.csv
+
 # Copy entrypoint script
 COPY --from=builder /app/scripts/entrypoint.sh ./entrypoint.sh
 

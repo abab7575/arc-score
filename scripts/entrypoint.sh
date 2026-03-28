@@ -28,10 +28,17 @@ else
 fi
 
 # Always import brand CSVs (bulk-import skips duplicates, so this is safe)
+# CSVs are in /app/brand-csvs because the data/ dir is a volume mount
 echo "[entrypoint] Importing brand CSVs..."
-npx tsx scripts/bulk-import.ts data/seed-brands.csv 2>/dev/null || true
-npx tsx scripts/bulk-import.ts data/brands-500.csv 2>/dev/null || true
-echo "[entrypoint] Brand import complete."
+if [ -d "/app/brand-csvs" ]; then
+  for csv in /app/brand-csvs/*.csv; do
+    echo "[entrypoint] Importing $csv..."
+    npx tsx scripts/bulk-import.ts "$csv"
+  done
+  echo "[entrypoint] Brand import complete."
+else
+  echo "[entrypoint] No brand CSVs found at /app/brand-csvs — skipping."
+fi
 
 # Start the Next.js server
 echo "[entrypoint] Starting server on port ${PORT:-3000}..."
