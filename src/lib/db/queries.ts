@@ -1,7 +1,24 @@
 import { db, schema } from "./index";
 import { eq, desc, sql, and, gte, lt } from "drizzle-orm";
 import type { ScanReport } from "@/types/report";
-import type { LightweightScanResult } from "@/lib/scanner/lightweight-scanner";
+
+/** Minimal type for insertLightweightScan — avoids importing scanner module into DB layer */
+interface LightweightScanInput {
+  robotsTxt: { found: boolean; blockedAgents: string[]; allowedAgents: string[] };
+  userAgentTests: Array<{ userAgent: string; verdict: string }>;
+  jsonLd: { found: boolean };
+  schemaOrg: { found: boolean };
+  openGraph: { found: boolean };
+  sitemap: { found: boolean };
+  feeds: Array<{ found: boolean }>;
+  ucpFile: { found: boolean };
+  llmsTxt: { found: boolean };
+  platform: { platform: string };
+  cdn: { cdn: string };
+  waf: { waf: string };
+  responseTime: { homepage: number };
+  scannedAt: string;
+}
 
 export interface BrandWithLatestScore {
   id: number;
@@ -292,7 +309,7 @@ export function getAllScansForBrand(brandId: number) {
 
 // ── Lightweight Scan Queries ────────────────────────────────────────
 
-export function insertLightweightScan(brandId: number, result: LightweightScanResult) {
+export function insertLightweightScan(brandId: number, result: LightweightScanInput) {
   const agentStatus: Record<string, string> = {};
   for (const agent of result.robotsTxt.allowedAgents) {
     agentStatus[agent] = "allowed";
