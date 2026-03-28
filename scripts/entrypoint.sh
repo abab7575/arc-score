@@ -27,6 +27,12 @@ else
   echo "[entrypoint] Database exists at $DB_PATH ($(du -h "$DB_PATH" | cut -f1)) — skipping seed."
 fi
 
+# Always import brand CSVs (bulk-import skips duplicates, so this is safe)
+echo "[entrypoint] Importing brand CSVs..."
+npx tsx scripts/bulk-import.ts data/seed-brands.csv 2>/dev/null || true
+npx tsx scripts/bulk-import.ts data/brands-500.csv 2>/dev/null || true
+echo "[entrypoint] Brand import complete."
+
 # Start the Next.js server
 echo "[entrypoint] Starting server on port ${PORT:-3000}..."
 exec npx next start -H 0.0.0.0 -p ${PORT:-3000}
