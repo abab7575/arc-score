@@ -13,7 +13,9 @@ RUN npm ci
 COPY . .
 
 # Seed the database BEFORE build (so DB exists when Next.js collects page data)
-RUN npx tsx src/lib/db/seed.ts && npx tsx scripts/seed-feeds.ts
+RUN npx tsx src/lib/db/seed.ts && npx tsx scripts/seed-feeds.ts \
+    && npx tsx scripts/bulk-import.ts data/seed-brands.csv \
+    && npx tsx scripts/bulk-import.ts data/brands-500.csv
 
 # Build Next.js
 RUN npm run build
