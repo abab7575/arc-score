@@ -33,21 +33,21 @@ export function IndexHero({ brandCount }: { brandCount?: number }) {
           </div>
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0A1628] tracking-tight leading-tight mb-4">
-            AI agent intelligence on<br />
-            <span className="text-[#0259DD]">{brandCount ? `${brandCount.toLocaleString()} e-commerce brands` : "e-commerce brands"}</span>
+            Is your brand visible to<br />
+            <span className="text-[#0259DD]">AI shopping agents?</span>
           </h1>
 
           <p className="text-base sm:text-lg text-[#0A1628]/60 max-w-2xl mx-auto mb-8">
-            Which brands let GPTBot, ClaudeBot, PerplexityBot, and Amazonbot in?
-            Who blocks them? What platforms and protections are they using?
+            ChatGPT, Perplexity, and Claude now recommend products directly.
+            ARC tracks how {brandCount ? `${brandCount.toLocaleString()}+` : "1,000+"} e-commerce brands configure AI agent access — updated daily, free.
           </p>
 
           {/* Signal badges */}
           <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
             {[
-              { icon: Shield, label: "robots.txt policies", color: "#FF6648" },
-              { icon: Globe, label: "User-agent access testing", color: "#0259DD" },
-              { icon: Database, label: "Structured data & feeds", color: "#059669" },
+              { icon: Shield, label: "AI agent access rules", color: "#FF6648" },
+              { icon: Globe, label: "Live access testing", color: "#0259DD" },
+              { icon: Database, label: "Product data quality", color: "#059669" },
             ].map(({ icon: Icon, label, color }) => (
               <div
                 key={label}
@@ -65,14 +65,14 @@ export function IndexHero({ brandCount }: { brandCount?: number }) {
               href="/matrix"
               className="text-sm font-bold text-white bg-[#0259DD] hover:bg-[#0247b5] px-6 py-3 transition-colors relative group/btn"
             >
-              View the Matrix
+              Check any brand free
               <span className="absolute inset-0 bg-[#0A1628] -z-10 translate-x-[2px] translate-y-[2px] group-hover/btn:translate-x-[3px] group-hover/btn:translate-y-[3px] transition-transform" />
             </Link>
             <Link
               href="/pricing"
               className="text-sm font-semibold text-[#0A1628] border-2 border-[#0A1628] px-6 py-2.5 hover:bg-[#0A1628] hover:text-white transition-colors"
             >
-              Get Pro Access
+              Get Pro alerts
             </Link>
           </div>
         </div>
