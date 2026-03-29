@@ -44,6 +44,18 @@ async function main() {
     brands = brands.filter(b => b.category === filterCategory);
   }
 
+  // Prioritize unscanned brands first so new additions get data immediately
+  const scannedIds = new Set(
+    db.select({ id: schema.lightweightScans.brandId })
+      .from(schema.lightweightScans)
+      .all()
+      .map((r: { id: number }) => r.id)
+  );
+  const unscanned = brands.filter(b => !scannedIds.has(b.id));
+  const alreadyScanned = brands.filter(b => scannedIds.has(b.id));
+  brands = [...unscanned, ...alreadyScanned];
+  console.log(`Unscanned (priority): ${unscanned.length}, Already scanned: ${alreadyScanned.length}`);
+
   console.log(`\n=== ARC Lightweight Daily Scan ===`);
   console.log(`Brands: ${brands.length}`);
   console.log(`Concurrency: ${concurrency}`);
