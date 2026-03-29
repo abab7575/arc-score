@@ -11,10 +11,12 @@ function Tooltip({ text, children }: { text: string; children: React.ReactNode }
     <span className="relative group/tip inline-flex items-center gap-1 cursor-help">
       {children}
       <Info className="w-3 h-3 text-muted-foreground/40 group-hover/tip:text-[#0259DD] transition-colors inline" />
-      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 bg-[#0A1628] text-white text-[11px] font-normal leading-relaxed p-2.5 opacity-0 invisible group-hover/tip:opacity-100 group-hover/tip:visible transition-all z-50 pointer-events-none group-hover/tip:pointer-events-auto">
-        {text}
-        <span className="block mt-1.5"><Link href="/landscape" className="text-[#84AFFB] hover:text-white text-[10px] font-semibold uppercase tracking-wider">Learn more →</Link></span>
-        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#0A1628] rotate-45" />
+      <span className="absolute bottom-full left-1/2 -translate-x-1/2 pb-2 w-56 z-50 opacity-0 invisible group-hover/tip:opacity-100 group-hover/tip:visible transition-all">
+        <span className="block bg-[#0A1628] text-white text-[11px] font-normal leading-relaxed p-2.5 relative">
+          {text}
+          <span className="block mt-1.5"><Link href="/landscape" className="text-[#84AFFB] hover:text-white text-[10px] font-semibold uppercase tracking-wider">Learn more →</Link></span>
+          <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#0A1628] rotate-45" />
+        </span>
       </span>
     </span>
   );

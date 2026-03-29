@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
       const csv = [headers.join(","), ...rows].join("\n");
       return new NextResponse(csv, {
         headers: {
-          "Content-Type": "text/csv",
+          "Content-Type": "text/csv; charset=utf-8",
           "Content-Disposition": `attachment; filename="arc-matrix-${new Date().toISOString().split("T")[0]}.csv"`,
         },
       });

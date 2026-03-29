@@ -41,7 +41,7 @@ export function getPLANS(): Record<PlanId, PlanConfig> {
     pro: {
       id: "pro",
       name: "Pro",
-      price: 100,
+      price: 149,
       priceId: process.env.STRIPE_PRO_PRICE_ID ?? "",
       features: [
         "Everything in Free",

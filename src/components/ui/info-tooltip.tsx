@@ -68,23 +68,24 @@ export function InfoTooltip({
 
         {open && (
           <div
-            ref={tooltipRef}
-            className={`absolute z-[100] w-64 px-3 py-2.5 bg-gray-900 text-white rounded-lg shadow-xl
-              ${position === "top" ? "bottom-full mb-2" : "top-full mt-2"}
-              left-1/2 -translate-x-1/2`}
-            style={{ pointerEvents: "none" }}
+            className={`absolute z-[100] ${position === "top" ? "bottom-full pb-2" : "top-full pt-2"} left-1/2 -translate-x-1/2`}
           >
-            {/* Arrow */}
             <div
-              className={`absolute left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45
-                ${position === "top" ? "bottom-[-4px]" : "top-[-4px]"}`}
-            />
-            <p className="text-[12px] leading-relaxed font-medium">{content}</p>
-            {detail && (
-              <p className="text-[11px] leading-relaxed text-gray-400 mt-1.5 border-t border-gray-700 pt-1.5">
-                {detail}
-              </p>
-            )}
+              ref={tooltipRef}
+              className="w-64 px-3 py-2.5 bg-gray-900 text-white rounded-lg shadow-xl relative"
+            >
+              {/* Arrow */}
+              <div
+                className={`absolute left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45
+                  ${position === "top" ? "bottom-[-4px]" : "top-[-4px]"}`}
+              />
+              <p className="text-[12px] leading-relaxed font-medium">{content}</p>
+              {detail && (
+                <p className="text-[11px] leading-relaxed text-gray-400 mt-1.5 border-t border-gray-700 pt-1.5">
+                  {detail}
+                </p>
+              )}
+            </div>
           </div>
         )}
       </span>

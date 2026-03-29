@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
               customerId: customer.id,
               stripeSubscriptionId: sub.id,
               stripePriceId: priceId,
-              plan: planConfig?.id ?? "monitor",
+              plan: planConfig?.id ?? "pro",
               status: sub.status,
               currentPeriodEnd: sub.cancel_at
                 ? new Date(sub.cancel_at * 1000).toISOString()

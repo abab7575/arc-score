@@ -401,7 +401,7 @@ function ChapterThree() {
           {[
             { value: "37", label: "brands with structured data markup", sublabel: "out of 86 scanned", color: "#059669" },
             { value: "38", label: "brands blocking GPTBot specifically", sublabel: "out of 86 scanned", color: "#FF6648" },
-            { value: "38", label: "average ARC Score across all brands", sublabel: "73 brands scored", color: "#0259DD" },
+            { value: "38", label: "average ARC Report across all brands", sublabel: "73 brands scored", color: "#0259DD" },
             { value: "1,000+", label: "total brands tracked", sublabel: "updated weekly", color: "#FBBA16" },
           ].map((stat) => (
             <div key={stat.label} className="border border-[#E8E0D8] bg-white p-4 text-center">
@@ -803,7 +803,7 @@ function CtaSection() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
         <div className="text-center mb-10">
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-            Get your free ARC Score
+            Get your free ARC Report
           </h2>
           <p className="text-base text-white/50 max-w-xl mx-auto">
             Enter your site URL and we&apos;ll scan it against all 10 AI shopping agents. Free score, no credit card required.
@@ -817,7 +817,7 @@ function CtaSection() {
               <span className="spec-label text-[#059669] text-[10px]">SUBMITTED</span>
             </div>
             <h3 className="text-lg font-bold text-white mb-2">We&apos;ll scan your site.</h3>
-            <p className="text-sm text-white/50">You&apos;ll receive your ARC Score by email once the scan completes.</p>
+            <p className="text-sm text-white/50">You&apos;ll receive your ARC Report by email once the scan completes.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="max-w-lg mx-auto space-y-4">
@@ -848,7 +848,7 @@ function CtaSection() {
               disabled={loading}
               className="w-full px-6 py-3 bg-[#FF6648] text-white text-sm font-bold hover:bg-[#e85a3f] transition-colors disabled:opacity-50 relative group"
             >
-              {loading ? "Submitting..." : "Get My Free ARC Score"}
+              {loading ? "Submitting..." : "Get My Free ARC Report"}
               <span className="absolute inset-0 bg-[#0259DD] -z-10 translate-x-[2px] translate-y-[2px] group-hover:translate-x-[3px] group-hover:translate-y-[3px] transition-transform" />
             </button>
           </form>
