@@ -7,6 +7,25 @@ import { IndexHero } from "@/components/index/index-hero";
 import type { BrandCategory } from "@/lib/brands";
 import { CATEGORY_LABELS } from "@/lib/brands";
 import Link from "next/link";
+import { Info } from "lucide-react";
+
+function HeaderWithTooltip({ label, tooltip, align }: { label: string; tooltip: string; align: "left" | "center" }) {
+  return (
+    <th className={`${align === "center" ? "text-center" : "text-left"} px-4 py-2.5 font-semibold text-foreground`}>
+      <div className={`inline-flex items-center gap-1.5 group/tip relative ${align === "center" ? "justify-center" : ""}`}>
+        {label}
+        <Info className="w-3.5 h-3.5 text-muted-foreground/50 group-hover/tip:text-[#0259DD] transition-colors cursor-help" />
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-[#0A1628] text-white text-xs font-normal leading-relaxed p-3 opacity-0 invisible group-hover/tip:opacity-100 group-hover/tip:visible transition-all z-50 pointer-events-none group-hover/tip:pointer-events-auto">
+          <p className="mb-2">{tooltip}</p>
+          <Link href="/landscape" className="text-[#84AFFB] hover:text-white text-[10px] font-semibold uppercase tracking-wider">
+            Learn more →
+          </Link>
+          <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#0A1628] rotate-45" />
+        </div>
+      </div>
+    </th>
+  );
+}
 
 interface MatrixBrand {
   id: number;
@@ -165,10 +184,26 @@ export default function HomePage() {
               <thead>
                 <tr className="border-b border-gray-200 bg-gray-50/50">
                   <th className="text-left px-4 py-2.5 font-semibold text-foreground">Brand</th>
-                  <th className="text-left px-4 py-2.5 font-semibold text-foreground">Platform</th>
-                  <th className="text-center px-4 py-2.5 font-semibold text-foreground">Agents Blocked</th>
-                  <th className="text-center px-4 py-2.5 font-semibold text-foreground">Structured Data</th>
-                  <th className="text-left px-4 py-2.5 font-semibold text-foreground">CDN / WAF</th>
+                  <HeaderWithTooltip
+                    label="Platform"
+                    tooltip="The e-commerce platform powering the site (Shopify, Magento, Salesforce Commerce Cloud, etc). Detected from response headers and page source."
+                    align="left"
+                  />
+                  <HeaderWithTooltip
+                    label="Agents Blocked"
+                    tooltip="How many of the 8 major AI shopping agents (GPTBot, ClaudeBot, PerplexityBot, etc) are blocked via robots.txt or HTTP response. 0/8 = fully open to AI agents."
+                    align="center"
+                  />
+                  <HeaderWithTooltip
+                    label="Structured Data"
+                    tooltip="Machine-readable product data on the site. LD = JSON-LD schema markup. OG = Open Graph tags. Feed = product feed (Google Shopping, Shopify JSON). Agents need this to understand products."
+                    align="center"
+                  />
+                  <HeaderWithTooltip
+                    label="CDN / WAF"
+                    tooltip="Content Delivery Network and Web Application Firewall protecting the site. WAFs like DataDome or PerimeterX can block AI agents even if robots.txt allows them."
+                    align="left"
+                  />
                 </tr>
               </thead>
               <tbody>
