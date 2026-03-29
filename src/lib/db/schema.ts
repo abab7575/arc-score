@@ -272,3 +272,38 @@ export const validationResults = sqliteTable("validation_results", {
   testedAt: text("tested_at").notNull().$defaultFn(() => new Date().toISOString()),
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
+
+// ── Scan Orchestration ──────────────────────────────────────────────
+
+export const scanRuns = sqliteTable("scan_runs", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  scanType: text("scan_type").notNull(), // lightweight, full, robots-matrix
+  status: text("status").notNull().default("queued"), // queued, running, completed, failed, cancelled
+  totalBrands: integer("total_brands").notNull().default(0),
+  completedCount: integer("completed_count").notNull().default(0),
+  failedCount: integer("failed_count").notNull().default(0),
+  skippedCount: integer("skipped_count").notNull().default(0),
+  changesDetected: integer("changes_detected").notNull().default(0),
+  startedAt: text("started_at"),
+  completedAt: text("completed_at"),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+export const scanJobs = sqliteTable("scan_jobs", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  runId: integer("run_id").notNull().references(() => scanRuns.id),
+  brandId: integer("brand_id").notNull().references(() => brands.id),
+  status: text("status").notNull().default("queued"), // queued, running, completed, failed, skipped
+  error: text("error"),
+  retryCount: integer("retry_count").notNull().default(0),
+  scanDurationMs: integer("scan_duration_ms"),
+  startedAt: text("started_at"),
+  completedAt: text("completed_at"),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+export const systemState = sqliteTable("system_state", {
+  key: text("key").primaryKey(),
+  value: text("value").notNull(),
+  updatedAt: text("updated_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
