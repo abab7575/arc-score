@@ -47,12 +47,72 @@ const FIELD_INFO: Record<string, { label: string; tooltip: string }> = {
 };
 
 const VALUE_TOOLTIPS: Record<string, string> = {
-  allowed: "The site explicitly permits this AI agent to access its content.",
-  blocked: "The site blocks this AI agent — either via robots.txt or by detecting and rejecting its requests.",
-  no_rule: "The site's robots.txt doesn't mention this agent. By default, access is allowed but not guaranteed.",
+  allowed: "This brand's robots.txt explicitly permits this AI agent to access their site.",
+  blocked: "This brand's robots.txt explicitly tells this AI agent not to access their site.",
+  no_rule: "This brand's robots.txt does not mention this AI agent. By web convention, access is allowed by default.",
+  restricted: "Our test request was blocked or challenged, likely by the site's security system (WAF), not by a specific AI agent policy.",
+  inconclusive: "We could not get a clear result on this scan. This can happen due to timeouts or temporary issues. We will retry on the next scan.",
   unknown: "We couldn't determine access status — the site may have timed out or returned an unexpected response.",
   "none-detected": "No WAF or bot protection system was detected on this site.",
 };
+
+type ConfidenceLevel = "high" | "medium" | "low";
+
+const CONFIDENCE_META: Record<ConfidenceLevel, { label: string; color: string; tooltip: string }> = {
+  high: {
+    label: "high confidence",
+    color: "text-[#059669]",
+    tooltip: "High confidence — based on direct file parsing or verified HTTP responses.",
+  },
+  medium: {
+    label: "medium confidence",
+    color: "text-[#FBBA16]",
+    tooltip: "Medium confidence — based on HTTP testing which can be affected by security systems.",
+  },
+  low: {
+    label: "low confidence",
+    color: "text-[#FF6648]",
+    tooltip: "Low confidence — based on HTML source analysis. JavaScript-rendered content may not be detected.",
+  },
+};
+
+function getFieldConfidence(field: string): ConfidenceLevel {
+  // robots.txt per-agent fields → high
+  if (field.startsWith("agent_access_")) return "high";
+  // platform detection for major platforms → high
+  if (field === "platform") return "high";
+  // HTTP-based tests → medium
+  if (field === "blocked_agent_count") return "medium";
+  if (field === "cdn") return "medium";
+  if (field === "waf") return "medium";
+  // Structured data detection → low (misses JS-rendered content)
+  if (field === "json_ld") return "low";
+  if (field === "schema_product") return "low";
+  if (field === "open_graph") return "low";
+  if (field === "product_feed") return "low";
+  if (field === "llms_txt") return "low";
+  if (field === "ucp") return "low";
+  // Default to medium for unknown fields
+  return "medium";
+}
+
+function ConfidenceBadge({ field }: { field: string }) {
+  const level = getFieldConfidence(field);
+  const meta = CONFIDENCE_META[level];
+  return (
+    <span className="relative group/conf inline-flex items-center ml-1.5 cursor-help">
+      <span className={`text-[10px] font-mono ${meta.color} opacity-60 group-hover/conf:opacity-100 transition-opacity`}>
+        ({meta.label})
+      </span>
+      <span className="absolute bottom-full left-1/2 -translate-x-1/2 pb-2 w-56 z-50 opacity-0 invisible group-hover/conf:opacity-100 group-hover/conf:visible transition-all">
+        <span className="block bg-[#0A1628] text-white text-[11px] font-normal leading-relaxed p-2.5 relative">
+          {meta.tooltip}
+          <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#0A1628] rotate-45" />
+        </span>
+      </span>
+    </span>
+  );
+}
 
 function formatField(field: string): React.ReactNode {
   if (field.startsWith("agent_access_")) {
@@ -165,6 +225,7 @@ export default function ChangelogPage() {
                           <span className="font-mono text-xs bg-red-50 text-red-700 px-1 py-0.5">{formatValue(entry.oldValue)}</span>
                           {" to "}
                           <span className="font-mono text-xs bg-green-50 text-green-700 px-1 py-0.5">{formatValue(entry.newValue)}</span>
+                          <ConfidenceBadge field={entry.field} />
                         </p>
                       </div>
                     </div>

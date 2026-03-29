@@ -180,4 +180,24 @@ export const EXPLAINERS = {
   gradeC: "Grade C (50–69): Needs Work — agents struggle with key interactions and may fail to complete purchases.",
   gradeD: "Grade D (30–49): Poor — significant barriers prevent agents from completing basic shopping tasks.",
   gradeF: "Grade F (0–29): Not Ready — agents cannot meaningfully interact with this site.",
+
+  // Access states
+  accessAllowed:
+    "This brand's robots.txt explicitly permits this AI agent to access their site.",
+  accessBlocked:
+    "This brand's robots.txt explicitly tells this AI agent not to access their site.",
+  accessNoRule:
+    "This brand's robots.txt does not mention this AI agent. By web convention, access is allowed by default.",
+  accessRestricted:
+    "Our test request was blocked or challenged, likely by the site's security system (WAF), not by a specific AI agent policy.",
+  accessInconclusive:
+    "We could not get a clear result on this scan. This can happen due to timeouts or temporary issues. We will retry on the next scan.",
+
+  // Confidence levels
+  confidenceHigh:
+    "High confidence — based on direct file parsing or verified HTTP responses.",
+  confidenceMedium:
+    "Medium confidence — based on HTTP testing which can be affected by security systems.",
+  confidenceLow:
+    "Low confidence — based on HTML source analysis. JavaScript-rendered content may not be detected.",
 } as const;

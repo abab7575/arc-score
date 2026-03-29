@@ -103,5 +103,26 @@ sqlite.exec(`
   )
 `);
 
+// Auto-migrate: ensure pending_changes table exists (two-scan confirmation buffer)
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS pending_changes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    brand_id INTEGER NOT NULL REFERENCES brands(id),
+    field TEXT NOT NULL,
+    old_value TEXT,
+    new_value TEXT,
+    first_detected_at TEXT NOT NULL DEFAULT (datetime('now')),
+    confirmation_type TEXT NOT NULL,
+    confirmed INTEGER NOT NULL DEFAULT 0
+  )
+`);
+
+// Auto-migrate: add drift_report column to scan_runs (stores JSON drift report)
+try {
+  sqlite.exec(`ALTER TABLE scan_runs ADD COLUMN drift_report TEXT`);
+} catch {
+  // Column already exists
+}
+
 export const db = drizzle(sqlite, { schema });
 export { schema };

@@ -15,7 +15,9 @@
 import { db, schema } from "@/lib/db";
 import { eq, and, sql } from "drizzle-orm";
 import { runLightweightScan } from "./lightweight-scanner";
-import { insertLightweightScan } from "@/lib/db/queries";
+import { insertLightweightScan, getLatestLightweightScan, getPreviousLightweightScan } from "@/lib/db/queries";
+import { processChangelog, cleanupRevertedPendingChanges } from "./changelog-engine";
+import { runDriftChecks, type DriftReport } from "./drift-detector";
 
 const WORKER_TICK_MS = 1000; // Check for jobs every 1 second
 const JOB_TIMEOUT_MS = 60000; // 60 second per-brand timeout
@@ -156,6 +158,25 @@ async function processJob(
     // Store scan result
     insertLightweightScan(brand.id, result);
 
+    // Process changelog: compare with previous scan and apply confirmation rules
+    let changelogCount = 0;
+    try {
+      const latestScan = getLatestLightweightScan(brand.id);
+      if (latestScan) {
+        const previousScan = getPreviousLightweightScan(brand.id, latestScan.scannedAt);
+        if (previousScan) {
+          changelogCount = processChangelog(brand.id, latestScan, previousScan);
+          // Clean up pending changes for fields that reverted to their previous value
+          cleanupRevertedPendingChanges(brand.id, latestScan, previousScan);
+        }
+      }
+    } catch (changelogError) {
+      console.error(
+        `[scan-worker] changelog error for ${brand.slug}:`,
+        changelogError instanceof Error ? changelogError.message : changelogError,
+      );
+    }
+
     // Mark job as completed
     db.update(schema.scanJobs)
       .set({
@@ -166,10 +187,11 @@ async function processJob(
       .where(eq(schema.scanJobs.id, job.id))
       .run();
 
-    // Update run progress
+    // Update run progress (include confirmed changelog changes)
     db.update(schema.scanRuns)
       .set({
         completedCount: sql`completed_count + 1`,
+        changesDetected: sql`changes_detected + ${changelogCount}`,
       })
       .where(eq(schema.scanRuns.id, job.runId))
       .run();
@@ -179,7 +201,7 @@ async function processJob(
         (t: { verdict: string }) => t.verdict === "blocked",
       ).length ?? 0;
     console.log(
-      `[scan-worker] done ${brand.slug}: ${result.platform?.platform ?? "unknown"} | ${blockedCount} blocked | ${duration}ms`,
+      `[scan-worker] done ${brand.slug}: ${result.platform?.platform ?? "unknown"} | ${blockedCount} blocked | ${changelogCount} changes | ${duration}ms`,
     );
   } catch (error) {
     const duration = Date.now() - startTime;
@@ -231,11 +253,38 @@ async function workerTick(): Promise<void> {
       .get();
 
     if (runningRun) {
-      // All jobs done, mark run as completed
+      // All jobs done — run drift checks before marking complete
+      let driftReport: DriftReport | null = null;
+      try {
+        driftReport = runDriftChecks(runningRun.id);
+
+        if (driftReport.alerts.length > 0) {
+          const criticalCount = driftReport.alerts.filter(a => a.severity === "critical").length;
+          const warningCount = driftReport.alerts.filter(a => a.severity === "warning").length;
+          console.log(
+            `[scan-worker] Drift check for run #${runningRun.id}: ${criticalCount} critical, ${warningCount} warning alerts`,
+          );
+          for (const alert of driftReport.alerts) {
+            console.log(
+              `[scan-worker]   [${alert.severity.toUpperCase()}] ${alert.type}: ${alert.message}`,
+            );
+          }
+        } else {
+          console.log(`[scan-worker] Drift check for run #${runningRun.id}: healthy, no alerts`);
+        }
+      } catch (driftError) {
+        console.error(
+          `[scan-worker] Drift check failed for run #${runningRun.id}:`,
+          driftError instanceof Error ? driftError.message : driftError,
+        );
+      }
+
+      // Mark run as completed and store drift report
       db.update(schema.scanRuns)
         .set({
           status: "completed",
           completedAt: new Date().toISOString(),
+          driftReport: driftReport ? JSON.stringify(driftReport) : null,
         })
         .where(eq(schema.scanRuns.id, runningRun.id))
         .run();
@@ -463,6 +512,16 @@ export function getScanHealth() {
     .orderBy(sql`id DESC`)
     .all();
 
+  // Parse drift report from the latest run (if available)
+  let driftReport: DriftReport | null = null;
+  if (latestRun?.driftReport) {
+    try {
+      driftReport = JSON.parse(latestRun.driftReport) as DriftReport;
+    } catch {
+      // ignore parse errors
+    }
+  }
+
   // Determine overall status
   let overallStatus: "green" | "yellow" | "red" = "green";
   if (!todayRun) overallStatus = "yellow";
@@ -472,6 +531,11 @@ export function getScanHealth() {
     overallStatus = "yellow";
   if (totalBrands > 0 && freshBrands / totalBrands < 0.8)
     overallStatus = "red";
+
+  // Drift alerts can escalate overall status
+  if (driftReport && !driftReport.healthy) overallStatus = "red";
+  else if (driftReport && driftReport.alerts.length > 0 && overallStatus === "green")
+    overallStatus = "yellow";
 
   return {
     overallStatus,
@@ -498,6 +562,7 @@ export function getScanHealth() {
           completedAt: latestRun.completedAt,
         }
       : null,
+    driftReport,
     failedBrands: failedJobs,
     dataFreshness: {
       freshBrands,

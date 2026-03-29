@@ -256,6 +256,19 @@ export const changelogEntries = sqliteTable("changelog_entries", {
   detectedAt: text("detected_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 
+// ── Pending Changes (two-scan confirmation buffer) ──────────────────
+
+export const pendingChanges = sqliteTable("pending_changes", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  brandId: integer("brand_id").notNull().references(() => brands.id),
+  field: text("field").notNull(),
+  oldValue: text("old_value"),
+  newValue: text("new_value"),
+  firstDetectedAt: text("first_detected_at").notNull().$defaultFn(() => new Date().toISOString()),
+  confirmationType: text("confirmation_type").notNull(), // immediate, requires_confirmation
+  confirmed: integer("confirmed").notNull().default(0), // 0 = pending, 1 = confirmed
+});
+
 // ── Validation: ARC Prediction vs Real Agent Results ─────────────────
 
 export const validationResults = sqliteTable("validation_results", {
@@ -284,6 +297,7 @@ export const scanRuns = sqliteTable("scan_runs", {
   failedCount: integer("failed_count").notNull().default(0),
   skippedCount: integer("skipped_count").notNull().default(0),
   changesDetected: integer("changes_detected").notNull().default(0),
+  driftReport: text("drift_report"), // JSON drift report from post-run anomaly detection
   startedAt: text("started_at"),
   completedAt: text("completed_at"),
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),

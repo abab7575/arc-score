@@ -451,6 +451,63 @@ export function insertChangelogEntry(brandId: number, field: string, oldValue: s
     .run();
 }
 
+// ── Pending Changes Queries ──────────────────────────────────────────
+
+export function getPendingChange(brandId: number, field: string) {
+  return db
+    .select()
+    .from(schema.pendingChanges)
+    .where(
+      and(
+        eq(schema.pendingChanges.brandId, brandId),
+        eq(schema.pendingChanges.field, field),
+        eq(schema.pendingChanges.confirmed, 0),
+      ),
+    )
+    .limit(1)
+    .get();
+}
+
+export function insertPendingChange(
+  brandId: number,
+  field: string,
+  oldValue: string | null,
+  newValue: string | null,
+  confirmationType: string,
+) {
+  return db
+    .insert(schema.pendingChanges)
+    .values({ brandId, field, oldValue, newValue, confirmationType })
+    .run();
+}
+
+export function updatePendingChange(id: number, newValue: string | null) {
+  return db
+    .update(schema.pendingChanges)
+    .set({ newValue, firstDetectedAt: new Date().toISOString() })
+    .where(eq(schema.pendingChanges.id, id))
+    .run();
+}
+
+export function confirmAndDeletePendingChange(id: number) {
+  return db
+    .delete(schema.pendingChanges)
+    .where(eq(schema.pendingChanges.id, id))
+    .run();
+}
+
+export function clearStalePendingChanges(brandId: number, field: string) {
+  return db
+    .delete(schema.pendingChanges)
+    .where(
+      and(
+        eq(schema.pendingChanges.brandId, brandId),
+        eq(schema.pendingChanges.field, field),
+      ),
+    )
+    .run();
+}
+
 export function getPreviousLightweightScan(brandId: number, beforeDate: string) {
   return db
     .select()
