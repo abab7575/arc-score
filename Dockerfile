@@ -12,10 +12,12 @@ RUN npm ci
 # Copy source
 COPY . .
 
+# Collect all brand CSVs into a dedicated directory (survives volume mount)
+RUN mkdir -p /app/brand-csvs && cp /app/data/*.csv /app/brand-csvs/ 2>/dev/null || true
+
 # Seed the database BEFORE build (so DB exists when Next.js collects page data)
 RUN npx tsx src/lib/db/seed.ts && npx tsx scripts/seed-feeds.ts \
-    && npx tsx scripts/bulk-import.ts data/seed-brands.csv \
-    && npx tsx scripts/bulk-import.ts data/brands-500.csv
+    && for csv in /app/brand-csvs/*.csv; do npx tsx scripts/bulk-import.ts "$csv"; done
 
 # Build Next.js
 RUN npm run build
@@ -58,10 +60,9 @@ COPY --from=builder /app/tsconfig.json ./tsconfig.json
 # Copy seeded database as fallback (entrypoint will skip seed if volume DB exists)
 COPY --from=builder /app/data ./data.seed
 
-# Copy brand CSVs to a separate dir (data/ is a volume mount and overwrites build files)
-COPY --from=builder /app/data/seed-brands.csv ./brand-csvs/seed-brands.csv
-COPY --from=builder /app/data/brands-500.csv ./brand-csvs/brands-500.csv
-COPY --from=builder /app/data/brands-1000.csv ./brand-csvs/brands-1000.csv
+# Copy all brand CSVs (data/ is a volume mount, so CSVs must live elsewhere)
+# Any new CSV added to data/ is automatically picked up — no Dockerfile changes needed
+COPY --from=builder /app/brand-csvs ./brand-csvs
 
 # Copy entrypoint script
 COPY --from=builder /app/scripts/entrypoint.sh ./entrypoint.sh
