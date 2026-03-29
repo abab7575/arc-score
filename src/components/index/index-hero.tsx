@@ -37,9 +37,13 @@ export function IndexHero({ brandCount }: { brandCount?: number }) {
             <span className="text-[#0259DD]">AI shopping agents?</span>
           </h1>
 
-          <p className="text-base sm:text-lg text-[#0A1628]/60 max-w-2xl mx-auto mb-8">
+          <p className="text-base sm:text-lg text-[#0A1628]/60 max-w-2xl mx-auto mb-3">
             ChatGPT, Perplexity, and Claude now recommend products directly.
-            ARC tracks how {brandCount ? `${brandCount.toLocaleString()}+` : "1,000+"} e-commerce brands configure AI agent access — updated daily, free.
+            We scan {brandCount ? `${brandCount.toLocaleString()}+` : "1,000+"} e-commerce brands daily so you can see exactly what your competitors are doing — and what you&apos;re missing.
+          </p>
+
+          <p className="text-sm text-[#0A1628]/40 max-w-xl mx-auto mb-8 font-mono">
+            {brandCount ? brandCount.toLocaleString() : "1,000+"} brands tracked &middot; 12 AI agents tested &middot; Updated every 24 hours
           </p>
 
           {/* Signal badges */}
