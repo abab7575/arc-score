@@ -32,8 +32,8 @@ interface MatrixData {
   results: BrandResult[];
   summary: {
     allBlocked: number;
-    someBlocked: number;
-    noneBlocked: number;
+    someBlocked?: number;
+    noneBlocked?: number;
     avgBlockedAgents: string;
   };
 }
@@ -51,14 +51,49 @@ export default function PublicMatrixPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/admin/robots-matrix")
+    fetch("/api/matrix")
       .then((r) => {
         if (!r.ok) throw new Error("Matrix data is not yet available. Check back soon.");
         return r.json();
       })
       .then((d) => {
         if (d.error) throw new Error(d.error);
-        setData(d);
+        // Transform new API shape to match existing component expectations
+        const agents: Agent[] = [
+          { id: "GPTBot", name: "GPTBot", company: "OpenAI", product: "ChatGPT" },
+          { id: "ChatGPT-User", name: "ChatGPT-User", company: "OpenAI", product: "Operator" },
+          { id: "ClaudeBot", name: "ClaudeBot", company: "Anthropic", product: "Claude" },
+          { id: "Claude-Web", name: "Claude-Web", company: "Anthropic", product: "Claude" },
+          { id: "PerplexityBot", name: "PerplexityBot", company: "Perplexity", product: "Comet" },
+          { id: "Google-Extended", name: "Google-Extended", company: "Google", product: "AI Mode" },
+          { id: "Amazonbot", name: "Amazonbot", company: "Amazon", product: "Buy For Me" },
+          { id: "CCBot", name: "CCBot", company: "Common Crawl", product: "Klarna" },
+        ];
+        const scannedBrands = d.brands.filter((b: Record<string, unknown>) => b.scanned);
+        const results: BrandResult[] = scannedBrands.map((b: Record<string, unknown>) => ({
+          slug: b.slug,
+          name: b.name as string,
+          url: b.url as string,
+          category: b.category as string,
+          robotsTxtFound: true,
+          robotsTxtUrl: `${b.url}/robots.txt`,
+          agents: (b.agentStatus ?? {}) as Record<string, "allowed" | "blocked" | "no_rule">,
+          blockedCount: (b.blockedAgentCount ?? 0) as number,
+          allowedCount: agents.length - ((b.blockedAgentCount ?? 0) as number),
+          totalAgents: agents.length,
+          scannedAt: (b.scannedAt ?? "") as string,
+        }));
+        const allBlocked = results.filter((r) => r.blockedCount === agents.length).length;
+        const avgBlocked = results.length > 0
+          ? (results.reduce((s, r) => s + r.blockedCount, 0) / results.length).toFixed(1)
+          : "0";
+        setData({
+          generatedAt: new Date().toISOString(),
+          totalBrands: results.length,
+          agents,
+          results,
+          summary: { allBlocked, avgBlockedAgents: avgBlocked },
+        });
       })
       .catch((e) => setError(e.message));
   }, []);
