@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, schema } from "@/lib/db/index";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { hashPassword, createCustomer, updateCustomerPlan, getCustomerByEmail } from "@/lib/customer-auth";
 
 // Temporary endpoint to create Andy's Pro account on production.
@@ -17,6 +17,17 @@ export async function POST(request: NextRequest) {
   const userPassword = "andyadmin";
 
   try {
+    // Ensure customers table exists
+    db.run(sql`CREATE TABLE IF NOT EXISTS customers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      name TEXT,
+      stripe_customer_id TEXT UNIQUE,
+      plan TEXT NOT NULL DEFAULT 'free',
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    )`);
+
     // Check if exists
     let customer = getCustomerByEmail(email);
 
