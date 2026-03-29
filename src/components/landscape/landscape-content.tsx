@@ -375,7 +375,7 @@ function HeroSection() {
         <div className="hero-fade flex items-center gap-4 text-[10px] font-mono text-foreground/50">
           <span className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            100 brands scored
+            501 brands tracked
           </span>
           <span className="text-foreground/20">|</span>
           <span>Updated weekly</span>

@@ -114,7 +114,7 @@ function HeroSection() {
         </p>
 
         <p className="text-sm text-white/30 font-mono">
-          Based on scanning <span className="text-[#FBBA16]">276</span> e-commerce brands
+          Based on scanning <span className="text-[#FBBA16]">501</span> e-commerce brands
         </p>
 
         {/* Chapter navigation */}
@@ -275,7 +275,7 @@ function ChapterTwo() {
       subtitle: "THE INVISIBLE BOUNCER",
       description:
         "Even if your robots.txt says \"welcome,\" your CDN — the network that delivers your site globally, companies like Akamai, Cloudflare — might block AI agents automatically. Your security team turned on \"bot protection\" and didn't realize it blocks AI shopping agents too.",
-      detail: "This is the most common accidental blocker we see across 276 brands.",
+      detail: "This is the most common accidental blocker we see across 501 brands.",
     },
     {
       icon: Database,
@@ -362,7 +362,7 @@ function ChapterTwo() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   CHAPTER 3 — THE DATA: 276 BRANDS SCANNED
+   CHAPTER 3 — THE DATA: 501 BRANDS TRACKED
    ═══════════════════════════════════════════════════════════════════════ */
 
 function ChapterThree() {
@@ -379,7 +379,7 @@ function ChapterThree() {
         </div>
 
         <h2 className="text-2xl sm:text-3xl font-bold text-[#0A1628] mb-4 leading-tight">
-          The Data: 276 Brands Scanned
+          The Data: 501 Brands Tracked
         </h2>
         <p className="text-base text-[#0A1628]/60 max-w-3xl leading-relaxed mb-10">
           We sent AI agents to every major e-commerce brand we could find. Here&apos;s what we learned.
@@ -399,10 +399,10 @@ function ChapterThree() {
         {/* Key findings grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
           {[
-            { value: "69", label: "brands with complete structured data", sublabel: "out of 276", color: "#059669" },
-            { value: "42", label: "brands blocking GPTBot specifically", sublabel: "{/* TODO: pull from real data */}", color: "#FF6648" },
-            { value: "61", label: "average ARC Score across all brands", sublabel: "out of 100 {/* TODO: pull from real data */}", color: "#0259DD" },
-            { value: "276", label: "total brands scanned and tracked", sublabel: "updated weekly", color: "#FBBA16" },
+            { value: "37", label: "brands with structured data markup", sublabel: "out of 86 scanned", color: "#059669" },
+            { value: "38", label: "brands blocking GPTBot specifically", sublabel: "out of 86 scanned", color: "#FF6648" },
+            { value: "38", label: "average ARC Score across all brands", sublabel: "73 brands scored", color: "#0259DD" },
+            { value: "501", label: "total brands tracked", sublabel: "updated weekly", color: "#FBBA16" },
           ].map((stat) => (
             <div key={stat.label} className="border border-[#E8E0D8] bg-white p-4 text-center">
               <span className="data-num text-3xl font-black block mb-1" style={{ color: stat.color }}>
@@ -416,7 +416,7 @@ function ChapterThree() {
         {/* Three archetypes */}
         <h3 className="text-lg font-bold text-[#0A1628] mb-2">Three brand archetypes</h3>
         <p className="text-sm text-[#0A1628]/60 mb-6">
-          After scanning 276 brands, clear patterns emerge. Most brands fall into one of three categories.
+          After scanning 501 brands, clear patterns emerge. Most brands fall into one of three categories.
         </p>
 
         <div className="space-y-5 mb-12">
@@ -760,7 +760,7 @@ function ChapterFive() {
             The shift isn&apos;t coming. It&apos;s here.
           </p>
           <p className="text-xs text-[#0A1628]/60 mt-1 leading-relaxed">
-            84 million shopping queries per week on ChatGPT alone. 10 live AI shopping agents. 276 brands scanned.
+            84 million shopping queries per week on ChatGPT alone. 10 live AI shopping agents. 501 brands tracked.
             The data is clear: brands that are ready for AI agents will capture a growing share of commerce.
             The ones that aren&apos;t won&apos;t even know what they&apos;re missing.
           </p>
