@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import Link from "next/link";
-import { Lock, Info } from "lucide-react";
+import { Lock, Info, LinkIcon } from "lucide-react";
 
 function Tooltip({ text, children }: { text: string; children: React.ReactNode }) {
   return (
@@ -210,23 +210,34 @@ export default function ChangelogPage() {
                   {dateEntries.map(entry => (
                     <div
                       key={entry.id}
-                      className="flex items-start gap-3 border border-gray-200 bg-white px-4 py-3"
+                      className="flex items-start gap-3 border border-gray-200 bg-white px-4 py-3 group/entry hover:border-[#0259DD] transition-colors relative"
                     >
                       <div className="flex-1 min-w-0">
-                        <Link
-                          href={`/brand/${entry.brandSlug}`}
-                          className="font-medium text-sm text-foreground hover:text-[#0259DD] transition-colors"
-                        >
-                          {entry.brandName}
+                        <div className="flex items-center gap-2">
+                          <Link
+                            href={`/brand/${entry.brandSlug}`}
+                            className="font-medium text-sm text-foreground hover:text-[#0259DD] transition-colors"
+                          >
+                            {entry.brandName}
+                          </Link>
+                          <Link
+                            href={`/changelog/${entry.id}`}
+                            className="opacity-0 group-hover/entry:opacity-100 transition-opacity text-muted-foreground hover:text-[#0259DD]"
+                            title="Shareable link"
+                          >
+                            <LinkIcon className="w-3.5 h-3.5" />
+                          </Link>
+                        </div>
+                        <Link href={`/changelog/${entry.id}`} className="block mt-0.5">
+                          <p className="text-sm text-muted-foreground">
+                            <span className="font-medium text-foreground">{formatField(entry.field)}</span>
+                            {" changed from "}
+                            <span className="font-mono text-xs bg-red-50 text-red-700 px-1 py-0.5">{formatValue(entry.oldValue)}</span>
+                            {" to "}
+                            <span className="font-mono text-xs bg-green-50 text-green-700 px-1 py-0.5">{formatValue(entry.newValue)}</span>
+                            <ConfidenceBadge field={entry.field} />
+                          </p>
                         </Link>
-                        <p className="text-sm text-muted-foreground mt-0.5">
-                          <span className="font-medium text-foreground">{formatField(entry.field)}</span>
-                          {" changed from "}
-                          <span className="font-mono text-xs bg-red-50 text-red-700 px-1 py-0.5">{formatValue(entry.oldValue)}</span>
-                          {" to "}
-                          <span className="font-mono text-xs bg-green-50 text-green-700 px-1 py-0.5">{formatValue(entry.newValue)}</span>
-                          <ConfidenceBadge field={entry.field} />
-                        </p>
                       </div>
                     </div>
                   ))}
