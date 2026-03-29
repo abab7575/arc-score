@@ -3,26 +3,29 @@ import { exec } from "child_process";
 
 export const dynamic = "force-dynamic";
 
-function verifyCronSecret(request: NextRequest): boolean {
+function verifyCronSecret(request: NextRequest): NextResponse | null {
   const secret = process.env.CRON_SECRET;
-  if (!secret) return true; // no secret configured = allow (dev mode)
+  if (!secret) {
+    return NextResponse.json({ error: "CRON_SECRET not configured" }, { status: 500 });
+  }
   const authHeader = request.headers.get("authorization");
-  const querySecret = request.nextUrl.searchParams.get("secret");
-  return authHeader === `Bearer ${secret}` || querySecret === secret;
+  const token = authHeader?.replace("Bearer ", "");
+  if (token !== secret) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  return null;
 }
 
 export async function GET(request: NextRequest) {
-  if (!verifyCronSecret(request)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const authError = verifyCronSecret(request);
+  if (authError) return authError;
 
   return runGeneration();
 }
 
 export async function POST(request: NextRequest) {
-  if (!verifyCronSecret(request)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const authError = verifyCronSecret(request);
+  if (authError) return authError;
 
   return runGeneration();
 }

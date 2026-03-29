@@ -46,7 +46,7 @@ export default function LoginPage() {
         <div className="text-center mb-8">
           <h1 className="text-2xl font-black text-foreground mb-2">Log In</h1>
           <p className="text-muted-foreground">
-            Access your ARC Report reports and monitoring dashboard.
+            Access your account and Pro features.
           </p>
         </div>
 

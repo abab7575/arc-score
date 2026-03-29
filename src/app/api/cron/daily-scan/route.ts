@@ -2,14 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { exec } from "child_process";
 
 export async function POST(request: NextRequest) {
-  // Authenticate with CRON_SECRET
+  // Authenticate with CRON_SECRET (mandatory)
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret) {
-    const authHeader = request.headers.get("authorization");
-    const token = authHeader?.replace("Bearer ", "");
-    if (token !== cronSecret) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (!cronSecret) {
+    return NextResponse.json({ error: "CRON_SECRET not configured" }, { status: 500 });
+  }
+  const authHeader = request.headers.get("authorization");
+  const token = authHeader?.replace("Bearer ", "");
+  if (token !== cronSecret) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   // Spawn the daily scan script in the background

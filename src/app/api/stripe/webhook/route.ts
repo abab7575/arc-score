@@ -39,17 +39,17 @@ export async function POST(request: NextRequest) {
       }
       case "customer.subscription.updated": {
         const sub = event.data.object as Stripe.Subscription;
-        handleSubscriptionUpdated(sub);
+        await handleSubscriptionUpdated(sub);
         break;
       }
       case "customer.subscription.deleted": {
         const sub = event.data.object as Stripe.Subscription;
-        handleSubscriptionDeleted(sub);
+        await handleSubscriptionDeleted(sub);
         break;
       }
       case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice;
-        handlePaymentFailed(invoice);
+        await handlePaymentFailed(invoice);
         break;
       }
     }
@@ -108,7 +108,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   }
 }
 
-function handleSubscriptionUpdated(sub: Stripe.Subscription) {
+async function handleSubscriptionUpdated(sub: Stripe.Subscription) {
   const stripeCustomerId = sub.customer as string;
   const customer = getCustomerByStripeId(stripeCustomerId);
   if (!customer) return;
@@ -131,7 +131,7 @@ function handleSubscriptionUpdated(sub: Stripe.Subscription) {
   });
 }
 
-function handleSubscriptionDeleted(sub: Stripe.Subscription) {
+async function handleSubscriptionDeleted(sub: Stripe.Subscription) {
   const stripeCustomerId = sub.customer as string;
   const customer = getCustomerByStripeId(stripeCustomerId);
   if (!customer) return;
@@ -140,7 +140,7 @@ function handleSubscriptionDeleted(sub: Stripe.Subscription) {
   deleteSubscription(sub.id);
 }
 
-function handlePaymentFailed(invoice: Stripe.Invoice) {
+async function handlePaymentFailed(invoice: Stripe.Invoice) {
   const stripeCustomerId = invoice.customer as string;
   if (!stripeCustomerId) return;
 

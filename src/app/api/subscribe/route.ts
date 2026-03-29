@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { sql } from "drizzle-orm";
 
 export async function POST(request: Request) {
   try {
@@ -12,8 +14,20 @@ export async function POST(request: Request) {
       );
     }
 
-    // TODO: wire up to email service (Resend, Loops, etc.)
-    console.log("[subscribe]", { email, brandUrl: brandUrl || "(none)" });
+    // Store the subscription request in the database
+    db.run(sql`
+      CREATE TABLE IF NOT EXISTS email_subscribers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT NOT NULL,
+        brand_url TEXT,
+        subscribed_at TEXT NOT NULL DEFAULT (datetime('now'))
+      )
+    `);
+
+    db.run(sql`
+      INSERT OR IGNORE INTO email_subscribers (email, brand_url)
+      VALUES (${email}, ${brandUrl || null})
+    `);
 
     return NextResponse.json({ success: true });
   } catch (error) {

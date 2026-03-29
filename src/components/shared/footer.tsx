@@ -42,8 +42,8 @@ export function Footer() {
               {[
                 { href: "/", label: "INDEX" },
                 { href: "/matrix", label: "MATRIX" },
-                { href: "/guide", label: "GUIDE" },
-                { href: "/methodology", label: "METHODOLOGY" },
+                { href: "/landscape", label: "LANDSCAPE" },
+                { href: "/changelog", label: "CHANGELOG" },
                 { href: "/pricing", label: "PRICING" },
               ].map((link) => (
                 <Link

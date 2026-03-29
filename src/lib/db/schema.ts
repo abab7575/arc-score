@@ -130,7 +130,7 @@ export const customers = sqliteTable("customers", {
   passwordHash: text("password_hash").notNull(),
   name: text("name"),
   stripeCustomerId: text("stripe_customer_id").unique(),
-  plan: text("plan").notNull().default("free"), // free, monitor, team
+  plan: text("plan").notNull().default("free"), // free, pro
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 
@@ -139,7 +139,7 @@ export const subscriptions = sqliteTable("subscriptions", {
   customerId: integer("customer_id").notNull().references(() => customers.id),
   stripeSubscriptionId: text("stripe_subscription_id").notNull().unique(),
   stripePriceId: text("stripe_price_id").notNull(),
-  plan: text("plan").notNull(), // monitor, team
+  plan: text("plan").notNull(), // free, pro
   status: text("status").notNull(), // active, canceled, past_due, trialing
   currentPeriodEnd: text("current_period_end").notNull(),
   cancelAtPeriodEnd: integer("cancel_at_period_end", { mode: "boolean" }).notNull().default(false),
