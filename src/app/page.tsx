@@ -117,7 +117,7 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
       <Navbar />
-      <IndexHero />
+      <IndexHero brandCount={stats?.totalBrands} />
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
         {/* Stats bar */}

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Database, Shield, Globe } from "lucide-react";
 
-export function IndexHero() {
+export function IndexHero({ brandCount }: { brandCount?: number }) {
   return (
     <div className="relative overflow-hidden" style={{ backgroundColor: "#FFF8F0" }}>
       {/* Retro grid */}
@@ -34,7 +34,7 @@ export function IndexHero() {
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0A1628] tracking-tight leading-tight mb-4">
             AI agent intelligence on<br />
-            <span className="text-[#0259DD]">500 e-commerce brands</span>
+            <span className="text-[#0259DD]">{brandCount ? `${brandCount.toLocaleString()} e-commerce brands` : "e-commerce brands"}</span>
           </h1>
 
           <p className="text-base sm:text-lg text-[#0A1628]/60 max-w-2xl mx-auto mb-8">
