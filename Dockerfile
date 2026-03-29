@@ -61,6 +61,7 @@ COPY --from=builder /app/data ./data.seed
 # Copy brand CSVs to a separate dir (data/ is a volume mount and overwrites build files)
 COPY --from=builder /app/data/seed-brands.csv ./brand-csvs/seed-brands.csv
 COPY --from=builder /app/data/brands-500.csv ./brand-csvs/brands-500.csv
+COPY --from=builder /app/data/brands-1000.csv ./brand-csvs/brands-1000.csv
 
 # Copy entrypoint script
 COPY --from=builder /app/scripts/entrypoint.sh ./entrypoint.sh
