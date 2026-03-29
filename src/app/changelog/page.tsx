@@ -4,7 +4,21 @@ import { useState, useEffect } from "react";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import Link from "next/link";
-import { Lock } from "lucide-react";
+import { Lock, Info } from "lucide-react";
+
+function Tooltip({ text, children }: { text: string; children: React.ReactNode }) {
+  return (
+    <span className="relative group/tip inline-flex items-center gap-1 cursor-help">
+      {children}
+      <Info className="w-3 h-3 text-muted-foreground/40 group-hover/tip:text-[#0259DD] transition-colors inline" />
+      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 bg-[#0A1628] text-white text-[11px] font-normal leading-relaxed p-2.5 opacity-0 invisible group-hover/tip:opacity-100 group-hover/tip:visible transition-all z-50 pointer-events-none group-hover/tip:pointer-events-auto">
+        {text}
+        <span className="block mt-1.5"><Link href="/landscape" className="text-[#84AFFB] hover:text-white text-[10px] font-semibold uppercase tracking-wider">Learn more →</Link></span>
+        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#0A1628] rotate-45" />
+      </span>
+    </span>
+  );
+}
 
 interface ChangelogEntry {
   id: number;
@@ -17,31 +31,60 @@ interface ChangelogEntry {
   detectedAt: string;
 }
 
-const FIELD_LABELS: Record<string, string> = {
-  platform: "Platform",
-  cdn: "CDN",
-  waf: "WAF",
-  blocked_agent_count: "Blocked Agents",
-  json_ld: "JSON-LD",
-  schema_product: "Schema Product",
-  open_graph: "Open Graph",
-  product_feed: "Product Feed",
-  llms_txt: "llms.txt",
-  ucp: "UCP",
+const FIELD_INFO: Record<string, { label: string; tooltip: string }> = {
+  platform: { label: "Platform", tooltip: "The e-commerce platform powering the site (Shopify, Magento, etc)." },
+  cdn: { label: "CDN", tooltip: "Content Delivery Network — the infrastructure serving the site's content globally." },
+  waf: { label: "WAF", tooltip: "Web Application Firewall — security layer that can block AI agents even if robots.txt allows them." },
+  blocked_agent_count: { label: "Blocked Agents", tooltip: "The number of AI shopping agents (out of 8) that are blocked from accessing this site." },
+  json_ld: { label: "JSON-LD", tooltip: "Structured data markup that helps AI agents understand products, prices, and availability on the page." },
+  schema_product: { label: "Schema Product", tooltip: "Schema.org Product markup — the standard way to describe products so machines can read them." },
+  open_graph: { label: "Open Graph", tooltip: "Meta tags used by social platforms and AI agents to understand page content (title, image, description)." },
+  product_feed: { label: "Product Feed", tooltip: "A machine-readable file listing all products (Google Shopping, Shopify JSON, etc). Essential for feed-based AI agents." },
+  llms_txt: { label: "llms.txt", tooltip: "A file that tells AI language models what the site is about and how to interact with it. A new standard." },
+  ucp: { label: "UCP", tooltip: "Universal Commerce Protocol — an emerging standard for AI agents to interact with e-commerce sites programmatically." },
 };
 
-function formatField(field: string): string {
+const VALUE_TOOLTIPS: Record<string, string> = {
+  allowed: "The site explicitly permits this AI agent to access its content.",
+  blocked: "The site blocks this AI agent — either via robots.txt or by detecting and rejecting its requests.",
+  no_rule: "The site's robots.txt doesn't mention this agent. By default, access is allowed but not guaranteed.",
+  unknown: "We couldn't determine access status — the site may have timed out or returned an unexpected response.",
+  "none-detected": "No WAF or bot protection system was detected on this site.",
+};
+
+function formatField(field: string): React.ReactNode {
   if (field.startsWith("agent_access_")) {
     const agent = field.replace("agent_access_", "");
-    return `${agent} access`;
+    return (
+      <Tooltip text={`Whether the AI agent "${agent}" can access this site. Determined by robots.txt rules and real HTTP access testing.`}>
+        <span>{agent} access</span>
+      </Tooltip>
+    );
   }
-  return FIELD_LABELS[field] ?? field;
+  const info = FIELD_INFO[field];
+  if (info) {
+    return (
+      <Tooltip text={info.tooltip}>
+        <span>{info.label}</span>
+      </Tooltip>
+    );
+  }
+  return field;
 }
 
-function formatValue(value: string | null): string {
+function formatValue(value: string | null): React.ReactNode {
   if (value === null) return "none";
   if (value === "true" || value === "1") return "detected";
   if (value === "false" || value === "0") return "not detected";
+
+  const tip = VALUE_TOOLTIPS[value];
+  if (tip) {
+    return (
+      <Tooltip text={tip}>
+        <span>{value}</span>
+      </Tooltip>
+    );
+  }
   return value;
 }
 
