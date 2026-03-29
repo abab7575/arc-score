@@ -80,7 +80,7 @@ export default function SubmitPage() {
                     href="/pricing"
                     className="block w-full py-3 bg-[#FF6648] text-white text-sm font-bold hover:bg-[#e85a3f] transition-colors text-center"
                   >
-                    Skip the wait — Get full report now ($99/mo)
+                    Skip the wait — Get full report now ($149/mo)
                   </Link>
                   <Link
                     href="/"
@@ -240,7 +240,7 @@ export default function SubmitPage() {
                   <div>
                     <p className="text-sm font-semibold text-foreground">Full Findings & Action Plan</p>
                     <p className="text-xs text-muted-foreground">Every issue found, prioritized by impact, with exactly how to fix each one.</p>
-                    <span className="spec-label text-[8px] text-[#0259DD] mt-1 inline-block">MONITOR PLAN — $99/MO</span>
+                    <span className="spec-label text-[8px] text-[#0259DD] mt-1 inline-block">PRO PLAN — $149/MO</span>
                   </div>
                 </div>
 
@@ -251,7 +251,7 @@ export default function SubmitPage() {
                   <div>
                     <p className="text-sm font-semibold text-foreground">Agent Journey Replays</p>
                     <p className="text-xs text-muted-foreground">Watch exactly where each AI agent got stuck on your site. Screenshots and step-by-step.</p>
-                    <span className="spec-label text-[8px] text-[#0259DD] mt-1 inline-block">MONITOR PLAN — $99/MO</span>
+                    <span className="spec-label text-[8px] text-[#0259DD] mt-1 inline-block">PRO PLAN — $149/MO</span>
                   </div>
                 </div>
 
@@ -262,7 +262,7 @@ export default function SubmitPage() {
                   <div>
                     <p className="text-sm font-semibold text-foreground">Weekly Monitoring & Alerts</p>
                     <p className="text-xs text-muted-foreground">Automated weekly rescans. Get alerted when your score changes or new issues appear.</p>
-                    <span className="spec-label text-[8px] text-[#0259DD] mt-1 inline-block">MONITOR PLAN — $99/MO</span>
+                    <span className="spec-label text-[8px] text-[#0259DD] mt-1 inline-block">PRO PLAN — $149/MO</span>
                   </div>
                 </div>
               </div>
@@ -278,7 +278,7 @@ export default function SubmitPage() {
             {/* Social proof */}
             <div className="border border-gray-200 bg-[#FFF8F0] p-5">
               <div className="flex items-center gap-2 mb-3">
-                <span className="data-num text-2xl font-black text-foreground">276+</span>
+                <span className="data-num text-2xl font-black text-foreground">1,000+</span>
                 <span className="text-sm text-muted-foreground">brands already tracked</span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">

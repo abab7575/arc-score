@@ -28,7 +28,7 @@ export function PaywallGate({ title, description, itemCount }: PaywallGateProps)
               href="/pricing"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#0259DD] text-white text-sm font-semibold hover:bg-[#0259DD]/90 transition-colors"
             >
-              Unlock Full Report — $99/mo
+              Unlock Full Report — $149/mo
             </Link>
             <Link
               href="/login"

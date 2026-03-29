@@ -152,7 +152,7 @@ The good news: most of these are quick fixes. The top 3 alone could
 get you to {{estimatedScore}}/100.
 
 If you want the full findings with fix instructions, that's on our
-Monitor plan ($99/mo) — but the score and category breakdown are free
+Pro plan ($149/mo) — but the score and category breakdown are free
 to check right now.
 
 Best,

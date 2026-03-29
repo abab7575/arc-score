@@ -175,7 +175,7 @@ export function InstantCheck() {
         </div>
 
         <div className="flex items-center gap-4 mt-3 text-xs text-[#0A1628]/40">
-          <span>276 brands tracked</span>
+          <span>1,000+ brands tracked</span>
           <span className="w-1 h-1 rounded-full bg-[#0A1628]/20" />
           <span>Real data</span>
           <span className="w-1 h-1 rounded-full bg-[#0A1628]/20" />

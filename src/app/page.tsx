@@ -107,7 +107,7 @@ export default function HomePage() {
     "@type": "Organization",
     name: "ARC Report",
     url: "https://arcreport.ai",
-    description: "AI agent intelligence for e-commerce. Daily scanning of 500+ brands for robots.txt policies, user-agent access, structured data, and platform detection.",
+    description: "AI agent intelligence for e-commerce. Daily scanning of 1,000+ brands for robots.txt policies, user-agent access, structured data, and platform detection.",
   };
 
   return (

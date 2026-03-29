@@ -40,7 +40,7 @@ export function WhatsNext() {
           </h3>
           <p className="text-xs text-muted-foreground leading-relaxed">
             Automated weekly scans with trend tracking and email alerts when your
-            score changes. $99/mo.
+            score changes. $149/mo.
           </p>
         </div>
 

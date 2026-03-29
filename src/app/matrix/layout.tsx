@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "AI Agent Access Matrix — 276 Brands | ARC Report",
+  title: "AI Agent Access Matrix — 1,000+ Brands | ARC Report",
   description:
-    "Which AI shopping agents can access the top e-commerce brands? Real-time robots.txt analysis across 276 brands. Free, open data from ARC Report.",
+    "Which AI shopping agents can access the top e-commerce brands? Real-time robots.txt analysis across 1,000+ brands. Free, open data from ARC Report.",
 };
 
 export default function MatrixLayout({
