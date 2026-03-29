@@ -239,7 +239,7 @@ export const lightweightScans = sqliteTable("lightweight_scans", {
   // Full result as JSON for detail view
   resultJson: text("result_json").notNull(),
 
-  // Per-agent status as compact JSON: Record<agentLabel, "allowed"|"blocked"|"no_rule">
+  // Per-agent status: "allowed"|"blocked" (policy)|"no_rule"|"restricted" (WAF)|"inconclusive"
   agentStatusJson: text("agent_status_json").notNull(),
 
   scannedAt: text("scanned_at").notNull().$defaultFn(() => new Date().toISOString()),

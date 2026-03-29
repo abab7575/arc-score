@@ -325,15 +325,28 @@ export function insertLightweightScan(brandId: number, result: LightweightScanIn
     }
   }
 
-  // Enrich agent status with UA test results (more authoritative than robots.txt)
+  // Enrich agent status with UA test results
+  // Distinguish policy blocks (robots.txt) from WAF/security restrictions (HTTP 403 without robots.txt rule)
   for (const test of result.userAgentTests) {
-    if (test.verdict === "blocked" && agentStatus[test.userAgent] !== "blocked") {
-      agentStatus[test.userAgent] = "blocked";
+    if (test.verdict === "blocked") {
+      if (agentStatus[test.userAgent] === "blocked") {
+        // robots.txt already says blocked, HTTP confirms — keep as "blocked" (policy)
+      } else {
+        // No robots.txt block but HTTP returns 403 — this is a WAF/security restriction, not policy
+        agentStatus[test.userAgent] = "restricted";
+      }
+    } else if (test.verdict === "unknown") {
+      // Timeout or error — mark as inconclusive, don't change existing status
+      if (agentStatus[test.userAgent] === "no_rule") {
+        agentStatus[test.userAgent] = "inconclusive";
+      }
     }
+    // If verdict is "allowed" or "degraded", keep the robots.txt-derived status
   }
 
   const blockedCount = Object.values(agentStatus).filter(v => v === "blocked").length;
-  const allowedCount = Object.values(agentStatus).filter(v => v !== "blocked").length;
+  const restrictedCount = Object.values(agentStatus).filter(v => v === "restricted").length;
+  const allowedCount = Object.values(agentStatus).filter(v => v !== "blocked" && v !== "restricted").length;
 
   return db
     .insert(schema.lightweightScans)
