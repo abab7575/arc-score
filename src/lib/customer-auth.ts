@@ -88,8 +88,14 @@ function fromBase64Url(str: string): Uint8Array {
   return bytes;
 }
 
+function getSessionSecret(): string {
+  const secret = process.env.CUSTOMER_SESSION_SECRET || process.env.ADMIN_SESSION_SECRET;
+  if (!secret) throw new Error("No session secret configured (CUSTOMER_SESSION_SECRET or ADMIN_SESSION_SECRET)");
+  return secret;
+}
+
 async function hmacSign(data: string): Promise<string> {
-  const secret = process.env.CUSTOMER_SESSION_SECRET ?? process.env.ADMIN_SESSION_SECRET!;
+  const secret = getSessionSecret();
   const enc = new TextEncoder();
   const key = await crypto.subtle.importKey(
     "raw", enc.encode(secret),
@@ -100,7 +106,7 @@ async function hmacSign(data: string): Promise<string> {
 }
 
 async function hmacVerify(data: string, signature: string): Promise<boolean> {
-  const secret = process.env.CUSTOMER_SESSION_SECRET ?? process.env.ADMIN_SESSION_SECRET!;
+  const secret = getSessionSecret();
   const enc = new TextEncoder();
   const key = await crypto.subtle.importKey(
     "raw", enc.encode(secret),
@@ -123,18 +129,31 @@ export async function createCustomerSession(customerId: number): Promise<string>
 export async function verifyCustomerSession(token: string): Promise<number | null> {
   if (!token) return null;
   const parts = token.split(".");
-  if (parts.length !== 2) return null;
+  if (parts.length !== 2) {
+    console.error("[auth] Invalid token format — expected 2 parts, got", parts.length);
+    return null;
+  }
 
   const [data, sig] = parts;
-  const valid = await hmacVerify(data, sig);
-  if (!valid) return null;
-
   try {
+    const valid = await hmacVerify(data, sig);
+    if (!valid) {
+      console.error("[auth] HMAC verification failed — secret mismatch?", {
+        hasCustomerSecret: !!process.env.CUSTOMER_SESSION_SECRET,
+        hasAdminSecret: !!process.env.ADMIN_SESSION_SECRET,
+      });
+      return null;
+    }
+
     const padded = data.replace(/-/g, "+").replace(/_/g, "/");
     const payload = JSON.parse(atob(padded));
-    if (payload.exp < Date.now()) return null;
+    if (payload.exp < Date.now()) {
+      console.error("[auth] Token expired");
+      return null;
+    }
     return payload.cid as number;
-  } catch {
+  } catch (error) {
+    console.error("[auth] Token verification error:", error);
     return null;
   }
 }

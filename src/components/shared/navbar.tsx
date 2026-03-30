@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AdminLink } from "./admin-link";
+import { AuthNavLink } from "./auth-nav-link";
 
 export function Navbar() {
   return (
@@ -58,12 +59,7 @@ export function Navbar() {
               Pricing
             </Link>
             <AdminLink />
-            <Link
-              href="/login"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Log In
-            </Link>
+            <AuthNavLink />
           </div>
         </div>
       </nav>
