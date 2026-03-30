@@ -27,7 +27,7 @@ export default function LoginPage() {
 
       const data = await res.json();
       if (res.ok) {
-        router.push("/account");
+        router.push("/");
       } else {
         setError(data.error || "Login failed");
       }
