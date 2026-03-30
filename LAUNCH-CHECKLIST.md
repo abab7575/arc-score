@@ -64,9 +64,9 @@
 
 ## DECIDE (need your input)
 
-- [ ] **I5. Final pricing:** Code says $99/$299. Memory says $79/$249. Pricing page shows $99/$299 monthly. Which is it?
+- [ ] **I5. Final pricing:** Settled on single Pro tier at $149/mo. Verify pricing page reflects this.
 - [ ] **Custom domain:** Do you have one? Want to set one up?
-- [ ] **Agency tier:** Add $599/mo for 20 brands to pricing page?
+- [ ] **Agency tier:** Future consideration (single Pro tier at $149/mo for now)
 
 ---
 

@@ -31,7 +31,7 @@
 | **Scrunch** | AEO/GEO visibility platform | $250-500/mo | Live, broader focus |
 | **Semrush AI Toolkit** | AI visibility add-on | $99/mo add-on | Live, SEO-first |
 | **GrackerAI** | AI visibility intelligence | $2,000+/mo | Live, enterprise |
-| **Robot Shopper** | 5-agent scan + 10 scoring lenses + action plan | $79-249/mo | **Live, 276 brands scored** |
+| **Robot Shopper** | 5-agent scan + 10 scoring lenses + action plan | $149/mo (Pro) | **Live, 276 brands scored** |
 
 **Our edge:** We're the only tool that sends actual AI agents to shop the site (browser, data, accessibility, visual, feed) and scores against 10 real agent profiles. Everyone else does content/visibility analysis. We test the transaction.
 
@@ -55,7 +55,7 @@
 | CRO services | $2,000-5,000 | Agency/tool |
 | **Total SaaS stack** | **$2,000-5,000** | Before agencies |
 
-**Robot Shopper at $79-249/mo is a no-brainer add to this stack.**
+**Robot Shopper at $149/mo (Pro) is a no-brainer add to this stack.**
 
 ---
 
@@ -84,7 +84,7 @@
 - They do NOT want to hire an AI consultant or learn protocols
 - They want a report they can hand to their dev or agency and say "fix these"
 
-**Willingness to pay:** $79-249/mo is in their comfort zone. They spend $200/mo on Hotjar, $300/mo on SEO tools. This fits.
+**Willingness to pay:** $149/mo (Pro) is in their comfort zone. They spend $200/mo on Hotjar, $300/mo on SEO tools. This fits.
 
 **How they find us:**
 - Google: "is my site ready for chatgpt shopping" / "ai agent ecommerce optimization"
@@ -121,7 +121,7 @@
 - Continuous monitoring with Slack/email alerts
 - Custom agent testing (test with THEIR product URLs)
 
-**Willingness to pay:** $2,000-10,000/mo. Our $249 Team plan is too cheap.
+**Willingness to pay:** $2,000-10,000/mo. Our $149 Pro plan is too cheap.
 
 **Verdict: FUTURE OPPORTUNITY. We need an Enterprise tier ($2K+/mo) but not for the $30K MRR sprint. Too long a sales cycle.**
 
@@ -149,7 +149,7 @@
 
 **Willingness to pay:** $500-2,000/mo for multi-brand access
 
-**Verdict: HIGH VALUE CHANNEL. An Agency plan ($499/mo for 20 brands) could drive significant MRR and also bring brand clients who upgrade to direct plans.**
+**Verdict: HIGH VALUE CHANNEL. A future Agency plan could drive significant MRR and also bring brand clients who upgrade to direct Pro plans ($149/mo).**
 
 ---
 
@@ -232,35 +232,17 @@
 
 ### Current Pricing
 - Free: Public scores (lead gen)
-- Monitor: $79/mo (1 brand, full findings)
-- Team: $249/mo (5 brands)
+- Pro: $149/mo (full findings, action plan, brand claiming)
 
 ### Path to $30K MRR
 
-**Scenario: Blended tiers**
+**Scenario: Single Pro tier**
 
 | Tier | Price | Customers Needed | Revenue |
 |------|-------|-----------------|---------|
-| Monitor | $79/mo | 150 | $11,850 |
-| Team | $249/mo | 50 | $12,450 |
-| Agency | $499/mo | 10 | $4,990 |
-| **Total** | | **210 customers** | **$29,290** |
+| Pro | $149/mo | 202 | $30,098 |
 
-**Key insight:** We need ~210 paying customers. At 2% free-to-paid conversion, that's ~10,500 free users who've checked their score.
-
-### New Tier: Agency Plan ($499/mo)
-
-| Feature | Monitor ($79) | Team ($249) | Agency ($499) |
-|---------|--------------|-------------|---------------|
-| Brands monitored | 1 | 5 | 20 |
-| Full findings & action plan | Yes | Yes | Yes |
-| Agent journey replays | Yes | Yes | Yes |
-| Weekly re-scans | Yes | Yes | Yes |
-| Competitor benchmarking | No | 3 competitors | Unlimited |
-| PDF export | No | Yes | Yes |
-| API access | No | No | Yes |
-| Priority support | No | Email | Slack channel |
-| Custom scan scheduling | No | No | Yes |
+**Key insight:** We need ~202 paying customers. At 2% free-to-paid conversion, that's ~10,100 free users who've checked their score.
 
 ---
 
@@ -452,27 +434,21 @@ Robot Shopper is the first mover in this category.
 
 ### Month 1-2: Foundation
 - [ ] 500 free users checking scores
-- [ ] 20 Monitor subscribers ($1,580 MRR)
-- [ ] 5 Team subscribers ($1,245 MRR)
+- [ ] 20 Pro subscribers ($2,980 MRR)
 - [ ] 50 LinkedIn posts published
 - [ ] 8 blog posts published
 - [ ] 1 agency partnership signed
 
 ### Month 3-4: Growth
 - [ ] 2,000 free users
-- [ ] 60 Monitor subscribers ($4,740 MRR)
-- [ ] 20 Team subscribers ($4,980 MRR)
-- [ ] 3 Agency subscribers ($1,497 MRR)
-- [ ] ~$11K MRR
+- [ ] 75 Pro subscribers ($11,175 MRR)
 - [ ] 1 conference speaking slot
 - [ ] 3 newsletter sponsorships
 
 ### Month 5-6: Scale
 - [ ] 5,000 free users
-- [ ] 150 Monitor subscribers ($11,850 MRR)
-- [ ] 50 Team subscribers ($12,450 MRR)
-- [ ] 10 Agency subscribers ($4,990 MRR)
-- [ ] **$29,290 MRR** 🎯
+- [ ] 202 Pro subscribers ($30,098 MRR)
+- [ ] **~$30K MRR**
 
 ### Key Conversion Metrics to Track
 - Homepage → Free score check: 30%+
@@ -486,7 +462,7 @@ Robot Shopper is the first mover in this category.
 ## Part 8: What to Build Next (Product Roadmap for GTM)
 
 ### Must-have for $30K MRR
-1. **Agency plan** ($499/mo, 20 brands) — unlocks a high-value segment
+1. **Grow Pro subscriber base** ($149/mo) — single tier simplifies conversion
 2. **PDF export** — agencies and teams need shareable reports for stakeholders
 3. **Competitor benchmarking** — "How do I compare to X?" drives urgency
 4. **Email drip sequences** — convert free users to paid over 7-14 days
@@ -502,7 +478,7 @@ Robot Shopper is the first mover in this category.
 
 ## Part 9: Immediate Next Actions (This Week)
 
-1. **Add Agency pricing tier** to the pricing page ($499/mo, 20 brands)
+1. **Drive Pro conversions** at $149/mo
 2. **Start LinkedIn posting** — use Content Engine to generate daily posts
 3. **Write the "State of AI Agent Readiness" blog post** using real index data
 4. **Set up email drip** — 5-email sequence for email capture subscribers

@@ -46,6 +46,9 @@ export async function POST(request: NextRequest) {
     if (stripeSessionId) {
       try {
         const session = await stripe.checkout.sessions.retrieve(stripeSessionId);
+        if (session.customer_email && session.customer_email !== email) {
+          return NextResponse.json({ error: "Email must match the email used at checkout" }, { status: 400 });
+        }
         if (session.customer) {
           stripeCustomerId = session.customer as string;
         }
