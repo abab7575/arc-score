@@ -107,7 +107,7 @@ export default function PricingPage() {
             </div>
 
             <div className="mb-6">
-              <span className="text-3xl font-black text-foreground">$149</span>
+              <span className="text-3xl font-black text-foreground">$100</span>
               <span className="text-muted-foreground ml-1">/mo</span>
             </div>
 

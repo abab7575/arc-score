@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Pricing — ARC Report",
   description:
-    "AI agent readiness monitoring for e-commerce. Free scores for every brand. Full diagnostics from $149/mo.",
+    "Agent access intelligence for e-commerce. Free index, always. Pro at $100/mo adds 90+ days history, full changelog, CSV/JSON exports, API access, and email alerts.",
 };
 
 export default function PricingLayout({

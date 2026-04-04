@@ -33,17 +33,17 @@ export function IndexHero({ brandCount }: { brandCount?: number }) {
           </div>
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0A1628] tracking-tight leading-tight mb-4">
-            Is your brand visible to<br />
-            <span className="text-[#0259DD]">AI shopping agents?</span>
+            Agent access intelligence for<br />
+            <span className="text-[#0259DD]">{brandCount ? `${brandCount.toLocaleString()}+` : "1,000+"} commerce sites.</span>
           </h1>
 
           <p className="text-base sm:text-lg text-[#0A1628]/60 max-w-2xl mx-auto mb-3">
-            ChatGPT, Perplexity, and Claude now recommend products directly.
-            We scan {brandCount ? `${brandCount.toLocaleString()}+` : "1,000+"} e-commerce brands daily so you can see exactly what your competitors are doing — and what you&apos;re missing.
+            Which sites accept which agents. Which platforms they run on. What they publish.
+            What&apos;s changing. Scanned daily, published publicly.
           </p>
 
           <p className="text-sm text-[#0A1628]/40 max-w-xl mx-auto mb-8 font-mono">
-            {brandCount ? brandCount.toLocaleString() : "1,000+"} brands tracked &middot; 12 AI agents tested &middot; Updated every 24 hours
+            {brandCount ? brandCount.toLocaleString() : "1,000+"} brands &middot; 9 agents tested &middot; updated every 24h
           </p>
 
           {/* Signal badges */}
@@ -69,14 +69,14 @@ export function IndexHero({ brandCount }: { brandCount?: number }) {
               href="/matrix"
               className="text-sm font-bold text-white bg-[#0259DD] hover:bg-[#0247b5] px-6 py-3 transition-colors relative group/btn"
             >
-              Check any brand free
+              Browse the index
               <span className="absolute inset-0 bg-[#0A1628] -z-10 translate-x-[2px] translate-y-[2px] group-hover/btn:translate-x-[3px] group-hover/btn:translate-y-[3px] transition-transform" />
             </Link>
             <Link
               href="/pricing"
               className="text-sm font-semibold text-[#0A1628] border-2 border-[#0A1628] px-6 py-2.5 hover:bg-[#0A1628] hover:text-white transition-colors"
             >
-              Get Pro alerts
+              API &amp; history
             </Link>
           </div>
         </div>
