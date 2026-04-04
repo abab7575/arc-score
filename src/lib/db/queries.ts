@@ -462,6 +462,83 @@ export function getChangelogForBrand(brandId: number, limit: number = 50) {
     .all();
 }
 
+// ── Weekly Intelligence Queries ──────────────────────────────────────
+
+/** Top N brands by changelog entry count in the last `days` days. */
+export function getTopMovers(days: number, limit: number = 20) {
+  const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+  return db
+    .select({
+      brandId: schema.changelogEntries.brandId,
+      changeCount: sql<number>`count(*)`.as("change_count"),
+      brandSlug: schema.brands.slug,
+      brandName: schema.brands.name,
+      brandCategory: schema.brands.category,
+    })
+    .from(schema.changelogEntries)
+    .innerJoin(schema.brands, eq(schema.changelogEntries.brandId, schema.brands.id))
+    .where(gte(schema.changelogEntries.detectedAt, cutoff))
+    .groupBy(schema.changelogEntries.brandId)
+    .orderBy(sql`change_count DESC`)
+    .limit(limit)
+    .all();
+}
+
+/** Changelog entries matching a field pattern (SQL LIKE) in the last `days` days. */
+export function getChangelogByFieldPattern(
+  fieldPattern: string,
+  days: number,
+  limit: number = 50,
+  newValueFilter?: string,
+) {
+  const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+  const conditions = [
+    sql`${schema.changelogEntries.field} LIKE ${fieldPattern}`,
+    gte(schema.changelogEntries.detectedAt, cutoff),
+  ];
+  if (newValueFilter !== undefined) {
+    conditions.push(eq(schema.changelogEntries.newValue, newValueFilter));
+  }
+
+  return db
+    .select({
+      id: schema.changelogEntries.id,
+      brandId: schema.changelogEntries.brandId,
+      field: schema.changelogEntries.field,
+      oldValue: schema.changelogEntries.oldValue,
+      newValue: schema.changelogEntries.newValue,
+      detectedAt: schema.changelogEntries.detectedAt,
+      brandSlug: schema.brands.slug,
+      brandName: schema.brands.name,
+      brandCategory: schema.brands.category,
+    })
+    .from(schema.changelogEntries)
+    .innerJoin(schema.brands, eq(schema.changelogEntries.brandId, schema.brands.id))
+    .where(and(...conditions))
+    .orderBy(desc(schema.changelogEntries.detectedAt))
+    .limit(limit)
+    .all();
+}
+
+/** Aggregate totals for the weekly intelligence surface. */
+export function getWeeklyTotals(days: number) {
+  const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+  const total = db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.changelogEntries)
+    .where(gte(schema.changelogEntries.detectedAt, cutoff))
+    .get();
+  const uniqueBrands = db
+    .select({ count: sql<number>`count(DISTINCT brand_id)` })
+    .from(schema.changelogEntries)
+    .where(gte(schema.changelogEntries.detectedAt, cutoff))
+    .get();
+  return {
+    totalChanges: total?.count ?? 0,
+    brandsMoving: uniqueBrands?.count ?? 0,
+  };
+}
+
 export function insertChangelogEntry(brandId: number, field: string, oldValue: string | null, newValue: string | null) {
   return db
     .insert(schema.changelogEntries)
