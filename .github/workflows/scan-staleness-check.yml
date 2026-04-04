@@ -1,0 +1,55 @@
+name: Scan Staleness Check
+
+# Runs every 6 hours. Fails (and sends a GitHub workflow-failure email to repo
+# watchers) if the most recent successful scan completed more than 26 hours ago.
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+env:
+  BASE_URL: https://www.arcreport.ai
+  STALE_THRESHOLD_HOURS: 26
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Check last scan completion
+        run: |
+          set -e
+
+          RESPONSE=$(curl -s --max-time 30 "${BASE_URL}/api/scan-health")
+          echo "Health response: $RESPONSE"
+
+          COMPLETED=$(echo "$RESPONSE" | python3 -c "
+          import json, sys
+          d = json.load(sys.stdin)
+          latest = d.get('latestRun') or {}
+          print((latest.get('completedAt') or '') if latest.get('status') == 'completed' else '')
+          ")
+
+          if [ -z "$COMPLETED" ]; then
+            echo "::error::No completed scan run found on production. Last scan never finished."
+            exit 1
+          fi
+
+          AGE_HOURS=$(python3 -c "
+          from datetime import datetime, timezone
+          now = datetime.now(timezone.utc)
+          ts = datetime.fromisoformat('${COMPLETED}'.replace('Z', '+00:00'))
+          print(f'{(now - ts).total_seconds() / 3600:.1f}')
+          ")
+
+          echo "Last successful scan: ${COMPLETED} (${AGE_HOURS}h ago)"
+
+          STALE=$(python3 -c "print('yes' if float('${AGE_HOURS}') > ${STALE_THRESHOLD_HOURS} else 'no')")
+
+          if [ "$STALE" = "yes" ]; then
+            echo "::error::Scan is stale: ${AGE_HOURS}h since last completion (threshold: ${STALE_THRESHOLD_HOURS}h)"
+            exit 1
+          fi
+
+          echo "✓ Scan freshness OK (${AGE_HOURS}h < ${STALE_THRESHOLD_HOURS}h threshold)"
