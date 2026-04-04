@@ -134,5 +134,10 @@ for (const stmt of [
   try { sqlite.exec(stmt); } catch { /* column exists */ }
 }
 
+// Auto-migrate: add heartbeat column so dead scan processes can be detected
+try {
+  sqlite.exec(`ALTER TABLE scan_runs ADD COLUMN last_heartbeat_at TEXT`);
+} catch { /* column exists */ }
+
 export const db = drizzle(sqlite, { schema });
 export { schema };

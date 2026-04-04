@@ -304,6 +304,7 @@ export const scanRuns = sqliteTable("scan_runs", {
   driftReport: text("drift_report"), // JSON drift report from post-run anomaly detection
   startedAt: text("started_at"),
   completedAt: text("completed_at"),
+  lastHeartbeatAt: text("last_heartbeat_at"), // updated during scan so dead processes can be detected
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 

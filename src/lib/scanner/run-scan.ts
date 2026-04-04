@@ -16,9 +16,10 @@ import {
 import { processChangelog, cleanupRevertedPendingChanges } from "./changelog-engine";
 import { runDriftChecks, type DriftReport } from "./drift-detector";
 
-const STALE_RUN_THRESHOLD_MS = 30 * 60 * 1000; // 30 min
+const STALE_HEARTBEAT_MS = 3 * 60 * 1000; // 3 min without heartbeat = dead
 const PER_BRAND_TIMEOUT_MS = 25_000;
 const DEFAULT_CONCURRENCY = 25;
+const HEARTBEAT_INTERVAL_MS = 30_000; // update heartbeat at least every 30s
 
 export interface ScanSummary {
   runId: number;
@@ -35,7 +36,9 @@ export interface ScanSummary {
  * Called at the start of a new run so stuck state never blocks future scans.
  */
 function abandonStaleRuns(): number {
-  const cutoff = new Date(Date.now() - STALE_RUN_THRESHOLD_MS).toISOString();
+  // A run is stale if its heartbeat is older than STALE_HEARTBEAT_MS.
+  // For runs with no heartbeat yet, fall back to startedAt/createdAt.
+  const cutoff = new Date(Date.now() - STALE_HEARTBEAT_MS).toISOString();
 
   const stale = db
     .select()
@@ -43,7 +46,7 @@ function abandonStaleRuns(): number {
     .where(
       and(
         eq(schema.scanRuns.status, "running"),
-        sql`COALESCE(started_at, created_at) < ${cutoff}`,
+        sql`COALESCE(last_heartbeat_at, started_at, created_at) < ${cutoff}`,
       ),
     )
     .all();
@@ -58,7 +61,9 @@ function abandonStaleRuns(): number {
       })
       .where(eq(schema.scanRuns.id, run.id))
       .run();
-    console.log(`[run-scan] Abandoned stale run #${run.id} (started ${run.startedAt})`);
+    console.log(
+      `[run-scan] Abandoned stale run #${run.id} (last heartbeat: ${run.lastHeartbeatAt ?? run.startedAt ?? "never"})`,
+    );
   }
 
   return stale.length;
@@ -106,16 +111,27 @@ export async function runScanOnce(options: { concurrency?: number } = {}): Promi
   }
 
   // 4. Create new run record
+  const nowIso = new Date().toISOString();
   const run = db
     .insert(schema.scanRuns)
     .values({
       scanType: "lightweight",
       status: "running",
       totalBrands: brands.length,
-      startedAt: new Date().toISOString(),
+      startedAt: nowIso,
+      lastHeartbeatAt: nowIso,
     })
     .returning()
     .get();
+
+  // Background heartbeat: refresh lastHeartbeatAt every HEARTBEAT_INTERVAL_MS
+  // so a dead process is detectable quickly.
+  const heartbeatInterval = setInterval(() => {
+    db.update(schema.scanRuns)
+      .set({ lastHeartbeatAt: new Date().toISOString() })
+      .where(eq(schema.scanRuns.id, run.id))
+      .run();
+  }, HEARTBEAT_INTERVAL_MS);
 
   console.log(`[run-scan] Run #${run.id} started: ${brands.length} brands, concurrency=${concurrency}`);
 
@@ -191,6 +207,9 @@ export async function runScanOnce(options: { concurrency?: number } = {}): Promi
 
   const workers = Array.from({ length: concurrency }, () => worker());
   await Promise.all(workers);
+
+  // Stop heartbeat once scanning is done
+  clearInterval(heartbeatInterval);
 
   // 6. Drift checks
   let driftReport: DriftReport | null = null;
