@@ -866,11 +866,11 @@ function CtaSection() {
           </Link>
           <span className="hidden sm:inline text-white/15">|</span>
           <Link
-            href="/agents"
+            href="/changelog"
             className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors"
           >
             <Eye size={14} />
-            See all 10 AI agent profiles
+            See daily changes across brands
             <ArrowRight size={12} />
           </Link>
         </div>

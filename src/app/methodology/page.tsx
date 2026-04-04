@@ -568,12 +568,11 @@ export default function MethodologyPage() {
             </div>
           </div>
           <p className="text-xs text-muted-foreground mt-4">
-            Want your brand added?{" "}
-            <Link href="/submit" className="text-[#0259DD] hover:underline">
-              Submit it here
-            </Link>
-            . We review submissions daily and add qualifying e-commerce sites
-            to the index.
+            Want your brand added? Email{" "}
+            <a href="mailto:hello@arcreport.ai" className="text-[#0259DD] hover:underline">
+              hello@arcreport.ai
+            </a>
+            . We review requests daily and add qualifying e-commerce sites to the index.
           </p>
         </section>
 
