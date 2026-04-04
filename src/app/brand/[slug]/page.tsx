@@ -1,24 +1,9 @@
 import { notFound } from "next/navigation";
-import { cookies } from "next/headers";
+import Link from "next/link";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
-import { BrandHeader } from "@/components/brand/brand-header";
-import { ScoreTrendChart } from "@/components/brand/score-trend-chart";
-import { ScanHistory } from "@/components/brand/scan-history";
-import { ScoreHero } from "@/components/report/score-hero";
-import { ScoreBreakdown } from "@/components/report/score-breakdown";
-import { AgentJourneys } from "@/components/report/agent-journeys";
-import { FindingsSection } from "@/components/report/findings-section";
-import { ActionPlan } from "@/components/report/action-plan";
-import { AgentCompatibility } from "@/components/report/agent-compatibility";
-import { PaywallGate } from "@/components/report/paywall-gate";
-import { getBrandBySlug, getLatestScanForBrand, getFullScanReport, getScoreHistory, getAllScansForBrand, formatPercentileComparison } from "@/lib/db/queries";
-import { BRANDS } from "@/lib/brands";
-import { verifyCustomerSession, getCustomerById, getClaimedBrands, CUSTOMER_COOKIE_NAME } from "@/lib/customer-auth";
-import { verifySessionToken, SESSION_COOKIE_NAME } from "@/lib/auth";
+import { getBrandBySlug, getLatestLightweightScan, getChangelogForBrand } from "@/lib/db/queries";
 import type { Metadata } from "next";
-import type { Grade } from "@/types/report";
-import { getGradeLabel } from "@/lib/scoring";
 
 interface BrandPageProps {
   params: Promise<{ slug: string }>;
@@ -32,18 +17,65 @@ export async function generateMetadata({ params }: BrandPageProps): Promise<Meta
   const brand = getBrandBySlug(slug);
   if (!brand) return { title: "Brand Not Found" };
 
-  const latestScan = getLatestScanForBrand(brand.id);
-  if (latestScan) {
-    return {
-      title: `${brand.name} ARC Score — ${latestScan.overallScore}/100 (Grade ${latestScan.grade})`,
-      description: `${brand.name} scores ${latestScan.overallScore}/100 on the ARC Report Agent Readiness Index. Grade ${latestScan.grade}: ${getGradeLabel(latestScan.grade as Grade)}.`,
-    };
-  }
-
   return {
-    title: `${brand.name} — ARC Report`,
-    description: `Agent readiness score for ${brand.name}. See how well AI agents can navigate ${brand.url}.`,
+    title: `${brand.name} — Agent Signals | ARC Report`,
+    description: `Latest agent-access signals, infrastructure, and structured data for ${brand.name}. Updated daily.`,
   };
+}
+
+const AGENT_ORDER = [
+  "GPTBot",
+  "ChatGPT-User",
+  "ClaudeBot",
+  "Claude-Web",
+  "PerplexityBot",
+  "Google-Extended",
+  "CCBot",
+  "Amazonbot",
+  "Bingbot",
+];
+
+function statusStyle(status: string): { label: string; color: string } {
+  switch (status) {
+    case "allowed":
+      return { label: "allowed", color: "#059669" };
+    case "blocked":
+      return { label: "blocked", color: "#DC2626" };
+    case "restricted":
+      return { label: "restricted", color: "#D97706" };
+    case "no_rule":
+      return { label: "no rule", color: "#6B7280" };
+    case "inconclusive":
+      return { label: "inconclusive", color: "#9CA3AF" };
+    default:
+      return { label: status, color: "#9CA3AF" };
+  }
+}
+
+function Signal({ label, present, detail }: { label: string; present: boolean; detail?: string }) {
+  return (
+    <div className="flex items-center justify-between py-2 border-b border-gray-200">
+      <span className="text-sm text-foreground">{label}</span>
+      <div className="flex items-center gap-2">
+        {detail && <span className="text-xs font-mono text-muted-foreground">{detail}</span>}
+        <span
+          className="text-xs font-mono font-bold uppercase tracking-wider"
+          style={{ color: present ? "#059669" : "#9CA3AF" }}
+        >
+          {present ? "detected" : "not detected"}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function Field({ label, value }: { label: string; value: string | null | undefined }) {
+  return (
+    <div className="flex items-center justify-between py-2 border-b border-gray-200">
+      <span className="text-sm text-foreground">{label}</span>
+      <span className="text-xs font-mono text-muted-foreground">{value || "unknown"}</span>
+    </div>
+  );
 }
 
 export default async function BrandPage({ params }: BrandPageProps) {
@@ -51,155 +83,171 @@ export default async function BrandPage({ params }: BrandPageProps) {
   const brand = getBrandBySlug(slug);
   if (!brand) notFound();
 
-  const latestScan = getLatestScanForBrand(brand.id);
-  const report = latestScan ? getFullScanReport(latestScan.id) : null;
-  const history = getScoreHistory(brand.id, 30);
-  const allScans = getAllScansForBrand(brand.id);
+  const scan = getLatestLightweightScan(brand.id);
+  const changelog = getChangelogForBrand(brand.id, 10);
 
-  // Check if user has paid access to this brand
-  let hasFullAccess = false;
-  try {
-    const cookieStore = await cookies();
-
-    // Admin gets full access to all brands
-    const adminToken = cookieStore.get(SESSION_COOKIE_NAME)?.value;
-    if (adminToken && (await verifySessionToken(adminToken))) {
-      hasFullAccess = true;
+  let agentStatus: Record<string, string> = {};
+  if (scan?.agentStatusJson) {
+    try {
+      agentStatus = JSON.parse(scan.agentStatusJson) as Record<string, string>;
+    } catch {
+      // ignore
     }
-
-    // Customer access: paid plan + claimed brand
-    if (!hasFullAccess) {
-      const token = cookieStore.get(CUSTOMER_COOKIE_NAME)?.value;
-      if (token) {
-        const customerId = await verifyCustomerSession(token);
-        if (customerId) {
-          const customer = getCustomerById(customerId);
-          if (customer && customer.plan !== "free") {
-            const claims = getClaimedBrands(customerId);
-            hasFullAccess = claims.some((c) => c.brandId === brand.id);
-          }
-        }
-      }
-    }
-  } catch {
-    // Auth check failed — show free version
   }
-
-  const jsonLd = latestScan
-    ? {
-        "@context": "https://schema.org",
-        "@type": "Review",
-        name: `${brand.name} ARC Score`,
-        reviewBody: latestScan.verdict || `${brand.name} scores ${latestScan.overallScore}/100 on agent readiness.`,
-        author: {
-          "@type": "Organization",
-          name: "ARC Report",
-          url: "https://arcscore.com",
-        },
-        itemReviewed: {
-          "@type": "WebSite",
-          name: brand.name,
-          url: brand.url,
-        },
-        reviewRating: {
-          "@type": "Rating",
-          ratingValue: String(latestScan.overallScore),
-          bestRating: "100",
-          worstRating: "0",
-        },
-      }
-    : null;
 
   return (
     <div className="min-h-screen bg-background">
-      {jsonLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-      )}
       <Navbar />
-      <main className="max-w-4xl mx-auto px-4 sm:px-6">
-        <BrandHeader
-          name={brand.name}
-          url={brand.url}
-          category={brand.category}
-          scannedAt={latestScan?.scannedAt ?? null}
-        />
 
-        {report ? (
-          <>
-            {/* Always visible: Score, Trend, Categories */}
-            <ScoreHero
-              score={report.overallScore ?? 0}
-              grade={report.grade ?? "F"}
-              verdict={report.verdict ?? "Score data available."}
-              comparison={formatPercentileComparison(report.overallScore ?? 0)}
-            />
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="md:col-span-2">
-                <ScoreTrendChart
-                  data={history.map((h) => ({
-                    date: h.date,
-                    score: h.score,
-                    grade: h.grade,
-                  }))}
-                />
-              </div>
-              <div>
-                <ScanHistory scans={allScans} />
-              </div>
-            </div>
-
-            <ScoreBreakdown categories={report.categories ?? []} />
-
-            {/* Gated: Full agent compatibility, journeys, findings, action plan */}
-            {hasFullAccess ? (
-              <>
-                <AgentCompatibility scores={report.aiAgentScores} categories={report.categories ?? []} />
-                <AgentJourneys journeys={report.journeys ?? []} siteName={report.url} />
-                <FindingsSection findings={report.findings ?? []} />
-                <ActionPlan
-                  actions={report.actionPlan ?? []}
-                  currentScore={report.overallScore ?? 0}
-                  estimatedScoreAfterFixes={report.estimatedScoreAfterFixes ?? 0}
-                />
-              </>
-            ) : (
-              <>
-                <PaywallGate
-                  title="AI Agent Compatibility"
-                  description="See how this brand scores across all 10 AI shopping agents — from ChatGPT Shopping to Amazon Buy For Me — and which agents struggle most."
-                  itemCount={10}
-                />
-                <PaywallGate
-                  title="Detailed Findings"
-                  description="Get the full list of issues with severity ratings, explanations, and which AI agents are affected. Know exactly what's broken."
-                  itemCount={report.findings?.length ?? 0}
-                />
-                <PaywallGate
-                  title="Action Plan"
-                  description={`See the prioritized fix list with estimated score gains. This brand could reach ${report.estimatedScoreAfterFixes ?? 0}/100 by addressing top issues.`}
-                  itemCount={report.actionPlan?.length ?? 0}
-                />
-              </>
-            )}
-          </>
-        ) : (
-          <div className="text-center py-20">
-            <div className="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl font-bold text-gray-300">?</span>
-            </div>
-            <h2 className="text-lg font-semibold text-foreground mb-2">
-              No scan data yet
-            </h2>
-            <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-              {brand.name} hasn&apos;t been scanned yet. Check back soon — we scan all tracked brands daily.
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+        {/* Header */}
+        <div className="mb-10">
+          <div className="flex items-baseline gap-3 mb-2">
+            <span className="spec-label text-muted-foreground">BRAND</span>
+            <span className="spec-label text-muted-foreground">/</span>
+            <span className="spec-label text-muted-foreground uppercase">{brand.category || "—"}</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight mb-2">
+            {brand.name}
+          </h1>
+          <a
+            href={brand.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-mono text-[#0259DD] hover:underline"
+          >
+            {brand.url}
+          </a>
+          {scan && (
+            <p className="text-xs font-mono text-muted-foreground mt-3">
+              last scanned: {new Date(scan.scannedAt).toISOString().split(".")[0]}Z
             </p>
+          )}
+        </div>
+
+        {!scan ? (
+          <div className="border-2 border-gray-200 p-8 text-center">
+            <p className="text-sm text-muted-foreground">No scan data yet for this brand.</p>
+          </div>
+        ) : (
+          <div className="space-y-10">
+            {/* Agent Access */}
+            <section>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-foreground mb-3">
+                Agent Access
+              </h2>
+              <div className="border-2 border-gray-200">
+                <table className="w-full">
+                  <tbody>
+                    {AGENT_ORDER.map((agent) => {
+                      const status = agentStatus[agent] ?? "inconclusive";
+                      const s = statusStyle(status);
+                      return (
+                        <tr key={agent} className="border-b border-gray-200 last:border-b-0">
+                          <td className="px-4 py-2 text-sm font-mono text-foreground">{agent}</td>
+                          <td className="px-4 py-2 text-right">
+                            <span
+                              className="text-xs font-mono font-bold uppercase tracking-wider"
+                              style={{ color: s.color }}
+                            >
+                              {s.label}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            {/* Infrastructure */}
+            <section>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-foreground mb-3">
+                Infrastructure
+              </h2>
+              <div className="border-2 border-gray-200 px-4">
+                <Field label="Platform" value={scan.platform} />
+                <Field label="CDN" value={scan.cdn} />
+                <Field label="WAF" value={scan.waf} />
+                <Field
+                  label="Homepage response"
+                  value={scan.homepageResponseMs ? `${scan.homepageResponseMs}ms` : null}
+                />
+              </div>
+            </section>
+
+            {/* Signals */}
+            <section>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-foreground mb-3">
+                Signals
+              </h2>
+              <div className="border-2 border-gray-200 px-4">
+                <Signal label="robots.txt" present={scan.robotsTxtFound} />
+                <Signal label="JSON-LD" present={scan.hasJsonLd} />
+                <Signal label="Schema.org Product" present={scan.hasSchemaProduct} />
+                <Signal label="Open Graph" present={scan.hasOpenGraph} />
+                <Signal label="Sitemap" present={scan.hasSitemap} />
+                <Signal label="Product feed" present={scan.hasProductFeed} />
+                <Signal
+                  label="llms.txt"
+                  present={scan.hasLlmsTxt}
+                  detail={
+                    scan.hasLlmsTxt && scan.llmsTxtBytes
+                      ? `${scan.llmsTxtBytes}B / ${scan.llmsTxtLinkCount ?? 0} links`
+                      : undefined
+                  }
+                />
+                <Signal
+                  label="Agent declaration file"
+                  present={scan.hasAgentsTxt}
+                  detail={scan.hasAgentsTxt ? scan.agentsTxtVariant ?? undefined : undefined}
+                />
+                <Signal label="UCP endpoint" present={scan.hasUcp} />
+              </div>
+            </section>
+
+            {/* Recent Changes */}
+            {changelog.length > 0 && (
+              <section>
+                <h2 className="text-sm font-bold uppercase tracking-wider text-foreground mb-3">
+                  Recent Changes
+                </h2>
+                <div className="border-2 border-gray-200">
+                  {changelog.map((entry) => (
+                    <div
+                      key={entry.id}
+                      className="px-4 py-3 border-b border-gray-200 last:border-b-0"
+                    >
+                      <div className="flex items-baseline justify-between gap-3">
+                        <div className="flex-1">
+                          <span className="text-sm text-foreground font-medium">{entry.field}</span>
+                          <span className="text-xs font-mono text-muted-foreground ml-2">
+                            {entry.oldValue ?? "null"} → {entry.newValue ?? "null"}
+                          </span>
+                        </div>
+                        <span className="text-xs font-mono text-muted-foreground shrink-0">
+                          {new Date(entry.detectedAt).toISOString().split("T")[0]}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            <div className="pt-4">
+              <Link
+                href="/changelog"
+                className="text-sm text-[#0259DD] hover:underline font-mono"
+              >
+                ← back to changelog
+              </Link>
+            </div>
           </div>
         )}
       </main>
+
       <Footer />
     </div>
   );

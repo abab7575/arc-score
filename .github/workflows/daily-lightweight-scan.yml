@@ -21,7 +21,7 @@ env:
 jobs:
   trigger-scan:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 20
     steps:
       - name: Trigger lightweight scan
         run: |
@@ -32,7 +32,7 @@ jobs:
 
           echo "Triggering lightweight scan: ${BASE_URL}/api/cron/lightweight-scan${PARAMS}"
 
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+          RESPONSE=$(curl -s --max-time 1140 -w "\n%{http_code}" -X POST \
             "${BASE_URL}/api/cron/lightweight-scan${PARAMS}" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json")

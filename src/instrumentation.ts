@@ -50,9 +50,7 @@ export async function register() {
           updated_at TEXT NOT NULL DEFAULT (datetime('now'))
         )`);
 
-        const { startScanWorker } = await import("@/lib/scanner/scan-worker");
-        startScanWorker();
-        console.log("[instrumentation] Scan worker started successfully");
+        console.log("[instrumentation] Scan tables ensured. Worker startup disabled (scans run one-shot via cron endpoint).");
       } catch (error) {
         console.error("[instrumentation] Scan worker failed to start:", error);
         // Non-fatal — the app continues serving requests without the worker
