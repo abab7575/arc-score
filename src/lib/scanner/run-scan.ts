@@ -17,8 +17,8 @@ import { processChangelog, cleanupRevertedPendingChanges } from "./changelog-eng
 import { runDriftChecks, type DriftReport } from "./drift-detector";
 
 const STALE_RUN_THRESHOLD_MS = 30 * 60 * 1000; // 30 min
-const PER_BRAND_TIMEOUT_MS = 60_000;
-const DEFAULT_CONCURRENCY = 20;
+const PER_BRAND_TIMEOUT_MS = 25_000;
+const DEFAULT_CONCURRENCY = 25;
 
 export interface ScanSummary {
   runId: number;
@@ -123,56 +123,74 @@ export async function runScanOnce(options: { concurrency?: number } = {}): Promi
   let failed = 0;
   let changesDetected = 0;
 
-  // 5. Process brands in batches (concurrency windows)
-  for (let i = 0; i < brands.length; i += concurrency) {
-    const batch = brands.slice(i, i + concurrency);
+  // 5. Process brands with a proper concurrency pool (always N in flight,
+  // never waiting on a batch to drain).
+  const brandQueue = [...brands];
+  const progressLogEvery = 100;
+  let lastLoggedMilestone = 0;
 
-    await Promise.all(
-      batch.map(async (brand) => {
-        try {
-          const result = await Promise.race([
-            runLightweightScan(brand.url, brand.productUrl ?? undefined),
-            new Promise<never>((_, reject) =>
-              setTimeout(
-                () => reject(new Error(`Timeout after ${PER_BRAND_TIMEOUT_MS / 1000}s`)),
-                PER_BRAND_TIMEOUT_MS,
-              ),
-            ),
-          ]);
+  async function processOne(brand: typeof brands[number]): Promise<void> {
+    try {
+      const result = await Promise.race([
+        runLightweightScan(brand.url, brand.productUrl ?? undefined),
+        new Promise<never>((_, reject) =>
+          setTimeout(
+            () => reject(new Error(`Timeout after ${PER_BRAND_TIMEOUT_MS / 1000}s`)),
+            PER_BRAND_TIMEOUT_MS,
+          ),
+        ),
+      ]);
 
-          insertLightweightScan(brand.id, result);
+      insertLightweightScan(brand.id, result);
 
-          // Apply changelog + confirmation logic
-          try {
-            const latest = getLatestLightweightScan(brand.id);
-            if (latest) {
-              const previous = getPreviousLightweightScan(brand.id, latest.scannedAt);
-              if (previous) {
-                const brandChanges = processChangelog(brand.id, latest, previous);
-                changesDetected += brandChanges;
-                cleanupRevertedPendingChanges(brand.id, latest, previous);
-              }
-            }
-          } catch (changelogError) {
-            console.error(
-              `[run-scan] changelog error for ${brand.slug}:`,
-              changelogError instanceof Error ? changelogError.message : changelogError,
-            );
+      try {
+        const latest = getLatestLightweightScan(brand.id);
+        if (latest) {
+          const previous = getPreviousLightweightScan(brand.id, latest.scannedAt);
+          if (previous) {
+            const brandChanges = processChangelog(brand.id, latest, previous);
+            changesDetected += brandChanges;
+            cleanupRevertedPendingChanges(brand.id, latest, previous);
           }
-
-          completed++;
-        } catch (err) {
-          failed++;
-          const msg = err instanceof Error ? err.message : String(err);
-          console.error(`[run-scan] fail ${brand.slug}: ${msg}`);
         }
-      }),
-    );
+      } catch (changelogError) {
+        console.error(
+          `[run-scan] changelog error for ${brand.slug}:`,
+          changelogError instanceof Error ? changelogError.message : changelogError,
+        );
+      }
 
-    // Progress log every batch
-    const pct = Math.round(((completed + failed) / brands.length) * 100);
-    console.log(`[run-scan] ${completed + failed}/${brands.length} (${pct}%) — ok:${completed} fail:${failed}`);
+      completed++;
+    } catch (err) {
+      failed++;
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error(`[run-scan] fail ${brand.slug}: ${msg}`);
+    }
+
+    // Incremental progress writes to DB every 50 brands so dashboards can
+    // observe progress without requiring the full run to finish.
+    const done = completed + failed;
+    if (done - lastLoggedMilestone >= progressLogEvery) {
+      lastLoggedMilestone = done;
+      const pct = Math.round((done / brands.length) * 100);
+      console.log(`[run-scan] ${done}/${brands.length} (${pct}%) — ok:${completed} fail:${failed}`);
+      db.update(schema.scanRuns)
+        .set({ completedCount: completed, failedCount: failed, changesDetected })
+        .where(eq(schema.scanRuns.id, run.id))
+        .run();
+    }
   }
+
+  async function worker(): Promise<void> {
+    while (brandQueue.length > 0) {
+      const brand = brandQueue.shift();
+      if (!brand) return;
+      await processOne(brand);
+    }
+  }
+
+  const workers = Array.from({ length: concurrency }, () => worker());
+  await Promise.all(workers);
 
   // 6. Drift checks
   let driftReport: DriftReport | null = null;

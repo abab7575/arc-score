@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runScanOnce } from "@/lib/scanner/run-scan";
 
-// This endpoint runs the full scan synchronously. Railway has no hard request
-// timeout for long-running requests, but GitHub Actions caller should allow 20min.
-export const maxDuration = 900; // 15 min Next.js hint
+// Fire-and-forget pattern: endpoint dispatches the scan in the background and
+// returns immediately. This keeps us well under Railway's edge-proxy timeout.
+// Scan progress is observable via /api/scan-health.
 
 export async function POST(request: NextRequest) {
   const cronSecret = process.env.CRON_SECRET;
@@ -16,22 +16,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  try {
-    const url = new URL(request.url);
-    const concurrencyParam = url.searchParams.get("concurrency");
-    const concurrency = concurrencyParam ? parseInt(concurrencyParam, 10) : undefined;
+  const url = new URL(request.url);
+  const concurrencyParam = url.searchParams.get("concurrency");
+  const concurrency = concurrencyParam ? parseInt(concurrencyParam, 10) : undefined;
 
-    const summary = await runScanOnce({ concurrency });
+  // Dispatch scan in background. Don't await.
+  void runScanOnce({ concurrency }).catch((err) => {
+    console.error("[cron/lightweight-scan] runScanOnce failed:", err instanceof Error ? err.message : err);
+  });
 
-    return NextResponse.json({
-      status: "completed",
-      ...summary,
-      timestamp: new Date().toISOString(),
-    });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    return NextResponse.json({ error: message }, { status: 500 });
-  }
+  return NextResponse.json({
+    status: "started",
+    message: "Scan dispatched. Monitor /api/scan-health for progress.",
+    timestamp: new Date().toISOString(),
+  });
 }
 
 export async function GET(request: NextRequest) {
