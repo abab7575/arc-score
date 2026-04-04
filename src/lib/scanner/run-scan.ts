@@ -17,9 +17,9 @@ import { processChangelog, cleanupRevertedPendingChanges } from "./changelog-eng
 import { runDriftChecks, type DriftReport } from "./drift-detector";
 
 const STALE_HEARTBEAT_MS = 3 * 60 * 1000; // 3 min without heartbeat = dead
-const PER_BRAND_TIMEOUT_MS = 25_000;
-const DEFAULT_CONCURRENCY = 25;
-const HEARTBEAT_INTERVAL_MS = 30_000; // update heartbeat at least every 30s
+const PER_BRAND_TIMEOUT_MS = 60_000; // internal branches (robots.txt retries, agents.txt sequential) can hit 30s
+const DEFAULT_CONCURRENCY = 40; // higher concurrency absorbs slow brands without stalling throughput
+const HEARTBEAT_INTERVAL_MS = 30_000;
 
 export interface ScanSummary {
   runId: number;
