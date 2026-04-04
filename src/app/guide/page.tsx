@@ -401,8 +401,8 @@ function ChapterThree() {
           {[
             { value: "37", label: "brands with structured data markup", sublabel: "out of 86 scanned", color: "#059669" },
             { value: "38", label: "brands blocking GPTBot specifically", sublabel: "out of 86 scanned", color: "#FF6648" },
-            { value: "38", label: "average ARC Report across all brands", sublabel: "73 brands scored", color: "#0259DD" },
-            { value: "1,000+", label: "total brands tracked", sublabel: "updated weekly", color: "#FBBA16" },
+            { value: "96%", label: "brands fully open to AI agents", sublabel: "of 1,006 tracked", color: "#0259DD" },
+            { value: "1,000+", label: "total brands tracked", sublabel: "updated daily", color: "#FBBA16" },
           ].map((stat) => (
             <div key={stat.label} className="border border-[#E8E0D8] bg-white p-4 text-center">
               <span className="data-num text-3xl font-black block mb-1" style={{ color: stat.color }}>
@@ -580,8 +580,8 @@ function ChapterFour() {
       detail: "Clear CTAs, simple forms, no ambiguous steps. Every unnecessary click is a point where an AI agent might get confused. Design for clarity, not cleverness.",
     },
     {
-      action: "Monitor your AI agent readiness score",
-      detail: "As AI agents evolve, your readiness score will change. Set up regular monitoring to catch regressions before they cost you sales you can't see in analytics.",
+      action: "Monitor your agent-access signals over time",
+      detail: "As AI agents and platforms evolve, your site's posture will shift. Track robots.txt rules, structured data coverage, and WAF behavior continuously to catch regressions before they cost you sales you can't see in analytics.",
     },
   ];
 
@@ -601,7 +601,7 @@ function ChapterFour() {
         </h2>
         <p className="text-base text-white/50 max-w-3xl leading-relaxed mb-12">
           Practical, prioritized recommendations. Start with the quick wins &mdash; most take less than a day
-          and have an outsized impact on your AI agent readiness.
+          and have an outsized impact on agent access and product understanding.
         </p>
 
         {/* Quick Wins */}
@@ -803,10 +803,10 @@ function CtaSection() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
         <div className="text-center mb-10">
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-            Get your free ARC Report
+            Get notified when your site changes
           </h2>
           <p className="text-base text-white/50 max-w-xl mx-auto">
-            Enter your site URL and we&apos;ll scan it against all 10 AI shopping agents. Free score, no credit card required.
+            Add your site and email, and we&apos;ll notify you when our daily scan detects a change in your agent-access posture. No credit card required.
           </p>
         </div>
 
@@ -816,8 +816,8 @@ function CtaSection() {
               <span className="w-2 h-2 rounded-full bg-[#059669]" />
               <span className="spec-label text-[#059669] text-[10px]">SUBMITTED</span>
             </div>
-            <h3 className="text-lg font-bold text-white mb-2">We&apos;ll scan your site.</h3>
-            <p className="text-sm text-white/50">You&apos;ll receive your ARC Report by email once the scan completes.</p>
+            <h3 className="text-lg font-bold text-white mb-2">You&apos;re on the list.</h3>
+            <p className="text-sm text-white/50">We&apos;ll notify you when your site&apos;s agent-access signals change.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="max-w-lg mx-auto space-y-4">
@@ -848,7 +848,7 @@ function CtaSection() {
               disabled={loading}
               className="w-full px-6 py-3 bg-[#FF6648] text-white text-sm font-bold hover:bg-[#e85a3f] transition-colors disabled:opacity-50 relative group"
             >
-              {loading ? "Submitting..." : "Get My Free ARC Report"}
+              {loading ? "Submitting..." : "Notify Me on Changes"}
               <span className="absolute inset-0 bg-[#0259DD] -z-10 translate-x-[2px] translate-y-[2px] group-hover:translate-x-[3px] group-hover:translate-y-[3px] transition-transform" />
             </button>
           </form>
