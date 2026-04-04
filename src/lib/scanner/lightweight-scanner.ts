@@ -34,7 +34,14 @@ export interface LightweightScanResult {
 
   // Protocol files
   ucpFile: { found: boolean };
-  llmsTxt: { found: boolean };
+  llmsTxt: {
+    found: boolean;
+    bytes: number;
+    linkCount: number;
+    hasH1: boolean;
+    hasSummary: boolean;
+  };
+  agentsTxt: { found: boolean; variant: "agents.txt" | "agents-brief.txt" | null };
 
   // Infrastructure detection
   platform: { platform: string; confidence: string; signals: string[] };
@@ -95,13 +102,15 @@ export async function runLightweightScan(
     robotsTxtResult,
     ucpResult,
     llmsTxtResult,
+    agentsTxtResult,
     sitemapResult,
     feedResults,
   ] = await Promise.all([
     fetchHomepage(baseUrl),
     checkRobotsTxt(baseUrl),
     checkFile(`${baseUrl}/.well-known/ucp`, "UCP"),
-    checkFile(`${baseUrl}/llms.txt`, "llms.txt"),
+    checkLlmsTxt(baseUrl),
+    checkAgentsTxt(baseUrl),
     checkSitemap(baseUrl),
     checkFeeds(baseUrl),
   ]);
@@ -131,7 +140,8 @@ export async function runLightweightScan(
     sitemap: sitemapResult,
     feeds: feedResults,
     ucpFile: { found: ucpResult },
-    llmsTxt: { found: llmsTxtResult },
+    llmsTxt: llmsTxtResult,
+    agentsTxt: agentsTxtResult,
     platform,
     cdn,
     waf,
@@ -223,7 +233,7 @@ async function checkRobotsTxt(baseUrl: string): Promise<LightweightScanResult["r
   }
 }
 
-// ── Simple File Checks (UCP, llms.txt) ─────────────────────────────
+// ── Simple File Checks (UCP) ───────────────────────────────────────
 
 async function checkFile(url: string, label: string): Promise<boolean> {
   const res = await fetchWithRetry(
@@ -235,6 +245,73 @@ async function checkFile(url: string, label: string): Promise<boolean> {
   const content = await res.text();
   if (content.startsWith("<!") || content.startsWith("<html")) return false;
   return content.length > 0;
+}
+
+// ── llms.txt (presence + lightweight quality signals) ──────────────
+
+async function checkLlmsTxt(baseUrl: string): Promise<LightweightScanResult["llmsTxt"]> {
+  const empty = { found: false, bytes: 0, linkCount: 0, hasH1: false, hasSummary: false };
+
+  const res = await fetchWithRetry(
+    `${baseUrl}/llms.txt`,
+    { headers: { "User-Agent": "ARCReport-Scanner/1.0" } },
+    { timeoutMs: 10000, maxAttempts: 2, label: `[Lightweight] llms.txt` }
+  );
+  if (!res || !res.ok) return empty;
+
+  // Reject HTML responses (sites that serve a soft-404 for unknown paths)
+  const contentType = (res.headers.get("content-type") || "").toLowerCase();
+  if (contentType.includes("text/html")) return empty;
+
+  const content = await res.text();
+  if (!content.length) return empty;
+  const head = content.trimStart().slice(0, 16).toLowerCase();
+  if (head.startsWith("<!") || head.startsWith("<html")) return empty;
+
+  // Quality observations — per llmstxt.org: H1 title + blockquote summary + markdown links
+  const hasH1 = /^#\s+\S/m.test(content);
+  const hasSummary = /^>\s+\S/m.test(content);
+  const linkMatches = content.match(/\[[^\]]+\]\([^)]+\)/g);
+  const linkCount = linkMatches ? linkMatches.length : 0;
+
+  return {
+    found: true,
+    bytes: Buffer.byteLength(content, "utf8"),
+    linkCount,
+    hasH1,
+    hasSummary,
+  };
+}
+
+// ── agents.txt / agents-brief.txt (presence) ───────────────────────
+
+async function checkAgentsTxt(baseUrl: string): Promise<LightweightScanResult["agentsTxt"]> {
+  const candidates: Array<{ path: string; variant: "agents.txt" | "agents-brief.txt" }> = [
+    { path: "/agents.txt", variant: "agents.txt" },
+    { path: "/agents-brief.txt", variant: "agents-brief.txt" },
+    { path: "/.well-known/agents.txt", variant: "agents.txt" },
+  ];
+
+  for (const { path, variant } of candidates) {
+    const res = await fetchWithRetry(
+      `${baseUrl}${path}`,
+      { headers: { "User-Agent": "ARCReport-Scanner/1.0" } },
+      { timeoutMs: 10000, maxAttempts: 1, label: `[Lightweight] ${path}` }
+    );
+    if (!res || !res.ok) continue;
+
+    const contentType = (res.headers.get("content-type") || "").toLowerCase();
+    if (contentType.includes("text/html")) continue;
+
+    const content = await res.text();
+    if (!content.length) continue;
+    const head = content.trimStart().slice(0, 16).toLowerCase();
+    if (head.startsWith("<!") || head.startsWith("<html")) continue;
+
+    return { found: true, variant };
+  }
+
+  return { found: false, variant: null };
 }
 
 // ── Sitemap Check ──────────────────────────────────────────────────

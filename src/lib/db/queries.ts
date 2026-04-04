@@ -12,7 +12,8 @@ interface LightweightScanInput {
   sitemap: { found: boolean };
   feeds: Array<{ found: boolean }>;
   ucpFile: { found: boolean };
-  llmsTxt: { found: boolean };
+  llmsTxt: { found: boolean; bytes: number; linkCount: number };
+  agentsTxt: { found: boolean; variant: "agents.txt" | "agents-brief.txt" | null };
   platform: { platform: string };
   cdn: { cdn: string };
   waf: { waf: string };
@@ -364,6 +365,10 @@ export function insertLightweightScan(brandId: number, result: LightweightScanIn
       hasSitemap: result.sitemap.found,
       hasProductFeed: result.feeds.some(f => f.found),
       hasLlmsTxt: result.llmsTxt.found,
+      llmsTxtBytes: result.llmsTxt.found ? result.llmsTxt.bytes : null,
+      llmsTxtLinkCount: result.llmsTxt.found ? result.llmsTxt.linkCount : null,
+      hasAgentsTxt: result.agentsTxt.found,
+      agentsTxtVariant: result.agentsTxt.variant,
       hasUcp: result.ucpFile.found,
       homepageResponseMs: result.responseTime.homepage,
       resultJson: JSON.stringify(result),

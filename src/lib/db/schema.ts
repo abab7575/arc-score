@@ -233,6 +233,10 @@ export const lightweightScans = sqliteTable("lightweight_scans", {
   hasSitemap: integer("has_sitemap", { mode: "boolean" }).notNull().default(false),
   hasProductFeed: integer("has_product_feed", { mode: "boolean" }).notNull().default(false),
   hasLlmsTxt: integer("has_llms_txt", { mode: "boolean" }).notNull().default(false),
+  llmsTxtBytes: integer("llms_txt_bytes"),
+  llmsTxtLinkCount: integer("llms_txt_link_count"),
+  hasAgentsTxt: integer("has_agents_txt", { mode: "boolean" }).notNull().default(false),
+  agentsTxtVariant: text("agents_txt_variant"),
   hasUcp: integer("has_ucp", { mode: "boolean" }).notNull().default(false),
   homepageResponseMs: integer("homepage_response_ms"),
 

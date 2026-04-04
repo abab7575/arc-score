@@ -76,7 +76,11 @@ async function main() {
       }
 
       try {
-        const result = await runLightweightScan(brand.url, brand.productUrl ?? undefined);
+        // Per-brand timeout: 60 seconds max, then skip
+        const result = await Promise.race([
+          runLightweightScan(brand.url, brand.productUrl ?? undefined),
+          new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`Timeout scanning ${brand.slug} after 60s`)), 60000)),
+        ]);
 
         // Store in database
         insertLightweightScan(brand.id, result);

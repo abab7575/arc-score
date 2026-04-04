@@ -124,5 +124,15 @@ try {
   // Column already exists
 }
 
+// Auto-migrate: add llms.txt quality + agents.txt columns to lightweight_scans
+for (const stmt of [
+  `ALTER TABLE lightweight_scans ADD COLUMN llms_txt_bytes INTEGER`,
+  `ALTER TABLE lightweight_scans ADD COLUMN llms_txt_link_count INTEGER`,
+  `ALTER TABLE lightweight_scans ADD COLUMN has_agents_txt INTEGER NOT NULL DEFAULT 0`,
+  `ALTER TABLE lightweight_scans ADD COLUMN agents_txt_variant TEXT`,
+]) {
+  try { sqlite.exec(stmt); } catch { /* column exists */ }
+}
+
 export const db = drizzle(sqlite, { schema });
 export { schema };
