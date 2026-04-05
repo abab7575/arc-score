@@ -218,6 +218,97 @@ function AudienceRow({
   );
 }
 
+const STATUS_HEX: Record<AgentStatus, string> = {
+  allowed: "#059669",
+  no_rule: "#94A3B8",
+  restricted: "#FBBA16",
+  blocked: "#FF6648",
+  inconclusive: "#CBD5E1",
+};
+
+const STATUS_SHADOW: Record<AgentStatus, string> = {
+  allowed: "#00492C",
+  no_rule: "#475569",
+  restricted: "#8B6914",
+  blocked: "#8A2D16",
+  inconclusive: "#64748B",
+};
+
+function getFieldColor(field: string): string {
+  if (field.toLowerCase().includes("robots.txt")) return "#0259DD";
+  if (field.toLowerCase().includes("llms") || field.toLowerCase().includes("agent")) return "#7C3AED";
+  if (
+    field.toLowerCase().includes("json") ||
+    field.toLowerCase().includes("schema") ||
+    field.toLowerCase().includes("open graph") ||
+    field.toLowerCase().includes("feed")
+  )
+    return "#FF6648";
+  if (field.toLowerCase().includes("platform") || field.toLowerCase().includes("cdn") || field.toLowerCase().includes("waf"))
+    return "#FBBA16";
+  return "#94A3B8";
+}
+
+function InstrumentCard({
+  tag,
+  color,
+  value,
+  valueSuffix,
+  detail,
+  lowPool,
+}: {
+  tag: string;
+  color: string;
+  value: string;
+  valueSuffix?: string;
+  detail: string;
+  lowPool?: boolean;
+}) {
+  return (
+    <div className="relative">
+      <div
+        className="absolute inset-0 -z-10"
+        style={{ backgroundColor: color, opacity: 0.25, transform: "translate(4px, 4px)" }}
+      />
+      <div className="border-2 border-[#0A1628] bg-white h-full">
+        {/* Colored top bar */}
+        <div
+          className="border-b-2 border-[#0A1628] px-4 py-2 flex items-center justify-between gap-2"
+          style={{ backgroundColor: color }}
+        >
+          <span className="text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-white">
+            {tag}
+          </span>
+          <span className="flex gap-1">
+            <span className="w-1 h-1 rounded-full bg-white/60" />
+            <span className="w-1 h-1 rounded-full bg-white/60" />
+            <span className="w-1 h-1 rounded-full bg-white/60" />
+          </span>
+        </div>
+        <div className="px-5 py-5">
+          <div className="flex items-baseline gap-2 mb-1">
+            <span
+              className="data-num text-3xl sm:text-4xl font-black leading-none tracking-tight"
+              style={{ color: "#0A1628" }}
+            >
+              {value}
+            </span>
+            {valueSuffix && (
+              <span className="text-[11px] font-mono text-muted-foreground">{valueSuffix}</span>
+            )}
+          </div>
+          {lowPool && (
+            <p className="text-[10px] font-mono text-[#FF6648] mb-2 uppercase tracking-[0.08em]">
+              small peer pool
+            </p>
+          )}
+          <p className="text-sm text-muted-foreground leading-6">{detail}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PeerLine({
   label,
   value,
@@ -643,276 +734,494 @@ export default async function BrandPage({ params }: BrandPageProps) {
           </div>
         </section>
 
-        <section className="max-w-4xl mx-auto px-4 sm:px-6 pt-16 pb-8 space-y-16">
-          {/* ─── Agent Reach ──────────────────────────────────────── */}
+        <section className="max-w-5xl mx-auto px-4 sm:px-6 pt-16 pb-12 space-y-24">
+          {/* ═══════════════════════════════════════════════════════════
+              01 // AGENT REACH ARRAY
+              ═══════════════════════════════════════════════════════════ */}
           <div>
-            <div className="flex items-baseline justify-between gap-4 mb-6">
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-2">
-                  Agent Reach
-                </p>
-                <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
-                  How nine major AI agents fare on this site
-                </h2>
-              </div>
-              <span className="text-xs font-mono text-muted-foreground shrink-0 whitespace-nowrap">
-                scanned {formatDate(scan.scannedAt)}
-                {scan.homepageResponseMs ? ` · ${scan.homepageResponseMs}ms` : ""}
+            <div className="flex items-baseline gap-3 mb-6">
+              <span className="data-num text-sm font-black text-[#FF6648] shrink-0">/ 01</span>
+              <span className="spec-label text-muted-foreground shrink-0">AGENT REACH ARRAY</span>
+              <span className="h-px flex-1 bg-[color:var(--color-arc-border)]" />
+              <span className="spec-label text-muted-foreground shrink-0 hidden sm:inline">
+                RUN_{String(scan.id).padStart(4, "0")} / {formatDate(scan.scannedAt).toUpperCase()}
               </span>
             </div>
-
-            <p className="text-sm text-muted-foreground leading-6 mb-6 max-w-2xl">
-              ARC checks each agent&apos;s robots.txt rule and a live HTTP request from
-              that agent&apos;s user-agent string. The five outcomes are ordered from
-              least to most friction.
+            <h2 className="text-4xl sm:text-6xl font-black tracking-tight text-foreground leading-[0.9] mb-3 max-w-3xl">
+              Who can get <span className="text-[#0259DD]">in the door.</span>
+            </h2>
+            <p className="text-base sm:text-lg text-muted-foreground leading-7 max-w-2xl mb-10">
+              Nine AI agents, one scan. Color tells you the outcome; hover any status
+              in the legend to read what it means.
             </p>
 
-            {/* Legend — inline, quiet */}
-            <div className="rounded-lg border border-[color:var(--color-arc-border)] bg-white px-5 py-4 mb-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5 text-sm">
-                {(
-                  ["allowed", "no_rule", "restricted", "blocked", "inconclusive"] as AgentStatus[]
-                ).map((status) => {
-                  const tone = statusStyle(status);
-                  return (
-                    <div key={status} className="flex items-start gap-3">
-                      <span
-                        className={cx(
-                          "mt-0.5 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] shrink-0 whitespace-nowrap",
-                          tone.chip,
-                        )}
+            {/* Big readout card with offset shadow */}
+            <div className="relative mb-5">
+              <div
+                className="absolute inset-0 -z-10"
+                style={{ backgroundColor: "#0A1628", transform: "translate(4px, 4px)" }}
+              />
+              <div className="border-2 border-[#0A1628] bg-white">
+                <div className="grid grid-cols-1 sm:grid-cols-[auto_1fr] divide-y-2 sm:divide-y-0 sm:divide-x-2 divide-[#0A1628]">
+                  {/* Count block */}
+                  <div className="px-6 py-6 sm:px-8 sm:py-7 min-w-[200px]">
+                    <div className="spec-label text-muted-foreground mb-3">REACH</div>
+                    <div className="flex items-baseline gap-1">
+                      <span className="data-num text-[64px] sm:text-[84px] font-black text-[#0259DD] tabular-nums leading-[0.85]">
+                        {String(openCount).padStart(2, "0")}
+                      </span>
+                      <span className="data-num text-3xl sm:text-4xl font-black text-[#0A1628]/20 leading-none pb-1">
+                        / 09
+                      </span>
+                    </div>
+                    <p className="text-xs font-mono text-muted-foreground mt-3">
+                      agents open on this scan
+                    </p>
+                  </div>
+
+                  {/* Distribution visualization */}
+                  <div className="px-6 py-6 sm:px-8 sm:py-7">
+                    <div className="flex items-center justify-between gap-3 mb-3">
+                      <div className="spec-label text-muted-foreground">DISTRIBUTION</div>
+                      <div className="flex items-center gap-3 text-[10px] font-mono text-muted-foreground">
+                        <span className="flex items-center gap-1.5">
+                          <span className="inline-block w-2 h-2 bg-[#059669]" />
+                          {statuses.filter((s) => s.status === "allowed").length}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <span className="inline-block w-2 h-2 bg-slate-400" />
+                          {statuses.filter((s) => s.status === "no_rule").length}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <span className="inline-block w-2 h-2 bg-[#FBBA16]" />
+                          {restrictedCount}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <span className="inline-block w-2 h-2 bg-[#FF6648]" />
+                          {blockedCount}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <span className="inline-block w-2 h-2 bg-slate-300" />
+                          {inconclusiveCount}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex h-10 border-2 border-[#0A1628]">
+                      {statuses.map(({ agent, status }, i) => {
+                        const color = STATUS_HEX[status];
+                        return (
+                          <div
+                            key={agent}
+                            className="flex-1 border-r-2 border-[#0A1628] last:border-r-0 relative group"
+                            style={{ backgroundColor: color }}
+                            title={`${agent}: ${statusStyle(status).label}`}
+                          >
+                            <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[8px] font-mono font-bold text-[#0A1628] opacity-0 group-hover:opacity-100 transition-opacity">
+                              {i + 1}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div className="flex justify-between text-[10px] font-mono text-muted-foreground mt-2">
+                      <span>01 · GPTBot</span>
+                      <span>09 · Bingbot</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 3×3 agent tile grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+              {statuses.map(({ agent, status }, i) => {
+                const tone = statusStyle(status);
+                const color = STATUS_HEX[status];
+                const shadow = STATUS_SHADOW[status];
+                return (
+                  <div key={agent} className="relative">
+                    <div
+                      className="absolute inset-0 -z-10"
+                      style={{ backgroundColor: shadow, transform: "translate(3px, 3px)" }}
+                    />
+                    <div className="border-2 border-[#0A1628] bg-white px-4 py-4 h-full">
+                      <div className="flex items-start justify-between gap-2 mb-3">
+                        <div
+                          className="h-11 w-11 rounded-full border-2 border-[#0A1628] shrink-0"
+                          style={{ backgroundColor: color }}
+                        />
+                        <div className="text-right">
+                          <div className="data-num text-[10px] font-bold text-muted-foreground">
+                            {String(i + 1).padStart(2, "0")} / 09
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-sm font-mono font-bold text-foreground mb-1 truncate">
+                        {agent}
+                      </div>
+                      <div
+                        className="text-[10px] font-mono font-bold uppercase tracking-[0.12em]"
+                        style={{ color: shadow }}
                       >
                         {tone.label}
-                      </span>
-                      <span className="text-[13px] leading-5 text-muted-foreground">
-                        {tone.tone}
-                      </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Legend — inline, bold swatches */}
+            <div className="border-t-2 border-dashed border-[#0A1628]/20 pt-5">
+              <div className="spec-label text-muted-foreground mb-3">LEGEND</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2.5">
+                {(
+                  ["allowed", "no_rule", "restricted", "blocked", "inconclusive"] as AgentStatus[]
+                ).map((s) => {
+                  const tone = statusStyle(s);
+                  return (
+                    <div key={s} className="flex items-start gap-3 text-[13px]">
+                      <span
+                        className="inline-block w-3 h-3 border border-[#0A1628] shrink-0 mt-1"
+                        style={{ backgroundColor: STATUS_HEX[s] }}
+                      />
+                      <div className="flex-1">
+                        <span className="font-mono font-bold uppercase tracking-[0.1em] text-[11px] text-foreground">
+                          {tone.label}
+                        </span>
+                        <span className="text-muted-foreground ml-2 text-[12px]">{tone.tone}</span>
+                      </div>
                     </div>
                   );
                 })}
               </div>
             </div>
+          </div>
 
-            {/* Agent grid — one card style */}
-            <div className="rounded-lg border border-[color:var(--color-arc-border)] bg-white overflow-hidden divide-y divide-[color:var(--color-arc-border)] sm:divide-y-0 sm:grid sm:grid-cols-3">
-              {statuses.map(({ agent, status }, i) => {
-                const tone = statusStyle(status);
+          {/* ═══════════════════════════════════════════════════════════
+              02 // MACHINE-READABLE STACK
+              ═══════════════════════════════════════════════════════════ */}
+          <div>
+            <div className="flex items-baseline gap-3 mb-6">
+              <span className="data-num text-sm font-black text-[#0259DD] shrink-0">/ 02</span>
+              <span className="spec-label text-muted-foreground shrink-0">MACHINE-READABLE STACK</span>
+              <span className="h-px flex-1 bg-[color:var(--color-arc-border)]" />
+              <span className="spec-label text-muted-foreground shrink-0 hidden sm:inline">
+                {machineReadableCount} / 08 LAYERS ACTIVE
+              </span>
+            </div>
+            <h2 className="text-4xl sm:text-6xl font-black tracking-tight text-foreground leading-[0.9] mb-3 max-w-3xl">
+              What agents can <span className="text-[#FF6648]">understand.</span>
+            </h2>
+            <p className="text-base sm:text-lg text-muted-foreground leading-7 max-w-2xl mb-10">
+              A site can be reachable and still be hard for agents to read. Three
+              published layers, ranked from table-stakes to frontier.
+            </p>
+
+            {/* Three stack columns */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+              {machineReadableLayers.map((layer, idx) => {
+                const layerColors = [
+                  { band: "#0259DD", shadow: "#001F4D", text: "#0259DD" }, // discovery
+                  { band: "#FF6648", shadow: "#8A2D16", text: "#FF6648" }, // commerce
+                  { band: "#FBBA16", shadow: "#6B4E00", text: "#8B6914" }, // guidance
+                ][idx];
+                const activeCount = layer.items.filter((i) => i.active).length;
+                const totalCount = layer.items.length;
                 return (
-                  <div
-                    key={agent}
-                    className={cx(
-                      "flex items-center justify-between gap-3 px-5 py-4",
-                      i % 3 !== 0 && "sm:border-l sm:border-[color:var(--color-arc-border)]",
-                      i >= 3 && "sm:border-t sm:border-[color:var(--color-arc-border)]",
-                    )}
-                  >
-                    <span className="text-sm font-mono text-foreground truncate">{agent}</span>
-                    <span
-                      className={cx(
-                        "rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] shrink-0 whitespace-nowrap",
-                        tone.chip,
-                      )}
-                    >
-                      {tone.label}
-                    </span>
+                  <div key={layer.title} className="relative">
+                    <div
+                      className="absolute inset-0 -z-10"
+                      style={{
+                        backgroundColor: layerColors.shadow,
+                        transform: "translate(4px, 4px)",
+                      }}
+                    />
+                    <div className="border-2 border-[#0A1628] bg-white h-full flex flex-col">
+                      {/* Colored band header */}
+                      <div
+                        className="border-b-2 border-[#0A1628] px-4 py-3"
+                        style={{ backgroundColor: layerColors.band }}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-[11px] font-mono font-bold uppercase tracking-[0.14em] text-white">
+                            {layer.title}
+                          </span>
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-[0.1em] text-white/70">
+                            0{idx + 1}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Big fraction */}
+                      <div className="px-4 py-5 border-b border-[#0A1628]/10">
+                        <div className="flex items-baseline gap-1">
+                          <span
+                            className="data-num text-5xl font-black leading-none tabular-nums"
+                            style={{ color: layerColors.text }}
+                          >
+                            {String(activeCount).padStart(2, "0")}
+                          </span>
+                          <span className="data-num text-xl font-black text-[#0A1628]/20 leading-none">
+                            / 0{totalCount}
+                          </span>
+                        </div>
+                        <p className="text-[11px] font-mono text-muted-foreground mt-2 uppercase tracking-[0.08em]">
+                          {layer.summary}
+                        </p>
+                      </div>
+
+                      {/* Signal rows */}
+                      <div className="flex-1 divide-y divide-[#0A1628]/10">
+                        {layer.items.map((item) => (
+                          <div
+                            key={item.label}
+                            className="flex items-center gap-3 px-4 py-3"
+                          >
+                            {item.active ? (
+                              <div
+                                className="h-3 w-3 rounded-full border border-[#0A1628] shrink-0"
+                                style={{ backgroundColor: layerColors.band }}
+                              />
+                            ) : (
+                              <div className="h-3 w-3 rounded-full border border-[#0A1628]/30 bg-white shrink-0" />
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <div
+                                className={cx(
+                                  "text-sm truncate",
+                                  item.active ? "text-foreground font-semibold" : "text-muted-foreground",
+                                )}
+                              >
+                                {item.label}
+                              </div>
+                              {item.detail && (
+                                <div className="text-[10px] font-mono text-muted-foreground mt-0.5 truncate">
+                                  {item.detail}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 );
               })}
             </div>
           </div>
 
-          {/* ─── Machine-Readable Signals ─────────────────────────── */}
+          {/* ═══════════════════════════════════════════════════════════
+              03 // POSITION vs PEERS
+              ═══════════════════════════════════════════════════════════ */}
           <div>
-            <div className="mb-6">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-2">
-                Machine-Readable Signals
-              </p>
-              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground mb-2">
-                What agents can understand once inside
-              </h2>
-              <p className="text-sm text-muted-foreground leading-6 max-w-2xl">
-                A site can be reachable and still be hard for agents to understand. These
-                are the published signals ARC found on this scan.
-              </p>
-            </div>
-
-            <div className="rounded-lg border border-[color:var(--color-arc-border)] bg-white divide-y divide-[color:var(--color-arc-border)]">
-              {machineReadableLayers.map((layer) => (
-                <div key={layer.title} className="px-5 sm:px-6 py-5">
-                  <div className="flex items-baseline justify-between gap-4 mb-3">
-                    <h3 className="text-sm font-bold uppercase tracking-[0.12em] text-foreground">
-                      {layer.title}
-                    </h3>
-                    <span className="text-[11px] text-muted-foreground shrink-0 max-w-[60%] text-right">
-                      {layer.summary}
-                    </span>
-                  </div>
-
-                  <dl className="divide-y divide-[color:var(--color-arc-border)] -mx-5 sm:-mx-6">
-                    {layer.items.map((item) => (
-                      <div
-                        key={item.label}
-                        className="flex items-baseline justify-between gap-4 px-5 sm:px-6 py-2.5"
-                      >
-                        <dt className="text-sm text-foreground">
-                          {item.label}
-                          {item.detail && (
-                            <span className="text-xs text-muted-foreground ml-2 font-mono">
-                              {item.detail}
-                            </span>
-                          )}
-                        </dt>
-                        <dd
-                          className={cx(
-                            "text-[11px] font-mono font-semibold uppercase tracking-[0.12em] shrink-0",
-                            item.active ? "text-emerald-700" : "text-muted-foreground/60",
-                          )}
-                        >
-                          {item.active ? "present" : "not detected"}
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ─── Peer Position ────────────────────────────────────── */}
-          <div>
-            <div className="mb-6">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-2">
-                Peer Position
-              </p>
-              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground mb-2">
-                How this sits in its category
-              </h2>
-              <p className="text-sm text-muted-foreground leading-6 max-w-2xl">
-                Comparisons against {brand.category || "category"} peers in the ARC index.
-                These numbers shift as the field evolves, so read them as the current shape of
-                the market, not a fixed benchmark.
-              </p>
-            </div>
-
-            <div className="rounded-lg border border-[color:var(--color-arc-border)] bg-white divide-y divide-[color:var(--color-arc-border)]">
-              <PeerLine
-                label="Access"
-                value={categoryAccessPct ?? "Not enough peers to compare"}
-                detail={`${blockedCount + restrictedCount} of 9 agents showed friction on this scan.`}
-              />
-              <PeerLine
-                label="Machine-readable coverage"
-                value={categorySignalPct ?? "Not enough peers to compare"}
-                detail={`${machineReadableCount} of 8 signals currently detected.`}
-              />
-              <PeerLine
-                label="llms.txt adoption"
-                value={scan.hasLlmsTxt ? "Publishes llms.txt" : "No llms.txt"}
-                detail={`${llmsCategoryAdoption}% of ${brand.category || "category"} peers currently publish llms.txt.`}
-              />
-              <PeerLine
-                label="Agent declaration file"
-                value={
-                  scan.hasAgentsTxt
-                    ? `Publishes ${scan.agentsTxtVariant ?? "declaration file"}`
-                    : "None detected"
-                }
-                detail={`${guidanceCategoryAdoption}% of ${brand.category || "category"} peers publish any agent or LLM guidance file.`}
-              />
-            </div>
-          </div>
-
-          {/* ─── Recent Changes ───────────────────────────────────── */}
-          <div>
-            <div className="flex items-baseline justify-between gap-4 mb-6">
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-2">
-                  Recent Changes
-                </p>
-                <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
-                  Confirmed movement
-                </h2>
-              </div>
-              <span className="text-xs font-mono text-muted-foreground shrink-0">
-                last {Math.min(changelog.length, 12)} {pluralize(Math.min(changelog.length, 12), "entry", "entries")}
+            <div className="flex items-baseline gap-3 mb-6">
+              <span className="data-num text-sm font-black text-[#FBBA16] shrink-0">/ 03</span>
+              <span className="spec-label text-muted-foreground shrink-0">
+                POSITION // {(brand.category || "CATEGORY").toUpperCase()} PEERS
+              </span>
+              <span className="h-px flex-1 bg-[color:var(--color-arc-border)]" />
+              <span className="spec-label text-muted-foreground shrink-0 hidden sm:inline">
+                N={categoryPeerScans.length}
               </span>
             </div>
+            <h2 className="text-4xl sm:text-6xl font-black tracking-tight text-foreground leading-[0.9] mb-3 max-w-3xl">
+              How it sits against <span className="text-[#FBBA16]">peers.</span>
+            </h2>
+            <p className="text-base sm:text-lg text-muted-foreground leading-7 max-w-2xl mb-10">
+              Four lenses. Numbers shift as the field evolves, so treat these as the
+              current shape of the market, not a fixed benchmark.
+            </p>
 
-            {changelog.length === 0 ? (
-              <div className="rounded-lg border border-[color:var(--color-arc-border)] bg-white px-5 py-8 text-sm text-muted-foreground">
-                No confirmed changes have been published for this brand yet. ARC buffers noisy
-                signals before promoting them, so stable profiles will look empty here.
-              </div>
-            ) : (
-              <div className="rounded-lg border border-[color:var(--color-arc-border)] bg-white divide-y divide-[color:var(--color-arc-border)]">
-                {changelog.map((entry) => (
-                  <div
-                    key={entry.id}
-                    className="flex items-baseline gap-4 px-5 sm:px-6 py-3.5"
-                  >
-                    <span className="text-[11px] font-mono text-muted-foreground shrink-0 w-20">
-                      {formatDate(entry.detectedAt)}
-                    </span>
-                    <span className="text-sm text-foreground shrink-0 w-44 sm:w-56 truncate">
-                      {formatFieldLabel(entry.field)}
-                    </span>
-                    <span className="text-xs font-mono text-muted-foreground flex-1 min-w-0 truncate text-right">
-                      {entry.oldValue ?? "—"} <span className="text-muted-foreground/60">→</span>{" "}
-                      <span className="text-foreground">{entry.newValue ?? "—"}</span>
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <InstrumentCard
+                tag="ACCESS"
+                color="#0259DD"
+                value={categoryAccessPct ?? "—"}
+                valueSuffix={categoryAccessPct ? "" : "n/a"}
+                detail={`${blockedCount + restrictedCount} of 9 agents showed friction on this scan.`}
+                lowPool={categoryPeerScans.length < 4}
+              />
+              <InstrumentCard
+                tag="COVERAGE"
+                color="#FF6648"
+                value={categorySignalPct ?? "—"}
+                valueSuffix={categorySignalPct ? "" : "n/a"}
+                detail={`${machineReadableCount} of 8 machine-readable signals detected.`}
+                lowPool={categoryPeerScans.length < 4}
+              />
+              <InstrumentCard
+                tag="LLMS.TXT"
+                color="#7C3AED"
+                value={scan.hasLlmsTxt ? "YES" : "NO"}
+                valueSuffix=""
+                detail={`${llmsCategoryAdoption}% of ${brand.category || "peers"} publish llms.txt.`}
+              />
+              <InstrumentCard
+                tag="AGENT GUIDANCE"
+                color="#00492C"
+                value={scan.hasAgentsTxt ? "YES" : "NO"}
+                valueSuffix={scan.hasAgentsTxt && scan.agentsTxtVariant ? scan.agentsTxtVariant : ""}
+                detail={`${guidanceCategoryAdoption}% of ${brand.category || "peers"} publish any explicit guidance file.`}
+              />
+            </div>
           </div>
 
-          {/* ─── How to Read This ─────────────────────────────────── */}
+          {/* ═══════════════════════════════════════════════════════════
+              04 // TRANSMISSION LOG
+              ═══════════════════════════════════════════════════════════ */}
           <div>
-            <div className="mb-5">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-2">
-                How to Read This
-              </p>
-              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground mb-2">
-                This is an early-field readout
-              </h2>
-              <p className="text-sm text-muted-foreground leading-6 max-w-2xl">
-                Agentic commerce is a young category. Most stores were not built with AI
-                shoppers in mind, and files like llms.txt or agent declaration docs are
-                only now starting to appear. Read this page with three things in mind.
-              </p>
+            <div className="flex items-baseline gap-3 mb-6">
+              <span className="data-num text-sm font-black text-[#059669] shrink-0">/ 04</span>
+              <span className="spec-label text-muted-foreground shrink-0">TRANSMISSION LOG</span>
+              <span className="h-px flex-1 bg-[color:var(--color-arc-border)]" />
+              <span className="spec-label text-muted-foreground shrink-0 hidden sm:inline">
+                {changelog.length} ENTRIES
+              </span>
             </div>
+            <h2 className="text-4xl sm:text-6xl font-black tracking-tight text-foreground leading-[0.9] mb-3 max-w-3xl">
+              What moved <span className="text-[#059669]">recently.</span>
+            </h2>
+            <p className="text-base sm:text-lg text-muted-foreground leading-7 max-w-2xl mb-10">
+              Confirmed published changes. ARC buffers noisy signals before promoting
+              them, so stable brands will look empty here — that is a feature.
+            </p>
 
-            <ol className="rounded-lg border border-[color:var(--color-arc-border)] bg-white divide-y divide-[color:var(--color-arc-border)]">
+            <div className="relative">
+              <div
+                className="absolute inset-0 -z-10"
+                style={{ backgroundColor: "#0A1628", transform: "translate(4px, 4px)" }}
+              />
+              <div className="border-2 border-[#0A1628] bg-white overflow-hidden">
+                {/* Terminal chrome header */}
+                <div
+                  className="flex items-center gap-2 px-4 py-2.5 border-b-2 border-[#0A1628]"
+                  style={{ backgroundColor: "#0A1628" }}
+                >
+                  <span className="flex gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#FF6648]" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#FBBA16]" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#059669]" />
+                  </span>
+                  <span className="text-[10px] font-mono text-white/50 ml-2">
+                    arc.report / brand / {brand.slug} / log
+                  </span>
+                  <span className="text-[10px] font-mono text-[#84AFFB] ml-auto flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#84AFFB] animate-pulse" />
+                    {changelog.length > 0 ? "ACTIVE" : "STANDBY"}
+                  </span>
+                </div>
+
+                {/* Log entries */}
+                {changelog.length === 0 ? (
+                  <div className="px-5 py-10 text-center">
+                    <div className="spec-label text-muted-foreground mb-2">NO TRANSMISSIONS</div>
+                    <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                      This brand has not produced a confirmed change yet. Stable profiles
+                      are a signal of their own.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-[#0A1628]/10">
+                    {changelog.map((entry) => {
+                      const fieldColor = getFieldColor(entry.field);
+                      return (
+                        <div
+                          key={entry.id}
+                          className="flex items-baseline gap-4 px-4 sm:px-5 py-3 hover:bg-[color:var(--color-arc-cream)] transition-colors"
+                        >
+                          <span
+                            className="inline-block w-1 self-stretch shrink-0"
+                            style={{ backgroundColor: fieldColor }}
+                          />
+                          <span className="data-num text-[11px] text-muted-foreground shrink-0 w-20 tabular-nums">
+                            {formatDate(entry.detectedAt).toUpperCase()}
+                          </span>
+                          <span className="text-[13px] font-mono text-foreground shrink-0 w-48 sm:w-56 truncate">
+                            {formatFieldLabel(entry.field)}
+                          </span>
+                          <span className="text-[11px] font-mono text-muted-foreground flex-1 min-w-0 truncate text-right">
+                            <span className="text-[#FF6648]">{entry.oldValue ?? "—"}</span>
+                            <span className="text-muted-foreground/40 mx-2">→</span>
+                            <span className="text-[#059669] font-bold">{entry.newValue ?? "—"}</span>
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* ═══════════════════════════════════════════════════════════
+              05 // FIELD NOTES
+              ═══════════════════════════════════════════════════════════ */}
+          <div>
+            <div className="flex items-baseline gap-3 mb-6">
+              <span className="data-num text-sm font-black text-[#7C3AED] shrink-0">/ 05</span>
+              <span className="spec-label text-muted-foreground shrink-0">FIELD NOTES</span>
+              <span className="h-px flex-1 bg-[color:var(--color-arc-border)]" />
+              <span className="spec-label text-muted-foreground shrink-0 hidden sm:inline">
+                INTERPRET WITH CARE
+              </span>
+            </div>
+            <h2 className="text-4xl sm:text-6xl font-black tracking-tight text-foreground leading-[0.9] mb-3 max-w-3xl">
+              This is an <span className="text-[#7C3AED]">early-field</span> readout.
+            </h2>
+            <p className="text-base sm:text-lg text-muted-foreground leading-7 max-w-2xl mb-10">
+              Agentic commerce is a young category. Most stores were not built with AI
+              shoppers in mind. Read this page with three things in mind.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[
                 {
                   heading: "Open does not mean optimized.",
                   body: "A site can allow agent traffic and still give weak machine-readable guidance once the agent arrives.",
+                  color: "#0259DD",
                 },
                 {
-                  heading: "Policy is not the same as enforcement.",
+                  heading: "Policy is not enforcement.",
                   body: "A brand can look open in robots.txt while site defenses still stop automated requests in practice.",
+                  color: "#FF6648",
                 },
                 {
-                  heading: "Movement matters more than a snapshot.",
+                  heading: "Movement beats snapshots.",
                   body: "One static profile is useful. Repeated changes are what turn this page into intelligence.",
+                  color: "#FBBA16",
                 },
               ].map((item, i) => (
-                <li key={item.heading} className="flex items-baseline gap-4 px-5 sm:px-6 py-4">
-                  <span className="text-[11px] font-mono text-muted-foreground shrink-0 w-6">
-                    0{i + 1}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold text-foreground mb-0.5">
+                <div key={item.heading} className="relative">
+                  <div
+                    className="absolute inset-0 -z-10"
+                    style={{ backgroundColor: item.color, opacity: 0.25, transform: "translate(4px, 4px)" }}
+                  />
+                  <div className="border-2 border-[#0A1628] bg-white p-5 h-full">
+                    <div className="flex items-start justify-between gap-3 mb-4">
+                      <span
+                        className="data-num text-[72px] font-black leading-none"
+                        style={{ color: item.color }}
+                      >
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span
+                        className="inline-block h-3 w-3 rounded-full border-2 border-[#0A1628] mt-3 shrink-0"
+                        style={{ backgroundColor: item.color }}
+                      />
+                    </div>
+                    <div className="text-base font-black text-foreground mb-2 leading-tight">
                       {item.heading}
                     </div>
                     <p className="text-sm text-muted-foreground leading-6">{item.body}</p>
                   </div>
-                </li>
+                </div>
               ))}
-            </ol>
+            </div>
           </div>
         </section>
       </main>
+
 
 
       <Footer />
