@@ -218,6 +218,47 @@ function AudienceRow({
   );
 }
 
+const LAYER_TOOLTIPS = [
+  {
+    content: "Can an agent find this site and understand its structure?",
+    detail:
+      "robots.txt tells agents which paths are allowed. Sitemaps list the URLs the site wants discovered. Both are table-stakes for any indexing or crawling behavior.",
+  },
+  {
+    content: "Can an agent understand products without rendering the page?",
+    detail:
+      "JSON-LD, Schema.org Product, Open Graph, and product feeds let agents parse titles, prices, availability, and images from structured data instead of scraping visible HTML.",
+  },
+  {
+    content: "Does the site publish explicit guidance for agents or LLMs?",
+    detail:
+      "llms.txt, agent declaration files, and UCP endpoints are emerging. Most brands still publish nothing here, so even one file is notable. Naming is unsettled — treat as descriptive.",
+  },
+] as const;
+
+const INSTRUMENT_TOOLTIPS = {
+  ACCESS: {
+    content: "How openly this site admits AI agents vs. peers in its category.",
+    detail:
+      "Based on how many of the 9 major AI agent identities showed friction on this scan (blocked by policy or restricted by defenses). Fewer is better.",
+  },
+  COVERAGE: {
+    content: "How much machine-readable structure this site publishes vs. peers.",
+    detail:
+      "Sums across 8 signals: robots.txt, sitemap, JSON-LD, Schema.org Product, Open Graph, product feed, llms.txt, and UCP. Higher is better.",
+  },
+  "LLMS.TXT": {
+    content: "Is llms.txt published at the root of this site?",
+    detail:
+      "llms.txt is an emerging proposal (llmstxt.org) for sites to give LLMs a curated entry point. Still young — most brands publish nothing.",
+  },
+  "AGENT GUIDANCE": {
+    content: "Does this site publish any explicit agent policy or brief file?",
+    detail:
+      "Checks for /agents.txt, /agents-brief.txt, and /.well-known/agents.txt. Standards are unsettled as of early 2026; this is a descriptive signal, not a compliance check.",
+  },
+} as const;
+
 const STATUS_HEX: Record<AgentStatus, string> = {
   allowed: "#059669",
   no_rule: "#94A3B8",
@@ -256,6 +297,8 @@ function InstrumentCard({
   valueSuffix,
   detail,
   lowPool,
+  tooltipContent,
+  tooltipDetail,
 }: {
   tag: string;
   color: string;
@@ -263,6 +306,8 @@ function InstrumentCard({
   valueSuffix?: string;
   detail: string;
   lowPool?: boolean;
+  tooltipContent?: string;
+  tooltipDetail?: string;
 }) {
   return (
     <div className="relative">
@@ -302,7 +347,14 @@ function InstrumentCard({
               small peer pool
             </p>
           )}
-          <p className="text-sm text-muted-foreground leading-6">{detail}</p>
+          <div className="inline-flex items-start gap-1.5">
+            <p className="text-sm text-muted-foreground leading-6 flex-1">{detail}</p>
+            {tooltipContent && (
+              <span className="mt-1 shrink-0">
+                <InfoTooltip content={tooltipContent} detail={tooltipDetail} />
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -765,7 +817,13 @@ export default async function BrandPage({ params }: BrandPageProps) {
                 <div className="grid grid-cols-1 sm:grid-cols-[auto_1fr] divide-y-2 sm:divide-y-0 sm:divide-x-2 divide-[#0A1628]">
                   {/* Count block */}
                   <div className="px-6 py-6 sm:px-8 sm:py-7 min-w-[200px]">
-                    <div className="spec-label text-muted-foreground mb-3">REACH</div>
+                    <div className="spec-label text-muted-foreground mb-3 inline-flex items-center gap-1.5">
+                      REACH
+                      <InfoTooltip
+                        content="How many of the nine AI agents ARC could treat as meaningfully reachable on this scan."
+                        detail="Counts both agents explicitly allowed in robots.txt and agents with no explicit rule (default-allowed). It does not count agents blocked by policy or by site defenses."
+                      />
+                    </div>
                     <div className="flex items-baseline gap-1">
                       <span className="data-num text-[64px] sm:text-[84px] font-black text-[#0259DD] tabular-nums leading-[0.85]">
                         {String(openCount).padStart(2, "0")}
@@ -782,7 +840,13 @@ export default async function BrandPage({ params }: BrandPageProps) {
                   {/* Distribution visualization */}
                   <div className="px-6 py-6 sm:px-8 sm:py-7">
                     <div className="flex items-center justify-between gap-3 mb-3">
-                      <div className="spec-label text-muted-foreground">DISTRIBUTION</div>
+                      <div className="spec-label text-muted-foreground inline-flex items-center gap-1.5">
+                        DISTRIBUTION
+                        <InfoTooltip
+                          content="One colored segment per agent, in the order shown below. Color indicates this scan's outcome."
+                          detail="Green = open. Grey = no explicit rule (default-allowed). Mustard = restricted by site defenses. Coral = blocked by policy. Light grey = scan was inconclusive."
+                        />
+                      </div>
                       <div className="flex items-center gap-3 text-[10px] font-mono text-muted-foreground">
                         <span className="flex items-center gap-1.5">
                           <span className="inline-block w-2 h-2 bg-[#059669]" />
@@ -966,9 +1030,13 @@ export default async function BrandPage({ params }: BrandPageProps) {
                             / 0{totalCount}
                           </span>
                         </div>
-                        <p className="text-[11px] font-mono text-muted-foreground mt-2 uppercase tracking-[0.08em]">
-                          {layer.summary}
-                        </p>
+                        <div className="text-[11px] font-mono text-muted-foreground mt-2 uppercase tracking-[0.08em] inline-flex items-start gap-1.5">
+                          <span>{layer.summary}</span>
+                          <InfoTooltip
+                            content={LAYER_TOOLTIPS[idx].content}
+                            detail={LAYER_TOOLTIPS[idx].detail}
+                          />
+                        </div>
                       </div>
 
                       {/* Signal rows */}
@@ -1041,6 +1109,8 @@ export default async function BrandPage({ params }: BrandPageProps) {
                 valueSuffix={categoryAccessPct ? "" : "n/a"}
                 detail={`${blockedCount + restrictedCount} of 9 agents showed friction on this scan.`}
                 lowPool={categoryPeerScans.length < 4}
+                tooltipContent={INSTRUMENT_TOOLTIPS.ACCESS.content}
+                tooltipDetail={INSTRUMENT_TOOLTIPS.ACCESS.detail}
               />
               <InstrumentCard
                 tag="COVERAGE"
@@ -1049,6 +1119,8 @@ export default async function BrandPage({ params }: BrandPageProps) {
                 valueSuffix={categorySignalPct ? "" : "n/a"}
                 detail={`${machineReadableCount} of 8 machine-readable signals detected.`}
                 lowPool={categoryPeerScans.length < 4}
+                tooltipContent={INSTRUMENT_TOOLTIPS.COVERAGE.content}
+                tooltipDetail={INSTRUMENT_TOOLTIPS.COVERAGE.detail}
               />
               <InstrumentCard
                 tag="LLMS.TXT"
@@ -1056,6 +1128,8 @@ export default async function BrandPage({ params }: BrandPageProps) {
                 value={scan.hasLlmsTxt ? "YES" : "NO"}
                 valueSuffix=""
                 detail={`${llmsCategoryAdoption}% of ${brand.category || "peers"} publish llms.txt.`}
+                tooltipContent={INSTRUMENT_TOOLTIPS["LLMS.TXT"].content}
+                tooltipDetail={INSTRUMENT_TOOLTIPS["LLMS.TXT"].detail}
               />
               <InstrumentCard
                 tag="AGENT GUIDANCE"
@@ -1063,6 +1137,8 @@ export default async function BrandPage({ params }: BrandPageProps) {
                 value={scan.hasAgentsTxt ? "YES" : "NO"}
                 valueSuffix={scan.hasAgentsTxt && scan.agentsTxtVariant ? scan.agentsTxtVariant : ""}
                 detail={`${guidanceCategoryAdoption}% of ${brand.category || "peers"} publish any explicit guidance file.`}
+                tooltipContent={INSTRUMENT_TOOLTIPS["AGENT GUIDANCE"].content}
+                tooltipDetail={INSTRUMENT_TOOLTIPS["AGENT GUIDANCE"].detail}
               />
             </div>
           </div>
