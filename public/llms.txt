@@ -15,17 +15,20 @@ ARC Report (arcreport.ai) is a research tool that monitors the AI-agent readines
 ## Key Pages
 
 - [Home](https://arcreport.ai/): Live dashboard and search across all tracked brands.
-- [Brand Pages](https://arcreport.ai/brand/): Per-brand detail pages with historical data and screenshots.
+- [Brand Pages](https://arcreport.ai/brand/): Per-brand detail pages with agent access breakdown and signal coverage.
+- [Leaderboard](https://arcreport.ai/leaderboard): Top 10 AI-Ready and AI-Resistant brands, updated daily.
+- [Changelog](https://arcreport.ai/changelog): Daily changes detected across all tracked brands.
 - [API Docs](https://arcreport.ai/docs): Developer documentation for integrating ARC Report data.
 
 ## Data
 
 ARC Report collects the following signals for each brand:
 
-- **robots.txt policies**: Which AI user-agents are allowed or blocked.
-- **Structured data**: Presence of Schema.org Product, Offer, and BreadcrumbList markup.
-- **Platform detection**: Identified e-commerce platform (Shopify, Salesforce Commerce Cloud, Magento, custom, etc.).
-- **Checkout accessibility**: Whether the add-to-cart and checkout flows are navigable by an agent.
-- **Cookie and consent gates**: Whether cookie banners or consent walls block automated access.
+- **robots.txt policies**: Which AI user-agents (GPTBot, ClaudeBot, PerplexityBot, etc.) are allowed or blocked.
+- **HTTP access testing**: Real requests with 9 AI agent user-agent strings to detect WAF blocks and content stripping.
+- **Structured data**: Presence of JSON-LD, Schema.org Product, Open Graph, sitemaps, and product feeds.
+- **Platform detection**: Identified e-commerce platform (Shopify, Salesforce Commerce Cloud, Magento, WooCommerce, custom, etc.).
+- **Protocol files**: llms.txt, agents.txt, and UCP endpoint presence and quality.
+- **Infrastructure**: CDN (Cloudflare, Fastly, Akamai) and WAF (DataDome, PerimeterX) detection.
 
-Data is refreshed daily. The full dataset is available via the API.
+Data is refreshed daily. The full dataset is available via the public API at no cost.
