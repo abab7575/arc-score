@@ -12,6 +12,8 @@ import {
 } from "@/lib/customer-auth";
 import { stripe, getPlanByPriceId } from "@/lib/stripe";
 import { rateLimit } from "@/lib/rate-limit";
+import { sendEmail } from "@/lib/email/send";
+import { welcomeEmail } from "@/lib/email/templates";
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for") || "unknown";
@@ -99,6 +101,10 @@ export async function POST(request: NextRequest) {
         }
       }
     }
+
+    // Send welcome email (fire and forget)
+    const welcome = welcomeEmail({ name: name || null, plan });
+    void sendEmail({ to: email, ...welcome });
 
     // Create session
     const token = await createCustomerSession(customer.id);

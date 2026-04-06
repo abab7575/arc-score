@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, schema } from "@/lib/db";
 import { eq, gte, sql } from "drizzle-orm";
+import { sendEmail } from "@/lib/email/send";
+import { watchlistAlertEmail } from "@/lib/email/templates";
 
 /**
  * Daily watchlist alert cron — runs after the daily scan.
@@ -16,11 +18,6 @@ export async function POST(request: NextRequest) {
   const token = authHeader?.replace("Bearer ", "");
   if (token !== cronSecret) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const resendApiKey = process.env.RESEND_API_KEY;
-  if (!resendApiKey) {
-    return NextResponse.json({ error: "RESEND_API_KEY not configured" }, { status: 500 });
   }
 
   // Get today's changelog entries
@@ -97,46 +94,23 @@ export async function POST(request: NextRequest) {
 
     if (relevantChanges.length === 0) continue;
 
-    // Build email body
-    const changeLines = relevantChanges.map((c) =>
-      `- ${c.brandName}: ${c.field} changed from "${c.oldValue ?? "none"}" to "${c.newValue ?? "none"}"`
-    ).join("\n");
+    // Build and send email using template
+    const emailData = watchlistAlertEmail({
+      name: customer.name,
+      changes: relevantChanges.map(c => ({
+        brandName: c.brandName,
+        brandSlug: c.brandSlug,
+        field: c.field,
+        oldValue: c.oldValue,
+        newValue: c.newValue,
+      })),
+    });
 
-    const htmlChanges = relevantChanges.map((c) =>
-      `<li><strong>${c.brandName}</strong>: <code>${c.field}</code> — <del>${c.oldValue ?? "none"}</del> → <strong>${c.newValue ?? "none"}</strong> <a href="https://arcreport.ai/brand/${c.brandSlug}">[view]</a></li>`
-    ).join("");
-
-    try {
-      const res = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${resendApiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: "ARC Report <alerts@arcreport.ai>",
-          to: customer.email,
-          subject: `ARC Alert: ${relevantChanges.length} change${relevantChanges.length === 1 ? "" : "s"} on your watchlist`,
-          html: `
-            <h2>Watchlist Alert</h2>
-            <p>Hi${customer.name ? ` ${customer.name}` : ""},</p>
-            <p>${relevantChanges.length} change${relevantChanges.length === 1 ? " was" : "s were"} detected on brands you're tracking:</p>
-            <ul>${htmlChanges}</ul>
-            <p><a href="https://arcreport.ai/account/watchlist">View your watchlist</a></p>
-            <p style="color:#888;font-size:12px;">You're receiving this because you have an active ARC Report watchlist.</p>
-          `,
-          text: `Watchlist Alert\n\n${relevantChanges.length} changes detected:\n\n${changeLines}\n\nView your watchlist: https://arcreport.ai/account/watchlist`,
-        }),
-      });
-
-      if (res.ok) {
-        emailsSent++;
-      } else {
-        const body = await res.text();
-        errors.push(`Customer ${customerId}: ${res.status} ${body}`);
-      }
-    } catch (e) {
-      errors.push(`Customer ${customerId}: ${e instanceof Error ? e.message : "unknown error"}`);
+    const result = await sendEmail({ to: customer.email, ...emailData });
+    if (result.success) {
+      emailsSent++;
+    } else {
+      errors.push(`Customer ${customerId}: ${result.error}`);
     }
   }
 
