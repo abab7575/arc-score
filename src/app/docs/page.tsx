@@ -223,8 +223,7 @@ export default function DocsPage() {
             Need more?
           </h2>
           <p className="text-sm text-muted-foreground mb-4">
-            Pro ($149/mo) includes full history exports, daily alerts, and higher API limits.
-            Agency ($299/mo) adds Slack/webhook alerts and team seats.{" "}
+            Pro ($149/mo) includes full history, daily alerts, watchlists, and data exports.{" "}
             <a href="/pricing" className="text-[#0259DD] hover:underline">See pricing</a> or email{" "}
             <a href="mailto:hello@arcreport.ai" className="text-[#0259DD] hover:underline">
               hello@arcreport.ai

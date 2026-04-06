@@ -16,12 +16,12 @@ const TIERS = [
     ctaHref: "/",
     accent: false,
     features: [
-      "Full public index — all brands, latest scan",
+      "Full public index — all 1,000+ brands",
       "Matrix view with agent access status",
-      "Brand profiles with current snapshot",
+      "Brand readouts with current snapshot",
       "3 most recent changelog entries",
-      "Basic weekly digest",
-      "Rate-limited public API",
+      "Weekly digest email",
+      "Public API access",
     ],
   },
   {
@@ -29,35 +29,16 @@ const TIERS = [
     name: "Pro",
     price: 149,
     period: "/mo",
-    tagline: "Watchlists, alerts, and exports",
+    tagline: "Watchlists, daily alerts, and exports",
     cta: "Get Pro Access",
     accent: true,
-    badge: "Most Popular",
     features: [
       "Everything in Free",
       "Watchlists — track up to 10 brands",
       "Daily change alerts via email",
       "Full changelog history (90+ days)",
-      "CSV and JSON export",
-      "Personal API key (10k req/day)",
-    ],
-  },
-  {
-    id: "agency" as const,
-    name: "Agency",
-    price: 299,
-    period: "/mo",
-    tagline: "Teams, Slack alerts, and deep API",
-    cta: "Get Agency Access",
-    accent: false,
-    features: [
-      "Everything in Pro",
-      "50 brand watchlists",
-      "Slack and webhook alerts",
-      "Team seats (up to 5)",
-      "Higher API limits (100k req/day)",
-      "Competitor tracking groups",
-      "Category-level diffs",
+      "CSV and JSON data export",
+      "Claim your brand profile",
     ],
   },
 ];
@@ -65,7 +46,7 @@ const TIERS = [
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
 
-  async function handleCheckout(planId: "pro" | "agency") {
+  async function handleCheckout(planId: "pro") {
     setLoading(planId);
     try {
       const res = await fetch("/api/stripe/create-checkout", {
@@ -98,12 +79,12 @@ export default function PricingPage() {
           </h1>
           <p className="text-base text-muted-foreground max-w-2xl mx-auto">
             The free index shows every brand&apos;s agentic posture today.
-            Paid plans add watchlists, daily alerts, full history, and exports.
+            Pro adds watchlists, daily alerts, full history, and exports.
           </p>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
           {TIERS.map((tier) => (
             <div
               key={tier.id}
@@ -111,12 +92,6 @@ export default function PricingPage() {
                 tier.accent ? "border-[#FF6648]" : "border-gray-200"
               }`}
             >
-              {tier.badge && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FF6648] text-white text-[10px] font-bold px-3 py-1 uppercase tracking-wider whitespace-nowrap">
-                  {tier.badge}
-                </div>
-              )}
-
               <div className="mb-4">
                 <h3 className="text-lg font-bold text-foreground">{tier.name}</h3>
                 <p className="text-sm text-muted-foreground mt-0.5">{tier.tagline}</p>
@@ -179,33 +154,31 @@ export default function PricingPage() {
         </div>
 
         {/* Comparison table */}
-        <div className="mt-16 max-w-4xl mx-auto overflow-x-auto">
+        <div className="mt-16 max-w-3xl mx-auto overflow-x-auto">
           <table className="w-full border-2 border-gray-200 bg-white text-sm">
             <thead>
               <tr className="border-b-2 border-gray-200">
                 <th className="text-left p-4 font-bold text-foreground">Feature</th>
                 <th className="text-center p-4 font-bold text-foreground">Free</th>
-                <th className="text-center p-4 font-bold text-foreground border-x-2 border-gray-200">Pro</th>
-                <th className="text-center p-4 font-bold text-foreground">Agency</th>
+                <th className="text-center p-4 font-bold text-foreground border-l-2 border-gray-200">Pro — $149/mo</th>
               </tr>
             </thead>
             <tbody>
               {[
-                ["Brands tracked", "Browse all", "10 watchlists", "50 watchlists"],
-                ["Daily alerts", "—", "Email", "Email + Slack + Webhooks"],
-                ["Changelog history", "3 entries", "90+ days", "90+ days"],
-                ["Exports", "—", "CSV + JSON", "CSV + JSON"],
-                ["API access", "Rate-limited", "10k req/day", "100k req/day"],
-                ["Team seats", "1", "1", "5"],
-              ].map(([feature, free, pro, agency], i) => (
+                ["Brand watchlists", "—", "Up to 10"],
+                ["Daily change alerts", "—", "Email"],
+                ["Changelog history", "3 entries", "Full 90+ days"],
+                ["Data exports", "—", "CSV + JSON"],
+                ["Brand claiming", "—", "Included"],
+                ["Weekly digest", "Included", "Included"],
+              ].map(([feature, free, pro], i) => (
                 <tr
                   key={feature}
                   className={`border-b border-gray-100 ${i % 2 === 0 ? "bg-gray-50/50" : ""}`}
                 >
                   <td className="p-4 font-medium text-foreground">{feature}</td>
                   <td className="p-4 text-center text-muted-foreground">{free}</td>
-                  <td className="p-4 text-center text-muted-foreground border-x-2 border-gray-200">{pro}</td>
-                  <td className="p-4 text-center text-muted-foreground">{agency}</td>
+                  <td className="p-4 text-center text-muted-foreground border-l-2 border-gray-200">{pro}</td>
                 </tr>
               ))}
             </tbody>
@@ -280,7 +253,7 @@ export default function PricingPage() {
         <div className="mt-12 text-center">
           <p className="text-sm text-muted-foreground max-w-xl mx-auto">
             Cancel anytime. The free index is always free.
-            Need API-only access or custom terms? <a href="mailto:hello@arcreport.ai" className="text-[#0259DD] hover:underline">Contact us</a>.
+            Need a team plan or custom terms? <a href="mailto:hello@arcreport.ai" className="text-[#0259DD] hover:underline">Contact us</a>.
           </p>
         </div>
       </main>

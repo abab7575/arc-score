@@ -14,7 +14,7 @@ export const stripe = new Proxy({} as Stripe, {
   },
 });
 
-export type PlanId = "free" | "pro" | "agency";
+export type PlanId = "free" | "pro";
 
 export interface PlanConfig {
   id: PlanId;
@@ -23,7 +23,6 @@ export interface PlanConfig {
   priceId: string; // Stripe Price ID from env
   features: string[];
   watchlistLimit: number;
-  apiLimit: string;
 }
 
 export function getPLANS(): Record<PlanId, PlanConfig> {
@@ -34,13 +33,13 @@ export function getPLANS(): Record<PlanId, PlanConfig> {
       price: 0,
       priceId: "",
       watchlistLimit: 0,
-      apiLimit: "Rate-limited public API",
       features: [
-        "Full public index — all brands, latest scan",
+        "Full public index — all 1,000+ brands",
         "Matrix view with agent access status",
-        "Brand profiles with current snapshot",
+        "Brand readouts with current snapshot",
         "3 most recent changelog entries",
-        "Basic weekly digest",
+        "Weekly digest email",
+        "Public API access",
       ],
     },
     pro: {
@@ -49,31 +48,13 @@ export function getPLANS(): Record<PlanId, PlanConfig> {
       price: 149,
       priceId: process.env.STRIPE_PRO_PRICE_ID ?? "",
       watchlistLimit: 10,
-      apiLimit: "10k requests/day",
       features: [
         "Everything in Free",
         "Watchlists — track up to 10 brands",
         "Daily change alerts via email",
         "Full changelog history (90+ days)",
-        "CSV and JSON export",
-        "Personal API key (10k req/day)",
-      ],
-    },
-    agency: {
-      id: "agency",
-      name: "Agency",
-      price: 299,
-      priceId: process.env.STRIPE_AGENCY_PRICE_ID ?? "",
-      watchlistLimit: 50,
-      apiLimit: "100k requests/day",
-      features: [
-        "Everything in Pro",
-        "50 brand watchlists",
-        "Slack and webhook alerts",
-        "Team seats (up to 5)",
-        "Higher API limits (100k req/day)",
-        "Competitor tracking groups",
-        "Category-level diffs",
+        "CSV and JSON data export",
+        "Claim your brand profile",
       ],
     },
   };
