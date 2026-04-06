@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
@@ -41,6 +41,14 @@ interface BrandOption {
 }
 
 export default function AccountPage() {
+  return (
+    <Suspense>
+      <AccountContent />
+    </Suspense>
+  );
+}
+
+function AccountContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isWelcome = searchParams.get("welcome") === "1";
