@@ -17,20 +17,26 @@ export type ContentType =
 
 // ── Helpers ─────────────────────────────────────────────────────────
 
-function gradeEmoji(grade: string): string {
+function tierEmoji(tier: string): string {
   const map: Record<string, string> = {
-    A: "\u{1F7E2}",
-    B: "\u{1F535}",
-    C: "\u{1F7E1}",
-    D: "\u{1F7E0}",
-    F: "\u{1F534}",
+    Leader: "\u{1F7E2}",
+    Strong: "\u{1F535}",
+    Moderate: "\u{1F7E1}",
+    Limited: "\u{1F7E0}",
+    Minimal: "\u{1F534}",
   };
-  return map[grade] || "";
+  return map[tier] || "";
 }
 
-function scoreBar(score: number): string {
-  const filled = Math.round(score / 10);
-  return "\u2588".repeat(filled) + "\u2591".repeat(10 - filled);
+function statusEmoji(status: string): string {
+  const map: Record<string, string> = {
+    allowed: "\u2705",
+    no_rule: "\u2796",
+    inconclusive: "\u2753",
+    restricted: "\u{1F6A7}",
+    blocked: "\u{1F6D1}",
+  };
+  return map[status] || "";
 }
 
 function ordinalSuffix(n: number): string {
@@ -49,7 +55,7 @@ function truncate(text: string, max: number): string {
 interface LeaderboardData {
   categoryName: string;
   categoryId: string;
-  brands: { rank: number; name: string; score: number; grade: string }[];
+  brands: { rank: number; name: string; score: number; tier: string; signals: number; openAgents: number }[];
   totalBrands: number;
 }
 
@@ -62,10 +68,10 @@ export function categoryLeaderboardTemplate(
   if (platform === "x") {
     const lines = brands
       .slice(0, 5)
-      .map((b) => `${gradeEmoji(b.grade)} ${ordinalSuffix(b.rank)} ${b.name} (${b.score}/100)`)
+      .map((b) => `${tierEmoji(b.tier)} ${ordinalSuffix(b.rank)} ${b.name} (${b.openAgents} agents open, ${b.signals} signals)`)
       .join("\n");
     return truncate(
-      `${categoryName} AI Agent Readiness Leaderboard\n\n${lines}\n\nScored across ${totalBrands} brands on arcreport.ai`,
+      `${categoryName} AI Readiness Leaderboard\n\n${lines}\n\n${totalBrands} brands tracked on arcreport.ai`,
       280
     );
   }
@@ -74,20 +80,20 @@ export function categoryLeaderboardTemplate(
     const lines = brands
       .map(
         (b) =>
-          `${gradeEmoji(b.grade)} ${ordinalSuffix(b.rank)}. ${b.name} \u2014 ${b.score}/100 (Grade ${b.grade})`
+          `${tierEmoji(b.tier)} ${ordinalSuffix(b.rank)}. ${b.name} \u2014 ${b.openAgents} agents open, ${b.signals}/7 signals (${b.tier})`
       )
       .join("\n");
-    return `${categoryName} \u2014 AI Agent Readiness Leaderboard\n\nWhich ${categoryName.toLowerCase()} brands are best prepared for AI shopping agents? Here's how the top performers stack up:\n\n${lines}\n\nWe score brands across 7 categories \u2014 from discoverability and product data to cart/checkout and agentic commerce protocols.\n\n${totalBrands} brands tracked and scored weekly.\n\nFull rankings: arcreport.ai\n\n#AICommerce #Ecommerce #RetailTech #ARCReport`;
+    return `${categoryName} \u2014 AI Readiness Leaderboard\n\nWhich ${categoryName.toLowerCase()} brands are most open to AI agents? Here's how the top performers stack up:\n\n${lines}\n\nWe measure agent access (robots.txt), structured data signals, and AI commerce protocols like llms.txt and UCP.\n\n${totalBrands} brands tracked daily.\n\nFull rankings: arcreport.ai\n\n#AICommerce #Ecommerce #RetailTech #ARCReport`;
   }
 
   // newsletter
   const rows = brands
     .map(
       (b) =>
-        `| ${b.rank} | ${b.name} | ${b.score} | ${b.grade} |`
+        `| ${b.rank} | ${b.name} | ${b.openAgents} | ${b.signals}/7 | ${b.tier} |`
     )
     .join("\n");
-  return `## ${categoryName} \u2014 AI Agent Readiness Leaderboard\n\n| Rank | Brand | Score | Grade |\n|------|-------|-------|-------|\n${rows}\n\n*${totalBrands} brands tracked. Scores updated weekly across 7 categories.*\n\n[View full rankings \u2192](https://arcreport.ai)`;
+  return `## ${categoryName} \u2014 AI Readiness Leaderboard\n\n| Rank | Brand | Open Agents | Signals | Tier |\n|------|-------|-------------|---------|------|\n${rows}\n\n*${totalBrands} brands tracked. Data updated daily.*\n\n[View full rankings \u2192](https://arcreport.ai)`;
 }
 
 // ── Score Spotlight ──────────────────────────────────────────────────
@@ -95,63 +101,65 @@ export function categoryLeaderboardTemplate(
 interface SpotlightData {
   brandName: string;
   brandSlug: string;
-  overallScore: number;
-  grade: string;
-  categoryBreakdown: { name: string; score: number; grade: string }[];
-  previousScore: number | null;
+  readinessScore: number;
+  tier: string;
+  signalBreakdown: { name: string; present: boolean }[];
+  agentAccess: { agent: string; status: string }[];
+  openAgents: number;
+  blockedAgents: number;
+  rank: number;
+  totalBrands: number;
 }
 
 export function scoreSpotlightTemplate(
   platform: Platform,
   data: SpotlightData
 ): string {
-  const { brandName, overallScore, grade, categoryBreakdown, previousScore } = data;
-  const delta =
-    previousScore !== null ? overallScore - previousScore : null;
-  const deltaStr =
-    delta !== null
-      ? delta > 0
-        ? ` (\u2191${delta})`
-        : delta < 0
-        ? ` (\u2193${Math.abs(delta)})`
-        : " (unchanged)"
-      : "";
+  const { brandName, readinessScore, tier, signalBreakdown, agentAccess, openAgents, blockedAgents, rank, totalBrands } = data;
+
+  const signalsPresentCount = signalBreakdown.filter((s) => s.present).length;
+  const signalsTotalCount = signalBreakdown.length;
 
   if (platform === "x") {
-    const top = categoryBreakdown
-      .sort((a, b) => b.score - a.score)
+    const agentSummary = `${openAgents} agents open, ${blockedAgents} blocked`;
+    const topSignals = signalBreakdown
+      .filter((s) => s.present)
       .slice(0, 3)
-      .map((c) => `${c.name}: ${c.score}`)
-      .join(" | ");
+      .map((s) => s.name)
+      .join(", ");
     return truncate(
-      `${gradeEmoji(grade)} ${brandName} scores ${overallScore}/100${deltaStr} on AI Agent Readiness\n\n${top}\n\nFull breakdown: arcreport.ai/brand/${data.brandSlug}`,
+      `${tierEmoji(tier)} ${brandName}: ${agentSummary}\n\nSignals: ${topSignals}\nRank: ${ordinalSuffix(rank)} of ${totalBrands}\n\narcreport.ai/brand/${data.brandSlug}`,
       280
     );
   }
 
   if (platform === "linkedin") {
-    const breakdown = categoryBreakdown
-      .sort((a, b) => b.score - a.score)
-      .map((c) => `${gradeEmoji(c.grade)} ${c.name}: ${c.score}/100`)
+    const signalLines = signalBreakdown
+      .map((s) => `${s.present ? "\u2705" : "\u274C"} ${s.name}`)
       .join("\n");
-    return `ARC Report Spotlight: ${brandName}\n\n${gradeEmoji(grade)} Overall: ${overallScore}/100 (Grade ${grade})${deltaStr}\n\nCategory Breakdown:\n${breakdown}\n\nARC Report measures how well e-commerce sites work with AI shopping agents \u2014 from ChatGPT Shopping to browser-automation agents like Operator.\n\nFull report: arcreport.ai/brand/${data.brandSlug}\n\n#AICommerce #Ecommerce #ARCReport`;
+    const agentLines = agentAccess
+      .map((a) => `${statusEmoji(a.status)} ${a.agent}: ${a.status}`)
+      .join("\n");
+    return `ARC Report Spotlight: ${brandName}\n\n${tierEmoji(tier)} Tier: ${tier} | ${openAgents} agents open, ${blockedAgents} blocked\nRanked ${ordinalSuffix(rank)} of ${totalBrands} brands\n\nSignals (${signalsPresentCount}/${signalsTotalCount}):\n${signalLines}\n\nAgent Access:\n${agentLines}\n\nARC Report tracks how e-commerce sites interact with AI shopping agents \u2014 from ChatGPT Shopping to browser-automation agents like Operator.\n\nFull report: arcreport.ai/brand/${data.brandSlug}\n\n#AICommerce #Ecommerce #ARCReport`;
   }
 
   // newsletter
-  const rows = categoryBreakdown
-    .map((c) => `| ${c.name} | ${scoreBar(c.score)} | ${c.score} | ${c.grade} |`)
+  const signalRows = signalBreakdown
+    .map((s) => `| ${s.name} | ${s.present ? "\u2705" : "\u274C"} |`)
     .join("\n");
-  return `## ARC Report Spotlight: ${brandName}\n\n**Overall: ${overallScore}/100 (Grade ${grade})**${deltaStr}\n\n| Category | | Score | Grade |\n|----------|---|-------|-------|\n${rows}\n\n[View full report \u2192](https://arcreport.ai/brand/${data.brandSlug})`;
+  const agentRows = agentAccess
+    .map((a) => `| ${a.agent} | ${a.status} |`)
+    .join("\n");
+  return `## ARC Report Spotlight: ${brandName}\n\n**Tier: ${tier}** | ${openAgents} agents open, ${blockedAgents} blocked | Ranked ${ordinalSuffix(rank)} of ${totalBrands}\n\n### Signals (${signalsPresentCount}/${signalsTotalCount})\n\n| Signal | Present |\n|--------|---------|\n${signalRows}\n\n### Agent Access\n\n| Agent | Status |\n|-------|--------|\n${agentRows}\n\n[View full report \u2192](https://arcreport.ai/brand/${data.brandSlug})`;
 }
 
 // ── Biggest Movers ──────────────────────────────────────────────────
 
 interface MoverEntry {
   name: string;
+  changeCount: number;
   score: number;
-  previousScore: number;
-  delta: number;
-  grade: string;
+  tier: string;
 }
 
 interface MoversData {
@@ -163,46 +171,35 @@ export function biggestMoversTemplate(
   platform: Platform,
   data: MoversData
 ): string {
-  const { direction, movers } = data;
-  const label =
-    direction === "up"
-      ? "Biggest Climbers"
-      : direction === "down"
-      ? "Biggest Drops"
-      : "Biggest Movers";
+  const { movers } = data;
+  const label = "Most Active This Week";
 
   if (platform === "x") {
     const lines = movers
       .slice(0, 5)
-      .map((m) => {
-        const arrow = m.delta > 0 ? "\u2191" : "\u2193";
-        return `${arrow}${Math.abs(m.delta)} ${m.name} (${m.score})`;
-      })
+      .map((m) => `${tierEmoji(m.tier)} ${m.name}: ${m.changeCount} changes`)
       .join("\n");
     return truncate(
-      `AI Agent Readiness \u2014 ${label} This Week\n\n${lines}\n\narcreport.ai`,
+      `AI Agent Readiness \u2014 ${label}\n\n${lines}\n\narcreport.ai`,
       280
     );
   }
 
   if (platform === "linkedin") {
     const lines = movers
-      .map((m) => {
-        const arrow = m.delta > 0 ? "\u{1F4C8}" : "\u{1F4C9}";
-        return `${arrow} ${m.name}: ${m.previousScore} \u2192 ${m.score} (${m.delta > 0 ? "+" : ""}${m.delta})`;
-      })
+      .map((m) => `\u{1F504} ${m.name}: ${m.changeCount} changes (current tier: ${m.tier})`)
       .join("\n");
-    return `AI Agent Readiness \u2014 ${label} This Week\n\nWhich brands made the biggest score changes?\n\n${lines}\n\nScores shift as brands improve (or regress) on structured data, checkout flows, and AI agent compatibility.\n\nTrack the full index: arcreport.ai\n\n#AICommerce #Ecommerce #RetailTech`;
+    return `AI Agent Readiness \u2014 ${label}\n\nWhich brands had the most changes to their AI agent posture this week?\n\n${lines}\n\nChanges include robots.txt updates, new structured data signals, platform migrations, and more.\n\nTrack the full index: arcreport.ai\n\n#AICommerce #Ecommerce #RetailTech`;
   }
 
   // newsletter
   const rows = movers
     .map(
       (m) =>
-        `| ${m.name} | ${m.previousScore} | ${m.score} | ${m.delta > 0 ? "+" : ""}${m.delta} | ${m.grade} |`
+        `| ${m.name} | ${m.changeCount} | ${m.score} | ${m.tier} |`
     )
     .join("\n");
-  return `## ${label} This Week\n\n| Brand | Previous | Current | Change | Grade |\n|-------|----------|---------|--------|-------|\n${rows}\n\n*Scores measured weekly across 7 AI agent readiness categories.*`;
+  return `## ${label}\n\n| Brand | Changes | Readiness Score | Tier |\n|-------|---------|-----------------|------|\n${rows}\n\n*Changes tracked daily across robots.txt, structured data, agent access, and more.*`;
 }
 
 // ── Agent Readiness ─────────────────────────────────────────────────
@@ -211,23 +208,25 @@ interface AgentReadinessData {
   agentName: string;
   agentType: string;
   agentCompany: string;
-  brands: { rank: number; name: string; score: number; grade: string }[];
+  brands: { rank: number; name: string; status: string; readinessScore: number; openAgents: number }[];
   totalBrands: number;
+  allowedCount: number;
+  blockedCount: number;
 }
 
 export function agentReadinessTemplate(
   platform: Platform,
   data: AgentReadinessData
 ): string {
-  const { agentName, agentType, brands, totalBrands } = data;
+  const { agentName, agentType, brands, totalBrands, allowedCount, blockedCount } = data;
 
   if (platform === "x") {
     const lines = brands
       .slice(0, 5)
-      .map((b) => `${gradeEmoji(b.grade)} ${b.name}: ${b.score}`)
+      .map((b) => `${statusEmoji(b.status)} ${b.name}: ${b.status}`)
       .join("\n");
     return truncate(
-      `Top brands ready for ${agentName} (${agentType})\n\n${lines}\n\narcreport.ai/agents`,
+      `${agentName} access across top brands\n\n${lines}\n\n${allowedCount} allow / ${blockedCount} block\narcreport.ai/agents`,
       280
     );
   }
@@ -236,43 +235,44 @@ export function agentReadinessTemplate(
     const lines = brands
       .map(
         (b) =>
-          `${gradeEmoji(b.grade)} ${ordinalSuffix(b.rank)}. ${b.name} \u2014 ${b.score}/100`
+          `${statusEmoji(b.status)} ${ordinalSuffix(b.rank)}. ${b.name} \u2014 ${b.status}`
       )
       .join("\n");
-    return `Which brands are most ready for ${agentName}?\n\n${agentName} is a ${agentType}-based AI shopping agent from ${data.agentCompany}. ${agentType === "feed" ? "It reads structured data and product feeds." : "It navigates sites with browser automation."}\n\nTop compatible brands:\n\n${lines}\n\nEach agent has unique needs \u2014 we score ${totalBrands} brands through 10 different agent lenses.\n\nExplore all agents: arcreport.ai/agents\n\n#AICommerce #AIAgents #Ecommerce`;
+    return `Which brands allow ${agentName}?\n\n${agentName} is a ${agentType}-based AI shopping agent from ${data.agentCompany}. ${agentType === "feed" ? "It reads structured data and product feeds." : "It navigates sites with browser automation."}\n\nTop brands by access:\n\n${lines}\n\nOf ${totalBrands} brands tracked: ${allowedCount} allow, ${blockedCount} block.\n\nExplore all agents: arcreport.ai/agents\n\n#AICommerce #AIAgents #Ecommerce`;
   }
 
   // newsletter
   const rows = brands
-    .map((b) => `| ${b.rank} | ${b.name} | ${b.score} | ${b.grade} |`)
+    .map((b) => `| ${b.rank} | ${b.name} | ${b.status} | ${b.readinessScore} |`)
     .join("\n");
-  return `## ${agentName} \u2014 Most Compatible Brands\n\n**Agent type:** ${agentType} | **Company:** ${data.agentCompany}\n\n| Rank | Brand | Score | Grade |\n|------|-------|-------|-------|\n${rows}\n\n*Compatibility scores based on ${agentName}'s weighted category priorities across ${totalBrands} brands.*`;
+  return `## ${agentName} \u2014 Brand Access Report\n\n**Agent type:** ${agentType} | **Company:** ${data.agentCompany}\n**${allowedCount}** brands allow | **${blockedCount}** brands block\n\n| Rank | Brand | Status | Readiness Score |\n|------|-------|--------|----------------|\n${rows}\n\n*Access status based on robots.txt policy and HTTP user-agent testing across ${totalBrands} brands.*`;
 }
 
 // ── Weekly Roundup ──────────────────────────────────────────────────
 
 interface WeeklyRoundupData {
   totalBrands: number;
-  avgScore: number;
-  topBrands: { name: string; score: number; grade: string }[];
-  movers: { name: string; delta: number; score: number }[];
+  totalChanges: number;
+  brandsMoving: number;
+  topBrands: { name: string; score: number; tier: string; openAgents: number }[];
+  movers: { name: string; changeCount: number }[];
+  recentChanges: { field: string; oldValue: string | null; newValue: string | null }[];
   recentArticles: { title: string }[];
-  todayScans: number;
 }
 
 export function weeklyRoundupTemplate(
   platform: Platform,
   data: WeeklyRoundupData
 ): string {
-  const { totalBrands, avgScore, topBrands, movers, recentArticles } = data;
+  const { totalBrands, totalChanges, brandsMoving, topBrands, movers, recentArticles } = data;
 
   if (platform === "x") {
     const top3 = topBrands
       .slice(0, 3)
-      .map((b) => `${gradeEmoji(b.grade)} ${b.name}: ${b.score}`)
+      .map((b) => `${tierEmoji(b.tier)} ${b.name}: ${b.openAgents} agents open`)
       .join("\n");
     return truncate(
-      `ARC Report Weekly Roundup\n\n${totalBrands} brands tracked | Avg: ${avgScore}/100\n\nTop 3:\n${top3}\n\narcreport.ai`,
+      `ARC Report Weekly Roundup\n\n${totalBrands} brands tracked | ${totalChanges} changes this week\n\nTop 3:\n${top3}\n\narcreport.ai`,
       280
     );
   }
@@ -280,35 +280,29 @@ export function weeklyRoundupTemplate(
   if (platform === "linkedin") {
     const topList = topBrands
       .slice(0, 5)
-      .map((b) => `${gradeEmoji(b.grade)} ${b.name}: ${b.score}/100`)
+      .map((b) => `${tierEmoji(b.tier)} ${b.name}: ${b.openAgents} agents open (${b.tier})`)
       .join("\n");
     const moverList =
       movers.length > 0
         ? movers
             .slice(0, 3)
-            .map(
-              (m) =>
-                `${m.delta > 0 ? "\u{1F4C8}" : "\u{1F4C9}"} ${m.name}: ${m.delta > 0 ? "+" : ""}${m.delta} (now ${m.score})`
-            )
+            .map((m) => `\u{1F504} ${m.name}: ${m.changeCount} changes`)
             .join("\n")
         : "No major movements this week.";
-    return `ARC Report \u2014 Weekly Roundup\n\n${totalBrands} brands tracked | Average score: ${avgScore}/100\n\nTop Performers:\n${topList}\n\nBiggest Moves:\n${moverList}\n\nAI shopping agents are reshaping e-commerce. Is your site ready?\n\narcreport.ai\n\n#AICommerce #Ecommerce #WeeklyRoundup`;
+    return `ARC Report \u2014 Weekly Roundup\n\n${totalBrands} brands tracked | ${totalChanges} changes across ${brandsMoving} brands this week\n\nTop Performers:\n${topList}\n\nMost Active:\n${moverList}\n\nAI shopping agents are reshaping e-commerce. Is your site ready?\n\narcreport.ai\n\n#AICommerce #Ecommerce #WeeklyRoundup`;
   }
 
   // newsletter
   const topRows = topBrands
     .slice(0, 10)
-    .map((b, i) => `| ${i + 1} | ${b.name} | ${b.score} | ${b.grade} |`)
+    .map((b, i) => `| ${i + 1} | ${b.name} | ${b.openAgents} | ${b.tier} |`)
     .join("\n");
   const moverRows =
     movers.length > 0
       ? movers
-          .map(
-            (m) =>
-              `| ${m.name} | ${m.delta > 0 ? "+" : ""}${m.delta} | ${m.score} |`
-          )
+          .map((m) => `| ${m.name} | ${m.changeCount} |`)
           .join("\n")
-      : "| *No major movements* | | |";
+      : "| *No major movements* | |";
   const newsItems =
     recentArticles.length > 0
       ? recentArticles
@@ -317,7 +311,7 @@ export function weeklyRoundupTemplate(
           .join("\n")
       : "- *No news highlights this week*";
 
-  return `## ARC Report \u2014 Weekly Roundup\n\n**${totalBrands} brands tracked** | Average score: **${avgScore}/100**\n\n### Top Performers\n\n| Rank | Brand | Score | Grade |\n|------|-------|-------|-------|\n${topRows}\n\n### Biggest Movers\n\n| Brand | Change | Current |\n|-------|--------|--------|\n${moverRows}\n\n### News Highlights\n\n${newsItems}\n\n---\n\n[Explore the full index \u2192](https://arcreport.ai)`;
+  return `## ARC Report \u2014 Weekly Roundup\n\n**${totalBrands} brands tracked** | **${totalChanges} changes** across **${brandsMoving} brands** this week\n\n### Top Performers\n\n| Rank | Brand | Open Agents | Tier |\n|------|-------|-------------|------|\n${topRows}\n\n### Most Active\n\n| Brand | Changes |\n|-------|---------|\n${moverRows}\n\n### News Highlights\n\n${newsItems}\n\n---\n\n[Explore the full index \u2192](https://arcreport.ai)`;
 }
 
 // ── News Reaction ───────────────────────────────────────────────────

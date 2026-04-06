@@ -2,13 +2,12 @@
  * Content Intelligence Engine
  *
  * Analyzes current data and returns ranked story candidates.
- * Reuses existing query functions — no new DB access patterns.
+ * Uses getMatrixData() (lightweight_scans) + changelog queries.
  */
 
-import { getAllBrandsWithLatestScores, type BrandWithLatestScore } from "@/lib/db/queries";
+import { getMatrixData, getTopMovers, getRecentChangelog } from "@/lib/db/queries";
 import { getNewsArticles, getRecentContentTypes } from "@/lib/db/admin-queries";
 import { AI_AGENT_PROFILES } from "@/lib/ai-agents";
-import { CATEGORY_CONFIG, GRADE_THRESHOLDS } from "@/lib/constants";
 import { EDUCATIONAL_TOPICS } from "./educational-topics";
 import type { Platform, ContentType } from "./templates";
 
@@ -26,28 +25,42 @@ export interface StoryCandidate {
 
 // ── Helpers ─────────────────────────────────────────────────────────
 
-function scoreToGrade(score: number): string {
-  for (const t of GRADE_THRESHOLDS) {
-    if (score >= t.min) return t.grade;
-  }
-  return "F";
+type MatrixRow = ReturnType<typeof getMatrixData>[number];
+
+function countSignals(scan: NonNullable<MatrixRow["scan"]>): number {
+  let count = 0;
+  if (scan.hasJsonLd) count++;
+  if (scan.hasSchemaProduct) count++;
+  if (scan.hasOpenGraph) count++;
+  if (scan.hasSitemap) count++;
+  if (scan.hasProductFeed) count++;
+  if (scan.hasAgentsTxt) count++;
+  if (scan.hasUcp) count++;
+  return count;
 }
 
-function getAgentScoreForBrand(
-  brand: BrandWithLatestScore,
-  agentId: string
-): number {
-  if (brand.aiAgentScores && brand.aiAgentScores[agentId] !== undefined) {
-    return brand.aiAgentScores[agentId];
+function computeReadinessScore(scan: NonNullable<MatrixRow["scan"]>): number {
+  const openAgents = scan.allowedAgentCount ?? 0;
+  const signals = countSignals(scan);
+  const llmsBonus = scan.hasLlmsTxt ? 15 : 0;
+  return openAgents * 10 + signals * 5 + llmsBonus;
+}
+
+function readinessTier(score: number): string {
+  if (score >= 80) return "Leader";
+  if (score >= 60) return "Strong";
+  if (score >= 40) return "Moderate";
+  if (score >= 20) return "Limited";
+  return "Minimal";
+}
+
+function parseAgentStatus(json: string | null): Record<string, string> {
+  if (!json) return {};
+  try {
+    return JSON.parse(json);
+  } catch {
+    return {};
   }
-  const profile = AI_AGENT_PROFILES.find((p) => p.id === agentId);
-  if (!profile || brand.categoryScores.length === 0) return 0;
-  let weighted = 0;
-  for (const [catId, weight] of Object.entries(profile.weights)) {
-    const cat = brand.categoryScores.find((c) => c.categoryId === catId);
-    weighted += (cat?.score ?? 0) * weight;
-  }
-  return Math.round(weighted);
 }
 
 // ── Story Detectors ────────────────────────────────────────────────
@@ -103,37 +116,29 @@ function detectNewsStories(): StoryCandidate[] {
   return stories;
 }
 
-function detectBigMovers(brands: BrandWithLatestScore[]): StoryCandidate[] {
+function detectBigMovers(rows: MatrixRow[]): StoryCandidate[] {
   const stories: StoryCandidate[] = [];
 
-  const movers = brands
-    .filter((b) => b.latestScore !== null && b.previousScore !== null)
-    .map((b) => ({
-      name: b.name,
-      slug: b.slug,
-      score: b.latestScore!,
-      previousScore: b.previousScore!,
-      delta: b.latestScore! - b.previousScore!,
-      grade: scoreToGrade(b.latestScore!),
-      categoryScores: b.categoryScores,
-    }))
-    .filter((m) => Math.abs(m.delta) >= 5)
-    .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+  // Use changelog to find brands with the most changes recently
+  const movers = getTopMovers(7, 5);
+  const scanByBrandId = new Map(rows.filter(r => r.scan).map(r => [r.brand.id, r]));
 
   for (const mover of movers.slice(0, 3)) {
+    const row = scanByBrandId.get(mover.brandId);
+    const score = row?.scan ? computeReadinessScore(row.scan) : 0;
+
     stories.push({
-      id: `mover-${mover.slug}`,
-      priority: 60 + Math.min(15, Math.abs(mover.delta)),
+      id: `mover-${mover.brandSlug}`,
+      priority: 60 + Math.min(15, mover.changeCount),
       contentType: "biggest-movers",
-      title: `${mover.name}: ${mover.delta > 0 ? "+" : ""}${mover.delta} points`,
+      title: `${mover.brandName}: ${mover.changeCount} changes this week`,
       platforms: ["x", "linkedin"],
       templateData: {
-        brandName: mover.name,
-        brandSlug: mover.slug,
-        previousScore: mover.previousScore,
-        currentScore: mover.score,
-        delta: mover.delta,
-        grade: mover.grade,
+        brandName: mover.brandName,
+        brandSlug: mover.brandSlug,
+        changeCount: mover.changeCount,
+        readinessScore: score,
+        tier: readinessTier(score),
       },
       imageTemplate: "mover-alert",
     });
@@ -142,57 +147,17 @@ function detectBigMovers(brands: BrandWithLatestScore[]): StoryCandidate[] {
   return stories;
 }
 
-function detectNewBrands(brands: BrandWithLatestScore[]): StoryCandidate[] {
-  const stories: StoryCandidate[] = [];
-  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-
-  // We don't have createdAt on brands in the query result — use scannedAt
-  // A brand scanned recently with no previousScore is likely new
-  const newBrands = brands
-    .filter(
-      (b) =>
-        b.latestScore !== null &&
-        b.previousScore === null &&
-        b.scannedAt &&
-        b.scannedAt >= weekAgo
-    )
-    .sort((a, b) => b.latestScore! - a.latestScore!);
-
-  for (const brand of newBrands.slice(0, 2)) {
-    const categories = brand.categoryScores.map((cs) => {
-      const config = CATEGORY_CONFIG[cs.categoryId as keyof typeof CATEGORY_CONFIG];
-      return { name: config?.name ?? cs.categoryId, score: cs.score, grade: scoreToGrade(cs.score) };
-    });
-
-    stories.push({
-      id: `new-brand-${brand.slug}`,
-      priority: 50 + Math.min(15, Math.round(brand.latestScore! / 7)),
-      contentType: "score-spotlight",
-      title: `New: ${brand.name} scores ${brand.latestScore}/100`,
-      platforms: ["x", "linkedin"],
-      templateData: {
-        brandName: brand.name,
-        brandSlug: brand.slug,
-        overallScore: brand.latestScore,
-        grade: brand.latestGrade ?? scoreToGrade(brand.latestScore!),
-        categories,
-      },
-      imageTemplate: "scorecard",
-    });
-  }
-
-  return stories;
-}
-
 function detectCategoryLeaderboards(
-  brands: BrandWithLatestScore[],
+  rows: MatrixRow[],
   recentTopics: Set<string>
 ): StoryCandidate[] {
   const stories: StoryCandidate[] = [];
-  const categoryIds = Object.keys(CATEGORY_CONFIG) as Array<keyof typeof CATEGORY_CONFIG>;
+
+  // Get unique brand categories
+  const categories = [...new Set(rows.map(r => r.brand.category).filter(Boolean))];
 
   // Sort by least-recently-covered first
-  const sorted = categoryIds.sort((a, b) => {
+  const sorted = categories.sort((a, b) => {
     const aRecent = recentTopics.has(`cat-${a}`) ? 1 : 0;
     const bRecent = recentTopics.has(`cat-${b}`) ? 1 : 0;
     return aRecent - bRecent;
@@ -201,35 +166,36 @@ function detectCategoryLeaderboards(
   const picked = sorted[0];
   if (!picked) return stories;
 
-  const catConfig = CATEGORY_CONFIG[picked];
-  const ranked = brands
-    .filter((b) => {
-      const cs = b.categoryScores.find((c) => c.categoryId === picked);
-      return cs && cs.score > 0;
+  const categoryName = picked.charAt(0).toUpperCase() + picked.slice(1);
+
+  const ranked = rows
+    .filter((r) => r.scan && r.brand.category === picked)
+    .map((r) => {
+      const score = computeReadinessScore(r.scan!);
+      return {
+        name: r.brand.name,
+        score,
+        tier: readinessTier(score),
+        signals: countSignals(r.scan!),
+        openAgents: r.scan!.allowedAgentCount ?? 0,
+      };
     })
-    .sort((a, b) => {
-      const aScore = a.categoryScores.find((c) => c.categoryId === picked)?.score ?? 0;
-      const bScore = b.categoryScores.find((c) => c.categoryId === picked)?.score ?? 0;
-      return bScore - aScore;
-    })
+    .sort((a, b) => b.score - a.score)
     .slice(0, 8)
-    .map((brand, i) => {
-      const cs = brand.categoryScores.find((c) => c.categoryId === picked)!;
-      return { rank: i + 1, name: brand.name, score: cs.score, grade: scoreToGrade(cs.score) };
-    });
+    .map((b, i) => ({ ...b, rank: i + 1 }));
 
   if (ranked.length >= 3) {
     stories.push({
       id: `leaderboard-${picked}`,
       priority: 45 + Math.round(Math.random() * 10),
       contentType: "category-leaderboard",
-      title: `${catConfig.name} Leaderboard`,
+      title: `${categoryName} Leaderboard`,
       platforms: ["x", "linkedin"],
       templateData: {
-        categoryName: catConfig.name,
+        categoryName,
         categoryId: picked,
         brands: ranked,
-        totalBrands: brands.filter((b) => b.latestScore !== null).length,
+        totalBrands: rows.filter((r) => r.scan).length,
       },
       imageTemplate: "leaderboard",
     });
@@ -239,7 +205,7 @@ function detectCategoryLeaderboards(
 }
 
 function detectAgentReadiness(
-  brands: BrandWithLatestScore[],
+  rows: MatrixRow[],
   recentTopics: Set<string>
 ): StoryCandidate[] {
   const stories: StoryCandidate[] = [];
@@ -253,15 +219,32 @@ function detectAgentReadiness(
   const picked = sorted[0];
   if (!picked) return stories;
 
-  const scored = brands
-    .filter((b) => b.latestScore !== null)
-    .map((b) => ({
-      name: b.name,
-      score: getAgentScoreForBrand(b, picked.id),
-      grade: "",
-    }))
-    .map((b) => ({ ...b, grade: scoreToGrade(b.score) }))
-    .sort((a, b) => b.score - a.score)
+  const agentUAs = picked.userAgentStrings;
+
+  const scored = rows
+    .filter((r) => r.scan)
+    .map((r) => {
+      const agentStatus = parseAgentStatus(r.scan!.agentStatusJson);
+      const statuses = agentUAs.map((ua) => agentStatus[ua] ?? "no_rule");
+      const statusPriority = ["allowed", "no_rule", "inconclusive", "restricted", "blocked"];
+      const bestStatus = statuses.sort(
+        (a, b) => statusPriority.indexOf(a) - statusPriority.indexOf(b)
+      )[0] ?? "no_rule";
+
+      return {
+        name: r.brand.name,
+        status: bestStatus,
+        readinessScore: computeReadinessScore(r.scan!),
+        openAgents: r.scan!.allowedAgentCount ?? 0,
+      };
+    })
+    .sort((a, b) => {
+      const statusOrder: Record<string, number> = { allowed: 0, no_rule: 1, inconclusive: 2, restricted: 3, blocked: 4 };
+      const aDiff = statusOrder[a.status] ?? 2;
+      const bDiff = statusOrder[b.status] ?? 2;
+      if (aDiff !== bDiff) return aDiff - bDiff;
+      return b.readinessScore - a.readinessScore;
+    })
     .slice(0, 8)
     .map((b, i) => ({ ...b, rank: i + 1 }));
 
@@ -278,7 +261,7 @@ function detectAgentReadiness(
         agentType: picked.type,
         agentCompany: picked.company,
         brands: scored,
-        totalBrands: brands.filter((b) => b.latestScore !== null).length,
+        totalBrands: rows.filter((r) => r.scan).length,
       },
       imageTemplate: "leaderboard",
     });
@@ -321,7 +304,7 @@ function detectEducationalTopics(recentTopics: Set<string>): StoryCandidate[] {
 // ── Main Intelligence Function ─────────────────────────────────────
 
 export function discoverStories(): StoryCandidate[] {
-  const brands = getAllBrandsWithLatestScores();
+  const rows = getMatrixData();
 
   // Get recently covered topics to avoid repetition
   let recentItems: ReturnType<typeof getRecentContentTypes> = [];
@@ -346,10 +329,9 @@ export function discoverStories(): StoryCandidate[] {
   // Collect all story candidates
   const allStories: StoryCandidate[] = [
     ...detectNewsStories(),
-    ...detectBigMovers(brands),
-    ...detectNewBrands(brands),
-    ...detectCategoryLeaderboards(brands, recentTopics),
-    ...detectAgentReadiness(brands, recentTopics),
+    ...detectBigMovers(rows),
+    ...detectCategoryLeaderboards(rows, recentTopics),
+    ...detectAgentReadiness(rows, recentTopics),
     ...detectEducationalTopics(recentTopics),
   ];
 

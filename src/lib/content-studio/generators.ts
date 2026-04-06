@@ -1,13 +1,17 @@
 /**
  * Content Studio — Data Assembly Layer
  *
- * Queries DB via existing functions, shapes data, passes to templates.
+ * Queries DB via lightweight_scans (getMatrixData), shapes data, passes to templates.
  */
 
-import { getAllBrandsWithLatestScores, type BrandWithLatestScore } from "@/lib/db/queries";
-import { getNewsArticles, getScanHealth } from "@/lib/db/admin-queries";
+import {
+  getMatrixData,
+  getTopMovers,
+  getWeeklyTotals,
+  getRecentChangelog,
+} from "@/lib/db/queries";
+import { getNewsArticles } from "@/lib/db/admin-queries";
 import { AI_AGENT_PROFILES } from "@/lib/ai-agents";
-import { CATEGORY_CONFIG, GRADE_THRESHOLDS } from "@/lib/constants";
 import {
   type Platform,
   type ContentType,
@@ -42,29 +46,44 @@ export interface GenerateResult {
 
 // ── Helpers ─────────────────────────────────────────────────────────
 
-function scoreToGrade(score: number): string {
-  for (const t of GRADE_THRESHOLDS) {
-    if (score >= t.min) return t.grade;
-  }
-  return "F";
+/** Lightweight scan → signal booleans list */
+function countSignals(scan: NonNullable<ReturnType<typeof getMatrixData>[number]["scan"]>): number {
+  let count = 0;
+  if (scan.hasJsonLd) count++;
+  if (scan.hasSchemaProduct) count++;
+  if (scan.hasOpenGraph) count++;
+  if (scan.hasSitemap) count++;
+  if (scan.hasProductFeed) count++;
+  if (scan.hasAgentsTxt) count++;
+  if (scan.hasUcp) count++;
+  return count;
 }
 
-function getAgentScoreForBrand(
-  brand: BrandWithLatestScore,
-  agentId: string
-): number {
-  if (brand.aiAgentScores && brand.aiAgentScores[agentId] !== undefined) {
-    return brand.aiAgentScores[agentId];
+/** Composite AI readiness score from lightweight scan signals */
+function computeReadinessScore(scan: NonNullable<ReturnType<typeof getMatrixData>[number]["scan"]>): number {
+  const openAgents = scan.allowedAgentCount ?? 0;
+  const signals = countSignals(scan);
+  const llmsBonus = scan.hasLlmsTxt ? 15 : 0;
+  return openAgents * 10 + signals * 5 + llmsBonus;
+}
+
+/** Readiness score → letter tier */
+function readinessTier(score: number): string {
+  if (score >= 80) return "Leader";
+  if (score >= 60) return "Strong";
+  if (score >= 40) return "Moderate";
+  if (score >= 20) return "Limited";
+  return "Minimal";
+}
+
+/** Parse agentStatusJson safely */
+function parseAgentStatus(json: string | null): Record<string, string> {
+  if (!json) return {};
+  try {
+    return JSON.parse(json);
+  } catch {
+    return {};
   }
-  // Fallback: compute from category scores if agent scores not precomputed
-  const profile = AI_AGENT_PROFILES.find((p) => p.id === agentId);
-  if (!profile || brand.categoryScores.length === 0) return 0;
-  let weighted = 0;
-  for (const [catId, weight] of Object.entries(profile.weights)) {
-    const cat = brand.categoryScores.find((c) => c.categoryId === catId);
-    weighted += (cat?.score ?? 0) * weight;
-  }
-  return Math.round(weighted);
 }
 
 // ── Generators ──────────────────────────────────────────────────────
@@ -74,36 +93,34 @@ function generateCategoryLeaderboard(
   categoryId: string,
   count: number
 ): GenerateResult {
-  const brands = getAllBrandsWithLatestScores();
-  const catConfig = CATEGORY_CONFIG[categoryId as keyof typeof CATEGORY_CONFIG];
-  const categoryName = catConfig?.name ?? categoryId;
+  const rows = getMatrixData();
+  // categoryId maps to brand.category (e.g. "fashion", "electronics")
+  const categoryName = categoryId.charAt(0).toUpperCase() + categoryId.slice(1);
 
-  const filtered = brands
-    .filter((b) => {
-      const catScore = b.categoryScores.find((c) => c.categoryId === categoryId);
-      return catScore && catScore.score > 0;
-    })
-    .sort((a, b) => {
-      const aScore = a.categoryScores.find((c) => c.categoryId === categoryId)?.score ?? 0;
-      const bScore = b.categoryScores.find((c) => c.categoryId === categoryId)?.score ?? 0;
-      return bScore - aScore;
-    })
-    .slice(0, count)
-    .map((brand, i) => {
-      const catScore = brand.categoryScores.find((c) => c.categoryId === categoryId)!;
+  const withScans = rows
+    .filter((r) => r.scan && r.brand.category === categoryId)
+    .map((r) => {
+      const score = computeReadinessScore(r.scan!);
       return {
-        rank: i + 1,
-        name: brand.name,
-        score: catScore.score,
-        grade: scoreToGrade(catScore.score),
+        rank: 0,
+        name: r.brand.name,
+        score,
+        tier: readinessTier(score),
+        signals: countSignals(r.scan!),
+        openAgents: r.scan!.allowedAgentCount ?? 0,
       };
-    });
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, count)
+    .map((b, i) => ({ ...b, rank: i + 1 }));
+
+  const totalBrands = rows.filter((r) => r.scan).length;
 
   const content = categoryLeaderboardTemplate(platform, {
     categoryName,
     categoryId,
-    brands: filtered,
-    totalBrands: brands.filter((b) => b.latestScore !== null).length,
+    brands: withScans,
+    totalBrands,
   });
 
   return { content, charCount: content.length, platform, contentType: "category-leaderboard" };
@@ -113,30 +130,55 @@ function generateScoreSpotlight(
   platform: Platform,
   brandSlug: string
 ): GenerateResult {
-  const brands = getAllBrandsWithLatestScores();
-  const brand = brands.find((b) => b.slug === brandSlug);
+  const rows = getMatrixData();
+  const row = rows.find((r) => r.brand.slug === brandSlug);
 
-  if (!brand || brand.latestScore === null) {
-    const content = `Brand "${brandSlug}" not found or has no score data.`;
+  if (!row || !row.scan) {
+    const content = `Brand "${brandSlug}" not found or has no scan data.`;
     return { content, charCount: content.length, platform, contentType: "score-spotlight" };
   }
 
-  const categoryBreakdown = brand.categoryScores.map((cs) => {
-    const config = CATEGORY_CONFIG[cs.categoryId as keyof typeof CATEGORY_CONFIG];
-    return {
-      name: config?.name ?? cs.categoryId,
-      score: cs.score,
-      grade: scoreToGrade(cs.score),
-    };
-  });
+  const scan = row.scan;
+  const readinessScore = computeReadinessScore(scan);
+  const agentStatus = parseAgentStatus(scan.agentStatusJson);
+
+  // Build signal breakdown
+  const signalBreakdown = [
+    { name: "JSON-LD", present: scan.hasJsonLd },
+    { name: "Schema.org Product", present: scan.hasSchemaProduct },
+    { name: "Open Graph", present: scan.hasOpenGraph },
+    { name: "Sitemap", present: scan.hasSitemap },
+    { name: "Product Feed", present: scan.hasProductFeed },
+    { name: "llms.txt", present: scan.hasLlmsTxt },
+    { name: "agents.txt", present: scan.hasAgentsTxt },
+    { name: "UCP", present: scan.hasUcp },
+  ];
+
+  // Agent access summary
+  const agentAccess = Object.entries(agentStatus).map(([agent, status]) => ({
+    agent,
+    status,
+  }));
+
+  // Peer comparison: how this brand ranks among all scanned brands
+  const allScores = rows
+    .filter((r) => r.scan)
+    .map((r) => computeReadinessScore(r.scan!))
+    .sort((a, b) => b - a);
+  const rank = allScores.findIndex((s) => s <= readinessScore) + 1;
+  const totalBrands = allScores.length;
 
   const content = scoreSpotlightTemplate(platform, {
-    brandName: brand.name,
-    brandSlug: brand.slug,
-    overallScore: brand.latestScore,
-    grade: brand.latestGrade ?? scoreToGrade(brand.latestScore),
-    categoryBreakdown,
-    previousScore: brand.previousScore,
+    brandName: row.brand.name,
+    brandSlug: row.brand.slug,
+    readinessScore,
+    tier: readinessTier(readinessScore),
+    signalBreakdown,
+    agentAccess,
+    openAgents: scan.allowedAgentCount ?? 0,
+    blockedAgents: scan.blockedAgentCount ?? 0,
+    rank,
+    totalBrands,
   });
 
   return { content, charCount: content.length, platform, contentType: "score-spotlight" };
@@ -147,28 +189,29 @@ function generateBiggestMovers(
   direction: "up" | "down" | "both",
   count: number
 ): GenerateResult {
-  const brands = getAllBrandsWithLatestScores();
+  // Use changelog-based movers
+  const movers = getTopMovers(7, count * 2);
 
-  const withDelta = brands
-    .filter((b) => b.latestScore !== null && b.previousScore !== null)
-    .map((b) => ({
-      name: b.name,
-      score: b.latestScore!,
-      previousScore: b.previousScore!,
-      delta: b.latestScore! - b.previousScore!,
-      grade: b.latestGrade ?? scoreToGrade(b.latestScore!),
-    }))
-    .filter((m) => {
-      if (direction === "up") return m.delta > 0;
-      if (direction === "down") return m.delta < 0;
-      return m.delta !== 0;
+  // Get scan data to enrich with current readiness info
+  const rows = getMatrixData();
+  const scanByBrandId = new Map(rows.filter(r => r.scan).map(r => [r.brand.id, r]));
+
+  const enriched = movers
+    .map((m) => {
+      const row = scanByBrandId.get(m.brandId);
+      const score = row?.scan ? computeReadinessScore(row.scan) : 0;
+      return {
+        name: m.brandName,
+        changeCount: m.changeCount,
+        score,
+        tier: readinessTier(score),
+      };
     })
-    .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))
     .slice(0, count);
 
   const content = biggestMoversTemplate(platform, {
     direction,
-    movers: withDelta,
+    movers: enriched,
   });
 
   return { content, charCount: content.length, platform, contentType: "biggest-movers" };
@@ -185,53 +228,93 @@ function generateAgentReadiness(
     return { content, charCount: content.length, platform, contentType: "agent-readiness" };
   }
 
-  const brands = getAllBrandsWithLatestScores();
-  const scored = brands
-    .filter((b) => b.latestScore !== null)
-    .map((b) => ({
-      name: b.name,
-      score: getAgentScoreForBrand(b, agentId),
-      grade: "",
-    }))
-    .map((b) => ({ ...b, grade: scoreToGrade(b.score) }))
-    .sort((a, b) => b.score - a.score)
+  const rows = getMatrixData();
+
+  // Find the relevant UA strings for this agent
+  const agentUAs = profile.userAgentStrings;
+
+  const scored = rows
+    .filter((r) => r.scan)
+    .map((r) => {
+      const agentStatus = parseAgentStatus(r.scan!.agentStatusJson);
+      // Determine this agent's status: check all UA strings, pick the best
+      const statuses = agentUAs.map((ua) => agentStatus[ua] ?? "no_rule");
+      // Priority: allowed > no_rule > inconclusive > restricted > blocked
+      const statusPriority = ["allowed", "no_rule", "inconclusive", "restricted", "blocked"];
+      const bestStatus = statuses.sort(
+        (a, b) => statusPriority.indexOf(a) - statusPriority.indexOf(b)
+      )[0] ?? "no_rule";
+
+      return {
+        name: r.brand.name,
+        status: bestStatus,
+        readinessScore: computeReadinessScore(r.scan!),
+        openAgents: r.scan!.allowedAgentCount ?? 0,
+      };
+    })
+    .sort((a, b) => {
+      // Sort: allowed first, then by readiness score
+      const statusOrder: Record<string, number> = { allowed: 0, no_rule: 1, inconclusive: 2, restricted: 3, blocked: 4 };
+      const aDiff = statusOrder[a.status] ?? 2;
+      const bDiff = statusOrder[b.status] ?? 2;
+      if (aDiff !== bDiff) return aDiff - bDiff;
+      return b.readinessScore - a.readinessScore;
+    })
     .slice(0, count)
     .map((b, i) => ({ ...b, rank: i + 1 }));
+
+  const totalBrands = rows.filter((r) => r.scan).length;
+  const allowedCount = scored.filter((s) => s.status === "allowed").length;
+  const blockedCount = rows
+    .filter((r) => r.scan)
+    .filter((r) => {
+      const st = parseAgentStatus(r.scan!.agentStatusJson);
+      return agentUAs.some((ua) => st[ua] === "blocked");
+    }).length;
 
   const content = agentReadinessTemplate(platform, {
     agentName: profile.name,
     agentType: profile.type,
     agentCompany: profile.company,
     brands: scored,
-    totalBrands: brands.filter((b) => b.latestScore !== null).length,
+    totalBrands,
+    allowedCount,
+    blockedCount,
   });
 
   return { content, charCount: content.length, platform, contentType: "agent-readiness" };
 }
 
 function generateWeeklyRoundup(platform: Platform): GenerateResult {
-  const brands = getAllBrandsWithLatestScores();
-  const health = getScanHealth();
+  const rows = getMatrixData();
+  const weeklyTotals = getWeeklyTotals(7);
+  const topMovers = getTopMovers(7, 5);
+  const changelog = getRecentChangelog(10);
 
-  const scoredBrands = brands
-    .filter((b) => b.latestScore !== null)
-    .sort((a, b) => b.latestScore! - a.latestScore!);
+  // Top brands by readiness score
+  const topBrands = rows
+    .filter((r) => r.scan)
+    .map((r) => ({
+      name: r.brand.name,
+      score: computeReadinessScore(r.scan!),
+      tier: readinessTier(computeReadinessScore(r.scan!)),
+      openAgents: r.scan!.allowedAgentCount ?? 0,
+    }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 10);
 
-  const topBrands = scoredBrands.slice(0, 10).map((b) => ({
-    name: b.name,
-    score: b.latestScore!,
-    grade: b.latestGrade ?? scoreToGrade(b.latestScore!),
+  // Movers from changelog
+  const movers = topMovers.map((m) => ({
+    name: m.brandName,
+    changeCount: m.changeCount,
   }));
 
-  const movers = brands
-    .filter((b) => b.latestScore !== null && b.previousScore !== null && b.latestScore !== b.previousScore)
-    .map((b) => ({
-      name: b.name,
-      delta: b.latestScore! - b.previousScore!,
-      score: b.latestScore!,
-    }))
-    .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))
-    .slice(0, 5);
+  // Recent changes for flavor
+  const recentChanges = changelog.slice(0, 5).map((c) => ({
+    field: c.field,
+    oldValue: c.oldValue,
+    newValue: c.newValue,
+  }));
 
   let recentArticles: { title: string }[] = [];
   try {
@@ -241,13 +324,16 @@ function generateWeeklyRoundup(platform: Platform): GenerateResult {
     // news table may not exist
   }
 
+  const totalBrands = rows.filter((r) => r.scan).length;
+
   const content = weeklyRoundupTemplate(platform, {
-    totalBrands: health.totalBrands,
-    avgScore: health.avgScore,
+    totalBrands,
+    totalChanges: weeklyTotals.totalChanges,
+    brandsMoving: weeklyTotals.brandsMoving,
     topBrands,
     movers,
+    recentChanges,
     recentArticles,
-    todayScans: health.todayScans,
   });
 
   return { content, charCount: content.length, platform, contentType: "weekly-roundup" };
@@ -296,7 +382,7 @@ export function generateContent(request: GenerateRequest): GenerateResult {
     case "category-leaderboard":
       return generateCategoryLeaderboard(
         platform,
-        request.categoryId ?? "discoverability",
+        request.categoryId ?? "fashion",
         count
       );
     case "score-spotlight":
