@@ -53,6 +53,12 @@ export function Navbar() {
               Changelog
             </Link>
             <Link
+              href="/leaderboard"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Leaderboard
+            </Link>
+            <Link
               href="/weekly"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >

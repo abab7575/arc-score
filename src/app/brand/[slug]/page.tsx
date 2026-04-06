@@ -5,6 +5,7 @@ import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import { InfoTooltip } from "@/components/ui/info-tooltip";
 import { TrackBrandButton } from "@/components/brand/track-button";
+import { ClaimBrandButton } from "@/components/brand/claim-button";
 import {
   getBrandBySlug,
   getLatestLightweightScan,
@@ -51,9 +52,33 @@ export async function generateMetadata({ params }: BrandPageProps): Promise<Meta
   const brand = getBrandBySlug(slug);
   if (!brand) return { title: "Brand Not Found" };
 
+  const scan = getLatestLightweightScan(brand.id);
+  let agentDetail = "";
+  if (scan) {
+    try {
+      const status = JSON.parse(scan.agentStatusJson) as Record<string, string>;
+      const blocked = Object.values(status).filter(s => s === "blocked" || s === "restricted").length;
+      const total = Object.keys(status).length;
+      agentDetail = blocked > 0
+        ? ` ${blocked} of ${total} AI agents are currently blocked.`
+        : ` All ${total} AI agents currently have access.`;
+    } catch { /* ignore */ }
+  }
+
   return {
-    title: `${brand.name} — AI Agent Readout | ARC Report`,
-    description: `See whether ${brand.name} is reachable by major AI agents, what machine-readable signals it publishes, and how it compares with peers.`,
+    title: `${brand.name} AI Bot Access & robots.txt Policy | ARC Report`,
+    description: `Does ${brand.name} allow ChatGPT, Claude, and other AI shopping agents? Live daily scan of ${brand.name}'s robots.txt, agent access policy, and machine-readable signals.${agentDetail}`,
+    keywords: [
+      `${brand.name} AI bot access`,
+      `${brand.name} robots.txt`,
+      `${brand.name} ChatGPT access`,
+      `${brand.name} AI agent policy`,
+      `${brand.name} GPTBot`,
+    ],
+    openGraph: {
+      title: `${brand.name} AI Bot Access — ARC Report`,
+      description: `Live scan of ${brand.name}'s AI agent access policy.${agentDetail}`,
+    },
   };
 }
 
@@ -684,6 +709,7 @@ export default async function BrandPage({ params }: BrandPageProps) {
                     API docs
                   </Link>
                   <TrackBrandButton brandId={brand.id} />
+                  <ClaimBrandButton brandId={brand.id} brandName={brand.name} />
                 </div>
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
