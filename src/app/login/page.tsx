@@ -27,7 +27,7 @@ export default function LoginPage() {
 
       const data = await res.json();
       if (res.ok) {
-        router.push("/");
+        router.push("/account");
       } else {
         setError(data.error || "Login failed");
       }
@@ -79,7 +79,12 @@ export default function LoginPage() {
             />
           </div>
 
-          {error && <p className="text-sm text-[#FF6648]">{error}</p>}
+          <div className="flex items-center justify-between">
+            {error && <p className="text-sm text-[#FF6648]">{error}</p>}
+            <a href="/forgot-password" className="text-xs text-muted-foreground hover:text-[#0259DD] ml-auto">
+              Forgot password?
+            </a>
+          </div>
 
           <button
             type="submit"

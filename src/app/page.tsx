@@ -120,6 +120,27 @@ export default function HomePage() {
       <Navbar />
       <IndexHero brandCount={stats?.totalBrands} />
 
+      {/* How it works */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 pt-10 pb-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="border-2 border-gray-200 bg-white px-5 py-4">
+            <div className="text-sm font-black text-[#FF6648] font-mono mb-2">/ 01</div>
+            <div className="text-sm font-bold text-foreground mb-1">We scan 1,000+ brands daily</div>
+            <div className="text-xs text-muted-foreground leading-relaxed">robots.txt policies, real HTTP agent access tests, structured data, platform detection, and protocol files like llms.txt.</div>
+          </div>
+          <div className="border-2 border-gray-200 bg-white px-5 py-4">
+            <div className="text-sm font-black text-[#FF6648] font-mono mb-2">/ 02</div>
+            <div className="text-sm font-bold text-foreground mb-1">Changes are confirmed and published</div>
+            <div className="text-xs text-muted-foreground leading-relaxed">Every signal change is verified across two consecutive scans before appearing in the changelog. No false positives.</div>
+          </div>
+          <div className="border-2 border-gray-200 bg-white px-5 py-4">
+            <div className="text-sm font-black text-[#FF6648] font-mono mb-2">/ 03</div>
+            <div className="text-sm font-bold text-foreground mb-1">You get alerts when things move</div>
+            <div className="text-xs text-muted-foreground leading-relaxed">Pro subscribers track specific brands and get daily email alerts. Everyone else gets the free weekly digest.</div>
+          </div>
+        </div>
+      </section>
+
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
         {/* Stats bar */}
         {stats && (
