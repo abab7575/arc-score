@@ -3,6 +3,8 @@
  * No browser needed, just HTTP requests.
  */
 
+import { fetchWithRetry } from "./fetch-with-retry";
+
 export interface UserAgentTestResult {
   userAgent: string;
   /** Which page was tested: "homepage" or "product" */
@@ -33,6 +35,8 @@ export interface DataAgentResult {
   jsonLd: {
     found: boolean;
     objects: unknown[];
+    /** Where JSON-LD was found: "http" (raw fetch), "rendered" (browser), "both", or "none" */
+    source: "http" | "rendered" | "both" | "none";
   };
   openGraph: {
     found: boolean;
@@ -127,18 +131,30 @@ export async function runDataAgent(
 
   // 2. Parse JSON-LD from both sources to maximize detection
   console.log("[Data Agent] Parsing JSON-LD...");
-  const jsonLd = parseJsonLd(html);
+  const rawJsonLd = parseJsonLd(rawHtml);
+  const renderedJsonLd = renderedHtml ? parseJsonLd(renderedHtml) : { found: false, objects: [] };
 
-  // If rendered HTML has more JSON-LD, merge objects from raw HTML too
+  // Determine source for transparency
+  let jsonLdSource: "http" | "rendered" | "both" | "none" = "none";
+  if (rawJsonLd.found && renderedJsonLd.found) jsonLdSource = "both";
+  else if (rawJsonLd.found) jsonLdSource = "http";
+  else if (renderedJsonLd.found) jsonLdSource = "rendered";
+
+  // Merge: start with whichever HTML was larger, then add unique objects from the other
+  const jsonLd = parseJsonLd(html);
   if (renderedHtml && rawHtml.length > 0) {
-    const rawJsonLd = parseJsonLd(rawHtml);
-    for (const obj of rawJsonLd.objects) {
+    const otherJsonLd = html === renderedHtml ? rawJsonLd : renderedJsonLd;
+    for (const obj of otherJsonLd.objects) {
       const exists = jsonLd.objects.some(
         (existing) => JSON.stringify(existing) === JSON.stringify(obj)
       );
       if (!exists) jsonLd.objects.push(obj);
     }
     jsonLd.found = jsonLd.objects.length > 0;
+  }
+
+  if (jsonLdSource === "rendered") {
+    console.log("[Data Agent] Schema found only in browser-rendered HTML (JS-injected)");
   }
 
   // 3. Parse Schema.org from JSON-LD
@@ -193,7 +209,7 @@ export async function runDataAgent(
 
   return {
     schemaOrg,
-    jsonLd,
+    jsonLd: { ...jsonLd, source: jsonLdSource },
     openGraph,
     robotsTxt,
     sitemap,
@@ -208,8 +224,9 @@ export async function runDataAgent(
 }
 
 async function fetchPage(url: string): Promise<string> {
-  try {
-    const res = await fetch(url, {
+  const res = await fetchWithRetry(
+    url,
+    {
       headers: {
         "User-Agent":
           "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
@@ -217,18 +234,17 @@ async function fetchPage(url: string): Promise<string> {
         "Accept-Language": "en-US,en;q=0.9",
       },
       redirect: "follow",
-      signal: AbortSignal.timeout(15000),
-    });
+    },
+    { timeoutMs: 15000, label: `[Data Agent] fetchPage ${url}` }
+  );
 
-    if (res.status === 403 || res.status === 429) {
-      console.warn(`[Data Agent] Blocked by WAF/bot protection (HTTP ${res.status}) for ${url}`);
-    }
+  if (!res) return "";
 
-    return await res.text();
-  } catch (e) {
-    console.error("[Data Agent] Failed to fetch page:", e);
-    return "";
+  if (res.status === 403 || res.status === 429) {
+    console.warn(`[Data Agent] Blocked by WAF/bot protection (HTTP ${res.status}) for ${url}`);
   }
+
+  return await res.text();
 }
 
 function parseJsonLd(html: string): { found: boolean; objects: unknown[] } {
@@ -359,15 +375,18 @@ async function checkRobotsTxt(
   baseUrl: string
 ): Promise<DataAgentResult["robotsTxt"]> {
   try {
-    const res = await fetch(`${baseUrl}/robots.txt`, {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (compatible; ARCReport-Scanner/1.0; +https://arcreport.ai)",
+    const res = await fetchWithRetry(
+      `${baseUrl}/robots.txt`,
+      {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (compatible; ARCReport-Scanner/1.0; +https://arcreport.ai)",
+        },
+        redirect: "follow",
       },
-      redirect: "follow",
-      signal: AbortSignal.timeout(10000),
-    });
-    if (!res.ok)
+      { timeoutMs: 10000, label: `[Data Agent] robots.txt ${baseUrl}` }
+    );
+    if (!res || !res.ok)
       return { found: false, blockedAgents: [], allowedAgents: [] };
 
     // Check if we got HTML instead of a real robots.txt (WAF/bot block)
@@ -442,12 +461,15 @@ async function checkSitemap(
 
   for (const sitemapUrl of uniqueUrls) {
     try {
-      const res = await fetch(sitemapUrl, {
-        headers: { "User-Agent": "ARCReport-Scanner/1.0" },
-        redirect: "follow",
-        signal: AbortSignal.timeout(10000),
-      });
-      if (!res.ok) continue;
+      const res = await fetchWithRetry(
+        sitemapUrl,
+        {
+          headers: { "User-Agent": "ARCReport-Scanner/1.0" },
+          redirect: "follow",
+        },
+        { timeoutMs: 10000, label: `[Data Agent] sitemap ${sitemapUrl}` }
+      );
+      if (!res || !res.ok) continue;
 
       const content = await res.text();
       if (!content.includes("<urlset") && !content.includes("<sitemapindex"))
@@ -470,10 +492,10 @@ async function checkSitemap(
   }
 
   // 3. If robots.txt had Sitemap directives but we couldn't fetch any,
-  //    still report as found (the declaration exists, we just couldn't access it)
+  //    report as NOT found — a declared-but-unfetchable sitemap isn't useful to agents
   if (robotsSitemaps.length > 0) {
     return {
-      found: true,
+      found: false,
       url: robotsSitemaps[0],
       productUrls: 0,
     };
@@ -498,21 +520,23 @@ async function probeApiEndpoints(
 
   for (const endpoint of endpoints) {
     tested.push(endpoint);
-    try {
-      const res = await fetch(`${baseUrl}${endpoint}`, {
+    const res = await fetchWithRetry(
+      `${baseUrl}${endpoint}`,
+      {
         headers: {
           "User-Agent": "ARCReport-Scanner/1.0",
           Accept: "application/json",
         },
-      });
-      if (
-        res.ok &&
-        res.headers.get("content-type")?.includes("application/json")
-      ) {
-        found.push(endpoint);
-      }
-    } catch {
-      continue;
+      },
+      { timeoutMs: 10000, maxAttempts: 2, label: `[Data Agent] API ${endpoint}` }
+    );
+    if (
+      res &&
+      res.ok &&
+      res.status !== 401 &&
+      res.headers.get("content-type")?.includes("application/json")
+    ) {
+      found.push(endpoint);
     }
   }
 
@@ -533,10 +557,12 @@ async function checkAcpEndpoints(
 
   // Check discovery documents
   for (const path of discoveryPaths) {
-    try {
-      const res = await fetch(`${baseUrl}${path}`, {
-        headers: { "User-Agent": "ARCReport-Scanner/1.0", Accept: "application/json" },
-      });
+    const res = await fetchWithRetry(
+      `${baseUrl}${path}`,
+      { headers: { "User-Agent": "ARCReport-Scanner/1.0", Accept: "application/json" } },
+      { timeoutMs: 10000, maxAttempts: 2, label: `[Data Agent] ACP discovery ${path}` }
+    );
+    if (res) {
       const contentType = res.headers.get("content-type") || "";
       probes.push({
         path,
@@ -550,7 +576,7 @@ async function checkAcpEndpoints(
         discoveryDoc = { found: true, content: text.substring(0, 2000) };
         break;
       }
-    } catch {
+    } else {
       probes.push({ path, method: "GET", status: 0, contentType: "", notes: "Connection failed" });
     }
   }
@@ -558,11 +584,12 @@ async function checkAcpEndpoints(
   // Probe ACP endpoint paths
   for (const path of acpPaths) {
     // OPTIONS probe
-    try {
-      const optRes = await fetch(`${baseUrl}${path}`, {
-        method: "OPTIONS",
-        headers: { "User-Agent": "ARCReport-Scanner/1.0" },
-      });
+    const optRes = await fetchWithRetry(
+      `${baseUrl}${path}`,
+      { method: "OPTIONS", headers: { "User-Agent": "ARCReport-Scanner/1.0" } },
+      { timeoutMs: 10000, maxAttempts: 2, label: `[Data Agent] ACP OPTIONS ${path}` }
+    );
+    if (optRes) {
       const ct = optRes.headers.get("content-type") || "";
       probes.push({
         path,
@@ -571,15 +598,17 @@ async function checkAcpEndpoints(
         contentType: ct,
         notes: optRes.headers.get("allow") ? `Allow: ${optRes.headers.get("allow")}` : "No Allow header",
       });
-    } catch {
+    } else {
       probes.push({ path, method: "OPTIONS", status: 0, contentType: "", notes: "Connection failed" });
     }
 
     // GET probe with non-existent ID (expect 404 with JSON content-type)
-    try {
-      const getRes = await fetch(`${baseUrl}${path}/does-not-exist`, {
-        headers: { "User-Agent": "ARCReport-Scanner/1.0", Accept: "application/json" },
-      });
+    const getRes = await fetchWithRetry(
+      `${baseUrl}${path}/does-not-exist`,
+      { headers: { "User-Agent": "ARCReport-Scanner/1.0", Accept: "application/json" } },
+      { timeoutMs: 10000, maxAttempts: 2, label: `[Data Agent] ACP GET ${path}` }
+    );
+    if (getRes) {
       const ct = getRes.headers.get("content-type") || "";
       let bodyKeys: string[] | undefined;
       if (ct.includes("json")) {
@@ -598,7 +627,7 @@ async function checkAcpEndpoints(
         bodyKeys,
         notes: ct.includes("json") ? "JSON response on 404 — possible API endpoint" : `Status ${getRes.status}`,
       });
-    } catch {
+    } else {
       probes.push({ path: `${path}/does-not-exist`, method: "GET", status: 0, contentType: "", notes: "Connection failed" });
     }
   }
@@ -631,53 +660,58 @@ async function probeCommerceApis(
 
   // Probe cart endpoints
   for (const ep of cartEndpoints) {
-    try {
-      const res = await fetch(`${baseUrl}${ep}`, {
-        headers: { "User-Agent": "ARCReport-Scanner/1.0", Accept: "application/json" },
-      });
-      if (res.headers.get("content-type")?.includes("json")) {
-        cartApiFound = true;
-        foundEndpoints.push(ep);
-        if (ep === "/cart.js") headlessSignals.push("Shopify cart API (cart.js)");
-      }
-    } catch { /* skip */ }
+    const res = await fetchWithRetry(
+      `${baseUrl}${ep}`,
+      { headers: { "User-Agent": "ARCReport-Scanner/1.0", Accept: "application/json" } },
+      { timeoutMs: 10000, maxAttempts: 2, label: `[Data Agent] cart ${ep}` }
+    );
+    if (res?.headers.get("content-type")?.includes("json")) {
+      cartApiFound = true;
+      foundEndpoints.push(ep);
+      if (ep === "/cart.js") headlessSignals.push("Shopify cart API (cart.js)");
+    }
   }
 
   // Probe checkout endpoints
   for (const ep of checkoutEndpoints) {
-    try {
-      const res = await fetch(`${baseUrl}${ep}`, {
-        headers: { "User-Agent": "ARCReport-Scanner/1.0", Accept: "application/json" },
-      });
+    const res = await fetchWithRetry(
+      `${baseUrl}${ep}`,
+      { headers: { "User-Agent": "ARCReport-Scanner/1.0", Accept: "application/json" } },
+      { timeoutMs: 10000, maxAttempts: 2, label: `[Data Agent] checkout ${ep}` }
+    );
+    if (res) {
       const ct = res.headers.get("content-type") || "";
-      if (ct.includes("json") || (res.status === 401 && ct.includes("json"))) {
+      // Only count as found if we get a real response, not 401 (requires auth = unusable by agents)
+      if (res.ok && ct.includes("json")) {
         checkoutApiFound = true;
         foundEndpoints.push(ep);
         headlessSignals.push("Checkout API endpoint");
       }
-    } catch { /* skip */ }
+    }
   }
 
   // Check GraphQL for cart mutations
-  try {
-    const res = await fetch(`${baseUrl}/graphql`, {
+  const gqlRes = await fetchWithRetry(
+    `${baseUrl}/graphql`,
+    {
       method: "POST",
       headers: {
         "User-Agent": "ARCReport-Scanner/1.0",
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify({
-        query: "{ __typename }",
-      }),
-    });
-    const ct = res.headers.get("content-type") || "";
+      body: JSON.stringify({ query: "{ __typename }" }),
+    },
+    { timeoutMs: 10000, maxAttempts: 2, label: `[Data Agent] GraphQL` }
+  );
+  if (gqlRes) {
+    const ct = gqlRes.headers.get("content-type") || "";
     if (ct.includes("json")) {
       graphqlDetected = true;
       foundEndpoints.push("/graphql");
       headlessSignals.push("GraphQL endpoint available");
     }
-  } catch { /* skip */ }
+  }
 
   return {
     cartApiFound,
@@ -689,31 +723,27 @@ async function probeCommerceApis(
 }
 
 async function checkUcpFile(baseUrl: string): Promise<{ found: boolean; content?: string }> {
-  try {
-    const res = await fetch(`${baseUrl}/.well-known/ucp`, {
-      headers: { "User-Agent": "ARCReport-Scanner/1.0" },
-    });
-    if (!res.ok) return { found: false };
-    const content = await res.text();
-    return { found: content.length > 0, content: content.substring(0, 2000) };
-  } catch {
-    return { found: false };
-  }
+  const res = await fetchWithRetry(
+    `${baseUrl}/.well-known/ucp`,
+    { headers: { "User-Agent": "ARCReport-Scanner/1.0" } },
+    { timeoutMs: 10000, maxAttempts: 2, label: `[Data Agent] UCP ${baseUrl}` }
+  );
+  if (!res || !res.ok) return { found: false };
+  const content = await res.text();
+  return { found: content.length > 0, content: content.substring(0, 2000) };
 }
 
 async function checkLlmsTxt(baseUrl: string): Promise<{ found: boolean; content?: string }> {
-  try {
-    const res = await fetch(`${baseUrl}/llms.txt`, {
-      headers: { "User-Agent": "ARCReport-Scanner/1.0" },
-    });
-    if (!res.ok) return { found: false };
-    const content = await res.text();
-    // Basic check that it looks like an llms.txt file (not an HTML 404 page)
-    if (content.startsWith("<!") || content.startsWith("<html")) return { found: false };
-    return { found: content.length > 0, content: content.substring(0, 2000) };
-  } catch {
-    return { found: false };
-  }
+  const res = await fetchWithRetry(
+    `${baseUrl}/llms.txt`,
+    { headers: { "User-Agent": "ARCReport-Scanner/1.0" } },
+    { timeoutMs: 10000, maxAttempts: 2, label: `[Data Agent] llms.txt ${baseUrl}` }
+  );
+  if (!res || !res.ok) return { found: false };
+  const content = await res.text();
+  // Basic check that it looks like an llms.txt file (not an HTML 404 page)
+  if (content.startsWith("<!") || content.startsWith("<html")) return { found: false };
+  return { found: content.length > 0, content: content.substring(0, 2000) };
 }
 
 // ---- Per-Agent User-Agent Testing ----
@@ -782,8 +812,10 @@ async function fetchWithUserAgent(
       BOT_BLOCK_PATTERNS.some((pattern) => pattern.test(body.substring(0, 5000)));
 
     // Check if content is significantly stripped compared to Chrome baseline
+    // Threshold: 25% — more conservative to avoid false "degraded" verdicts on
+    // sites that serve lighter pages to non-Chrome UAs (e.g. mobile-optimized, AMP)
     const contentStripped =
-      chromeBaseline > 0 && contentLength < chromeBaseline * 0.5;
+      chromeBaseline > 0 && contentLength < chromeBaseline * 0.25;
 
     // Determine verdict
     let verdict: UserAgentTestResult["verdict"];

@@ -1,0 +1,93 @@
+[
+  {
+    "id": "trg_1773008329201",
+    "targetAgent": "ed",
+    "prompt": "Test trigger",
+    "createdAt": "2026-03-08T22:18:49.201Z",
+    "acknowledged": true
+  },
+  {
+    "id": "trg_1773008391504",
+    "targetAgent": "ed",
+    "prompt": "Quick sync with Ron. Share one insight, ask one question, move one thing forward.",
+    "createdAt": "2026-03-08T22:19:51.504Z",
+    "acknowledged": false
+  },
+  {
+    "id": "trg_1773008395058",
+    "targetAgent": "ron",
+    "prompt": "Time to sync with Ed. Challenge something they said recently or share a new finding.",
+    "createdAt": "2026-03-08T22:19:55.058Z",
+    "acknowledged": false
+  },
+  {
+    "id": "trg_1773008395099",
+    "targetAgent": "ron",
+    "prompt": "Quick sync with Ed. Share one insight, ask one question, move one thing forward.",
+    "createdAt": "2026-03-08T22:19:55.099Z",
+    "acknowledged": false
+  },
+  {
+    "id": "trg_1773008395169",
+    "targetAgent": "ed",
+    "prompt": "Scheduled check-in with Ron. What's the most important thing happening right now? What should Ron know?",
+    "createdAt": "2026-03-08T22:19:55.169Z",
+    "acknowledged": false
+  },
+  {
+    "id": "trg_1773008395247",
+    "targetAgent": "ed",
+    "prompt": "Scheduled check-in with Ron. What's the most important thing happening right now? What should Ron know?",
+    "createdAt": "2026-03-08T22:19:55.247Z",
+    "acknowledged": false
+  },
+  {
+    "id": "trg_1773008395378",
+    "targetAgent": "ron",
+    "prompt": "Check in with Ed. Share what you're working on, ask what they're doing, and push each other's thinking forward.",
+    "createdAt": "2026-03-08T22:19:55.378Z",
+    "acknowledged": false
+  },
+  {
+    "id": "trg_1773008395475",
+    "targetAgent": "ed",
+    "prompt": "Check in with Ron. Share what you're working on, ask what they're doing, and push each other's thinking forward.",
+    "createdAt": "2026-03-08T22:19:55.475Z",
+    "acknowledged": false
+  },
+  {
+    "id": "trg_1773008395601",
+    "targetAgent": "ron",
+    "prompt": "Time to sync with Ed. Challenge something they said recently or share a new finding.",
+    "createdAt": "2026-03-08T22:19:55.601Z",
+    "acknowledged": false
+  },
+  {
+    "id": "trg_1773008425620",
+    "targetAgent": "ed",
+    "prompt": "Quick sync with Ron. Share one insight, ask one question, move one thing forward.",
+    "createdAt": "2026-03-08T22:20:25.620Z",
+    "acknowledged": false
+  },
+  {
+    "id": "trg_1773008455932",
+    "targetAgent": "ron",
+    "prompt": "Touch base with Ed. If you disagree with their last take, say so. If they nailed it, build on it.",
+    "createdAt": "2026-03-08T22:20:55.932Z",
+    "acknowledged": false
+  },
+  {
+    "id": "trg_1773008485637",
+    "targetAgent": "ed",
+    "prompt": "Scheduled check-in with Ron. What's the most important thing happening right now? What should Ron know?",
+    "createdAt": "2026-03-08T22:21:25.637Z",
+    "acknowledged": false
+  },
+  {
+    "id": "trg_1773008515946",
+    "targetAgent": "ron",
+    "prompt": "Quick sync with Ed. Share one insight, ask one question, move one thing forward.",
+    "createdAt": "2026-03-08T22:21:55.946Z",
+    "acknowledged": false
+  }
+]

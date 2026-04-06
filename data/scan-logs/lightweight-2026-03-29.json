@@ -1,0 +1,6063 @@
+{
+  "date": "2026-03-29",
+  "startedAt": "2026-03-29T22:37:22.058Z",
+  "config": {
+    "concurrency": 3
+  },
+  "summary": {
+    "total": 1006,
+    "successful": 1004,
+    "failed": 2,
+    "platforms": {
+      "magento": 315,
+      "custom": 480,
+      "salesforce": 132,
+      "woocommerce": 40,
+      "shopify": 10,
+      "nextjs": 18,
+      "unknown": 8,
+      "bigcommerce": 1
+    },
+    "totalBlocked": 646
+  },
+  "results": [
+    {
+      "slug": "nike",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1999
+    },
+    {
+      "slug": "zara",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1277
+    },
+    {
+      "slug": "adidas",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2653
+    },
+    {
+      "slug": "hm",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 21421
+    },
+    {
+      "slug": "asos",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 26351
+    },
+    {
+      "slug": "uniqlo",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 26740
+    },
+    {
+      "slug": "gap",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1503
+    },
+    {
+      "slug": "nordstrom",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1015
+    },
+    {
+      "slug": "lululemon",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 26302
+    },
+    {
+      "slug": "mango",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2106
+    },
+    {
+      "slug": "shein",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3820
+    },
+    {
+      "slug": "jcrew",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 30284
+    },
+    {
+      "slug": "abercrombie",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1419
+    },
+    {
+      "slug": "ralph-lauren",
+      "blockedAgents": 14,
+      "platform": "salesforce",
+      "duration": 4391
+    },
+    {
+      "slug": "tommy-hilfiger",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 40055
+    },
+    {
+      "slug": "forever-21",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 913
+    },
+    {
+      "slug": "old-navy",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2075
+    },
+    {
+      "slug": "urban-outfitters",
+      "blockedAgents": 14,
+      "platform": "magento",
+      "duration": 4101
+    },
+    {
+      "slug": "apple",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 763
+    },
+    {
+      "slug": "banana-republic",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2153
+    },
+    {
+      "slug": "puma",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 2422
+    },
+    {
+      "slug": "dell",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3463
+    },
+    {
+      "slug": "samsung",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 7697
+    },
+    {
+      "slug": "best-buy",
+      "blockedAgents": 2,
+      "platform": "custom",
+      "duration": 24366
+    },
+    {
+      "slug": "hp",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3572
+    },
+    {
+      "slug": "sony",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 6947
+    },
+    {
+      "slug": "lenovo",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 26377
+    },
+    {
+      "slug": "bose",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 1686
+    },
+    {
+      "slug": "logitech",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1471
+    },
+    {
+      "slug": "newegg",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1119
+    },
+    {
+      "slug": "bh-photo",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 447
+    },
+    {
+      "slug": "micro-center",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 459
+    },
+    {
+      "slug": "ikea",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 871
+    },
+    {
+      "slug": "west-elm",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1262
+    },
+    {
+      "slug": "pottery-barn",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1230
+    },
+    {
+      "slug": "wayfair",
+      "blockedAgents": 14,
+      "platform": "custom",
+      "duration": 5605
+    },
+    {
+      "slug": "cb2",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1781
+    },
+    {
+      "slug": "crate-barrel",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1904
+    },
+    {
+      "slug": "rh",
+      "blockedAgents": 15,
+      "platform": "magento",
+      "duration": 9565
+    },
+    {
+      "slug": "home-depot",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 490
+    },
+    {
+      "slug": "williams-sonoma",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1719
+    },
+    {
+      "slug": "lowes",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 722
+    },
+    {
+      "slug": "sephora",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 952
+    },
+    {
+      "slug": "overstock",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 3034
+    },
+    {
+      "slug": "article",
+      "blockedAgents": 4,
+      "platform": "magento",
+      "duration": 2991
+    },
+    {
+      "slug": "ulta",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1894
+    },
+    {
+      "slug": "glossier",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2225
+    },
+    {
+      "slug": "fenty-beauty",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2690
+    },
+    {
+      "slug": "mac",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1063
+    },
+    {
+      "slug": "bath-body-works",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2179
+    },
+    {
+      "slug": "the-ordinary",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 6292
+    },
+    {
+      "slug": "clinique",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1646
+    },
+    {
+      "slug": "kiehls",
+      "blockedAgents": 12,
+      "platform": "custom",
+      "duration": 1385
+    },
+    {
+      "slug": "drunk-elephant",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 1270
+    },
+    {
+      "slug": "walmart-grocery",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2274
+    },
+    {
+      "slug": "amazon-fresh",
+      "blockedAgents": 14,
+      "platform": "woocommerce",
+      "duration": 3882
+    },
+    {
+      "slug": "instacart",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 4711
+    },
+    {
+      "slug": "whole-foods",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 1516
+    },
+    {
+      "slug": "thrive-market",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2749
+    },
+    {
+      "slug": "kroger",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 26123
+    },
+    {
+      "slug": "gopuff",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1110
+    },
+    {
+      "slug": "doordash",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1926
+    },
+    {
+      "slug": "amazon",
+      "blockedAgents": 12,
+      "platform": "custom",
+      "duration": 22451
+    },
+    {
+      "slug": "walmart",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1511
+    },
+    {
+      "slug": "target",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 4927
+    },
+    {
+      "slug": "ebay",
+      "blockedAgents": -1,
+      "platform": "error",
+      "duration": 0,
+      "error": "Timeout scanning ebay after 60s"
+    },
+    {
+      "slug": "etsy",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 885
+    },
+    {
+      "slug": "macys",
+      "blockedAgents": 15,
+      "platform": "magento",
+      "duration": 5341
+    },
+    {
+      "slug": "costco",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 26409
+    },
+    {
+      "slug": "five-below",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 726
+    },
+    {
+      "slug": "kohls",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2173
+    },
+    {
+      "slug": "tj-maxx",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1922
+    },
+    {
+      "slug": "warby-parker",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 586
+    },
+    {
+      "slug": "casper",
+      "blockedAgents": 13,
+      "platform": "custom",
+      "duration": 1982
+    },
+    {
+      "slug": "allbirds",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 3800
+    },
+    {
+      "slug": "everlane",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2436
+    },
+    {
+      "slug": "rothys",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1617
+    },
+    {
+      "slug": "bombas",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 5847
+    },
+    {
+      "slug": "away",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1468
+    },
+    {
+      "slug": "brooklinen",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1504
+    },
+    {
+      "slug": "on-running",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 3411
+    },
+    {
+      "slug": "vuori",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1447
+    },
+    {
+      "slug": "hoka",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 2365
+    },
+    {
+      "slug": "skims",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1565
+    },
+    {
+      "slug": "mejuri",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1452
+    },
+    {
+      "slug": "native",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1460
+    },
+    {
+      "slug": "ritual",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 1133
+    },
+    {
+      "slug": "hims",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 868
+    },
+    {
+      "slug": "cuts",
+      "blockedAgents": 0,
+      "platform": "shopify",
+      "duration": 3033
+    },
+    {
+      "slug": "gymshark",
+      "blockedAgents": 4,
+      "platform": "magento",
+      "duration": 2649
+    },
+    {
+      "slug": "hermes",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 944
+    },
+    {
+      "slug": "louis-vuitton",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 8651
+    },
+    {
+      "slug": "gucci",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 26746
+    },
+    {
+      "slug": "tiffany",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 1747
+    },
+    {
+      "slug": "burberry",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 4190
+    },
+    {
+      "slug": "net-a-porter",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 26463
+    },
+    {
+      "slug": "north-face",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1065
+    },
+    {
+      "slug": "patagonia",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 1775
+    },
+    {
+      "slug": "rei",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 5827
+    },
+    {
+      "slug": "new-balance",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 1752
+    },
+    {
+      "slug": "under-armour",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 2035
+    },
+    {
+      "slug": "yeti",
+      "blockedAgents": 12,
+      "platform": "salesforce",
+      "duration": 3439
+    },
+    {
+      "slug": "levis",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 694
+    },
+    {
+      "slug": "american-eagle",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 1312
+    },
+    {
+      "slug": "brooks-brothers",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 2019
+    },
+    {
+      "slug": "express",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1367
+    },
+    {
+      "slug": "anthropologie",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1736
+    },
+    {
+      "slug": "free-people",
+      "blockedAgents": 14,
+      "platform": "magento",
+      "duration": 2692
+    },
+    {
+      "slug": "alo-yoga",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1497
+    },
+    {
+      "slug": "fabletics",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1137
+    },
+    {
+      "slug": "fashion-nova",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1429
+    },
+    {
+      "slug": "pacsun",
+      "blockedAgents": 8,
+      "platform": "custom",
+      "duration": 1456
+    },
+    {
+      "slug": "lucky-brand",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 2140
+    },
+    {
+      "slug": "revolve",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 26322
+    },
+    {
+      "slug": "lulus",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 806
+    },
+    {
+      "slug": "thredup",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 468
+    },
+    {
+      "slug": "stitch-fix",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1305
+    },
+    {
+      "slug": "the-realreal",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 842
+    },
+    {
+      "slug": "depop",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 579
+    },
+    {
+      "slug": "poshmark",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 4562
+    },
+    {
+      "slug": "asics",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1848
+    },
+    {
+      "slug": "skechers",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 1908
+    },
+    {
+      "slug": "converse",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 1510
+    },
+    {
+      "slug": "vans",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1432
+    },
+    {
+      "slug": "crocs",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 731
+    },
+    {
+      "slug": "reebok",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1459
+    },
+    {
+      "slug": "steve-madden",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1533
+    },
+    {
+      "slug": "dr-martens",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 841
+    },
+    {
+      "slug": "cole-haan",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1519
+    },
+    {
+      "slug": "birkenstock",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 1704
+    },
+    {
+      "slug": "asus",
+      "blockedAgents": 2,
+      "platform": "custom",
+      "duration": 2557
+    },
+    {
+      "slug": "acer",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 26355
+    },
+    {
+      "slug": "jbl",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 849
+    },
+    {
+      "slug": "msi",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2302
+    },
+    {
+      "slug": "razer",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 2357
+    },
+    {
+      "slug": "sonos",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 1500
+    },
+    {
+      "slug": "gopro",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1285
+    },
+    {
+      "slug": "ring",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2533
+    },
+    {
+      "slug": "anker",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2975
+    },
+    {
+      "slug": "lg",
+      "blockedAgents": 8,
+      "platform": "magento",
+      "duration": 2977
+    },
+    {
+      "slug": "dyson",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 26492
+    },
+    {
+      "slug": "tcl",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1880
+    },
+    {
+      "slug": "turtle-beach",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1361
+    },
+    {
+      "slug": "bang-and-olufsen",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3177
+    },
+    {
+      "slug": "corsair",
+      "blockedAgents": 2,
+      "platform": "nextjs",
+      "duration": 1639
+    },
+    {
+      "slug": "ethan-allen",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 1262
+    },
+    {
+      "slug": "room-and-board",
+      "blockedAgents": 14,
+      "platform": "custom",
+      "duration": 2466
+    },
+    {
+      "slug": "restoration-hardware",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1008
+    },
+    {
+      "slug": "castlery",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 2015
+    },
+    {
+      "slug": "joybird",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 2938
+    },
+    {
+      "slug": "floyd",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1499
+    },
+    {
+      "slug": "burrow",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1498
+    },
+    {
+      "slug": "interior-define",
+      "blockedAgents": 4,
+      "platform": "magento",
+      "duration": 2050
+    },
+    {
+      "slug": "ruggable",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 968
+    },
+    {
+      "slug": "parachute",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1514
+    },
+    {
+      "slug": "serena-and-lily",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2750
+    },
+    {
+      "slug": "havenly",
+      "blockedAgents": 2,
+      "platform": "custom",
+      "duration": 1657
+    },
+    {
+      "slug": "apt2b",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1437
+    },
+    {
+      "slug": "albany-park",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1405
+    },
+    {
+      "slug": "tuft-and-needle",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1671
+    },
+    {
+      "slug": "nars",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 1509
+    },
+    {
+      "slug": "charlotte-tilbury",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 5146
+    },
+    {
+      "slug": "tatcha",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1428
+    },
+    {
+      "slug": "olaplex",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1516
+    },
+    {
+      "slug": "rare-beauty",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1421
+    },
+    {
+      "slug": "kosas",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1062
+    },
+    {
+      "slug": "tower-28",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1847
+    },
+    {
+      "slug": "summer-fridays",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2677
+    },
+    {
+      "slug": "paulas-choice",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 1455
+    },
+    {
+      "slug": "cerave",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 3460
+    },
+    {
+      "slug": "olay",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3705
+    },
+    {
+      "slug": "estee-lauder",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2042
+    },
+    {
+      "slug": "bobbi-brown",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2763
+    },
+    {
+      "slug": "la-mer",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 4157
+    },
+    {
+      "slug": "dermalogica",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1401
+    },
+    {
+      "slug": "misfits-market",
+      "blockedAgents": 0,
+      "platform": "nextjs",
+      "duration": 921
+    },
+    {
+      "slug": "freshdirect",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 27074
+    },
+    {
+      "slug": "imperfect-foods",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1527
+    },
+    {
+      "slug": "hungryroot",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 3119
+    },
+    {
+      "slug": "peapod",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2236
+    },
+    {
+      "slug": "trader-joes",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 6629
+    },
+    {
+      "slug": "hellofresh",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 6186
+    },
+    {
+      "slug": "costco-grocery",
+      "blockedAgents": 2,
+      "platform": "custom",
+      "duration": 26194
+    },
+    {
+      "slug": "blue-apron",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 302
+    },
+    {
+      "slug": "daily-harvest",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1516
+    },
+    {
+      "slug": "wish",
+      "blockedAgents": 6,
+      "platform": "custom",
+      "duration": 5015
+    },
+    {
+      "slug": "temu",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 572
+    },
+    {
+      "slug": "zappos",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 2111
+    },
+    {
+      "slug": "6pm",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 2711
+    },
+    {
+      "slug": "mercari",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 573
+    },
+    {
+      "slug": "offerup",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 421
+    },
+    {
+      "slug": "groupon",
+      "blockedAgents": 2,
+      "platform": "custom",
+      "duration": 3339
+    },
+    {
+      "slug": "dollar-shave-club",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1441
+    },
+    {
+      "slug": "quip",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1426
+    },
+    {
+      "slug": "harrys",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3263
+    },
+    {
+      "slug": "billie",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1434
+    },
+    {
+      "slug": "chubbies",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2028
+    },
+    {
+      "slug": "outdoor-voices",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1697
+    },
+    {
+      "slug": "rhone",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 468
+    },
+    {
+      "slug": "tracksmith",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 537
+    },
+    {
+      "slug": "koio",
+      "blockedAgents": 10,
+      "platform": "magento",
+      "duration": 2464
+    },
+    {
+      "slug": "thursday-boots",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1547
+    },
+    {
+      "slug": "nisolo",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1555
+    },
+    {
+      "slug": "marine-layer",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1600
+    },
+    {
+      "slug": "buck-mason",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 672
+    },
+    {
+      "slug": "true-classic",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1687
+    },
+    {
+      "slug": "parade",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1708
+    },
+    {
+      "slug": "girlfriend-collective",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1642
+    },
+    {
+      "slug": "italic",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2020
+    },
+    {
+      "slug": "public-goods",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2410
+    },
+    {
+      "slug": "caraway",
+      "blockedAgents": 0,
+      "platform": "shopify",
+      "duration": 1697
+    },
+    {
+      "slug": "our-place",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1614
+    },
+    {
+      "slug": "brightland",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1533
+    },
+    {
+      "slug": "magic-spoon",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1515
+    },
+    {
+      "slug": "athletic-greens",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2548
+    },
+    {
+      "slug": "liquid-death",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2553
+    },
+    {
+      "slug": "olipop",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1587
+    },
+    {
+      "slug": "chanel",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 975
+    },
+    {
+      "slug": "prada",
+      "blockedAgents": 0,
+      "platform": "unknown",
+      "duration": 26425
+    },
+    {
+      "slug": "dior",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2078
+    },
+    {
+      "slug": "versace",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 1780
+    },
+    {
+      "slug": "balenciaga",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 3619
+    },
+    {
+      "slug": "omega",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 7346
+    },
+    {
+      "slug": "rolex",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 21316
+    },
+    {
+      "slug": "cartier",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 31212
+    },
+    {
+      "slug": "david-yurman",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 1420
+    },
+    {
+      "slug": "ssense",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 861
+    },
+    {
+      "slug": "farfetch",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 6076
+    },
+    {
+      "slug": "columbia",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 1621
+    },
+    {
+      "slug": "arcteryx",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1903
+    },
+    {
+      "slug": "mr-porter",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 26212
+    },
+    {
+      "slug": "osprey",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1802
+    },
+    {
+      "slug": "salomon",
+      "blockedAgents": 14,
+      "platform": "custom",
+      "duration": 2808
+    },
+    {
+      "slug": "merrell",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2936
+    },
+    {
+      "slug": "backcountry",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 561
+    },
+    {
+      "slug": "black-diamond",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1599
+    },
+    {
+      "slug": "hydro-flask",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1916
+    },
+    {
+      "slug": "moosejaw",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 2389
+    },
+    {
+      "slug": "cotopaxi",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2186
+    },
+    {
+      "slug": "prana",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2678
+    },
+    {
+      "slug": "peloton",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 819
+    },
+    {
+      "slug": "mountain-hardwear",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2276
+    },
+    {
+      "slug": "whoop",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 5204
+    },
+    {
+      "slug": "therabody",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1462
+    },
+    {
+      "slug": "oura",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2041
+    },
+    {
+      "slug": "vital-proteins",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1663
+    },
+    {
+      "slug": "care-of",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1108
+    },
+    {
+      "slug": "seed",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1062
+    },
+    {
+      "slug": "nutrafol",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3016
+    },
+    {
+      "slug": "boll-and-branch",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1582
+    },
+    {
+      "slug": "purple",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1099
+    },
+    {
+      "slug": "saatva",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 4618
+    },
+    {
+      "slug": "helix-sleep",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1956
+    },
+    {
+      "slug": "calm",
+      "blockedAgents": 14,
+      "platform": "custom",
+      "duration": 2422
+    },
+    {
+      "slug": "eight-sleep",
+      "blockedAgents": 0,
+      "platform": "nextjs",
+      "duration": 6569
+    },
+    {
+      "slug": "barkbox",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 601
+    },
+    {
+      "slug": "chewy",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2134
+    },
+    {
+      "slug": "headspace",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3426
+    },
+    {
+      "slug": "farmers-dog",
+      "blockedAgents": 15,
+      "platform": "custom",
+      "duration": 871
+    },
+    {
+      "slug": "nom-nom",
+      "blockedAgents": 2,
+      "platform": "custom",
+      "duration": 1020
+    },
+    {
+      "slug": "ollie",
+      "blockedAgents": 0,
+      "platform": "nextjs",
+      "duration": 2026
+    },
+    {
+      "slug": "petco",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 648
+    },
+    {
+      "slug": "wild-one",
+      "blockedAgents": 12,
+      "platform": "magento",
+      "duration": 2114
+    },
+    {
+      "slug": "fido",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 10139
+    },
+    {
+      "slug": "rover",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 733
+    },
+    {
+      "slug": "carters",
+      "blockedAgents": 14,
+      "platform": "salesforce",
+      "duration": 1883
+    },
+    {
+      "slug": "petsmart",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 4694
+    },
+    {
+      "slug": "primary",
+      "blockedAgents": 1,
+      "platform": "magento",
+      "duration": 2059
+    },
+    {
+      "slug": "tea-collection",
+      "blockedAgents": 14,
+      "platform": "unknown",
+      "duration": 2252
+    },
+    {
+      "slug": "hanna-andersson",
+      "blockedAgents": 14,
+      "platform": "salesforce",
+      "duration": 3412
+    },
+    {
+      "slug": "maisonette",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 4936
+    },
+    {
+      "slug": "monica-andy",
+      "blockedAgents": 0,
+      "platform": "shopify",
+      "duration": 6808
+    },
+    {
+      "slug": "lovevery",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 7311
+    },
+    {
+      "slug": "kiwico",
+      "blockedAgents": 2,
+      "platform": "nextjs",
+      "duration": 1648
+    },
+    {
+      "slug": "buybuy-baby",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1954
+    },
+    {
+      "slug": "little-sleepies",
+      "blockedAgents": 6,
+      "platform": "magento",
+      "duration": 3462
+    },
+    {
+      "slug": "massimo-dutti",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 858
+    },
+    {
+      "slug": "and-other-stories",
+      "blockedAgents": 16,
+      "platform": "nextjs",
+      "duration": 815
+    },
+    {
+      "slug": "cos",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1493
+    },
+    {
+      "slug": "allsaints",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2948
+    },
+    {
+      "slug": "ted-baker",
+      "blockedAgents": 6,
+      "platform": "magento",
+      "duration": 3623
+    },
+    {
+      "slug": "scotch-and-soda",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 4809
+    },
+    {
+      "slug": "bonobos",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 336
+    },
+    {
+      "slug": "everlast",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1468
+    },
+    {
+      "slug": "lands-end",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1831
+    },
+    {
+      "slug": "ll-bean",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2439
+    },
+    {
+      "slug": "talbots",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2479
+    },
+    {
+      "slug": "torrid",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 21630
+    },
+    {
+      "slug": "savage-x-fenty",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1088
+    },
+    {
+      "slug": "madewell",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1419
+    },
+    {
+      "slug": "good-american",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3511
+    },
+    {
+      "slug": "canon",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1268
+    },
+    {
+      "slug": "garmin",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 4052
+    },
+    {
+      "slug": "nikon",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 3307
+    },
+    {
+      "slug": "steelseries",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 887
+    },
+    {
+      "slug": "epson",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 3777
+    },
+    {
+      "slug": "brother",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 3321
+    },
+    {
+      "slug": "hyperx",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1669
+    },
+    {
+      "slug": "tp-link",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1631
+    },
+    {
+      "slug": "ubiquiti",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1557
+    },
+    {
+      "slug": "seagate",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1315
+    },
+    {
+      "slug": "western-digital",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2219
+    },
+    {
+      "slug": "caldigit",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 4405
+    },
+    {
+      "slug": "sennheiser",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 1830
+    },
+    {
+      "slug": "elgato",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 2570
+    },
+    {
+      "slug": "audio-technica",
+      "blockedAgents": 14,
+      "platform": "magento",
+      "duration": 1801
+    },
+    {
+      "slug": "lulu-and-georgia",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1489
+    },
+    {
+      "slug": "arhaus",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 2225
+    },
+    {
+      "slug": "rejuvenation",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1299
+    },
+    {
+      "slug": "maiden-home",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1627
+    },
+    {
+      "slug": "sabai",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1684
+    },
+    {
+      "slug": "schoolhouse",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2810
+    },
+    {
+      "slug": "dims",
+      "blockedAgents": 0,
+      "platform": "unknown",
+      "duration": 516
+    },
+    {
+      "slug": "outer",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1677
+    },
+    {
+      "slug": "yardbird",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1563
+    },
+    {
+      "slug": "bed-bath-and-beyond",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 2116
+    },
+    {
+      "slug": "ballard-designs",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1177
+    },
+    {
+      "slug": "pier-1",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1677
+    },
+    {
+      "slug": "frontgate",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1029
+    },
+    {
+      "slug": "grandin-road",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1064
+    },
+    {
+      "slug": "havertys",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 587
+    },
+    {
+      "slug": "urban-decay",
+      "blockedAgents": 12,
+      "platform": "custom",
+      "duration": 1304
+    },
+    {
+      "slug": "benefit",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 1157
+    },
+    {
+      "slug": "too-faced",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1846
+    },
+    {
+      "slug": "laura-mercier",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1502
+    },
+    {
+      "slug": "it-cosmetics",
+      "blockedAgents": 12,
+      "platform": "custom",
+      "duration": 1438
+    },
+    {
+      "slug": "tarte",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1573
+    },
+    {
+      "slug": "nyx",
+      "blockedAgents": 12,
+      "platform": "custom",
+      "duration": 1288
+    },
+    {
+      "slug": "morphe",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1552
+    },
+    {
+      "slug": "e-l-f",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 5700
+    },
+    {
+      "slug": "colourpop",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1627
+    },
+    {
+      "slug": "supergoop",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1632
+    },
+    {
+      "slug": "glow-recipe",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1617
+    },
+    {
+      "slug": "youth-to-the-people",
+      "blockedAgents": 12,
+      "platform": "custom",
+      "duration": 1175
+    },
+    {
+      "slug": "herbivore",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1798
+    },
+    {
+      "slug": "versed",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1628
+    },
+    {
+      "slug": "iherb",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 930
+    },
+    {
+      "slug": "vitacost",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 3061
+    },
+    {
+      "slug": "weee",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 5361
+    },
+    {
+      "slug": "boxed",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1667
+    },
+    {
+      "slug": "farmstead",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1140
+    },
+    {
+      "slug": "butcherbox",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2141
+    },
+    {
+      "slug": "vons",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 547
+    },
+    {
+      "slug": "safeway",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 342
+    },
+    {
+      "slug": "shipt",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 2532
+    },
+    {
+      "slug": "albertsons",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 350
+    },
+    {
+      "slug": "bjs-wholesale",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1102
+    },
+    {
+      "slug": "sams-club",
+      "blockedAgents": 14,
+      "platform": "custom",
+      "duration": 3162
+    },
+    {
+      "slug": "dollar-general",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 379
+    },
+    {
+      "slug": "big-lots",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 2436
+    },
+    {
+      "slug": "dollar-tree",
+      "blockedAgents": 14,
+      "platform": "custom",
+      "duration": 5914
+    },
+    {
+      "slug": "burlington",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1059
+    },
+    {
+      "slug": "marshalls",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1673
+    },
+    {
+      "slug": "ross",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 1646
+    },
+    {
+      "slug": "belk",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1059
+    },
+    {
+      "slug": "jcpenney",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 720
+    },
+    {
+      "slug": "dillards",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2085
+    },
+    {
+      "slug": "neiman-marcus",
+      "blockedAgents": 6,
+      "platform": "custom",
+      "duration": 1000
+    },
+    {
+      "slug": "saks-fifth-avenue",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 497
+    },
+    {
+      "slug": "bloomingdales",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1796
+    },
+    {
+      "slug": "glossy-box",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 986
+    },
+    {
+      "slug": "fabfitfun",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1294
+    },
+    {
+      "slug": "sierra",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2806
+    },
+    {
+      "slug": "prose",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1305
+    },
+    {
+      "slug": "stitch-and-story",
+      "blockedAgents": 13,
+      "platform": "custom",
+      "duration": 2131
+    },
+    {
+      "slug": "function-of-beauty",
+      "blockedAgents": 11,
+      "platform": "custom",
+      "duration": 2610
+    },
+    {
+      "slug": "curology",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 920
+    },
+    {
+      "slug": "nurx",
+      "blockedAgents": 3,
+      "platform": "woocommerce",
+      "duration": 1498
+    },
+    {
+      "slug": "ro",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1219
+    },
+    {
+      "slug": "thirty-madison",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1584
+    },
+    {
+      "slug": "figs",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3202
+    },
+    {
+      "slug": "ministry-of-supply",
+      "blockedAgents": 10,
+      "platform": "magento",
+      "duration": 3385
+    },
+    {
+      "slug": "untuckit",
+      "blockedAgents": 4,
+      "platform": "magento",
+      "duration": 2522
+    },
+    {
+      "slug": "atoms",
+      "blockedAgents": 8,
+      "platform": "shopify",
+      "duration": 4022
+    },
+    {
+      "slug": "mizzen-main",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 10821
+    },
+    {
+      "slug": "greats",
+      "blockedAgents": 6,
+      "platform": "magento",
+      "duration": 2026
+    },
+    {
+      "slug": "stance",
+      "blockedAgents": 9,
+      "platform": "custom",
+      "duration": 2017
+    },
+    {
+      "slug": "birdies",
+      "blockedAgents": 11,
+      "platform": "custom",
+      "duration": 3073
+    },
+    {
+      "slug": "cometeer",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1475
+    },
+    {
+      "slug": "framebridge",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1516
+    },
+    {
+      "slug": "artifact-uprising",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 5775
+    },
+    {
+      "slug": "daily-look",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1131
+    },
+    {
+      "slug": "stio",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1421
+    },
+    {
+      "slug": "ridge",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1479
+    },
+    {
+      "slug": "bala",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 3521
+    },
+    {
+      "slug": "beardbrand",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 5485
+    },
+    {
+      "slug": "pela-case",
+      "blockedAgents": 10,
+      "platform": "custom",
+      "duration": 7416
+    },
+    {
+      "slug": "bite",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 4678
+    },
+    {
+      "slug": "grove-collaborative",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 6022
+    },
+    {
+      "slug": "blueland",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 6914
+    },
+    {
+      "slug": "tushy",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1514
+    },
+    {
+      "slug": "branch",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2434
+    },
+    {
+      "slug": "burga",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2424
+    },
+    {
+      "slug": "analogue",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 840
+    },
+    {
+      "slug": "ekster",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2706
+    },
+    {
+      "slug": "courant",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 3583
+    },
+    {
+      "slug": "solo-stove",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1046
+    },
+    {
+      "slug": "bottega-veneta",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 4360
+    },
+    {
+      "slug": "saint-laurent",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 4562
+    },
+    {
+      "slug": "celine",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 1768
+    },
+    {
+      "slug": "givenchy",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2521
+    },
+    {
+      "slug": "valentino",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3884
+    },
+    {
+      "slug": "loewe",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 1971
+    },
+    {
+      "slug": "moncler",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2899
+    },
+    {
+      "slug": "fendi",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 26240
+    },
+    {
+      "slug": "jimmy-choo",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 1202
+    },
+    {
+      "slug": "van-cleef-and-arpels",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 26473
+    },
+    {
+      "slug": "bulgari",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 27591
+    },
+    {
+      "slug": "matches-fashion",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1487
+    },
+    {
+      "slug": "mytheresa",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1468
+    },
+    {
+      "slug": "chopard",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 3786
+    },
+    {
+      "slug": "24s",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1081
+    },
+    {
+      "slug": "dicks-sporting-goods",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 579
+    },
+    {
+      "slug": "academy-sports",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 1226
+    },
+    {
+      "slug": "bass-pro-shops",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1459
+    },
+    {
+      "slug": "cabelas",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2415
+    },
+    {
+      "slug": "specialized",
+      "blockedAgents": 8,
+      "platform": "magento",
+      "duration": 1418
+    },
+    {
+      "slug": "titleist",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 1773
+    },
+    {
+      "slug": "trek-bikes",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3621
+    },
+    {
+      "slug": "cannondale",
+      "blockedAgents": 2,
+      "platform": "woocommerce",
+      "duration": 4360
+    },
+    {
+      "slug": "callaway-golf",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1790
+    },
+    {
+      "slug": "wilson",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1002
+    },
+    {
+      "slug": "taylormade",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 16087
+    },
+    {
+      "slug": "mammut",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1831
+    },
+    {
+      "slug": "fjallraven",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 3911
+    },
+    {
+      "slug": "oakley",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 26319
+    },
+    {
+      "slug": "kelty",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1540
+    },
+    {
+      "slug": "tonal",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1427
+    },
+    {
+      "slug": "mirror",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1043
+    },
+    {
+      "slug": "nordictrack",
+      "blockedAgents": 0,
+      "platform": "nextjs",
+      "duration": 1602
+    },
+    {
+      "slug": "bowflex",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 1263
+    },
+    {
+      "slug": "hyperice",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 904
+    },
+    {
+      "slug": "withings",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1057
+    },
+    {
+      "slug": "gnc",
+      "blockedAgents": 14,
+      "platform": "salesforce",
+      "duration": 2435
+    },
+    {
+      "slug": "fitbit",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 4872
+    },
+    {
+      "slug": "vitamin-shoppe",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1118
+    },
+    {
+      "slug": "garden-of-life",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1913
+    },
+    {
+      "slug": "organifi",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1530
+    },
+    {
+      "slug": "onnit",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1647
+    },
+    {
+      "slug": "moon-juice",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1579
+    },
+    {
+      "slug": "sakara-life",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1519
+    },
+    {
+      "slug": "noom",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1393
+    },
+    {
+      "slug": "open-farm",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1520
+    },
+    {
+      "slug": "wag",
+      "blockedAgents": 12,
+      "platform": "woocommerce",
+      "duration": 3101
+    },
+    {
+      "slug": "justfoodfordogs",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 2726
+    },
+    {
+      "slug": "spot-and-tango",
+      "blockedAgents": 0,
+      "platform": "nextjs",
+      "duration": 2336
+    },
+    {
+      "slug": "sundays-for-dogs",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 4487
+    },
+    {
+      "slug": "west-paw",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1450
+    },
+    {
+      "slug": "fable",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1523
+    },
+    {
+      "slug": "kong",
+      "blockedAgents": 1,
+      "platform": "magento",
+      "duration": 2537
+    },
+    {
+      "slug": "wisdom-panel",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1494
+    },
+    {
+      "slug": "embark",
+      "blockedAgents": 6,
+      "platform": "woocommerce",
+      "duration": 3457
+    },
+    {
+      "slug": "babylist",
+      "blockedAgents": 0,
+      "platform": "shopify",
+      "duration": 2882
+    },
+    {
+      "slug": "nugget",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1525
+    },
+    {
+      "slug": "uppababy",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2239
+    },
+    {
+      "slug": "stokke",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 5263
+    },
+    {
+      "slug": "lalo",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1403
+    },
+    {
+      "slug": "piccalio",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1438
+    },
+    {
+      "slug": "aden-anais",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1684
+    },
+    {
+      "slug": "pottery-barn-kids",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 958
+    },
+    {
+      "slug": "boden-mini",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1780
+    },
+    {
+      "slug": "the-honest-company",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 26040
+    },
+    {
+      "slug": "oreilly-auto-parts",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 499
+    },
+    {
+      "slug": "autozone",
+      "blockedAgents": 14,
+      "platform": "salesforce",
+      "duration": 9448
+    },
+    {
+      "slug": "advance-auto-parts",
+      "blockedAgents": 0,
+      "platform": "nextjs",
+      "duration": 16415
+    },
+    {
+      "slug": "napa-auto-parts",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 397
+    },
+    {
+      "slug": "rockauto",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1934
+    },
+    {
+      "slug": "tirerack",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1495
+    },
+    {
+      "slug": "carparts-com",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 863
+    },
+    {
+      "slug": "carvana",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1051
+    },
+    {
+      "slug": "vroom",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 3272
+    },
+    {
+      "slug": "carmax",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1138
+    },
+    {
+      "slug": "weathertech",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 684
+    },
+    {
+      "slug": "pep-boys",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2403
+    },
+    {
+      "slug": "american-muscle",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 667
+    },
+    {
+      "slug": "summit-racing",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1557
+    },
+    {
+      "slug": "4-wheel-parts",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 3518
+    },
+    {
+      "slug": "goldbelly",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 496
+    },
+    {
+      "slug": "drizly",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1074
+    },
+    {
+      "slug": "wine-com",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2003
+    },
+    {
+      "slug": "omaha-steaks",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 632
+    },
+    {
+      "slug": "vivino",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1417
+    },
+    {
+      "slug": "harry-and-david",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1893
+    },
+    {
+      "slug": "mouth",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1578
+    },
+    {
+      "slug": "ghirardelli",
+      "blockedAgents": 4,
+      "platform": "magento",
+      "duration": 1371
+    },
+    {
+      "slug": "crowd-cow",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 5596
+    },
+    {
+      "slug": "blue-bottle-coffee",
+      "blockedAgents": 14,
+      "platform": "custom",
+      "duration": 750
+    },
+    {
+      "slug": "trade-coffee",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1471
+    },
+    {
+      "slug": "nespresso",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 5876
+    },
+    {
+      "slug": "intelligentsia",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1461
+    },
+    {
+      "slug": "athletic-brewing",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1499
+    },
+    {
+      "slug": "lagunitas",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 2615
+    },
+    {
+      "slug": "graza",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1473
+    },
+    {
+      "slug": "fly-by-jing",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1410
+    },
+    {
+      "slug": "poppi",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1446
+    },
+    {
+      "slug": "chamberlain-coffee",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1450
+    },
+    {
+      "slug": "blank-street-coffee",
+      "blockedAgents": 0,
+      "platform": "nextjs",
+      "duration": 1354
+    },
+    {
+      "slug": "burton",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 2970
+    },
+    {
+      "slug": "discount-tire",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 318
+    },
+    {
+      "slug": "coker-tire",
+      "blockedAgents": 14,
+      "platform": "magento",
+      "duration": 2345
+    },
+    {
+      "slug": "rossignol",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 4360
+    },
+    {
+      "slug": "coach",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1024
+    },
+    {
+      "slug": "kate-spade",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 940
+    },
+    {
+      "slug": "michael-kors",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 1790
+    },
+    {
+      "slug": "guess",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1623
+    },
+    {
+      "slug": "lacoste",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 1626
+    },
+    {
+      "slug": "calvin-klein",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 26494
+    },
+    {
+      "slug": "hugo-boss",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 908
+    },
+    {
+      "slug": "diesel",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 971
+    },
+    {
+      "slug": "timberland",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1216
+    },
+    {
+      "slug": "wrangler",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 442
+    },
+    {
+      "slug": "lee-jeans",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 431
+    },
+    {
+      "slug": "true-religion",
+      "blockedAgents": 14,
+      "platform": "salesforce",
+      "duration": 4601
+    },
+    {
+      "slug": "7-for-all-mankind",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1532
+    },
+    {
+      "slug": "ag-jeans",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1474
+    },
+    {
+      "slug": "citizens-of-humanity",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1960
+    },
+    {
+      "slug": "superdry",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 1613
+    },
+    {
+      "slug": "french-connection",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1773
+    },
+    {
+      "slug": "vineyard-vines",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 3192
+    },
+    {
+      "slug": "karen-millen",
+      "blockedAgents": 4,
+      "platform": "magento",
+      "duration": 1906
+    },
+    {
+      "slug": "reiss",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2474
+    },
+    {
+      "slug": "boohoo",
+      "blockedAgents": 4,
+      "platform": "custom",
+      "duration": 1947
+    },
+    {
+      "slug": "river-island",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1199
+    },
+    {
+      "slug": "prettylittlething",
+      "blockedAgents": 4,
+      "platform": "custom",
+      "duration": 2277
+    },
+    {
+      "slug": "next",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1643
+    },
+    {
+      "slug": "bershka",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1140
+    },
+    {
+      "slug": "primark",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3543
+    },
+    {
+      "slug": "marks-and-spencer",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 4513
+    },
+    {
+      "slug": "pull-and-bear",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 858
+    },
+    {
+      "slug": "stradivarius",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 696
+    },
+    {
+      "slug": "esprit",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 787
+    },
+    {
+      "slug": "desigual",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 1244
+    },
+    {
+      "slug": "aldo",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1447
+    },
+    {
+      "slug": "charles-and-keith",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 3758
+    },
+    {
+      "slug": "ecco",
+      "blockedAgents": 0,
+      "platform": "unknown",
+      "duration": 1824
+    },
+    {
+      "slug": "stuart-weitzman",
+      "blockedAgents": 4,
+      "platform": "salesforce",
+      "duration": 3447
+    },
+    {
+      "slug": "clarks",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 4815
+    },
+    {
+      "slug": "tory-burch",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1086
+    },
+    {
+      "slug": "ann-taylor",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 3570
+    },
+    {
+      "slug": "eileen-fisher",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 26752
+    },
+    {
+      "slug": "loft",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 2371
+    },
+    {
+      "slug": "chicos",
+      "blockedAgents": 0,
+      "platform": "nextjs",
+      "duration": 3722
+    },
+    {
+      "slug": "white-house-black-market",
+      "blockedAgents": 0,
+      "platform": "nextjs",
+      "duration": 4732
+    },
+    {
+      "slug": "spanx",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1412
+    },
+    {
+      "slug": "aerie",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 2391
+    },
+    {
+      "slug": "victorias-secret",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 3718
+    },
+    {
+      "slug": "dickies",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1557
+    },
+    {
+      "slug": "duluth-trading",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 2730
+    },
+    {
+      "slug": "carhartt",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2763
+    },
+    {
+      "slug": "woolrich",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1522
+    },
+    {
+      "slug": "fila",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 4378
+    },
+    {
+      "slug": "swatch",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 6660
+    },
+    {
+      "slug": "fossil",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 857
+    },
+    {
+      "slug": "samsonite",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 1686
+    },
+    {
+      "slug": "tumi",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 1886
+    },
+    {
+      "slug": "herschel",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2289
+    },
+    {
+      "slug": "about-you",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1888
+    },
+    {
+      "slug": "zalando",
+      "blockedAgents": 6,
+      "platform": "custom",
+      "duration": 16188
+    },
+    {
+      "slug": "otto",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 761
+    },
+    {
+      "slug": "aritzia",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 851
+    },
+    {
+      "slug": "john-lewis",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 5959
+    },
+    {
+      "slug": "selfridges",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 657
+    },
+    {
+      "slug": "the-iconic",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2588
+    },
+    {
+      "slug": "david-jones",
+      "blockedAgents": 6,
+      "platform": "custom",
+      "duration": 6212
+    },
+    {
+      "slug": "ajio",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1233
+    },
+    {
+      "slug": "musinsa",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 7450
+    },
+    {
+      "slug": "myntra",
+      "blockedAgents": 0,
+      "platform": "unknown",
+      "duration": 26441
+    },
+    {
+      "slug": "el-palacio-de-hierro",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1425
+    },
+    {
+      "slug": "liverpool-mexico",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 4702
+    },
+    {
+      "slug": "gentle-monster",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 7163
+    },
+    {
+      "slug": "li-ning",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1418
+    },
+    {
+      "slug": "anta-sports",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1576
+    },
+    {
+      "slug": "country-road",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1846
+    },
+    {
+      "slug": "hobbs",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 1056
+    },
+    {
+      "slug": "arket",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 943
+    },
+    {
+      "slug": "reformation",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 1673
+    },
+    {
+      "slug": "oneplus",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1282
+    },
+    {
+      "slug": "google-store",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 3175
+    },
+    {
+      "slug": "microsoft-store",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 8391
+    },
+    {
+      "slug": "nokia",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1072
+    },
+    {
+      "slug": "intel",
+      "blockedAgents": 14,
+      "platform": "custom",
+      "duration": 1136
+    },
+    {
+      "slug": "motorola",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 4676
+    },
+    {
+      "slug": "nvidia",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1254
+    },
+    {
+      "slug": "amd",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 11313
+    },
+    {
+      "slug": "panasonic",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 26587
+    },
+    {
+      "slug": "philips",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 1005
+    },
+    {
+      "slug": "hisense",
+      "blockedAgents": 2,
+      "platform": "woocommerce",
+      "duration": 1790
+    },
+    {
+      "slug": "vizio",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2433
+    },
+    {
+      "slug": "roku",
+      "blockedAgents": 2,
+      "platform": "woocommerce",
+      "duration": 3430
+    },
+    {
+      "slug": "beats",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 2490
+    },
+    {
+      "slug": "marshall",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 4649
+    },
+    {
+      "slug": "jabra",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 1348
+    },
+    {
+      "slug": "shure",
+      "blockedAgents": 0,
+      "platform": "nextjs",
+      "duration": 1559
+    },
+    {
+      "slug": "dji",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1733
+    },
+    {
+      "slug": "fujifilm",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1429
+    },
+    {
+      "slug": "netgear",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 1858
+    },
+    {
+      "slug": "linksys",
+      "blockedAgents": 9,
+      "platform": "magento",
+      "duration": 1834
+    },
+    {
+      "slug": "kingston",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 559
+    },
+    {
+      "slug": "crucial",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1272
+    },
+    {
+      "slug": "belkin",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 1598
+    },
+    {
+      "slug": "otterbox",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 2243
+    },
+    {
+      "slug": "peak-design",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 5305
+    },
+    {
+      "slug": "casio",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 7166
+    },
+    {
+      "slug": "denon",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 566
+    },
+    {
+      "slug": "pioneer",
+      "blockedAgents": 15,
+      "platform": "magento",
+      "duration": 1999
+    },
+    {
+      "slug": "yamaha",
+      "blockedAgents": 4,
+      "platform": "custom",
+      "duration": 4041
+    },
+    {
+      "slug": "oppo",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1474
+    },
+    {
+      "slug": "ecobee",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2448
+    },
+    {
+      "slug": "xiaomi",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 13739
+    },
+    {
+      "slug": "arlo",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1062
+    },
+    {
+      "slug": "wyze",
+      "blockedAgents": 5,
+      "platform": "magento",
+      "duration": 2141
+    },
+    {
+      "slug": "simplisafe",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 3730
+    },
+    {
+      "slug": "eufy",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1177
+    },
+    {
+      "slug": "tile",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 898
+    },
+    {
+      "slug": "sonance",
+      "blockedAgents": 11,
+      "platform": "magento",
+      "duration": 3848
+    },
+    {
+      "slug": "ace-hardware",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 2160
+    },
+    {
+      "slug": "menards",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1905
+    },
+    {
+      "slug": "klipsch",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3928
+    },
+    {
+      "slug": "harbor-freight",
+      "blockedAgents": 15,
+      "platform": "custom",
+      "duration": 666
+    },
+    {
+      "slug": "sherwin-williams",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 1149
+    },
+    {
+      "slug": "tractor-supply",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 26411
+    },
+    {
+      "slug": "cuisinart",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 1367
+    },
+    {
+      "slug": "benjamin-moore",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 2628
+    },
+    {
+      "slug": "kitchenaid",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 26527
+    },
+    {
+      "slug": "le-creuset",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 476
+    },
+    {
+      "slug": "staub",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1058
+    },
+    {
+      "slug": "vitamix",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 2103
+    },
+    {
+      "slug": "irobot",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 2185
+    },
+    {
+      "slug": "ninja",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 3754
+    },
+    {
+      "slug": "breville",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 6661
+    },
+    {
+      "slug": "serta",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 288
+    },
+    {
+      "slug": "simplehuman",
+      "blockedAgents": 4,
+      "platform": "magento",
+      "duration": 1969
+    },
+    {
+      "slug": "tempur-pedic",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2729
+    },
+    {
+      "slug": "beautyrest",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 249
+    },
+    {
+      "slug": "sleep-number",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 3361
+    },
+    {
+      "slug": "nectar-sleep",
+      "blockedAgents": 0,
+      "platform": "nextjs",
+      "duration": 5254
+    },
+    {
+      "slug": "calphalon",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 771
+    },
+    {
+      "slug": "sur-la-table",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 1528
+    },
+    {
+      "slug": "world-market",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 3887
+    },
+    {
+      "slug": "zwilling",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 689
+    },
+    {
+      "slug": "all-clad",
+      "blockedAgents": 4,
+      "platform": "magento",
+      "duration": 1867
+    },
+    {
+      "slug": "wusthof",
+      "blockedAgents": 6,
+      "platform": "magento",
+      "duration": 1614
+    },
+    {
+      "slug": "miele",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2347
+    },
+    {
+      "slug": "instant-pot",
+      "blockedAgents": 4,
+      "platform": "magento",
+      "duration": 2157
+    },
+    {
+      "slug": "whirlpool",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 26359
+    },
+    {
+      "slug": "traeger",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 1517
+    },
+    {
+      "slug": "weber",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 1510
+    },
+    {
+      "slug": "layla-sleep",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 3750
+    },
+    {
+      "slug": "smeg",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 642
+    },
+    {
+      "slug": "big-green-egg",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1926
+    },
+    {
+      "slug": "blackstone",
+      "blockedAgents": 7,
+      "platform": "magento",
+      "duration": 2440
+    },
+    {
+      "slug": "loreal-paris",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2545
+    },
+    {
+      "slug": "maybelline",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 2366
+    },
+    {
+      "slug": "revlon",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 2197
+    },
+    {
+      "slug": "covergirl",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 310
+    },
+    {
+      "slug": "aveeno",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 933
+    },
+    {
+      "slug": "neutrogena",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1470
+    },
+    {
+      "slug": "la-roche-posay",
+      "blockedAgents": 12,
+      "platform": "custom",
+      "duration": 1420
+    },
+    {
+      "slug": "cetaphil",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 3136
+    },
+    {
+      "slug": "vichy",
+      "blockedAgents": 2,
+      "platform": "custom",
+      "duration": 3230
+    },
+    {
+      "slug": "shiseido",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 2656
+    },
+    {
+      "slug": "bioderma",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 3357
+    },
+    {
+      "slug": "sk-ii",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3272
+    },
+    {
+      "slug": "sulwhasoo",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1580
+    },
+    {
+      "slug": "laneige",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 4565
+    },
+    {
+      "slug": "innisfree",
+      "blockedAgents": 0,
+      "platform": "unknown",
+      "duration": 5372
+    },
+    {
+      "slug": "dr-jart",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1398
+    },
+    {
+      "slug": "cosrx",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2656
+    },
+    {
+      "slug": "amorepacific",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 4460
+    },
+    {
+      "slug": "lancome",
+      "blockedAgents": 12,
+      "platform": "custom",
+      "duration": 1414
+    },
+    {
+      "slug": "ysl-beauty",
+      "blockedAgents": 12,
+      "platform": "custom",
+      "duration": 1016
+    },
+    {
+      "slug": "giorgio-armani-beauty",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 40039
+    },
+    {
+      "slug": "tom-ford-beauty",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1435
+    },
+    {
+      "slug": "jo-malone",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1044
+    },
+    {
+      "slug": "diptyque",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1735
+    },
+    {
+      "slug": "le-labo",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 2695
+    },
+    {
+      "slug": "byredo",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2370
+    },
+    {
+      "slug": "murad",
+      "blockedAgents": 2,
+      "platform": "shopify",
+      "duration": 2258
+    },
+    {
+      "slug": "peter-thomas-roth",
+      "blockedAgents": 0,
+      "platform": "shopify",
+      "duration": 1302
+    },
+    {
+      "slug": "origins",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1046
+    },
+    {
+      "slug": "aveda",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1001
+    },
+    {
+      "slug": "bumble-and-bumble",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 903
+    },
+    {
+      "slug": "moroccanoil",
+      "blockedAgents": 1,
+      "platform": "magento",
+      "duration": 765
+    },
+    {
+      "slug": "oribe",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2095
+    },
+    {
+      "slug": "living-proof",
+      "blockedAgents": 3,
+      "platform": "magento",
+      "duration": 2357
+    },
+    {
+      "slug": "essie",
+      "blockedAgents": 12,
+      "platform": "magento",
+      "duration": 2895
+    },
+    {
+      "slug": "opi",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 4120
+    },
+    {
+      "slug": "creed",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1593
+    },
+    {
+      "slug": "sally-beauty",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 3197
+    },
+    {
+      "slug": "soko-glam",
+      "blockedAgents": 15,
+      "platform": "custom",
+      "duration": 2958
+    },
+    {
+      "slug": "publix",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 865
+    },
+    {
+      "slug": "h-e-b",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 456
+    },
+    {
+      "slug": "acqua-di-parma",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2430
+    },
+    {
+      "slug": "wegmans",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 2960
+    },
+    {
+      "slug": "lidl",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 2819
+    },
+    {
+      "slug": "aldi",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 11945
+    },
+    {
+      "slug": "food-lion",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 3113
+    },
+    {
+      "slug": "giant-food",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2773
+    },
+    {
+      "slug": "stop-and-shop",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 3179
+    },
+    {
+      "slug": "meijer",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1026
+    },
+    {
+      "slug": "sprouts",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 3244
+    },
+    {
+      "slug": "hy-vee",
+      "blockedAgents": 2,
+      "platform": "custom",
+      "duration": 5037
+    },
+    {
+      "slug": "sainsburys",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 789
+    },
+    {
+      "slug": "tesco",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2051
+    },
+    {
+      "slug": "ocado",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 3307
+    },
+    {
+      "slug": "asda",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 534
+    },
+    {
+      "slug": "coles",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 398
+    },
+    {
+      "slug": "woolworths-australia",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2433
+    },
+    {
+      "slug": "natural-grocers",
+      "blockedAgents": 0,
+      "platform": "unknown",
+      "duration": 2327
+    },
+    {
+      "slug": "picard",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 1456
+    },
+    {
+      "slug": "harmons",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 3790
+    },
+    {
+      "slug": "nordstrom-rack",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 2007
+    },
+    {
+      "slug": "homegoods",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2017
+    },
+    {
+      "slug": "staples",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 3290
+    },
+    {
+      "slug": "michaels",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 593
+    },
+    {
+      "slug": "joann",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1415
+    },
+    {
+      "slug": "office-depot",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 2875
+    },
+    {
+      "slug": "barnes-and-noble",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 805
+    },
+    {
+      "slug": "gamestop",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 543
+    },
+    {
+      "slug": "hobby-lobby",
+      "blockedAgents": 0,
+      "platform": "nextjs",
+      "duration": 2385
+    },
+    {
+      "slug": "hot-topic",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2281
+    },
+    {
+      "slug": "boxlunch",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2088
+    },
+    {
+      "slug": "walgreens",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 30469
+    },
+    {
+      "slug": "cvs",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 396
+    },
+    {
+      "slug": "party-city",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 377
+    },
+    {
+      "slug": "rite-aid",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1179
+    },
+    {
+      "slug": "rakuten",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1937
+    },
+    {
+      "slug": "shopee",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 4710
+    },
+    {
+      "slug": "lazada",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 27576
+    },
+    {
+      "slug": "flipkart",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 6179
+    },
+    {
+      "slug": "jd-com",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 6258
+    },
+    {
+      "slug": "coupang",
+      "blockedAgents": 14,
+      "platform": "custom",
+      "duration": 6357
+    },
+    {
+      "slug": "takealot",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 518
+    },
+    {
+      "slug": "allegro",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1128
+    },
+    {
+      "slug": "jumia",
+      "blockedAgents": 6,
+      "platform": "custom",
+      "duration": 4327
+    },
+    {
+      "slug": "wildberries",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 830
+    },
+    {
+      "slug": "tokopedia",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 6977
+    },
+    {
+      "slug": "ozon",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 7999
+    },
+    {
+      "slug": "souq",
+      "blockedAgents": 12,
+      "platform": "custom",
+      "duration": 1054
+    },
+    {
+      "slug": "bukalapak",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 4241
+    },
+    {
+      "slug": "noon",
+      "blockedAgents": 8,
+      "platform": "nextjs",
+      "duration": 26482
+    },
+    {
+      "slug": "dolce-and-gabbana",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 1215
+    },
+    {
+      "slug": "armani",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1810
+    },
+    {
+      "slug": "alexander-mcqueen",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 1513
+    },
+    {
+      "slug": "salvatore-ferragamo",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 724
+    },
+    {
+      "slug": "stella-mccartney",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 9793
+    },
+    {
+      "slug": "max-mara",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 26543
+    },
+    {
+      "slug": "brunello-cucinelli",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 909
+    },
+    {
+      "slug": "ermenegildo-zegna",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1075
+    },
+    {
+      "slug": "loro-piana",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 26250
+    },
+    {
+      "slug": "brioni",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2215
+    },
+    {
+      "slug": "berluti",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 2784
+    },
+    {
+      "slug": "tods",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 6390
+    },
+    {
+      "slug": "christian-louboutin",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1209
+    },
+    {
+      "slug": "balmain",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1179
+    },
+    {
+      "slug": "manolo-blahnik",
+      "blockedAgents": 12,
+      "platform": "magento",
+      "duration": 1875
+    },
+    {
+      "slug": "off-white",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 1567
+    },
+    {
+      "slug": "isabel-marant",
+      "blockedAgents": 4,
+      "platform": "custom",
+      "duration": 4418
+    },
+    {
+      "slug": "golden-goose",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 7310
+    },
+    {
+      "slug": "acne-studios",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 954
+    },
+    {
+      "slug": "jacquemus",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 604
+    },
+    {
+      "slug": "a-p-c",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1445
+    },
+    {
+      "slug": "kenzo",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 1174
+    },
+    {
+      "slug": "swarovski",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1349
+    },
+    {
+      "slug": "maison-margiela",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 2989
+    },
+    {
+      "slug": "pandora",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 770
+    },
+    {
+      "slug": "breitling",
+      "blockedAgents": 14,
+      "platform": "magento",
+      "duration": 3309
+    },
+    {
+      "slug": "tag-heuer",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 4560
+    },
+    {
+      "slug": "rimowa",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 935
+    },
+    {
+      "slug": "montblanc",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 6727
+    },
+    {
+      "slug": "iwc",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 26659
+    },
+    {
+      "slug": "goyard",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2746
+    },
+    {
+      "slug": "chloe",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 2553
+    },
+    {
+      "slug": "etro",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2533
+    },
+    {
+      "slug": "amiri",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1489
+    },
+    {
+      "slug": "mizuno",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 4416
+    },
+    {
+      "slug": "piaget",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 7240
+    },
+    {
+      "slug": "brooks-running",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 1476
+    },
+    {
+      "slug": "saucony",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2457
+    },
+    {
+      "slug": "altra-running",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 2572
+    },
+    {
+      "slug": "la-sportiva",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 602
+    },
+    {
+      "slug": "keen",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1442
+    },
+    {
+      "slug": "danner",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 4957
+    },
+    {
+      "slug": "gregory",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2087
+    },
+    {
+      "slug": "msr",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1694
+    },
+    {
+      "slug": "deuter",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2940
+    },
+    {
+      "slug": "big-agnes",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1656
+    },
+    {
+      "slug": "nemo-equipment",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1512
+    },
+    {
+      "slug": "sea-to-summit",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1742
+    },
+    {
+      "slug": "outdoor-research",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1729
+    },
+    {
+      "slug": "darn-tough",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1429
+    },
+    {
+      "slug": "smartwool",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 2813
+    },
+    {
+      "slug": "cobra-golf",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1418
+    },
+    {
+      "slug": "travismathew",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1421
+    },
+    {
+      "slug": "ping",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3193
+    },
+    {
+      "slug": "yonex",
+      "blockedAgents": 4,
+      "platform": "woocommerce",
+      "duration": 1778
+    },
+    {
+      "slug": "babolat",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 2434
+    },
+    {
+      "slug": "easton",
+      "blockedAgents": 14,
+      "platform": "salesforce",
+      "duration": 2941
+    },
+    {
+      "slug": "louisville-slugger",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 743
+    },
+    {
+      "slug": "rawlings",
+      "blockedAgents": 14,
+      "platform": "salesforce",
+      "duration": 2950
+    },
+    {
+      "slug": "fanatics",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 7484
+    },
+    {
+      "slug": "suunto",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 1135
+    },
+    {
+      "slug": "lids",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 7859
+    },
+    {
+      "slug": "mitchell-and-ness",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 8388
+    },
+    {
+      "slug": "helly-hansen",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 315
+    },
+    {
+      "slug": "icebreaker",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1725
+    },
+    {
+      "slug": "atomic",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2701
+    },
+    {
+      "slug": "head-sports",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1749
+    },
+    {
+      "slug": "k2-sports",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 8910
+    },
+    {
+      "slug": "volkl",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 9487
+    },
+    {
+      "slug": "hydrow",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1635
+    },
+    {
+      "slug": "rogue-fitness",
+      "blockedAgents": 16,
+      "platform": "woocommerce",
+      "duration": 2864
+    },
+    {
+      "slug": "marker",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 10760
+    },
+    {
+      "slug": "trx",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1472
+    },
+    {
+      "slug": "concept2",
+      "blockedAgents": 14,
+      "platform": "magento",
+      "duration": 2783
+    },
+    {
+      "slug": "life-fitness",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2405
+    },
+    {
+      "slug": "manduka",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1436
+    },
+    {
+      "slug": "myprotein",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1194
+    },
+    {
+      "slug": "optimum-nutrition",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1551
+    },
+    {
+      "slug": "transparent-labs",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1547
+    },
+    {
+      "slug": "momentous",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1441
+    },
+    {
+      "slug": "legion-athletics",
+      "blockedAgents": 2,
+      "platform": "woocommerce",
+      "duration": 3204
+    },
+    {
+      "slug": "pure-encapsulations",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1442
+    },
+    {
+      "slug": "nordic-naturals",
+      "blockedAgents": 14,
+      "platform": "magento",
+      "duration": 1047
+    },
+    {
+      "slug": "thorne",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 7701
+    },
+    {
+      "slug": "now-foods",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2048
+    },
+    {
+      "slug": "nature-made",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2733
+    },
+    {
+      "slug": "life-extension",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 3057
+    },
+    {
+      "slug": "huel",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1794
+    },
+    {
+      "slug": "bloom-nutrition",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1618
+    },
+    {
+      "slug": "swanson-health",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2657
+    },
+    {
+      "slug": "celsius",
+      "blockedAgents": 3,
+      "platform": "woocommerce",
+      "duration": 1684
+    },
+    {
+      "slug": "bodybuilding-com",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1508
+    },
+    {
+      "slug": "proform",
+      "blockedAgents": 0,
+      "platform": "nextjs",
+      "duration": 8736
+    },
+    {
+      "slug": "sole-fitness",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1865
+    },
+    {
+      "slug": "assault-fitness",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1858
+    },
+    {
+      "slug": "rep-fitness",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1695
+    },
+    {
+      "slug": "titan-fitness",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1897
+    },
+    {
+      "slug": "nobull",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1506
+    },
+    {
+      "slug": "gainful",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1558
+    },
+    {
+      "slug": "royal-canin",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 876
+    },
+    {
+      "slug": "purina",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2064
+    },
+    {
+      "slug": "ladder-sport",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 9462
+    },
+    {
+      "slug": "hills-pet",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1757
+    },
+    {
+      "slug": "blue-buffalo",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 2099
+    },
+    {
+      "slug": "taste-of-the-wild",
+      "blockedAgents": 16,
+      "platform": "woocommerce",
+      "duration": 2013
+    },
+    {
+      "slug": "wellness-pet",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 984
+    },
+    {
+      "slug": "orijen",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2576
+    },
+    {
+      "slug": "acana",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2082
+    },
+    {
+      "slug": "stella-and-chewys",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1541
+    },
+    {
+      "slug": "ruffwear",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1456
+    },
+    {
+      "slug": "merrick-pet",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2702
+    },
+    {
+      "slug": "kurgo",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 560
+    },
+    {
+      "slug": "furbo",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1815
+    },
+    {
+      "slug": "litter-robot",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3895
+    },
+    {
+      "slug": "whistle",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 771
+    },
+    {
+      "slug": "barkshop",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1081
+    },
+    {
+      "slug": "petplate",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 5140
+    },
+    {
+      "slug": "canidae",
+      "blockedAgents": 1,
+      "platform": "magento",
+      "duration": 2133
+    },
+    {
+      "slug": "diggs",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1523
+    },
+    {
+      "slug": "ziwi-peak",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2571
+    },
+    {
+      "slug": "lego",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2014
+    },
+    {
+      "slug": "hasbro",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 715
+    },
+    {
+      "slug": "mattel",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3157
+    },
+    {
+      "slug": "fisher-price",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2059
+    },
+    {
+      "slug": "melissa-and-doug",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1595
+    },
+    {
+      "slug": "build-a-bear",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2039
+    },
+    {
+      "slug": "american-girl",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1567
+    },
+    {
+      "slug": "toys-r-us",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1511
+    },
+    {
+      "slug": "disney-store",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 6404
+    },
+    {
+      "slug": "fat-brain-toys",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1983
+    },
+    {
+      "slug": "magna-tiles",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1513
+    },
+    {
+      "slug": "gymboree",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 2995
+    },
+    {
+      "slug": "janie-and-jack",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 4934
+    },
+    {
+      "slug": "oshkosh-bgosh",
+      "blockedAgents": 14,
+      "platform": "salesforce",
+      "duration": 5987
+    },
+    {
+      "slug": "the-childrens-place",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 6164
+    },
+    {
+      "slug": "babybjorn",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3547
+    },
+    {
+      "slug": "nuna",
+      "blockedAgents": 4,
+      "platform": "magento",
+      "duration": 5127
+    },
+    {
+      "slug": "ergobaby",
+      "blockedAgents": 4,
+      "platform": "magento",
+      "duration": 21682
+    },
+    {
+      "slug": "graco",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 882
+    },
+    {
+      "slug": "britax",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 2304
+    },
+    {
+      "slug": "chicco",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 3125
+    },
+    {
+      "slug": "owlet",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1439
+    },
+    {
+      "slug": "hatch-baby",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 637
+    },
+    {
+      "slug": "nanit",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1387
+    },
+    {
+      "slug": "zulily",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2623
+    },
+    {
+      "slug": "toyota-parts",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 2342
+    },
+    {
+      "slug": "ford-accessories",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 25143
+    },
+    {
+      "slug": "honda-parts",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1990
+    },
+    {
+      "slug": "chevrolet-accessories",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 3440
+    },
+    {
+      "slug": "bmw-shop",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3239
+    },
+    {
+      "slug": "tesla-shop",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1148
+    },
+    {
+      "slug": "mopar",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2159
+    },
+    {
+      "slug": "mercedes-benz-shop",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 5582
+    },
+    {
+      "slug": "jegs",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 735
+    },
+    {
+      "slug": "holley",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 464
+    },
+    {
+      "slug": "kandn-filters",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 465
+    },
+    {
+      "slug": "thule",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 1906
+    },
+    {
+      "slug": "yakima",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1623
+    },
+    {
+      "slug": "goodyear",
+      "blockedAgents": 2,
+      "platform": "salesforce",
+      "duration": 7006
+    },
+    {
+      "slug": "michelin",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 1640
+    },
+    {
+      "slug": "continental-tire",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 746
+    },
+    {
+      "slug": "bridgestone",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1844
+    },
+    {
+      "slug": "pirelli",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1360
+    },
+    {
+      "slug": "bfgoodrich",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 1105
+    },
+    {
+      "slug": "firestone",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 4118
+    },
+    {
+      "slug": "borla",
+      "blockedAgents": 14,
+      "platform": "custom",
+      "duration": 947
+    },
+    {
+      "slug": "bilstein",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 1430
+    },
+    {
+      "slug": "eibach",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 3879
+    },
+    {
+      "slug": "jc-whitney",
+      "blockedAgents": 3,
+      "platform": "woocommerce",
+      "duration": 2987
+    },
+    {
+      "slug": "starbucks-store",
+      "blockedAgents": 0,
+      "platform": "unknown",
+      "duration": 2710
+    },
+    {
+      "slug": "maxxis-tires",
+      "blockedAgents": 6,
+      "platform": "woocommerce",
+      "duration": 5585
+    },
+    {
+      "slug": "dunkin-shop",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 1723
+    },
+    {
+      "slug": "peets-coffee",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1453
+    },
+    {
+      "slug": "lavazza",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3226
+    },
+    {
+      "slug": "illy",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 1878
+    },
+    {
+      "slug": "stumptown",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1410
+    },
+    {
+      "slug": "counter-culture",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1504
+    },
+    {
+      "slug": "verve-coffee",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1532
+    },
+    {
+      "slug": "death-wish-coffee",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1480
+    },
+    {
+      "slug": "la-colombe",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1578
+    },
+    {
+      "slug": "gatorade",
+      "blockedAgents": 12,
+      "platform": "custom",
+      "duration": 541
+    },
+    {
+      "slug": "coca-cola-store",
+      "blockedAgents": 4,
+      "platform": "magento",
+      "duration": 1641
+    },
+    {
+      "slug": "red-bull-shop",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1421
+    },
+    {
+      "slug": "kind-snacks",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 353
+    },
+    {
+      "slug": "clif-bar",
+      "blockedAgents": 0,
+      "platform": "shopify",
+      "duration": 1292
+    },
+    {
+      "slug": "rxbar",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 27058
+    },
+    {
+      "slug": "hu-kitchen",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1555
+    },
+    {
+      "slug": "godiva",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1503
+    },
+    {
+      "slug": "lindt",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 1108
+    },
+    {
+      "slug": "sees-candies",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 367
+    },
+    {
+      "slug": "murrays-cheese",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 765
+    },
+    {
+      "slug": "zingermans",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 3873
+    },
+    {
+      "slug": "winc",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1898
+    },
+    {
+      "slug": "wine-access",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2918
+    },
+    {
+      "slug": "fever-tree",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 9065
+    },
+    {
+      "slug": "hint-water",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1460
+    },
+    {
+      "slug": "spindrift",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1606
+    },
+    {
+      "slug": "sanzo",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1444
+    },
+    {
+      "slug": "bai",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 1199
+    },
+    {
+      "slug": "davids-cookies",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1402
+    },
+    {
+      "slug": "waterloo-sparkling",
+      "blockedAgents": 6,
+      "platform": "woocommerce",
+      "duration": 8973
+    },
+    {
+      "slug": "tates-bake-shop",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1181
+    },
+    {
+      "slug": "bourbon-barrel-foods",
+      "blockedAgents": 12,
+      "platform": "magento",
+      "duration": 2205
+    },
+    {
+      "slug": "partake-foods",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 2000
+    },
+    {
+      "slug": "raos-homemade",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 741
+    },
+    {
+      "slug": "sir-kensingtons",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1281
+    },
+    {
+      "slug": "justins",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 6522
+    },
+    {
+      "slug": "kettle-and-fire",
+      "blockedAgents": 11,
+      "platform": "shopify",
+      "duration": 1471
+    },
+    {
+      "slug": "siete-foods",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1617
+    },
+    {
+      "slug": "cacao-prieto",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 2660
+    },
+    {
+      "slug": "veja",
+      "blockedAgents": 14,
+      "platform": "custom",
+      "duration": 672
+    },
+    {
+      "slug": "cariuma",
+      "blockedAgents": 9,
+      "platform": "magento",
+      "duration": 2647
+    },
+    {
+      "slug": "quince",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 4806
+    },
+    {
+      "slug": "tommy-john",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 841
+    },
+    {
+      "slug": "meundies",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1433
+    },
+    {
+      "slug": "mack-weldon",
+      "blockedAgents": 14,
+      "platform": "magento",
+      "duration": 2570
+    },
+    {
+      "slug": "saxx",
+      "blockedAgents": 8,
+      "platform": "magento",
+      "duration": 570
+    },
+    {
+      "slug": "knix",
+      "blockedAgents": 16,
+      "platform": "magento",
+      "duration": 1588
+    },
+    {
+      "slug": "thinx",
+      "blockedAgents": 16,
+      "platform": "shopify",
+      "duration": 1374
+    },
+    {
+      "slug": "thirdlove",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1506
+    },
+    {
+      "slug": "pangaia",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1430
+    },
+    {
+      "slug": "pact",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 3128
+    },
+    {
+      "slug": "jenni-kayne",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 645
+    },
+    {
+      "slug": "dagne-dover",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 768
+    },
+    {
+      "slug": "cuyana",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1836
+    },
+    {
+      "slug": "monos",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1461
+    },
+    {
+      "slug": "kotn",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1568
+    },
+    {
+      "slug": "leesa",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 4635
+    },
+    {
+      "slug": "bearaby",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1431
+    },
+    {
+      "slug": "material-kitchen",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1435
+    },
+    {
+      "slug": "muji",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 26204
+    },
+    {
+      "slug": "hollister",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 921
+    },
+    {
+      "slug": "roxy",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1429
+    },
+    {
+      "slug": "benetton",
+      "blockedAgents": 0,
+      "platform": "salesforce",
+      "duration": 7285
+    },
+    {
+      "slug": "quiksilver",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1531
+    },
+    {
+      "slug": "billabong",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1530
+    },
+    {
+      "slug": "volcom",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1934
+    },
+    {
+      "slug": "paul-smith",
+      "blockedAgents": 10,
+      "platform": "custom",
+      "duration": 1462
+    },
+    {
+      "slug": "g-star-raw",
+      "blockedAgents": 0,
+      "platform": "woocommerce",
+      "duration": 4187
+    },
+    {
+      "slug": "hackett-london",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 6234
+    },
+    {
+      "slug": "kenwood",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 3986
+    },
+    {
+      "slug": "braun",
+      "blockedAgents": 0,
+      "platform": "bigcommerce",
+      "duration": 5307
+    },
+    {
+      "slug": "technics",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 31087
+    },
+    {
+      "slug": "insta360",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 528
+    },
+    {
+      "slug": "skullcandy",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1415
+    },
+    {
+      "slug": "tuesday-morning",
+      "blockedAgents": 16,
+      "platform": "custom",
+      "duration": 1506
+    },
+    {
+      "slug": "abebooks",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1268
+    },
+    {
+      "slug": "thriftbooks",
+      "blockedAgents": 0,
+      "platform": "custom",
+      "duration": 382436
+    },
+    {
+      "slug": "spencers",
+      "blockedAgents": -1,
+      "platform": "error",
+      "duration": 0,
+      "error": "Timeout scanning spencers after 60s"
+    },
+    {
+      "slug": "cratejoy",
+      "blockedAgents": 7,
+      "platform": "magento",
+      "duration": 6941
+    },
+    {
+      "slug": "aquazzura",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 7494
+    },
+    {
+      "slug": "roger-vivier",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 8761
+    },
+    {
+      "slug": "canali",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1371
+    },
+    {
+      "slug": "missoni",
+      "blockedAgents": 16,
+      "platform": "salesforce",
+      "duration": 1323
+    },
+    {
+      "slug": "moschino",
+      "blockedAgents": 4,
+      "platform": "custom",
+      "duration": 2712
+    },
+    {
+      "slug": "hersheys-store",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1601
+    },
+    {
+      "slug": "russell-stover",
+      "blockedAgents": 4,
+      "platform": "magento",
+      "duration": 1385
+    },
+    {
+      "slug": "toblerone",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 920
+    },
+    {
+      "slug": "haribo",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 902
+    },
+    {
+      "slug": "jelly-belly",
+      "blockedAgents": 2,
+      "platform": "magento",
+      "duration": 2633
+    },
+    {
+      "slug": "mandms-store",
+      "blockedAgents": 2,
+      "platform": "custom",
+      "duration": 5222
+    },
+    {
+      "slug": "nescafe",
+      "blockedAgents": 0,
+      "platform": "magento",
+      "duration": 1133
+    },
+    {
+      "slug": "keurig",
+      "blockedAgents": 0,
+      "platform": "nextjs",
+      "duration": 2646
+    },
+    {
+      "slug": "twinings",
+      "blockedAgents": 14,
+      "platform": "custom",
+      "duration": 1909
+    },
+    {
+      "slug": "celestial-seasonings",
+      "blockedAgents": 8,
+      "platform": "custom",
+      "duration": 2035
+    }
+  ]
+}

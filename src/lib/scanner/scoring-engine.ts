@@ -250,8 +250,9 @@ function scoreNavigation(browser: BrowserAgentResult, a11y: AccessibilityAgentRe
 function scoreCartCheckout(browser: BrowserAgentResult, data: DataAgentResult, visual?: VisualAgentResult): CategoryScore {
   let score = 0;
   const clickedButUnverified = !browser.addToCartSuccess && browser.steps.some(s => s.details?.clickedButUnverified);
-  if (browser.addToCartSuccess) score += 35;
-  else if (clickedButUnverified) score += 15; // clicked but unverified — partial credit
+  if (browser.addToCartSuccess && browser.cartVerified) score += 35;
+  else if (browser.addToCartSuccess) score += 25; // clicked, success reported but not independently verified
+  else if (clickedButUnverified) score += 10; // clicked but no verification at all — low confidence
   if (browser.checkoutReached) score += 25;
   if (browser.guestCheckoutAvailable) score += 25;
   else if (browser.checkoutReached) score += 5;

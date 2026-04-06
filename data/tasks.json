@@ -1,0 +1,200 @@
+[
+  {
+    "id": "t1",
+    "title": "Verify live activity population in Mission Control",
+    "assignee": "ed",
+    "status": "done",
+    "priority": "high",
+    "category": "Operations",
+    "startedAt": "2026-03-08T22:31:01.455Z",
+    "completedAt": "2026-03-08T22:41:55.159Z",
+    "blockerNote": null
+  },
+  {
+    "id": "t2",
+    "title": "Map Competitor Landscape",
+    "assignee": "ron",
+    "status": "in-progress",
+    "priority": "medium",
+    "category": "Research",
+    "startedAt": "2026-03-08T22:30:22.371Z",
+    "completedAt": null,
+    "blockerNote": null
+  },
+  {
+    "id": "t3",
+    "title": "Identify 10 Pilot Irish Brands",
+    "assignee": "ron",
+    "status": "in-progress",
+    "priority": "high",
+    "category": "Scanning",
+    "startedAt": "2026-03-08T22:30:31.946Z",
+    "completedAt": null,
+    "blockerNote": null
+  },
+  {
+    "id": "t4",
+    "title": "Frame narrative around Ron's Gymshark finding",
+    "assignee": "ed",
+    "status": "in-progress",
+    "priority": "high",
+    "category": "Content",
+    "startedAt": "2026-03-08T22:46:25.733Z",
+    "completedAt": null,
+    "blockerNote": null
+  },
+  {
+    "id": "t5",
+    "title": "Re-scan Sephora — product-understanding score change",
+    "assignee": "ron",
+    "status": "in-progress",
+    "priority": "high",
+    "category": "Scanning",
+    "startedAt": "2026-03-08T22:41:40.170Z",
+    "completedAt": null,
+    "blockerNote": null
+  },
+  {
+    "id": "t6",
+    "title": "Frame narrative around Ron's Sephora finding",
+    "assignee": "ed",
+    "status": "queued",
+    "priority": "high",
+    "category": "Content",
+    "startedAt": null,
+    "completedAt": null,
+    "blockerNote": null
+  },
+  {
+    "id": "t7",
+    "title": "Investigate browser agent checkout failures on Shopify",
+    "assignee": "ron",
+    "status": "in-progress",
+    "priority": "high",
+    "category": "Investigation",
+    "startedAt": "2026-03-08T22:58:04.494Z",
+    "completedAt": null,
+    "blockerNote": null
+  },
+  {
+    "id": "t8",
+    "title": "Design continual self-improvement framework for Ed and Ron",
+    "assignee": "ed",
+    "status": "queued",
+    "priority": "urgent",
+    "category": "Operations",
+    "startedAt": null,
+    "completedAt": null,
+    "blockerNote": null
+  },
+  {
+    "id": "t9",
+    "title": "Re-scan Allbirds — performance-resilience score change",
+    "assignee": "ron",
+    "status": "queued",
+    "priority": "high",
+    "category": "Scanning",
+    "startedAt": null,
+    "completedAt": null,
+    "blockerNote": null
+  },
+  {
+    "id": "t10",
+    "title": "Implement automated quality regression check on scan outputs",
+    "assignee": "ron",
+    "status": "in-progress",
+    "priority": "high",
+    "category": "System",
+    "startedAt": "2026-03-08T22:57:54.428Z",
+    "completedAt": null,
+    "blockerNote": null
+  },
+  {
+    "id": "t11",
+    "title": "Define 3 target capabilities for 30-day horizon",
+    "assignee": "ed",
+    "status": "queued",
+    "priority": "high",
+    "category": "Self-Improvement",
+    "startedAt": null,
+    "completedAt": null,
+    "blockerNote": null
+  },
+  {
+    "id": "t12",
+    "title": "API comparison: OpenAI Assistants v3 vs Anthropic tool-use for our pipeline",
+    "assignee": "ron",
+    "status": "queued",
+    "priority": "medium",
+    "category": "Research",
+    "startedAt": null,
+    "completedAt": null,
+    "blockerNote": null
+  },
+  {
+    "id": "t13",
+    "title": "Implement automated quality regression check on scan outputs",
+    "assignee": "ron",
+    "status": "queued",
+    "priority": "high",
+    "category": "System",
+    "startedAt": null,
+    "completedAt": null,
+    "blockerNote": null
+  },
+  {
+    "id": "t14",
+    "title": "API comparison: OpenAI Assistants v3 vs Anthropic tool-use for our pipeline",
+    "assignee": "ron",
+    "status": "queued",
+    "priority": "medium",
+    "category": "Research",
+    "startedAt": null,
+    "completedAt": null,
+    "blockerNote": null
+  },
+  {
+    "id": "t15",
+    "title": "Build daily X/Twitter AI agent news scanner",
+    "assignee": "ron",
+    "status": "queued",
+    "priority": "high",
+    "category": "Self-Improvement",
+    "startedAt": null,
+    "completedAt": null,
+    "blockerNote": null
+  },
+  {
+    "id": "t16",
+    "title": "Research automated regression detection",
+    "assignee": "ron",
+    "status": "queued",
+    "priority": "medium",
+    "category": "Self-Improvement",
+    "startedAt": null,
+    "completedAt": null,
+    "blockerNote": null
+  },
+  {
+    "id": "t17",
+    "title": "API comparison: OpenAI Assistants v3 vs Anthropic tool-use for our pipeline",
+    "assignee": "ron",
+    "status": "queued",
+    "priority": "medium",
+    "category": "Research",
+    "startedAt": null,
+    "completedAt": null,
+    "blockerNote": null
+  },
+  {
+    "id": "t18",
+    "title": "Build daily X/Twitter AI agent news scanner",
+    "assignee": "ron",
+    "status": "queued",
+    "priority": "high",
+    "category": "Self-Improvement",
+    "startedAt": null,
+    "completedAt": null,
+    "blockerNote": null
+  }
+]

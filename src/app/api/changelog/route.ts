@@ -3,8 +3,15 @@ import { getRecentChangelog } from "@/lib/db/queries";
 import { verifyCustomerSession, CUSTOMER_COOKIE_NAME } from "@/lib/customer-auth";
 import { db, schema } from "@/lib/db/index";
 import { eq } from "drizzle-orm";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function GET(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for") || "unknown";
+  const { success } = rateLimit(ip, 30, 60000);
+  if (!success) {
+    return NextResponse.json({ error: "Rate limit exceeded. Try again in a minute." }, { status: 429 });
+  }
+
   // Check if user is Pro to determine limit
   let isPro = false;
 

@@ -1,0 +1,20 @@
+{
+  "ed": {
+    "id": "ed",
+    "name": "Ed",
+    "title": "Strategy & Intelligence",
+    "status": "talking",
+    "currentTask": "Populating Mission Control with live operating signals",
+    "lastSeen": "2026-03-08T23:03:27.760Z",
+    "sessionId": null
+  },
+  "ron": {
+    "id": "ron",
+    "name": "Ron",
+    "title": "Operations & Scanning",
+    "status": "talking",
+    "currentTask": "Strategizing continuous improvement with Ed",
+    "lastSeen": "2026-03-08T23:06:51.710Z",
+    "sessionId": null
+  }
+}

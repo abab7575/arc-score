@@ -1,0 +1,24 @@
+[
+  {
+    "id": "b1",
+    "agentId": "ron",
+    "title": "Allbirds returning 503 errors",
+    "description": "Intermittent server errors preventing clean scan. Need to wait for site stabilization.",
+    "severity": "medium",
+    "status": "resolved",
+    "relatedTaskId": null,
+    "reportedAt": "2026-03-08T22:32:31.465Z",
+    "resolvedAt": "2026-03-08T22:39:47.541Z"
+  },
+  {
+    "id": "b2",
+    "agentId": "ron",
+    "title": "Allbirds 503 Errors",
+    "description": "Intermittent 503 Service Unavailable errors on allbirds.com. Suspend scoring until stable.",
+    "severity": "medium",
+    "status": "active",
+    "relatedTaskId": null,
+    "reportedAt": "2026-03-08T22:33:43.811Z",
+    "resolvedAt": null
+  }
+]

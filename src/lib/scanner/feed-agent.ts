@@ -12,6 +12,8 @@
  * - Product feed auto-discovery via link tags
  */
 
+import { fetchWithRetry } from "./fetch-with-retry";
+
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // ---- Types ----
@@ -65,24 +67,18 @@ export interface FeedAgentResult {
 
 // ---- Helpers ----
 
-async function fetchWithTimeout(url: string, timeoutMs = 10000): Promise<Response | null> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const response = await fetch(url, {
-      signal: controller.signal,
+async function fetchFeed(url: string, timeoutMs = 10000): Promise<Response | null> {
+  return fetchWithRetry(
+    url,
+    {
       headers: {
         "User-Agent": "Mozilla/5.0 (compatible; ARCReport-Bot/1.0; +https://arcreport.ai)",
         Accept: "application/xml, application/rss+xml, text/xml, application/json, */*",
       },
       redirect: "follow",
-    });
-    return response;
-  } catch {
-    return null;
-  } finally {
-    clearTimeout(timeout);
-  }
+    },
+    { timeoutMs, maxAttempts: 2, label: `[Feed Agent] ${url}` }
+  );
 }
 
 function extractDomain(url: string): string {
@@ -194,7 +190,7 @@ export async function runFeedAgent(
   console.log("[Feed Agent] Step 1: Discovering feed links in HTML...");
 
   try {
-    const response = await fetchWithTimeout(`${domain}/`, 15000);
+    const response = await fetchFeed(`${domain}/`, 15000);
     if (response && response.ok) {
       const html = await response.text();
 
@@ -274,7 +270,7 @@ export async function runFeedAgent(
 
   for (const feedPath of merchantPaths) {
     const feedUrl = `${domain}${feedPath}`;
-    const response = await fetchWithTimeout(feedUrl, 8000);
+    const response = await fetchFeed(feedUrl, 8000);
 
     if (response && response.ok) {
       const contentType = response.headers.get("content-type") || "";
@@ -337,7 +333,7 @@ export async function runFeedAgent(
 
   for (const shopifyPath of shopifyPaths) {
     const url = `${domain}${shopifyPath}`;
-    const response = await fetchWithTimeout(url, 8000);
+    const response = await fetchFeed(url, 8000);
 
     if (response && response.ok) {
       const contentType = response.headers.get("content-type") || "";
@@ -410,7 +406,7 @@ export async function runFeedAgent(
 
   for (const rssPath of rssPaths) {
     const url = `${domain}${rssPath}`;
-    const response = await fetchWithTimeout(url, 8000);
+    const response = await fetchFeed(url, 8000);
 
     if (response && response.ok) {
       const body = await response.text();

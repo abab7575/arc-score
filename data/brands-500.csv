@@ -1,242 +1,275 @@
 name,url,category,productUrl
 # ── Fashion (15 additional) ───────────────────────────────
-Massimo Dutti,https://www.massimodutti.com,fashion,
-& Other Stories,https://www.stories.com,fashion,
-COS,https://www.cos.com,fashion,
-AllSaints,https://www.allsaints.com,fashion,
-Scotch & Soda,https://www.scotch-soda.com,fashion,
-Ted Baker,https://www.tedbaker.com,fashion,
-Bonobos,https://www.bonobos.com,fashion,
-Everlast,https://www.everlast.com,fashion,
-Lands' End,https://www.landsend.com,fashion,
-LL Bean,https://www.llbean.com,fashion,
-Talbots,https://www.talbots.com,fashion,
-Torrid,https://www.torrid.com,fashion,
-Savage X Fenty,https://www.savagex.com,fashion,
-Good American,https://www.goodamerican.com,fashion,
-Madewell,https://www.madewell.com,fashion,
+Massimo Dutti,https://www.massimodutti.com,fashion,https://www.massimodutti.com/en-us/women/coats
+& Other Stories,https://www.stories.com,fashion,https://www.stories.com/en-gb/clothing/dresses
+COS,https://www.cos.com,fashion,https://www.cos.com/en-gb/women/womenswear/tops
+AllSaints,https://www.allsaints.com,fashion,https://www.allsaints.com/women/dresses/
+Scotch & Soda,https://www.scotchandsoda.com,fashion,https://www.scotchandsoda.com/us/en/men/clothing/shirts/
+Ted Baker,https://www.tedbaker.com,fashion,https://www.tedbaker.com/us/Womens/Clothing/Dresses/
+Bonobos,https://www.bonobos.com,fashion,https://www.bonobos.com/products/everyday-performance-chinos
+Everlast,https://www.everlast.com,fashion,https://www.everlast.com/products/boxing-gloves
+Lands' End,https://www.landsend.com,fashion,https://www.landsend.com/products/womens-serious-sweats-hooded-pullover-sweatshirt/
+LL Bean,https://www.llbean.com,fashion,https://www.llbean.com/llb/shop/118899
+Talbots,https://www.talbots.com,fashion,https://www.talbots.com/womens/dresses/
+Torrid,https://www.torrid.com,fashion,https://www.torrid.com/category/dresses/
+Savage X Fenty,https://www.savagex.com,fashion,https://www.savagex.com/shop/lingerie/bras/
+Good American,https://www.goodamerican.com,fashion,https://www.goodamerican.com/products/good-legs-jeans
+Madewell,https://www.madewell.com,fashion,https://www.madewell.com/the-perfect-vintage-jean-MC531.html
 # ── Electronics (15 additional) ───────────────────────────
-Garmin,https://www.garmin.com,electronics,
-Canon,https://www.usa.canon.com,electronics,
-Nikon,https://www.nikonusa.com,electronics,
-Epson,https://www.epson.com,electronics,
-Brother,https://www.brother-usa.com,electronics,
-SteelSeries,https://www.steelseries.com,electronics,
-HyperX,https://www.hyperx.com,electronics,
-TP-Link,https://www.tp-link.com,electronics,
-Ubiquiti,https://www.ui.com,electronics,
-Western Digital,https://www.westerndigital.com,electronics,
-Seagate,https://www.seagate.com,electronics,
-CalDigit,https://www.caldigit.com,electronics,
-Elgato,https://www.elgato.com,electronics,
-Sennheiser,https://www.sennheiser.com,electronics,
-Audio-Technica,https://www.audio-technica.com,electronics,
+Garmin,https://www.garmin.com,electronics,https://www.garmin.com/en-US/p/741700/
+Canon,https://www.usa.canon.com,electronics,https://www.usa.canon.com/shop/p/eos-r50
+Nikon,https://www.nikonusa.com,electronics,https://www.nikonusa.com/p/z-30-mirrorless-camera/1681
+Epson,https://www.epson.com,electronics,https://epson.com/ecotank-et-4850-wireless-all-in-one-supertank-printer/p/C11CJ29201
+Brother,https://www.brother-usa.com,electronics,https://www.brother-usa.com/products/HLL3300CDW
+SteelSeries,https://www.steelseries.com,electronics,https://steelseries.com/gaming-headsets/arctis-nova-pro-wireless
+HyperX,https://www.hyperx.com,electronics,https://www.hyperx.com/products/hyperx-cloud-alpha-wireless
+TP-Link,https://www.tp-link.com,electronics,https://www.tp-link.com/us/home-networking/wifi-router/archer-ax55/
+Ubiquiti,https://www.ui.com,electronics,https://store.ui.com/us/en/products/udm-se
+Western Digital,https://www.westerndigital.com,electronics,https://www.westerndigital.com/products/portable-drives/wd-my-passport-usb-3-0-hdd
+Seagate,https://www.seagate.com,electronics,https://www.seagate.com/products/hard-drives/barracuda-hard-drive/
+CalDigit,https://www.caldigit.com,electronics,https://www.caldigit.com/thunderbolt-4-element-hub/
+Elgato,https://www.elgato.com,electronics,https://www.elgato.com/us/en/p/stream-deck-mk2-black
+Sennheiser,https://www.sennheiser.com,electronics,https://www.sennheiser.com/en-us/headphones/momentum-4-wireless
+Audio-Technica,https://www.audio-technica.com,electronics,https://www.audio-technica.com/en-us/ath-m50x
 # ── Home & Furniture (15 additional) ─────────────────────
-Arhaus,https://www.arhaus.com,home,
-Lulu and Georgia,https://www.luluandgeorgia.com,home,
-Rejuvenation,https://www.rejuvenation.com,home,
-Schoolhouse,https://www.schoolhouse.com,home,
-Maiden Home,https://www.maidenhome.com,home,
-Sabai,https://www.sabai.design,home,
-Dims,https://www.dims.com,home,
-Outer,https://www.liveouter.com,home,
-Yardbird,https://www.yardbird.com,home,
-Bed Bath & Beyond,https://www.bedbathandbeyond.com,home,
-Pier 1,https://www.pier1.com,home,
-Ballard Designs,https://www.ballarddesigns.com,home,
-Frontgate,https://www.frontgate.com,home,
-Grandin Road,https://www.grandinroad.com,home,
-Haverty's,https://www.havertys.com,home,
+Arhaus,https://www.arhaus.com,home,https://www.arhaus.com/furniture/sofas-sectionals/
+Lulu and Georgia,https://www.luluandgeorgia.com,home,https://www.luluandgeorgia.com/sofas-sectionals/
+Rejuvenation,https://www.rejuvenation.com,home,https://www.rejuvenation.com/catalog/products/lighting/pendant-lights/
+Schoolhouse,https://www.schoolhouse.com,home,https://www.schoolhouse.com/collections/pendant-lighting
+Maiden Home,https://www.maidenhome.com,home,https://www.maidenhome.com/products/the-nomad-sofa
+Sabai,https://www.sabai.design,home,https://www.sabai.design/products/the-medium-sofa
+Dims,https://www.dims.com,home,https://www.dims.com/
+Outer,https://www.liveouter.com,home,https://www.liveouter.com/products/the-sofa
+Yardbird,https://www.yardbird.com,home,https://www.yardbird.com/products/
+Bed Bath & Beyond,https://www.bedbathandbeyond.com,home,https://www.bedbathandbeyond.com/bedding/comforters-sets/
+Pier 1,https://www.pier1.com,home,https://www.pier1.com/collections/decorative-pillows
+Ballard Designs,https://www.ballarddesigns.com,home,https://www.ballarddesigns.com/furniture/
+Frontgate,https://www.frontgate.com,home,https://www.frontgate.com/outdoor-furniture/
+Grandin Road,https://www.grandinroad.com,home,https://www.grandinroad.com/furniture/
+Haverty's,https://www.havertys.com,home,https://www.havertys.com/furniture/sofas/
 # ── Beauty (15 additional) ───────────────────────────────
-Urban Decay,https://www.urbandecay.com,beauty,
-Too Faced,https://www.toofaced.com,beauty,
-Benefit,https://www.benefitcosmetics.com,beauty,
-Laura Mercier,https://www.lauramercier.com,beauty,
-IT Cosmetics,https://www.itcosmetics.com,beauty,
-Tarte,https://www.tartecosmetics.com,beauty,
-NYX,https://www.nyxcosmetics.com,beauty,
-e.l.f.,https://www.elfcosmetics.com,beauty,
-Morphe,https://www.morphe.com,beauty,
-ColourPop,https://www.colourpop.com,beauty,
-Supergoop,https://www.supergoop.com,beauty,
-Glow Recipe,https://www.glowrecipe.com,beauty,
-Youth to the People,https://www.youthtothepeople.com,beauty,
-Herbivore,https://www.herbivorebotanicals.com,beauty,
-Versed,https://www.versedskin.com,beauty,
+Urban Decay,https://www.urbandecay.com,beauty,https://www.urbandecay.com/eyes/all-nighter-waterproof-setting-spray
+Too Faced,https://www.toofaced.com,beauty,https://www.toofaced.com/products/better-than-sex-mascara
+Benefit,https://www.benefitcosmetics.com,beauty,https://www.benefitcosmetics.com/en-us/brow-products/gimme-brow
+Laura Mercier,https://www.lauramercier.com,beauty,https://www.lauramercier.com/products/translucent-loose-setting-powder
+IT Cosmetics,https://www.itcosmetics.com,beauty,https://www.itcosmetics.com/makeup/face/foundation/your-skin-but-better-cc-cream-with-spf-50/ITC_30064.html
+Tarte,https://www.tartecosmetics.com,beauty,https://www.tartecosmetics.com/shape-tape-full-coverage-concealer/13-13-4408-14050.html
+NYX,https://www.nyxcosmetics.com,beauty,https://www.nyxcosmetics.com/lip-products/lip-liner/professional-makeup-slim-lip-pencil/NYX_809.html
+e.l.f.,https://www.elfcosmetics.com,beauty,https://www.elfcosmetics.com/power-grip-primer/950701.html
+Morphe,https://www.morphe.com,beauty,https://www.morphe.com/products/morphe-2-filter-effect-concealer
+ColourPop,https://colourpop.com,beauty,https://colourpop.com/products/lippie-stix
+Supergoop,https://www.supergoop.com,beauty,https://www.supergoop.com/products/play-everyday-lotion-spf-50-with-sunflower-extract/
+Glow Recipe,https://www.glowrecipe.com,beauty,https://www.glowrecipe.com/products/watermelon-glow-pha-bha-pore-tight-toner
+Youth to the People,https://www.youthtothepeople.com,beauty,https://www.youthtothepeople.com/products/superberry-hydrate-glow-dream-mask
+Herbivore,https://www.herbivorebotanicals.com,beauty,https://www.herbivorebotanicals.com/products/lapis-balancing-facial-oil
+Versed,https://www.versedskin.com,beauty,https://www.versedskin.com/products/guards-up-daily-mineral-sunscreen-spf-35
 # ── Grocery & Delivery (10 additional) ───────────────────
-Weee!,https://www.sayweee.com,grocery,
-Vitacost,https://www.vitacost.com,grocery,
-iHerb,https://www.iherb.com,grocery,
-Boxed,https://www.boxed.com,grocery,
-ButcherBox,https://www.butcherbox.com,grocery,
-Farmstead,https://www.farmsteadapp.com,grocery,
-Shipt,https://www.shipt.com,grocery,
-Vons,https://www.vons.com,grocery,
-Safeway,https://www.safeway.com,grocery,
-Albertsons,https://www.albertsons.com,grocery,
+Weee!,https://www.sayweee.com,grocery,https://www.sayweee.com/en/category/fresh-produce
+Vitacost,https://www.vitacost.com,grocery,https://www.vitacost.com/now-vitamin-d-1000-iu-soft-gels/
+iHerb,https://www.iherb.com,grocery,https://www.iherb.com/pr/garden-of-life-vitamin-code-raw-vitamin-c/82137
+Boxed,https://www.boxed.com,grocery,https://www.boxed.com/
+ButcherBox,https://www.butcherbox.com,grocery,https://www.butcherbox.com/boxes/custom-box/
+Farmstead,https://www.farmstead.com,grocery,https://www.farmstead.com/
+Shipt,https://www.shipt.com,grocery,https://www.shipt.com/
+Vons,https://www.vons.com,grocery,https://www.vons.com/shop/category/grocery.html
+Safeway,https://www.safeway.com,grocery,https://www.safeway.com/shop/category/breakfast-cereal/201.html
+Albertsons,https://www.albertsons.com,grocery,https://www.albertsons.com/shop/category/breakfast-cereal.html
 # ── General / Marketplace (15 additional) ────────────────
-Sam's Club,https://www.samsclub.com,general,
-BJ's Wholesale,https://www.bjs.com,general,
-Dollar General,https://www.dollargeneral.com,general,
-Dollar Tree,https://www.dollartree.com,general,
-Big Lots,https://www.biglots.com,general,
-Marshalls,https://www.marshalls.com,general,
-Burlington,https://www.burlington.com,general,
-Ross,https://www.rossstores.com,general,
-Belk,https://www.belk.com,general,
-Dillard's,https://www.dillards.com,general,
-JCPenney,https://www.jcpenney.com,general,
-Neiman Marcus,https://www.neimanmarcus.com,general,
-Saks Fifth Avenue,https://www.saksfifthavenue.com,general,
-Bloomingdale's,https://www.bloomingdales.com,general,
-Sierra,https://www.sierra.com,general,
-# ── DTC (25 additional) ──────────────────────────────────
-Glossy Box,https://www.glossybox.com,dtc,
-FabFitFun,https://www.fabfitfun.com,dtc,
-Stitch & Story,https://www.stitchandstory.com,dtc,
-Prose,https://www.prose.com,dtc,
-Function of Beauty,https://www.functionofbeauty.com,dtc,
-Curology,https://www.curology.com,dtc,
-Nurx,https://www.nurx.com,dtc,
-Ro,https://www.ro.co,dtc,
-Thirty Madison,https://www.thirtymadison.com,dtc,
-Figs,https://www.wearfigs.com,dtc,
-Ministry of Supply,https://www.ministryofsupply.com,dtc,
-Mizzen+Main,https://www.mizzenandmain.com,dtc,
-Untuckit,https://www.untuckit.com,dtc,
-Atoms,https://www.atoms.com,dtc,
-Greats,https://www.greats.com,dtc,
-Birdies,https://www.birdies.com,dtc,
-Stance,https://www.stance.com,dtc,
-Cometeer,https://www.cometeer.com,dtc,
-Framebridge,https://www.framebridge.com,dtc,
-Artifact Uprising,https://www.artifactuprising.com,dtc,
-Daily Look,https://www.dailylook.com,dtc,
-Stio,https://www.stio.com,dtc,
-Ridge,https://www.ridge.com,dtc,
-Pela Case,https://www.pelacase.com,dtc,
-Beardbrand,https://www.beardbrand.com,dtc,
-Bala,https://www.shopbala.com,dtc,
-Bite,https://www.bitetoothpastebits.com,dtc,
-Blueland,https://www.blueland.com,dtc,
-Grove Collaborative,https://www.grove.co,dtc,
-Tushy,https://www.hellotushy.com,dtc,
-Branch,https://www.branchfurniture.com,dtc,
-Burga,https://www.burga.com,dtc,
-Ekster,https://www.ekster.com,dtc,
-Analogue,https://www.analogue.co,dtc,
-Courant,https://www.staycourant.com,dtc,
-Solo Stove,https://www.solostove.com,dtc,
+Sam's Club,https://www.samsclub.com,general,https://www.samsclub.com/p/members-mark-30ct-paper-plates/P04017
+BJ's Wholesale,https://www.bjs.com,general,https://www.bjs.com/electronics/laptops/
+Dollar General,https://www.dollargeneral.com,general,https://www.dollargeneral.com/products/category/food/snacks.html
+Dollar Tree,https://www.dollartree.com,general,https://www.dollartree.com/food-candy-snacks/c/1023
+Big Lots,https://www.biglots.com,general,https://www.biglots.com/furniture/sofas-couches
+Marshalls,https://www.marshalls.com,general,https://www.marshalls.com/us/store/catalog/category/Womens_Clothing
+Burlington,https://www.burlington.com,general,https://www.burlington.com/category/products/womens-clothing
+Ross,https://www.rossstores.com,general,https://www.rossstores.com/shop/womens/
+Belk,https://www.belk.com,general,https://www.belk.com/women/womens-clothing/dresses/
+Dillard's,https://www.dillards.com,general,https://www.dillards.com/category/dresses/
+JCPenney,https://www.jcpenney.com,general,https://www.jcpenney.com/g/womens-clothing/womens-dresses
+Neiman Marcus,https://www.neimanmarcus.com,general,https://www.neimanmarcus.com/c/womens-clothing-dresses-cat28160738
+Saks Fifth Avenue,https://www.saksfifthavenue.com,general,https://www.saksfifthavenue.com/content/category/0400000000000/Womens-Clothing
+Bloomingdale's,https://www.bloomingdales.com,general,https://www.bloomingdales.com/shop/womens/dresses
+Sierra,https://www.sierra.com,general,https://www.sierra.com/category/outerwear--jackets--coats/
+# ── DTC (36 brands) ──────────────────────────────────────
+Glossy Box,https://www.glossybox.com,dtc,https://www.glossybox.com/en-us/subscribe/monthly-box/
+FabFitFun,https://www.fabfitfun.com,dtc,https://www.fabfitfun.com/join/
+Stitch & Story,https://www.stitchandstory.com,dtc,https://www.stitchandstory.com/collections/knitting-kits
+Prose,https://www.prose.com,dtc,https://www.prose.com/products/shampoo
+Function of Beauty,https://www.functionofbeauty.com,dtc,https://www.functionofbeauty.com/products/hair/
+Curology,https://www.curology.com,dtc,https://curology.com/the-custom-formula/
+Nurx,https://www.nurx.com,dtc,https://www.nurx.com/birth-control/
+Ro,https://www.ro.co,dtc,https://www.ro.co/roman/ed/
+Thirty Madison,https://www.thirtymadison.com,dtc,https://www.thirtymadison.com/brands/
+Figs,https://www.wearfigs.com,dtc,https://www.wearfigs.com/products/womens-catarina-scrub-top
+Ministry of Supply,https://www.ministryofsupply.com,dtc,https://www.ministryofsupply.com/products/interface-quarter-zip
+Mizzen+Main,https://www.mizzenandmain.com,dtc,https://www.mizzenandmain.com/collections/dress-shirts
+Untuckit,https://www.untuckit.com,dtc,https://www.untuckit.com/collections/mens-shirts-all
+Atoms,https://www.atoms.com,dtc,https://www.atoms.com/products/model-000
+Greats,https://www.greats.com,dtc,https://www.greats.com/products/
+Birdies,https://www.birdies.com,dtc,https://www.birdies.com/collections/flats/products/the-starling
+Stance,https://www.stance.com,dtc,https://www.stance.com/collections/mens-socks-performance
+Cometeer,https://cometeer.com,dtc,https://cometeer.com/products/coffee-capsules
+Framebridge,https://www.framebridge.com,dtc,https://www.framebridge.com/products/frames/
+Artifact Uprising,https://www.artifactuprising.com,dtc,https://www.artifactuprising.com/photo-products/softcover-photo-book
+Daily Look,https://www.dailylook.com,dtc,https://www.dailylook.com/
+Stio,https://www.stio.com,dtc,https://www.stio.com/collections/mens-outerwear
+Ridge,https://www.ridge.com,dtc,https://www.ridge.com/products/ridge-wallet
+Pela Case,https://www.pelacase.com,dtc,https://www.pelacase.com/products/iphone-15-pro-case
+Beardbrand,https://www.beardbrand.com,dtc,https://www.beardbrand.com/products/complete-care-kit
+Bala,https://www.shopbala.com,dtc,https://www.shopbala.com/products/bala-bangles
+Bite,https://www.bitetoothpastebits.com,dtc,https://www.bitetoothpastebits.com/products/mint-toothpaste-bits
+Blueland,https://www.blueland.com,dtc,https://www.blueland.com/products/the-clean-up-kit
+Grove Collaborative,https://www.grove.co,dtc,https://www.grove.co/catalog/product/mrs-meyers-clean-day-hand-soap-refill/
+Tushy,https://www.hellotushy.com,dtc,https://www.hellotushy.com/products/tushy-classic-3-0-bidet-toilet-attachment
+Branch,https://www.branchfurniture.com,dtc,https://www.branchfurniture.com/products/ergonomic-chair
+Burga,https://www.burga.com,dtc,https://www.burga.com/products/phone-cases-iphone-15
+Ekster,https://www.ekster.com,dtc,https://www.ekster.com/products/parliament-slim-card-holder
+Analogue,https://www.analogue.co,dtc,https://www.analogue.co/pocket
+Courant,https://www.staycourant.com,dtc,https://www.staycourant.com/products/catch-2-multi-device-wireless-charging-pad
+Solo Stove,https://www.solostove.com,dtc,https://www.solostove.com/products/solo-stove-ranger-2-0
 # ── Luxury (15 additional) ───────────────────────────────
-Bottega Veneta,https://www.bottegaveneta.com,luxury,
-Saint Laurent,https://www.ysl.com,luxury,
-Celine,https://www.celine.com,luxury,
-Valentino,https://www.valentino.com,luxury,
-Givenchy,https://www.givenchy.com,luxury,
-Fendi,https://www.fendi.com,luxury,
-Moncler,https://www.moncler.com,luxury,
-Loewe,https://www.loewe.com,luxury,
-Jimmy Choo,https://www.jimmychoo.com,luxury,
-Bulgari,https://www.bulgari.com,luxury,
-Van Cleef & Arpels,https://www.vancleefarpels.com,luxury,
-Chopard,https://www.chopard.com,luxury,
-Matches Fashion,https://www.matchesfashion.com,luxury,
-Mytheresa,https://www.mytheresa.com,luxury,
-24S,https://www.24s.com,luxury,
-# ── Sports & Outdoor (15 additional) ─────────────────────
-Dick's Sporting Goods,https://www.dickssportinggoods.com,sports,
-Academy Sports,https://www.academy.com,sports,
-Cabela's,https://www.cabelas.com,sports,
-Bass Pro Shops,https://www.basspro.com,sports,
-Specialized,https://www.specialized.com,sports,
-Trek Bikes,https://www.trekbikes.com,sports,
-Cannondale,https://www.cannondale.com,sports,
-Titleist,https://www.titleist.com,sports,
-Callaway Golf,https://www.callawaygolf.com,sports,
-TaylorMade,https://www.taylormadegolf.com,sports,
-Wilson,https://www.wilson.com,sports,
-Oakley,https://www.oakley.com,sports,
-Mammut,https://www.mammut.com,sports,
-Fjallraven,https://www.fjallraven.com,sports,
-Kelty,https://www.kelty.com,sports,
+Bottega Veneta,https://www.bottegaveneta.com,luxury,https://www.bottegaveneta.com/en-us/bags/
+Saint Laurent,https://www.ysl.com,luxury,https://www.ysl.com/en-us/handbags/
+Celine,https://www.celine.com,luxury,https://www.celine.com/en-us/celine-woman/bags/
+Valentino,https://www.valentino.com,luxury,https://www.valentino.com/en-us/handbags/
+Givenchy,https://www.givenchy.com,luxury,https://www.givenchy.com/us/en-US/bags/
+Fendi,https://www.fendi.com,luxury,https://www.fendi.com/us/bags/
+Moncler,https://www.moncler.com,luxury,https://www.moncler.com/en-us/men/jackets/
+Loewe,https://www.loewe.com,luxury,https://www.loewe.com/int/en/bags/shoulder-bags/
+Jimmy Choo,https://www.jimmychoo.com,luxury,https://www.jimmychoo.com/en/women/shoes/pumps/
+Bulgari,https://www.bulgari.com,luxury,https://www.bulgari.com/en-us/jewelry/
+Van Cleef & Arpels,https://www.vancleefarpels.com,luxury,https://www.vancleefarpels.com/us/en/c/jewelry/necklaces-pendants.html
+Chopard,https://www.chopard.com,luxury,https://www.chopard.com/en-us/watches/
+Matches Fashion,https://www.matchesfashion.com,luxury,https://www.matchesfashion.com/products/
+Mytheresa,https://www.mytheresa.com,luxury,https://www.mytheresa.com/en-us/women/clothing/
+24S,https://www.24s.com,luxury,https://www.24s.com/en-us/women-bags/
+# ── Sports & Outdoor (17 brands) ─────────────────────────
+Dick's Sporting Goods,https://www.dickssportinggoods.com,sports,https://www.dickssportinggoods.com/f/mens-shoes/
+Academy Sports,https://www.academy.com,sports,https://www.academy.com/shop/browse/sports
+Cabela's,https://www.cabelas.com,sports,https://www.cabelas.com/shop/en/hunting-rifles
+Bass Pro Shops,https://www.basspro.com,sports,https://www.basspro.com/shop/en/fishing-rods-and-reels
+Specialized,https://www.specialized.com,sports,https://www.specialized.com/us/en/bikes/road-bikes
+Trek Bikes,https://www.trekbikes.com,sports,https://www.trekbikes.com/us/en_US/bikes/road-bikes/
+Cannondale,https://www.cannondale.com,sports,https://www.cannondale.com/en/bikes/road/endurance/synapse
+Titleist,https://www.titleist.com,sports,https://www.titleist.com/golf-balls/prov1/
+Callaway Golf,https://www.callawaygolf.com,sports,https://www.callawaygolf.com/golf-clubs/drivers/
+TaylorMade,https://www.taylormadegolf.com,sports,https://www.taylormadegolf.com/Drivers/
+Wilson,https://www.wilson.com,sports,https://www.wilson.com/en-us/sport/tennis/rackets/
+Oakley,https://www.oakley.com,sports,https://www.oakley.com/en-us/sunglasses/sport-sunglasses/
+Mammut,https://www.mammut.com,sports,https://www.mammut.com/us/en/jackets-vests/hardshell-jackets/
+Fjallraven,https://www.fjallraven.com,sports,https://www.fjallraven.com/us/en-us/bags-gear/backpacks/
+Kelty,https://www.kelty.com,sports,https://www.kelty.com/tents/
+Burton,https://www.burton.com,sports,https://www.burton.com/us/en/c/mens-snowboards
+Rossignol,https://www.rossignol.com,sports,https://www.rossignol.com/us/en/ski/alpine-skis/
 # ── Health & Wellness (15 additional) ────────────────────
-Tonal,https://www.tonal.com,health,
-Mirror,https://www.mirror.co,health,
-NordicTrack,https://www.nordictrack.com,health,
-Bowflex,https://www.bowflex.com,health,
-Hyperice,https://www.hyperice.com,health,
-Withings,https://www.withings.com,health,
-Fitbit,https://www.fitbit.com,health,
-GNC,https://www.gnc.com,health,
-Vitamin Shoppe,https://www.vitaminshoppe.com,health,
-Garden of Life,https://www.gardenoflife.com,health,
-Organifi,https://www.organifi.com,health,
-Onnit,https://www.onnit.com,health,
-Moon Juice,https://www.moonjuice.com,health,
-Sakara Life,https://www.sakara.com,health,
-Noom,https://www.noom.com,health,
+Tonal,https://www.tonal.com,health,https://www.tonal.com/product/tonal/
+Mirror,https://studio.lululemon.com,health,https://studio.lululemon.com/
+NordicTrack,https://www.nordictrack.com,health,https://www.nordictrack.com/treadmills/
+Bowflex,https://www.bowflex.com,health,https://www.bowflex.com/selecttech/dumbbells/
+Hyperice,https://www.hyperice.com,health,https://www.hyperice.com/products/hypervolt-2-pro/
+Withings,https://www.withings.com,health,https://www.withings.com/us/en/body-cardio
+Fitbit,https://www.fitbit.com,health,https://www.fitbit.com/global/us/products/smartwatches/charge6
+GNC,https://www.gnc.com,health,https://www.gnc.com/vitamins/
+Vitamin Shoppe,https://www.vitaminshoppe.com,health,https://www.vitaminshoppe.com/p/vitamin-shoppe-brand-vitamin-d3-5000-iu/vs-1388
+Garden of Life,https://www.gardenoflife.com,health,https://www.gardenoflife.com/products/sport-organic-plant-based-protein
+Organifi,https://www.organifi.com,health,https://www.organifi.com/products/green-juice/
+Onnit,https://www.onnit.com,health,https://www.onnit.com/alpha-brain/
+Moon Juice,https://www.moonjuice.com,health,https://www.moonjuice.com/products/brain-dust
+Sakara Life,https://www.sakara.com,health,https://www.sakara.com/products/signature-program
+Noom,https://www.noom.com,health,https://www.noom.com/plans/med/
 # ── Pet (10 additional) ──────────────────────────────────
-Wag,https://www.wag.com,pet,
-Open Farm,https://www.openfarmpet.com,pet,
-Sundays for Dogs,https://www.sundaysfordogs.com,pet,
-JustFoodForDogs,https://www.justfoodfordogs.com,pet,
-Spot & Tango,https://www.spotandtango.com,pet,
-Kong,https://www.kongcompany.com,pet,
-West Paw,https://www.westpaw.com,pet,
-Fable,https://www.fablepets.com,pet,
-Embark,https://www.embarkvet.com,pet,
-Wisdom Panel,https://www.wisdompanel.com,pet,
+Wag,https://www.wag.com,pet,https://www.wag.com/products/
+Open Farm,https://www.openfarmpet.com,pet,https://www.openfarmpet.com/products/raw-mix-dry-dog-food
+Sundays for Dogs,https://www.sundaysfordogs.com,pet,https://www.sundaysfordogs.com/products/sundays-for-dogs
+JustFoodForDogs,https://www.justfoodfordogs.com,pet,https://www.justfoodfordogs.com/fresh-dog-food/pantry-fresh/
+Spot & Tango,https://www.spotandtango.com,pet,https://www.spotandtango.com/unkibble/
+Kong,https://www.kongcompany.com,pet,https://www.kongcompany.com/products/classic/
+West Paw,https://www.westpaw.com,pet,https://www.westpaw.com/collections/dog-toys/zogoflex/
+Fable,https://www.fablepets.com,pet,https://www.fablepets.com/products/
+Embark,https://www.embarkvet.com,pet,https://www.embarkvet.com/products/dog-dna-tests/breed-health-kit/
+Wisdom Panel,https://www.wisdompanel.com,pet,https://www.wisdompanel.com/products/wisdom-panel-premium/
 # ── Kids & Family (10 additional) ────────────────────────
-Babylist,https://www.babylist.com,kids,
-Stokke,https://www.stokke.com,kids,
-UPPAbaby,https://www.uppababy.com,kids,
-Nugget,https://www.nuggetcomfort.com,kids,
-Lalo,https://www.meetlalo.com,kids,
-Piccalio,https://www.piccalio.com,kids,
-Aden + Anais,https://www.adenandanais.com,kids,
-Boden Mini,https://www.bodenusa.com,kids,
-Pottery Barn Kids,https://www.potterybarnkids.com,kids,
-The Honest Company,https://www.honest.com,kids,
-# ── Automotive & Parts (15 — NEW category) ───────────────
-AutoZone,https://www.autozone.com,automotive,
-O'Reilly Auto Parts,https://www.oreillyauto.com,automotive,
-Advance Auto Parts,https://www.advanceautoparts.com,automotive,
-NAPA Auto Parts,https://www.napaonline.com,automotive,
-RockAuto,https://www.rockauto.com,automotive,
-TireRack,https://www.tirerack.com,automotive,
-CarParts.com,https://www.carparts.com,automotive,
-Carvana,https://www.carvana.com,automotive,
-Vroom,https://www.vroom.com,automotive,
-CarMax,https://www.carmax.com,automotive,
-WeatherTech,https://www.weathertech.com,automotive,
-Pep Boys,https://www.pepboys.com,automotive,
-4 Wheel Parts,https://www.4wheelparts.com,automotive,
-Summit Racing,https://www.summitracing.com,automotive,
-American Muscle,https://www.americanmuscle.com,automotive,
-# ── Food & Beverage (15 — NEW category) ──────────────────
-Goldbelly,https://www.goldbelly.com,food-beverage,
-Drizly,https://www.drizly.com,food-beverage,
-Wine.com,https://www.wine.com,food-beverage,
-Vivino,https://www.vivino.com,food-beverage,
-Omaha Steaks,https://www.omahasteaks.com,food-beverage,
-Harry & David,https://www.harryanddavid.com,food-beverage,
-Mouth,https://www.mouth.com,food-beverage,
-Crowd Cow,https://www.crowdcow.com,food-beverage,
-Ghirardelli,https://www.ghirardelli.com,food-beverage,
-Nespresso,https://www.nespresso.com,food-beverage,
-Trade Coffee,https://www.drinktrade.com,food-beverage,
-Blue Bottle Coffee,https://www.bluebottlecoffee.com,food-beverage,
-Intelligentsia,https://www.intelligentsia.com,food-beverage,
-Athletic Brewing,https://www.athleticbrewing.com,food-beverage,
-Lagunitas,https://www.lagunitas.com,food-beverage,
-Graza,https://www.graza.co,food-beverage,
-Fly By Jing,https://www.flybyjing.com,food-beverage,
-Poppi,https://www.drinkpoppi.com,food-beverage,
-Chamberlain Coffee,https://www.chamberlaincoffee.com,food-beverage,
-Blank Street Coffee,https://www.blankstreet.com,food-beverage,
-# ── Additional Sports ────────────────────────────────────
-Burton,https://www.burton.com,sports,
-Rossignol,https://www.rossignol.com,sports,
-# ── Additional Automotive ────────────────────────────────
-Coker Tire,https://www.cokertire.com,automotive,
-Discount Tire,https://www.discounttire.com,automotive,
+Babylist,https://www.babylist.com,kids,https://www.babylist.com/store/strollers
+Stokke,https://www.stokke.com,kids,https://www.stokke.com/en-us/strollers/stokke-trailz/
+UPPAbaby,https://www.uppababy.com,kids,https://www.uppababy.com/strollers/vista-v2/
+Nugget,https://www.nuggetcomfort.com,kids,https://www.nuggetcomfort.com/shop/the-nugget/
+Lalo,https://www.meetlalo.com,kids,https://www.meetlalo.com/products/the-highchair
+Piccalio,https://www.piccalio.com,kids,https://www.piccalio.com/products/
+Aden + Anais,https://www.adenandanais.com,kids,https://www.adenandanais.com/products/essentials-muslin-swaddle-blankets
+Boden Mini,https://www.bodenusa.com,kids,https://www.bodenusa.com/en-us/girls-clothing/
+Pottery Barn Kids,https://www.potterybarnkids.com,kids,https://www.potterybarnkids.com/products/somewhere-over-rainbow-bedding/
+The Honest Company,https://www.honest.com,kids,https://www.honest.com/products/diapers/
+# ── Automotive & Parts (17 brands) ───────────────────────
+AutoZone,https://www.autozone.com,automotive,https://www.autozone.com/oil-and-fluids/motor-oil/
+O'Reilly Auto Parts,https://www.oreillyauto.com,automotive,https://www.oreillyauto.com/detail/b/castrol-13849/oils-fluids-16479/motor-oil-16480/
+Advance Auto Parts,https://www.advanceautoparts.com,automotive,https://www.advanceautoparts.com/o/advance/catalog/en_US/
+NAPA Auto Parts,https://www.napaonline.com,automotive,https://www.napaonline.com/en/brakes
+RockAuto,https://www.rockauto.com,automotive,https://www.rockauto.com/en/parts/
+TireRack,https://www.tirerack.com,automotive,https://www.tirerack.com/tires/
+CarParts.com,https://www.carparts.com,automotive,https://www.carparts.com/catalog/
+Carvana,https://www.carvana.com,automotive,https://www.carvana.com/vehicles/
+Vroom,https://www.vroom.com,automotive,https://www.vroom.com/vehicles
+CarMax,https://www.carmax.com,automotive,https://www.carmax.com/cars/used
+WeatherTech,https://www.weathertech.com,automotive,https://www.weathertech.com/floor-mats/
+Pep Boys,https://www.pepboys.com,automotive,https://www.pepboys.com/tires/
+4 Wheel Parts,https://www.4wheelparts.com,automotive,https://www.4wheelparts.com/suspension/lift-kits/
+Summit Racing,https://www.summitracing.com,automotive,https://www.summitracing.com/parts/engine/cylinder-heads/
+American Muscle,https://www.americanmuscle.com,automotive,https://www.americanmuscle.com/ford-mustang-parts.html
+Coker Tire,https://www.cokertire.com,automotive,https://www.cokertire.com/tires/
+Discount Tire,https://www.discounttire.com,automotive,https://www.discounttire.com/tires/
+# ── Food & Beverage (19 brands) ──────────────────────────
+Goldbelly,https://www.goldbelly.com,food-beverage,https://www.goldbelly.com/grimaldis-pizzeria
+Total Wine & More,https://www.totalwine.com,food-beverage,https://www.totalwine.com/wine/
+Wine.com,https://www.wine.com,food-beverage,https://www.wine.com/list/wine/7155
+Vivino,https://www.vivino.com,food-beverage,https://www.vivino.com/explore
+Omaha Steaks,https://www.omahasteaks.com,food-beverage,https://www.omahasteaks.com/shop/steaks/
+Harry & David,https://www.harryanddavid.com,food-beverage,https://www.harryanddavid.com/food-gifts/chocolates-candy/
+Mouth,https://www.mouth.com,food-beverage,https://www.mouth.com/collections/snacks
+Crowd Cow,https://www.crowdcow.com,food-beverage,https://www.crowdcow.com/products/wagyu-beef/
+Ghirardelli,https://www.ghirardelli.com,food-beverage,https://www.ghirardelli.com/shop/chocolate-gifts/chocolate-assortments/
+Nespresso,https://www.nespresso.com,food-beverage,https://www.nespresso.com/us/en/order/machines/original/
+Trade Coffee,https://www.drinktrade.com,food-beverage,https://www.drinktrade.com/coffee/fresh-roasted-coffee/
+Blue Bottle Coffee,https://bluebottlecoffee.com,food-beverage,https://bluebottlecoffee.com/us/eng/products/whole-bean-coffee/
+Intelligentsia,https://www.intelligentsia.com,food-beverage,https://www.intelligentsia.com/products/black-cat-espresso/
+Athletic Brewing,https://athleticbrewing.com,food-beverage,https://athleticbrewing.com/collections/beer/products/run-wild-ipa
+Lagunitas,https://lagunitas.com,food-beverage,https://lagunitas.com/beers/ipa/
+Graza,https://www.graza.co,food-beverage,https://www.graza.co/products/sizzle-drizzle-bundle
+Fly By Jing,https://www.flybyjing.com,food-beverage,https://www.flybyjing.com/products/sichuan-chili-crisp
+Poppi,https://drinkpoppi.com,food-beverage,https://drinkpoppi.com/products/poppi-soda-variety-pack
+Chamberlain Coffee,https://www.chamberlaincoffee.com,food-beverage,https://www.chamberlaincoffee.com/products/original-ground-coffee
+# ── International — UK / EU ───────────────────────────────
+Next,https://www.next.co.uk,fashion,https://www.next.co.uk/shop/gender-women/category-dresses
+Marks & Spencer,https://www.marksandspencer.com,fashion,https://www.marksandspencer.com/l/women/dresses
+Zalando,https://www.zalando.co.uk,fashion,https://www.zalando.co.uk/womens-clothing/dresses/
+Boohoo,https://www.boohoo.com,fashion,https://www.boohoo.com/womens/dresses/
+River Island,https://www.riverisland.com,fashion,https://www.riverisland.com/women/dresses/
+ASOS Marketplace,https://marketplace.asos.com,fashion,https://marketplace.asos.com/boutiques/
+About You,https://www.aboutyou.com,fashion,https://www.aboutyou.com/en/women/clothing/dresses/
+La Redoute,https://www.laredoute.co.uk,fashion,https://www.laredoute.co.uk/ppdp/cat-women-dresses.aspx
+Zalando Lounge,https://www.zalando-lounge.com,fashion,https://www.zalando-lounge.com/
+# ── International — APAC ─────────────────────────────────
+Muji,https://www.muji.com,home,https://www.muji.com/us/en/collections/house-hold-items
+Coupang,https://www.coupang.com,general,https://www.coupang.com/vp/products/
+Flipkart,https://www.flipkart.com,general,https://www.flipkart.com/phones-accessories/
+Myntra,https://www.myntra.com,fashion,https://www.myntra.com/women-dresses
+Shopee,https://shopee.com,general,https://shopee.com/Computers-Accessories-cat.11013247
+# ── US: Accessible Luxury & Accessories ──────────────────
+Coach,https://www.coach.com,luxury,https://www.coach.com/women/bags/
+Kate Spade,https://www.katespade.com,luxury,https://www.katespade.com/handbags/
+Michael Kors,https://www.michaelkors.com,fashion,https://www.michaelkors.com/handbags/
+Tory Burch,https://www.toryburch.com,luxury,https://www.toryburch.com/en-us/handbags
+Victoria's Secret,https://www.victoriassecret.com,fashion,https://www.victoriassecret.com/en-us/bras
+# ── US: Music & Pro Audio ────────────────────────────────
+Guitar Center,https://www.guitarcenter.com,electronics,https://www.guitarcenter.com/Guitars/
+Sweetwater,https://www.sweetwater.com,electronics,https://www.sweetwater.com/shop/guitars/electric-guitars/
+# ── US: Office & Specialty ───────────────────────────────
+Staples,https://www.staples.com,general,https://www.staples.com/office-supplies/
+World Market,https://www.worldmarket.com,home,https://www.worldmarket.com/furniture/
+# ── US: Resale Marketplaces ──────────────────────────────
+StockX,https://stockx.com,general,https://stockx.com/sneakers/
+GOAT,https://www.goat.com,fashion,https://www.goat.com/sneakers/
+Grailed,https://www.grailed.com,fashion,https://www.grailed.com/designers/
+# ── US: Fashion (additional) ─────────────────────────────
+Ann Taylor,https://www.anntaylor.com,fashion,https://www.anntaylor.com/dresses/
+Loft,https://www.loft.com,fashion,https://www.loft.com/dresses/
+Nordstrom Rack,https://www.nordstromrack.com,fashion,https://www.nordstromrack.com/women/clothing/dresses
