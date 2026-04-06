@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import { Check, Loader2 } from "lucide-react";
@@ -45,6 +45,18 @@ const TIERS = [
 
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
+  const [currentPlan, setCurrentPlan] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.authenticated) {
+          setCurrentPlan(data.customer.plan);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   async function handleCheckout(planId: "pro") {
     setLoading(planId);
@@ -113,7 +125,11 @@ export default function PricingPage() {
                 ))}
               </ul>
 
-              {tier.id === "free" ? (
+              {currentPlan === tier.id ? (
+                <div className="w-full py-3 text-sm font-bold text-center border-2 border-[#059669] text-[#059669] bg-emerald-50">
+                  Your Current Plan
+                </div>
+              ) : tier.id === "free" ? (
                 <a
                   href={tier.ctaHref}
                   className="block text-center py-3 border-2 border-gray-200 text-sm font-semibold text-foreground hover:bg-gray-50 transition-colors"
