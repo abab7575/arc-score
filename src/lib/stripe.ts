@@ -46,7 +46,7 @@ export function getPLANS(): Record<PlanId, PlanConfig> {
     pro: {
       id: "pro",
       name: "Pro",
-      price: 99,
+      price: 149,
       priceId: process.env.STRIPE_PRO_PRICE_ID ?? "",
       watchlistLimit: 10,
       apiLimit: "10k requests/day",

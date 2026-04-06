@@ -27,7 +27,7 @@ const TIERS = [
   {
     id: "pro" as const,
     name: "Pro",
-    price: 99,
+    price: 149,
     period: "/mo",
     tagline: "Watchlists, alerts, and exports",
     cta: "Get Pro Access",

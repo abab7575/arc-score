@@ -257,7 +257,7 @@ export default function PublicMatrixPage() {
                 fontFamily: "JetBrains Mono, monospace",
               }}
             >
-              Get watchlist alerts — from $99/mo
+              Get watchlist alerts — from $149/mo
             </Link>
           </div>
 

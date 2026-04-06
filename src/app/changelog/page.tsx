@@ -270,7 +270,7 @@ export default function ChangelogPage() {
                   href="/pricing"
                   className="inline-block text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-5 py-2 transition-colors"
                 >
-                  Upgrade for full history — $99/mo
+                  Upgrade for full history — $149/mo
                 </Link>
               </div>
             )}
