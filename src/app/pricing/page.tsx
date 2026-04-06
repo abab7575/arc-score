@@ -169,6 +169,70 @@ export default function PricingPage() {
           ))}
         </div>
 
+        {/* Social proof */}
+        <div className="mt-16 max-w-2xl mx-auto border-2 border-gray-200 bg-white p-8">
+          <h2 className="text-xl font-bold text-foreground mb-5">
+            Who uses ARC Report?
+          </h2>
+          <ul className="space-y-4">
+            <li>
+              <p className="text-sm font-semibold text-foreground">Agency teams</p>
+              <p className="text-sm text-muted-foreground">Tracking client AI readiness across portfolios</p>
+            </li>
+            <li>
+              <p className="text-sm font-semibold text-foreground">E-commerce operators</p>
+              <p className="text-sm text-muted-foreground">Monitoring competitor agent access policies</p>
+            </li>
+            <li>
+              <p className="text-sm font-semibold text-foreground">AI agent builders</p>
+              <p className="text-sm text-muted-foreground">Checking which sites are reachable before launch</p>
+            </li>
+            <li>
+              <p className="text-sm font-semibold text-foreground">Platform teams</p>
+              <p className="text-sm text-muted-foreground">Benchmarking their stack against 1,000+ peers</p>
+            </li>
+          </ul>
+        </div>
+
+        {/* FAQ */}
+        <div className="mt-12 max-w-2xl mx-auto">
+          <h2 className="text-xl font-bold text-foreground mb-5">
+            Frequently Asked Questions
+          </h2>
+          <div className="space-y-0">
+            {[
+              {
+                q: "How fresh is the data?",
+                a: "Every brand is scanned daily. Changes are detected, confirmed across two scans, and published to the changelog.",
+              },
+              {
+                q: "Can I cancel anytime?",
+                a: "Yes. Cancel in one click from your account page. No contracts, no hidden fees.",
+              },
+              {
+                q: "What\u2019s in the free tier?",
+                a: "The full public index, brand pages, matrix view, and the 3 most recent changelog entries. It\u2019s always free.",
+              },
+              {
+                q: "Do you offer annual pricing?",
+                a: "Not yet. Email us at hello@arcreport.ai if you\u2019re interested.",
+              },
+              {
+                q: "What agents do you track?",
+                a: "GPTBot, ChatGPT-User, ClaudeBot, Claude-Web, PerplexityBot, Google-Extended, Amazonbot, CCBot, and Bingbot.",
+              },
+            ].map((item) => (
+              <div
+                key={item.q}
+                className="border-2 border-gray-200 bg-white p-5 -mt-[2px] first:mt-0"
+              >
+                <p className="text-sm font-bold text-foreground">{item.q}</p>
+                <p className="text-sm text-muted-foreground mt-1.5">{item.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Bottom note */}
         <div className="mt-12 text-center">
           <p className="text-sm text-muted-foreground max-w-xl mx-auto">
