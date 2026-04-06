@@ -173,6 +173,21 @@ export default function LeaderboardPage() {
           />
         </div>
 
+        <div className="mt-8 border-2 border-dashed border-gray-300 bg-gray-50/50 px-6 py-8 text-center max-w-lg mx-auto">
+          <p className="text-sm font-semibold text-foreground mb-1">
+            Track ranking changes for your brands
+          </p>
+          <p className="text-sm text-muted-foreground mb-4">
+            Pro subscribers get daily alerts when tracked brands move up or down the rankings.
+          </p>
+          <Link
+            href="/pricing"
+            className="inline-block text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-5 py-2 transition-colors"
+          >
+            Get Pro — $149/mo
+          </Link>
+        </div>
+
         <div className="mt-8 text-center text-xs text-muted-foreground">
           <p>
             Rankings are based on daily HTTP scans of 1,000+ brands.
