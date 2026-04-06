@@ -1,0 +1,35 @@
+name: Daily Onboarding Emails
+
+on:
+  schedule:
+    # Run daily at 9 AM UTC (morning for US/EU)
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+
+env:
+  BASE_URL: https://www.arcreport.ai
+
+jobs:
+  send-onboarding:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Send onboarding emails (day 2 + day 5)
+        run: |
+          echo "Triggering onboarding emails: ${BASE_URL}/api/cron/onboarding-emails"
+
+          RESPONSE=$(curl -s --max-time 60 -w "\n%{http_code}" -X POST \
+            "${BASE_URL}/api/cron/onboarding-emails" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "Status: $HTTP_CODE"
+          echo "Response: $BODY"
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "::error::Onboarding emails failed with status $HTTP_CODE"
+            exit 1
+          fi
