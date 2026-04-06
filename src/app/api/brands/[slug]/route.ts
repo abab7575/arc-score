@@ -22,7 +22,7 @@ export async function GET(
     const customerId = await verifyCustomerSession(token);
     if (customerId) {
       const customer = getCustomerById(customerId);
-      if (customer && customer.plan === "pro") {
+      if (customer && customer.plan !== "free") {
         isPro = true;
       }
     }

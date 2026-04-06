@@ -6,6 +6,7 @@ import { Footer } from "@/components/shared/footer";
 import { InfoTooltip } from "@/components/ui/info-tooltip";
 import { TrackBrandButton } from "@/components/brand/track-button";
 import { ClaimBrandButton } from "@/components/brand/claim-button";
+import { EmailCapture } from "@/components/shared/email-capture";
 import {
   getBrandBySlug,
   getLatestLightweightScan,
@@ -651,9 +652,33 @@ export default async function BrandPage({ params }: BrandPageProps) {
     },
   ];
 
+  // JSON-LD structured data for search engines
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: `${brand.name} AI Agent Access Report`,
+    description: `Live daily scan of ${brand.name}'s AI agent access policy, robots.txt rules, and machine-readable signals.`,
+    url: `https://arcreport.ai/brand/${brand.slug}`,
+    mainEntity: {
+      "@type": "Organization",
+      name: brand.name,
+      url: brand.url,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "ARC Report",
+      url: "https://arcreport.ai",
+    },
+    dateModified: scan.scannedAt,
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       <main className="pb-16">
         <section className="hero-gradient border-b border-[color:var(--color-arc-border)]">
@@ -1353,9 +1378,15 @@ export default async function BrandPage({ params }: BrandPageProps) {
             </div>
           </div>
         </section>
+
+        <div className="mt-8 max-w-lg mx-auto">
+          <EmailCapture
+            source={`brand:${brand.slug}`}
+            heading={`Get weekly updates on ${brand.name}`}
+            subtext="One email per week with the biggest agent access changes across 1,000+ brands."
+          />
+        </div>
       </main>
-
-
 
       <Footer />
     </div>

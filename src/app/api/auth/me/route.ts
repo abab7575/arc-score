@@ -36,8 +36,8 @@ export async function GET(request: NextRequest) {
         name: customer.name,
         plan: customer.plan,
         planName: plan.name,
-        isPro: customer.plan === "pro",
-        brandLimit: customer.plan === "pro" ? 10 : 0,
+        isPro: customer.plan !== "free",
+        brandLimit: customer.plan === "agency" ? 50 : customer.plan === "pro" ? 10 : 0,
       },
       subscription: subscription
         ? {

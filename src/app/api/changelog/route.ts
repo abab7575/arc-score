@@ -17,13 +17,13 @@ export async function GET(request: NextRequest) {
         .from(schema.customers)
         .where(eq(schema.customers.id, customerId))
         .get();
-      if (customer && customer.plan === "pro") {
+      if (customer && customer.plan !== "free") {
         isPro = true;
       }
     }
   }
 
-  const limit = isPro ? 500 : 5;
+  const limit = isPro ? 500 : 10;
   const entries = getRecentChangelog(limit);
 
   // Enrich with brand names
