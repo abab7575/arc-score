@@ -36,12 +36,23 @@ export const metadata: Metadata = {
     description:
       "Public intelligence layer for how commerce sites are preparing for AI agents. Daily-scanned agent access signals for 1,000+ e-commerce brands: robots.txt policies, platform detection, structured data, and policy changes.",
     siteName: "ARC Report",
+    images: [
+      {
+        url: "https://arcreport.ai/api/og?title=AI+Agent+Intelligence+for+E-Commerce&subtitle=1%2C000%2B+brands+scanned+daily&stat=1%2C006",
+        width: 1200,
+        height: 630,
+        alt: "ARC Report — AI Agent Intelligence for E-Commerce",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "ARC Report — Agent Access Intelligence for E-Commerce",
     description:
-      "Public intelligence layer for how commerce sites are preparing for AI agents. Daily-scanned agent access signals for 1,000+ e-commerce brands: robots.txt policies, platform detection, structured data, and policy changes.",
+      "Public intelligence layer for how commerce sites are preparing for AI agents. Daily-scanned agent access signals for 1,000+ e-commerce brands.",
+    images: [
+      "https://arcreport.ai/api/og?title=AI+Agent+Intelligence+for+E-Commerce&subtitle=1%2C000%2B+brands+scanned+daily&stat=1%2C006",
+    ],
   },
 };
 
