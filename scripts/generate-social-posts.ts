@@ -46,11 +46,15 @@ function divider(title: string) {
 
 function printPost(label: string, text: string) {
   const charCount = text.length;
-  const fits = charCount <= 280 ? "OK" : "OVER";
+  const limit = label.includes("LinkedIn") ? 3000 : 280;
+  const fits = charCount <= limit ? "OK" : "OVER";
   console.log(`[${label}] (${charCount} chars \u2014 ${fits})`);
   console.log(text);
   console.log();
 }
+
+const X_HASHTAGS = "\n\n#AICommerce #AIShopping #Ecommerce";
+const LI_HASHTAGS = "\n\n#AICommerce #AIShopping #Ecommerce #RetailTech #AIAgents";
 
 // ─── Data queries ───────────────────────────────────────────────────
 
@@ -141,19 +145,27 @@ function generateLeaderboardPost() {
     ``,
     list,
     ``,
-    `Full leaderboard: arcreport.ai/leaderboard`,
+    `Full leaderboard: https://arcreport.ai/leaderboard`,
+    X_HASHTAGS,
   ].join("\n");
 
   const linkedIn = [
     `This week's Top 5 AI-Ready brands (out of ${totalBrands.toLocaleString()} scanned):`,
     ``,
-    ...ranked.map((r, i) =>
-      `${i + 1}. ${r.name} \u2014 ${plural(+r.allowed_agent_count, "agent")} allowed, ${+r.has_llms_txt ? "has llms.txt" : "no llms.txt"}`
-    ),
+    ...ranked.map((r, i) => {
+      const signals: string[] = [];
+      if (+r.has_llms_txt) signals.push("llms.txt");
+      if (+r.has_agents_txt) signals.push("agents.txt");
+      if (+r.has_product_feed) signals.push("product feed");
+      if (+r.has_schema_product) signals.push("Schema Product");
+      const signalStr = signals.length > 0 ? signals.join(", ") : "basic signals only";
+      return `${i + 1}. ${r.name} (${r.category}) \u2014 ${plural(+r.allowed_agent_count, "agent")} open, publishes ${signalStr}`;
+    }),
     ``,
-    `These brands allow all major AI agents (GPTBot, ClaudeBot, PerplexityBot, etc.) to access their product data, and publish structured signals like llms.txt.`,
+    `These brands allow all major AI agents to access their product data and publish machine-readable signals that help agents understand what they sell.`,
     ``,
-    `See the full leaderboard: arcreport.ai/leaderboard`,
+    `See the full leaderboard: https://arcreport.ai/leaderboard`,
+    LI_HASHTAGS,
   ].join("\n");
 
   printPost("X / Twitter", xPost);
@@ -209,8 +221,8 @@ function generateNotableChangePost() {
     const llmsChanges = recentChanges.filter(c => c.field === "llms_txt" && c.new_value === "true");
     if (llmsChanges.length > 0) {
       const c = llmsChanges[0];
-      const xPost = `${c.brand_name} just published llms.txt \u2014 a clear signal they want AI agents to understand their products.\n\nTrack who's adopting: arcreport.ai/leaderboard`;
-      const linkedIn = `${c.brand_name} just published llms.txt.\n\nThis is a machine-readable file that tells AI agents what the brand sells, what pages matter, and how to navigate their catalog. It's the clearest signal a brand can send that they're ready for AI-powered shopping.\n\nSee who else is adopting: arcreport.ai/leaderboard`;
+      const xPost = `${c.brand_name} just published llms.txt \u2014 a clear signal they want AI agents to understand their products.\n\nTrack who's adopting: https://arcreport.ai/leaderboard`;
+      const linkedIn = `${c.brand_name} just published llms.txt.\n\nThis is a machine-readable file that tells AI agents what the brand sells, what pages matter, and how to navigate their catalog. It's the clearest signal a brand can send that they're ready for AI-powered shopping.\n\nSee who else is adopting: https://arcreport.ai/leaderboard`;
       printPost("X / Twitter", xPost);
       printPost("LinkedIn", linkedIn);
       return;
@@ -226,8 +238,8 @@ function generateNotableChangePost() {
   const slugify = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
   const xPost = bestAction === "blocked"
-    ? `${bestBrand} just ${bestAction} ${agentList}.\n\nWhat that means for AI shopping: arcreport.ai/brand/${slugify(bestBrand)}`
-    : `${bestBrand} just opened access to ${agentList}.\n\nThe shift toward AI-readable commerce continues: arcreport.ai/brand/${slugify(bestBrand)}`;
+    ? `${bestBrand} just ${bestAction} ${agentList}.\n\nWhat that means for AI shopping: https://arcreport.ai/brand/${slugify(bestBrand)}`
+    : `${bestBrand} just opened access to ${agentList}.\n\nThe shift toward AI-readable commerce continues: https://arcreport.ai/brand/${slugify(bestBrand)}`;
 
   const linkedIn = bestAction === "blocked"
     ? [
@@ -235,14 +247,14 @@ function generateNotableChangePost() {
         ``,
         `This means AI agents like ChatGPT, Claude, and Perplexity can no longer crawl their product pages. For consumers using AI shopping assistants, ${bestBrand} products will become less visible.`,
         ``,
-        `We track these changes daily across ${totalBrands.toLocaleString()} brands: arcreport.ai`,
+        `We track these changes daily across ${totalBrands.toLocaleString()} brands: https://arcreport.ai`,
       ].join("\n")
     : [
         `${bestBrand} just opened access to ${bestAgents.join(", ")}.`,
         ``,
         `AI shopping agents can now crawl their product catalog, meaning ${bestBrand} products will start appearing in AI-powered recommendations.`,
         ``,
-        `We track these changes daily across ${totalBrands.toLocaleString()} brands: arcreport.ai`,
+        `We track these changes daily across ${totalBrands.toLocaleString()} brands: https://arcreport.ai`,
       ].join("\n");
 
   printPost("X / Twitter", xPost);
@@ -265,7 +277,8 @@ function generateStatsPost() {
     `${blockPct} blocking at least one`,
     `${llmsPct} have llms.txt`,
     ``,
-    `Full breakdown: arcreport.ai/matrix`,
+    `Full breakdown: https://arcreport.ai/matrix`,
+    X_HASHTAGS,
   ].join("\n");
 
   const linkedIn = [
@@ -277,7 +290,8 @@ function generateStatsPost() {
     ``,
     `Most brands haven't made an active choice yet \u2014 they simply have no robots.txt rules for AI crawlers. The question is whether "no rule" becomes "allowed" or "blocked" as awareness grows.`,
     ``,
-    `Explore the full matrix: arcreport.ai/matrix`,
+    `Explore the full matrix: https://arcreport.ai/matrix`,
+    LI_HASHTAGS,
   ].join("\n");
 
   printPost("X / Twitter", xPost);
@@ -312,8 +326,8 @@ function generateNewAdopterPost() {
     : brandNames.slice(0, 3).join(", ") + ` + ${count - 3} more`;
 
   const xPost = count === 1
-    ? `${brandNames[0]} just published llms.txt \u2014 signaling AI agents are welcome.\n\nSee who's ahead: arcreport.ai/leaderboard`
-    : `${plural(count, "brand")} published llms.txt this week: ${shortList}.\n\nThe adoption curve is moving.\n\narcreport.ai/leaderboard`;
+    ? `${brandNames[0]} just published llms.txt \u2014 signaling AI agents are welcome.\n\nSee who's ahead: https://arcreport.ai/leaderboard`
+    : `${plural(count, "brand")} published llms.txt in the last 2 weeks: ${shortList}.\n\nThe adoption curve is moving.\n\nhttps://arcreport.ai/leaderboard`;
 
   const linkedIn = [
     `${plural(count, "new brand")} published llms.txt in the last two weeks:`,
@@ -325,7 +339,8 @@ function generateNewAdopterPost() {
     ``,
     `Total brands with llms.txt: ${withLlmsTxt} out of ${totalBrands.toLocaleString()}`,
     ``,
-    `See who's adopting: arcreport.ai/leaderboard`,
+    `See who's adopting: https://arcreport.ai/leaderboard`,
+    LI_HASHTAGS,
   ].join("\n");
 
   printPost("X / Twitter", xPost);
@@ -389,11 +404,11 @@ function generateComparisonPost() {
     const lowCat = formatCat(lowestNonZero.category);
     const lowPct = pct(lowestNonZero.blocking, lowestNonZero.total);
     const ratio = (highest.rate / lowestNonZero.rate).toFixed(1);
-    xPost = `${highCat} brands are ${ratio}x more likely to block AI agents than ${lowCat} brands.\n\n${highCat}: ${highPct} blocking\n${lowCat}: ${lowPct} blocking\n\nFull category breakdown: arcreport.ai/matrix`;
+    xPost = `${highCat} brands are ${ratio}x more likely to block AI agents than ${lowCat} brands.\n\n${highCat}: ${highPct} blocking\n${lowCat}: ${lowPct} blocking\n\nFull category breakdown: https://arcreport.ai/matrix`;
   } else {
     const lowCat = formatCat(lowest.category);
     const lowPct = pct(lowest.blocking, lowest.total);
-    xPost = `${highCat} brands block AI agents the most (${highPct}). ${lowCat} brands block the least (${lowPct}).\n\nFull category breakdown: arcreport.ai/matrix`;
+    xPost = `${highCat} brands block AI agents the most (${highPct}). ${lowCat} brands block the least (${lowPct}).\n\nFull category breakdown: https://arcreport.ai/matrix`;
   }
 
   const lowCat = formatCat(lowest.category);
@@ -410,7 +425,8 @@ function generateComparisonPost() {
     ``,
     `${highCat} leads at ${highPct}, while ${lowCat} is lowest at ${lowPct}.`,
     ``,
-    `Full category breakdown across ${totalBrands.toLocaleString()} brands: arcreport.ai/matrix`,
+    `Full category breakdown across ${totalBrands.toLocaleString()} brands: https://arcreport.ai/matrix`,
+    LI_HASHTAGS,
   ].join("\n");
 
   printPost("X / Twitter", xPost);
