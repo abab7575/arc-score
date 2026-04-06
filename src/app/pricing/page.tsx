@@ -169,6 +169,49 @@ export default function PricingPage() {
           ))}
         </div>
 
+        {/* Trust / risk-reversal */}
+        <div className="mt-8 max-w-4xl mx-auto text-center">
+          <p className="text-sm text-muted-foreground">
+            Start today, cancel anytime. No contracts, no setup fees.
+            <br className="hidden sm:inline" />{" "}
+            Your first alert goes out within 24 hours of subscribing.
+          </p>
+        </div>
+
+        {/* Comparison table */}
+        <div className="mt-16 max-w-4xl mx-auto overflow-x-auto">
+          <table className="w-full border-2 border-gray-200 bg-white text-sm">
+            <thead>
+              <tr className="border-b-2 border-gray-200">
+                <th className="text-left p-4 font-bold text-foreground">Feature</th>
+                <th className="text-center p-4 font-bold text-foreground">Free</th>
+                <th className="text-center p-4 font-bold text-foreground border-x-2 border-gray-200">Pro</th>
+                <th className="text-center p-4 font-bold text-foreground">Agency</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ["Brands tracked", "Browse all", "10 watchlists", "50 watchlists"],
+                ["Daily alerts", "—", "Email", "Email + Slack + Webhooks"],
+                ["Changelog history", "3 entries", "90+ days", "90+ days"],
+                ["Exports", "—", "CSV + JSON", "CSV + JSON"],
+                ["API access", "Rate-limited", "10k req/day", "100k req/day"],
+                ["Team seats", "1", "1", "5"],
+              ].map(([feature, free, pro, agency], i) => (
+                <tr
+                  key={feature}
+                  className={`border-b border-gray-100 ${i % 2 === 0 ? "bg-gray-50/50" : ""}`}
+                >
+                  <td className="p-4 font-medium text-foreground">{feature}</td>
+                  <td className="p-4 text-center text-muted-foreground">{free}</td>
+                  <td className="p-4 text-center text-muted-foreground border-x-2 border-gray-200">{pro}</td>
+                  <td className="p-4 text-center text-muted-foreground">{agency}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
         {/* Social proof */}
         <div className="mt-16 max-w-2xl mx-auto border-2 border-gray-200 bg-white p-8">
           <h2 className="text-xl font-bold text-foreground mb-5">

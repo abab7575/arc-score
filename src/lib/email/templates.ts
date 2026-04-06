@@ -358,6 +358,102 @@ export function weeklyDigestEmail(data: WeeklyDigestData): { subject: string; ht
   };
 }
 
+export interface OnboardingDay2Data {
+  name: string | null;
+  plan: string;
+}
+
+export function onboardingDay2Email(data: OnboardingDay2Data): { subject: string; html: string; text: string } {
+  const greeting = data.name ? `Hey ${data.name},` : "Hey there,";
+  const isPaid = data.plan !== "free";
+
+  const content = `
+    ${sectionLabel("Day 2")}
+    ${heading("3 things to check on ARC Report today")}
+    ${paragraph(`${greeting} you signed up yesterday — here are three quick ways to get value from your account right now.`)}
+
+    ${cardBlock(`
+      <div style="font-size:14px; font-weight:900; color:#FF6648; font-family:monospace; margin-bottom:8px;">/ 01</div>
+      <a href="${isPaid ? "https://arcreport.ai/account/watchlist" : "https://arcreport.ai"}" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">${isPaid ? "Set up your first watchlist" : "Explore a brand page"} &rarr;</a>
+      <div style="font-size:13px; color:#475569; line-height:1.6;">${isPaid
+        ? "Pick the brands you care about and we'll email you the moment their AI agent access policy changes. Takes 30 seconds."
+        : "Search for any brand and see exactly how AI agents interact with their site — what's open, what's blocked, and what signals they publish."
+      }</div>
+    `)}
+
+    ${cardBlock(`
+      <div style="font-size:14px; font-weight:900; color:#FF6648; font-family:monospace; margin-bottom:8px;">/ 02</div>
+      <a href="https://arcreport.ai/leaderboard" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">Check the leaderboard &rarr;</a>
+      <div style="font-size:13px; color:#475569; line-height:1.6;">See which brands are the most AI-ready and which are the most resistant. Updated daily from 1,000+ brand scans.</div>
+    `)}
+
+    ${cardBlock(`
+      <div style="font-size:14px; font-weight:900; color:#FF6648; font-family:monospace; margin-bottom:8px;">/ 03</div>
+      <a href="https://arcreport.ai/landscape" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">Read the landscape guide &rarr;</a>
+      <div style="font-size:13px; color:#475569; line-height:1.6;">The big picture: how AI agents are reshaping e-commerce discovery, comparison, and purchasing — and what brands are doing about it.</div>
+    `)}
+
+    ${ctaButton(isPaid ? "Open your watchlist" : "Browse the index", isPaid ? "https://arcreport.ai/account/watchlist" : "https://arcreport.ai")}
+
+    ${dividerLine()}
+    ${paragraph('<span style="font-size:13px; color:#94A3B8;">Reply to this email anytime — it goes to a real person.</span>')}
+  `;
+
+  return {
+    subject: "3 things to check on ARC Report today",
+    html: layout(content, "Quick ways to get value from your ARC Report account."),
+    text: `${greeting} you signed up yesterday — here are three quick ways to get value from your account right now.\n\n1. ${isPaid ? "Set up your first watchlist: https://arcreport.ai/account/watchlist" : "Explore a brand page: https://arcreport.ai"}\n2. Check the leaderboard: https://arcreport.ai/leaderboard\n3. Read the landscape guide: https://arcreport.ai/landscape\n\nReply to this email anytime.`,
+  };
+}
+
+export interface OnboardingDay5Data {
+  name: string | null;
+  plan: string;
+}
+
+export function onboardingDay5Email(data: OnboardingDay5Data): { subject: string; html: string; text: string } {
+  const greeting = data.name ? `${data.name}, heads up` : "Heads up";
+  const isPaid = data.plan !== "free";
+
+  const content = `
+    ${sectionLabel("Day 5")}
+    ${heading("Your first weekly digest is coming Sunday")}
+    ${paragraph(`${greeting} — this Sunday you'll receive your first ARC Report weekly digest. Here's what to expect.`)}
+
+    ${cardBlock(`
+      <div style="font-size:14px; font-weight:900; color:#FF6648; font-family:monospace; margin-bottom:8px;">/ 01</div>
+      <div style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px;">What's in the weekly digest</div>
+      <div style="font-size:13px; color:#475569; line-height:1.6;">Every Sunday you'll get a summary of the week's biggest shifts: total changes across 1,000+ brands, the top movers, and notable policy changes — all in one email.</div>
+    `)}
+
+    ${cardBlock(`
+      <div style="font-size:14px; font-weight:900; color:#FF6648; font-family:monospace; margin-bottom:8px;">/ 02</div>
+      <div style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px;">${isPaid ? "Are your watchlist alerts set up?" : "Want daily alerts instead?"}</div>
+      <div style="font-size:13px; color:#475569; line-height:1.6;">${isPaid
+        ? "The weekly digest covers the whole index — but your watchlist alerts are the real-time signal. If you haven't added brands yet, now's the time."
+        : "The weekly digest gives you the full picture. Upgrade to Pro to track specific brands and get notified the same day their AI agent policy changes."
+      }</div>
+    `, isPaid ? "#0A1628" : "#FBBA16")}
+
+    ${ctaButton(isPaid ? "Manage your watchlist" : "See Pro features", isPaid ? "https://arcreport.ai/account/watchlist" : "https://arcreport.ai/pricing", isPaid ? "#0259DD" : "#FF6648")}
+
+    ${cardBlock(`
+      <div style="font-size:14px; font-weight:900; color:#FF6648; font-family:monospace; margin-bottom:8px;">/ 03</div>
+      <a href="https://arcreport.ai/leaderboard" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">Check the latest leaderboard &rarr;</a>
+      <div style="font-size:13px; color:#475569; line-height:1.6;">See where the Top 10 AI-Ready and AI-Resistant brands stand right now, before Sunday's digest drops.</div>
+    `)}
+
+    ${dividerLine()}
+    ${paragraph('<span style="font-size:13px; color:#94A3B8;">Questions? Reply to this email — it goes to a real person.</span>')}
+  `;
+
+  return {
+    subject: "Your first weekly digest is coming Sunday",
+    html: layout(content, "This Sunday: your first ARC Report weekly digest."),
+    text: `${greeting} — this Sunday you'll receive your first ARC Report weekly digest.\n\nWhat to expect: a summary of the week's biggest shifts across 1,000+ brands, top movers, and notable policy changes.\n\n${isPaid ? "Make sure your watchlist is set up: https://arcreport.ai/account/watchlist" : "Want daily alerts? See Pro features: https://arcreport.ai/pricing"}\n\nCheck the latest leaderboard: https://arcreport.ai/leaderboard\n\nReply to this email anytime.`,
+  };
+}
+
 export interface BrandClaimData {
   brandName: string;
   brandSlug: string;
