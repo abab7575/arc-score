@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getMatrixData, getLightweightScanHistory } from "@/lib/db/queries";
+import { getMatrixData, getLightweightScanHistory, getRecentChangelog } from "@/lib/db/queries";
 import { verifyCustomerSession, CUSTOMER_COOKIE_NAME } from "@/lib/customer-auth";
 import { db, schema } from "@/lib/db/index";
 import { eq } from "drizzle-orm";
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     .where(eq(schema.customers.id, customerId))
     .get();
 
-  if (!customer || customer.plan !== "pro") {
+  if (!customer || customer.plan === "free") {
     return NextResponse.json({ error: "Pro plan required" }, { status: 403 });
   }
 
@@ -86,5 +86,48 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  return NextResponse.json({ error: "Invalid export type" }, { status: 400 });
+  if (type === "changelog") {
+    const entries = getRecentChangelog(500);
+    const brands = db.select({ id: schema.brands.id, name: schema.brands.name, slug: schema.brands.slug })
+      .from(schema.brands).all();
+    const brandMap = new Map(brands.map(b => [b.id, b]));
+
+    if (format === "csv") {
+      const headers = ["date", "brand_name", "brand_slug", "field", "old_value", "new_value"];
+      const rows = entries.map(e => {
+        const brand = brandMap.get(e.brandId);
+        return [
+          e.detectedAt,
+          brand?.name ?? "",
+          brand?.slug ?? "",
+          e.field,
+          e.oldValue ?? "",
+          e.newValue ?? "",
+        ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(",");
+      });
+
+      const csv = [headers.join(","), ...rows].join("\n");
+      return new NextResponse(csv, {
+        headers: {
+          "Content-Type": "text/csv; charset=utf-8",
+          "Content-Disposition": `attachment; filename="arc-changelog-${new Date().toISOString().split("T")[0]}.csv"`,
+        },
+      });
+    }
+
+    return NextResponse.json({
+      exportedAt: new Date().toISOString(),
+      entryCount: entries.length,
+      data: entries.map(e => {
+        const brand = brandMap.get(e.brandId);
+        return {
+          ...e,
+          brandName: brand?.name,
+          brandSlug: brand?.slug,
+        };
+      }),
+    });
+  }
+
+  return NextResponse.json({ error: "Invalid export type. Use 'matrix' or 'changelog'." }, { status: 400 });
 }

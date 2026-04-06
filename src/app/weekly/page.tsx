@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
+import { EmailCapture } from "@/components/shared/email-capture";
 import {
   getTopMovers,
   getChangelogByFieldPattern,
@@ -217,7 +218,15 @@ export default async function WeeklyPage() {
           ))}
         </Section>
 
-        <div className="mt-12 pt-6 border-t border-gray-200 text-xs text-muted-foreground">
+        <div className="mt-12">
+          <EmailCapture
+            source="weekly"
+            heading="Get this digest in your inbox"
+            subtext="One email per week with the biggest agent access changes across 1,000+ brands. Free."
+          />
+        </div>
+
+        <div className="mt-6 pt-6 border-t border-gray-200 text-xs text-muted-foreground">
           <p>
             All changes are observed via daily HTTP scans. Pro subscribers get
             full historical depth, CSV/JSON exports, and email alerts when

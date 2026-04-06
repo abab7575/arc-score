@@ -207,6 +207,23 @@ export default function AccountPage() {
           </div>
         </div>
 
+        {/* Watchlist Link */}
+        {account.customer.plan !== "free" && (
+          <a
+            href="/account/watchlist"
+            className="flex items-center justify-between bg-white border-2 border-gray-200 rounded-xl p-6 mb-6 hover:border-[#0259DD] transition-colors group"
+          >
+            <div className="flex items-center gap-3">
+              <Shield className="w-5 h-5 text-[#0259DD]" />
+              <div>
+                <span className="font-bold text-foreground text-sm">Watchlist</span>
+                <p className="text-xs text-muted-foreground">Track brands and get daily change alerts</p>
+              </div>
+            </div>
+            <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-[#0259DD] transition-colors" />
+          </a>
+        )}
+
         {/* Claimed Brands */}
         {account.customer.plan !== "free" && (
           <div className="bg-white border-2 border-gray-200 rounded-xl p-6">

@@ -250,3 +250,63 @@ export function unclaimBrand(customerId: number, brandId: number) {
     .where(and(eq(schema.brandClaims.customerId, customerId), eq(schema.brandClaims.brandId, brandId)))
     .run();
 }
+
+// ── Watchlists ─────────────────────────────────────────────────────
+
+export function getWatchlist(customerId: number) {
+  return db.select({
+    id: schema.watchlists.id,
+    brandId: schema.watchlists.brandId,
+    createdAt: schema.watchlists.createdAt,
+    brandSlug: schema.brands.slug,
+    brandName: schema.brands.name,
+    brandCategory: schema.brands.category,
+  })
+    .from(schema.watchlists)
+    .innerJoin(schema.brands, eq(schema.watchlists.brandId, schema.brands.id))
+    .where(eq(schema.watchlists.customerId, customerId))
+    .all();
+}
+
+export function addToWatchlist(customerId: number, brandId: number) {
+  // Check if already watching
+  const existing = db.select().from(schema.watchlists)
+    .where(and(eq(schema.watchlists.customerId, customerId), eq(schema.watchlists.brandId, brandId)))
+    .get();
+  if (existing) return existing;
+  return db.insert(schema.watchlists).values({ customerId, brandId }).returning().get();
+}
+
+export function removeFromWatchlist(customerId: number, brandId: number) {
+  return db.delete(schema.watchlists)
+    .where(and(eq(schema.watchlists.customerId, customerId), eq(schema.watchlists.brandId, brandId)))
+    .run();
+}
+
+export function isWatching(customerId: number, brandId: number): boolean {
+  const row = db.select().from(schema.watchlists)
+    .where(and(eq(schema.watchlists.customerId, customerId), eq(schema.watchlists.brandId, brandId)))
+    .get();
+  return !!row;
+}
+
+export function getWatchlistCount(customerId: number): number {
+  const rows = db.select().from(schema.watchlists)
+    .where(eq(schema.watchlists.customerId, customerId))
+    .all();
+  return rows.length;
+}
+
+// ── Email Subscribers ──────────────────────────────────────────────
+
+export function addEmailSubscriber(email: string, source: string = "homepage") {
+  try {
+    return db.insert(schema.emailSubscribers)
+      .values({ email: email.toLowerCase(), source })
+      .returning()
+      .get();
+  } catch {
+    // Unique constraint — already subscribed
+    return null;
+  }
+}

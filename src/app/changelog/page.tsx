@@ -198,68 +198,79 @@ export default function ChangelogPage() {
           </div>
         ) : (
           <div className="space-y-8">
-            {Object.entries(grouped).map(([date, dateEntries]) => (
-              <div key={date}>
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="spec-label text-xs text-muted-foreground">{date}</span>
-                  <div className="flex-1 h-px bg-border" />
-                  <span className="text-xs text-muted-foreground">{dateEntries.length} change{dateEntries.length !== 1 ? "s" : ""}</span>
-                </div>
+            {(() => {
+              let runningIndex = 0;
+              const FREE_VISIBLE_LIMIT = 3;
+              return Object.entries(grouped).map(([date, dateEntries]) => (
+                <div key={date}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="spec-label text-xs text-muted-foreground">{date}</span>
+                    <div className="flex-1 h-px bg-border" />
+                    <span className="text-xs text-muted-foreground">{dateEntries.length} change{dateEntries.length !== 1 ? "s" : ""}</span>
+                  </div>
 
-                <div className="space-y-2">
-                  {dateEntries.map(entry => (
-                    <div
-                      key={entry.id}
-                      className="flex items-start gap-3 border border-gray-200 bg-white px-4 py-3 group/entry hover:border-[#0259DD] transition-colors relative"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <Link
-                            href={`/brand/${entry.brandSlug}`}
-                            className="font-medium text-sm text-foreground hover:text-[#0259DD] transition-colors"
-                          >
-                            {entry.brandName}
-                          </Link>
-                          <Link
-                            href={`/changelog/${entry.id}`}
-                            className="opacity-0 group-hover/entry:opacity-100 transition-opacity text-muted-foreground hover:text-[#0259DD]"
-                            title="Shareable link"
-                          >
-                            <LinkIcon className="w-3.5 h-3.5" />
-                          </Link>
+                  <div className="space-y-2">
+                    {dateEntries.map(entry => {
+                      runningIndex++;
+                      const isBlurred = !isPro && runningIndex > FREE_VISIBLE_LIMIT;
+                      return (
+                        <div
+                          key={entry.id}
+                          className={`flex items-start gap-3 border border-gray-200 bg-white px-4 py-3 group/entry hover:border-[#0259DD] transition-colors relative ${isBlurred ? "select-none" : ""}`}
+                        >
+                          {isBlurred && (
+                            <div className="absolute inset-0 backdrop-blur-[6px] bg-white/60 z-10" />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <Link
+                                href={`/brand/${entry.brandSlug}`}
+                                className="font-medium text-sm text-foreground hover:text-[#0259DD] transition-colors"
+                              >
+                                {entry.brandName}
+                              </Link>
+                              <Link
+                                href={`/changelog/${entry.id}`}
+                                className="opacity-0 group-hover/entry:opacity-100 transition-opacity text-muted-foreground hover:text-[#0259DD]"
+                                title="Shareable link"
+                              >
+                                <LinkIcon className="w-3.5 h-3.5" />
+                              </Link>
+                            </div>
+                            <Link href={`/changelog/${entry.id}`} className="block mt-0.5">
+                              <p className="text-sm text-muted-foreground">
+                                <span className="font-medium text-foreground">{formatField(entry.field)}</span>
+                                {" changed from "}
+                                <span className="font-mono text-xs bg-red-50 text-red-700 px-1 py-0.5">{formatValue(entry.oldValue)}</span>
+                                {" to "}
+                                <span className="font-mono text-xs bg-green-50 text-green-700 px-1 py-0.5">{formatValue(entry.newValue)}</span>
+                                <ConfidenceBadge field={entry.field} />
+                              </p>
+                            </Link>
+                          </div>
                         </div>
-                        <Link href={`/changelog/${entry.id}`} className="block mt-0.5">
-                          <p className="text-sm text-muted-foreground">
-                            <span className="font-medium text-foreground">{formatField(entry.field)}</span>
-                            {" changed from "}
-                            <span className="font-mono text-xs bg-red-50 text-red-700 px-1 py-0.5">{formatValue(entry.oldValue)}</span>
-                            {" to "}
-                            <span className="font-mono text-xs bg-green-50 text-green-700 px-1 py-0.5">{formatValue(entry.newValue)}</span>
-                            <ConfidenceBadge field={entry.field} />
-                          </p>
-                        </Link>
-                      </div>
-                    </div>
-                  ))}
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ));
+            })()}
 
             {/* Pro upsell */}
-            {!isPro && (
+            {!isPro && entries.length > 3 && (
               <div className="border-2 border-dashed border-gray-300 bg-gray-50/50 px-6 py-8 text-center">
                 <Lock className="w-5 h-5 text-muted-foreground mx-auto mb-3" />
                 <p className="text-sm font-semibold text-foreground mb-1">
-                  Showing the 5 most recent changes
+                  Full history is blurred
                 </p>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Upgrade to Pro for the full changelog with filtering and search.
+                  Upgrade to Pro for the full changelog — 90+ days of history, exports, and daily alerts.
                 </p>
                 <Link
                   href="/pricing"
                   className="inline-block text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-5 py-2 transition-colors"
                 >
-                  Get Pro — $100/mo
+                  Upgrade for full history — $99/mo
                 </Link>
               </div>
             )}

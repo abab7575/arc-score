@@ -1,0 +1,35 @@
+name: Daily Watchlist Alerts
+
+on:
+  schedule:
+    # Run at 4 AM UTC (2 hours after scan starts, should be complete by then)
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+env:
+  BASE_URL: https://www.arcreport.ai
+
+jobs:
+  send-alerts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Send watchlist alert emails
+        run: |
+          echo "Triggering watchlist alerts: ${BASE_URL}/api/cron/watchlist-alerts"
+
+          RESPONSE=$(curl -s --max-time 60 -w "\n%{http_code}" -X POST \
+            "${BASE_URL}/api/cron/watchlist-alerts" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "Status: $HTTP_CODE"
+          echo "Response: $BODY"
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "::error::Watchlist alerts failed with status $HTTP_CODE"
+            exit 1
+          fi

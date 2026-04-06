@@ -14,7 +14,7 @@ export const stripe = new Proxy({} as Stripe, {
   },
 });
 
-export type PlanId = "free" | "pro";
+export type PlanId = "free" | "pro" | "agency";
 
 export interface PlanConfig {
   id: PlanId;
@@ -22,6 +22,8 @@ export interface PlanConfig {
   price: number; // monthly in dollars
   priceId: string; // Stripe Price ID from env
   features: string[];
+  watchlistLimit: number;
+  apiLimit: string;
 }
 
 export function getPLANS(): Record<PlanId, PlanConfig> {
@@ -31,26 +33,47 @@ export function getPLANS(): Record<PlanId, PlanConfig> {
       name: "Free",
       price: 0,
       priceId: "",
+      watchlistLimit: 0,
+      apiLimit: "Rate-limited public API",
       features: [
-        "Full index — all brands, latest scan data",
+        "Full public index — all brands, latest scan",
         "Matrix view with agent access status",
         "Brand profiles with current snapshot",
-        "5 most recent changelog entries",
+        "3 most recent changelog entries",
+        "Basic weekly digest",
       ],
     },
     pro: {
       id: "pro",
       name: "Pro",
-      price: 100,
+      price: 99,
       priceId: process.env.STRIPE_PRO_PRICE_ID ?? "",
+      watchlistLimit: 10,
+      apiLimit: "10k requests/day",
       features: [
         "Everything in Free",
-        "Historical data (90+ days of daily snapshots)",
-        "Full weekly changelog across all brands",
-        "CSV and JSON export of full dataset",
-        "Comparison tool (any brands side-by-side)",
-        "API access",
-        "Email alerts on policy changes",
+        "Watchlists — track up to 10 brands",
+        "Daily change alerts via email",
+        "Full changelog history (90+ days)",
+        "CSV and JSON export",
+        "Personal API key (10k req/day)",
+      ],
+    },
+    agency: {
+      id: "agency",
+      name: "Agency",
+      price: 299,
+      priceId: process.env.STRIPE_AGENCY_PRICE_ID ?? "",
+      watchlistLimit: 50,
+      apiLimit: "100k requests/day",
+      features: [
+        "Everything in Pro",
+        "50 brand watchlists",
+        "Slack and webhook alerts",
+        "Team seats (up to 5)",
+        "Higher API limits (100k req/day)",
+        "Competitor tracking groups",
+        "Category-level diffs",
       ],
     },
   };

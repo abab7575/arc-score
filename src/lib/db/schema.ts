@@ -154,6 +154,24 @@ export const brandClaims = sqliteTable("brand_claims", {
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 
+// ── Watchlists (Pro feature: track brands for change alerts) ────────
+
+export const watchlists = sqliteTable("watchlists", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  customerId: integer("customer_id").notNull().references(() => customers.id),
+  brandId: integer("brand_id").notNull().references(() => brands.id),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+// ── Email Subscribers (newsletter capture) ──────────────────────────
+
+export const emailSubscribers = sqliteTable("email_subscribers", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  email: text("email").notNull().unique(),
+  source: text("source").notNull().default("homepage"), // homepage, weekly, brand-page, claim
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
 // ── Admin: Content Queue ─────────────────────────────────────────────
 
 export const contentQueue = sqliteTable("content_queue", {

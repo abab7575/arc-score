@@ -5,46 +5,84 @@ import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import { Check, Loader2 } from "lucide-react";
 
-const FREE_FEATURES = [
-  "Full index — all brands, latest scan data",
-  "Matrix view with agent access status",
-  "Brand profiles with current snapshot",
-  "Platform, CDN, and WAF detection",
-  "Structured data and feed analysis",
-  "5 most recent changelog entries",
-];
-
-const PRO_FEATURES = [
-  "Everything in Free",
-  "Historical data — 90+ days of daily snapshots",
-  "Full weekly changelog across all brands",
-  "CSV and JSON export of full dataset",
-  "Comparison tool — any brands side-by-side",
-  "API access",
-  "Email alerts on agent policy changes",
+const TIERS = [
+  {
+    id: "free" as const,
+    name: "Free",
+    price: 0,
+    period: "/forever",
+    tagline: "Browse the full index",
+    cta: "Browse the Index",
+    ctaHref: "/",
+    accent: false,
+    features: [
+      "Full public index — all brands, latest scan",
+      "Matrix view with agent access status",
+      "Brand profiles with current snapshot",
+      "3 most recent changelog entries",
+      "Basic weekly digest",
+      "Rate-limited public API",
+    ],
+  },
+  {
+    id: "pro" as const,
+    name: "Pro",
+    price: 99,
+    period: "/mo",
+    tagline: "Watchlists, alerts, and exports",
+    cta: "Get Pro Access",
+    accent: true,
+    badge: "Most Popular",
+    features: [
+      "Everything in Free",
+      "Watchlists — track up to 10 brands",
+      "Daily change alerts via email",
+      "Full changelog history (90+ days)",
+      "CSV and JSON export",
+      "Personal API key (10k req/day)",
+    ],
+  },
+  {
+    id: "agency" as const,
+    name: "Agency",
+    price: 299,
+    period: "/mo",
+    tagline: "Teams, Slack alerts, and deep API",
+    cta: "Get Agency Access",
+    accent: false,
+    features: [
+      "Everything in Pro",
+      "50 brand watchlists",
+      "Slack and webhook alerts",
+      "Team seats (up to 5)",
+      "Higher API limits (100k req/day)",
+      "Competitor tracking groups",
+      "Category-level diffs",
+    ],
+  },
 ];
 
 export default function PricingPage() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<string | null>(null);
 
-  async function handleCheckout() {
-    setLoading(true);
+  async function handleCheckout(planId: "pro" | "agency") {
+    setLoading(planId);
     try {
       const res = await fetch("/api/stripe/create-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId: "pro" }),
+        body: JSON.stringify({ planId }),
       });
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
       } else {
         alert(data.error || "Failed to start checkout");
-        setLoading(false);
+        setLoading(null);
       }
     } catch {
       alert("Something went wrong. Please try again.");
-      setLoading(false);
+      setLoading(null);
     }
   }
 
@@ -52,96 +90,90 @@ export default function PricingPage() {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-16">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-16">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight mb-3">
-            AI agent intelligence. Updated daily.
+            Track agent access changes before your competitors do.
           </h1>
           <p className="text-base text-muted-foreground max-w-2xl mx-auto">
-            The free index shows you what every brand&apos;s agentic posture looks like today.
-            Pro gives you the history, the exports, and the changelog.
+            The free index shows every brand&apos;s agentic posture today.
+            Paid plans add watchlists, daily alerts, full history, and exports.
           </p>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-          {/* Free */}
-          <div className="flex flex-col p-8 border-2 border-gray-200 bg-white">
-            <div className="mb-5">
-              <h3 className="text-lg font-bold text-foreground">Free</h3>
-              <p className="text-sm text-muted-foreground mt-0.5">Browse the full index</p>
-            </div>
-
-            <div className="mb-6">
-              <span className="text-3xl font-black text-foreground">$0</span>
-              <span className="text-muted-foreground ml-1">/forever</span>
-            </div>
-
-            <ul className="space-y-3 mb-8 flex-1">
-              {FREE_FEATURES.map((feature) => (
-                <li key={feature} className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-[#059669] mt-0.5 shrink-0" />
-                  <span className="text-sm text-foreground">{feature}</span>
-                </li>
-              ))}
-            </ul>
-
-            <a
-              href="/"
-              className="block text-center py-3 border-2 border-gray-200 text-sm font-semibold text-foreground hover:bg-gray-50 transition-colors"
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          {TIERS.map((tier) => (
+            <div
+              key={tier.id}
+              className={`relative flex flex-col p-7 border-2 bg-white ${
+                tier.accent ? "border-[#FF6648]" : "border-gray-200"
+              }`}
             >
-              Browse the Index
-            </a>
-          </div>
-
-          {/* Pro */}
-          <div className="relative flex flex-col p-8 border-2 border-[#FF6648] bg-white">
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FF6648] text-white text-[10px] font-bold px-3 py-1 uppercase tracking-wider">
-              Full Access
-            </div>
-
-            <div className="mb-5">
-              <h3 className="text-lg font-bold text-foreground">Pro</h3>
-              <p className="text-sm text-muted-foreground mt-0.5">History, exports, and alerts</p>
-            </div>
-
-            <div className="mb-6">
-              <span className="text-3xl font-black text-foreground">$100</span>
-              <span className="text-muted-foreground ml-1">/mo</span>
-            </div>
-
-            <ul className="space-y-3 mb-8 flex-1">
-              {PRO_FEATURES.map((feature) => (
-                <li key={feature} className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-[#059669] mt-0.5 shrink-0" />
-                  <span className="text-sm text-foreground">{feature}</span>
-                </li>
-              ))}
-            </ul>
-
-            <button
-              onClick={handleCheckout}
-              disabled={loading}
-              className="w-full py-3 text-sm font-bold bg-[#FF6648] text-white hover:bg-[#e85a3f] transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Redirecting to checkout...
-                </>
-              ) : (
-                "Get Pro Access"
+              {tier.badge && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FF6648] text-white text-[10px] font-bold px-3 py-1 uppercase tracking-wider whitespace-nowrap">
+                  {tier.badge}
+                </div>
               )}
-            </button>
-          </div>
+
+              <div className="mb-4">
+                <h3 className="text-lg font-bold text-foreground">{tier.name}</h3>
+                <p className="text-sm text-muted-foreground mt-0.5">{tier.tagline}</p>
+              </div>
+
+              <div className="mb-5">
+                <span className="text-3xl font-black text-foreground">
+                  ${tier.price}
+                </span>
+                <span className="text-muted-foreground ml-1">{tier.period}</span>
+              </div>
+
+              <ul className="space-y-2.5 mb-7 flex-1">
+                {tier.features.map((feature) => (
+                  <li key={feature} className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-[#059669] mt-0.5 shrink-0" />
+                    <span className="text-sm text-foreground">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {tier.id === "free" ? (
+                <a
+                  href={tier.ctaHref}
+                  className="block text-center py-3 border-2 border-gray-200 text-sm font-semibold text-foreground hover:bg-gray-50 transition-colors"
+                >
+                  {tier.cta}
+                </a>
+              ) : (
+                <button
+                  onClick={() => handleCheckout(tier.id)}
+                  disabled={loading !== null}
+                  className={`w-full py-3 text-sm font-bold transition-colors flex items-center justify-center gap-2 disabled:opacity-50 ${
+                    tier.accent
+                      ? "bg-[#FF6648] text-white hover:bg-[#e85a3f]"
+                      : "bg-[#0A1628] text-white hover:bg-[#0A1628]/90"
+                  }`}
+                >
+                  {loading === tier.id ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Redirecting...
+                    </>
+                  ) : (
+                    tier.cta
+                  )}
+                </button>
+              )}
+            </div>
+          ))}
         </div>
 
         {/* Bottom note */}
         <div className="mt-12 text-center">
           <p className="text-sm text-muted-foreground max-w-xl mx-auto">
             Cancel anytime. The free index is always free.
-            Need a team plan or API-only access? <a href="mailto:hello@arcreport.ai" className="text-[#0259DD] hover:underline">Get in touch</a>.
+            Need API-only access or custom terms? <a href="mailto:hello@arcreport.ai" className="text-[#0259DD] hover:underline">Contact us</a>.
           </p>
         </div>
       </main>

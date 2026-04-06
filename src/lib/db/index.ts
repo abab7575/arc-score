@@ -139,5 +139,25 @@ try {
   sqlite.exec(`ALTER TABLE scan_runs ADD COLUMN last_heartbeat_at TEXT`);
 } catch { /* column exists */ }
 
+// Auto-migrate: watchlists table (Pro feature)
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS watchlists (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_id INTEGER NOT NULL REFERENCES customers(id),
+    brand_id INTEGER NOT NULL REFERENCES brands(id),
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+
+// Auto-migrate: email_subscribers table
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS email_subscribers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    source TEXT NOT NULL DEFAULT 'homepage',
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+
 export const db = drizzle(sqlite, { schema });
 export { schema };

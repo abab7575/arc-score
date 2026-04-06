@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
+import { EmailCapture } from "@/components/shared/email-capture";
 import { IndexHero } from "@/components/index/index-hero";
 import type { BrandCategory } from "@/lib/brands";
 import { CATEGORY_LABELS } from "@/lib/brands";
@@ -272,6 +273,14 @@ export default function HomePage() {
             </table>
           </div>
         )}
+
+        <div className="mt-12 max-w-lg mx-auto">
+          <EmailCapture
+            source="homepage"
+            heading="Get the weekly digest"
+            subtext="One email per week with the biggest agent access changes across 1,000+ brands."
+          />
+        </div>
       </main>
 
       <Footer />

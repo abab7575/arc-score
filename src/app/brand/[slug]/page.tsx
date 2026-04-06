@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import { InfoTooltip } from "@/components/ui/info-tooltip";
+import { TrackBrandButton } from "@/components/brand/track-button";
 import {
   getBrandBySlug,
   getLatestLightweightScan,
@@ -682,6 +683,7 @@ export default async function BrandPage({ params }: BrandPageProps) {
                   >
                     API docs
                   </Link>
+                  <TrackBrandButton brandId={brand.id} />
                 </div>
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">

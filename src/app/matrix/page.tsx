@@ -102,9 +102,9 @@ export default function PublicMatrixPage() {
     return (
       <>
         <Navbar />
-        <div style={{ backgroundColor: "#0A1628", minHeight: "100vh", color: "#FFF8F0", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 16 }}>
+        <div style={{ backgroundColor: "#FFF8F0", minHeight: "100vh", color: "#0A1628", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 16 }}>
           <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 14, color: "#FF6648" }}>Matrix data not available</div>
-          <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 12, color: "#94A3B8", maxWidth: 400, textAlign: "center" }}>
+          <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 12, color: "#6B7280", maxWidth: 400, textAlign: "center" }}>
             The AI Agent Access Matrix is being updated. Please check back shortly.
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function PublicMatrixPage() {
     return (
       <>
         <Navbar />
-        <div style={{ backgroundColor: "#0A1628", minHeight: "100vh", color: "#FFF8F0", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ backgroundColor: "#FFF8F0", minHeight: "100vh", color: "#0A1628", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 14 }}>Loading matrix data...</div>
         </div>
       </>
@@ -143,14 +143,14 @@ export default function PublicMatrixPage() {
   return (
     <>
       <Navbar />
-      <div style={{ backgroundColor: "#0A1628", minHeight: "100vh", color: "#FFF8F0" }}>
+      <div style={{ backgroundColor: "#FFF8F0", minHeight: "100vh", color: "#0A1628" }}>
         <div style={{ maxWidth: 1400, margin: "0 auto", padding: "32px 24px" }}>
           {/* Header */}
           <div style={{ marginBottom: 32 }}>
             <h1 style={{ fontSize: 32, fontWeight: 800, margin: 0 }}>
               AI Agent Access Matrix
             </h1>
-            <p style={{ color: "#94A3B8", marginTop: 8, fontSize: 14, maxWidth: 600, lineHeight: 1.6 }}>
+            <p style={{ color: "#6B7280", marginTop: 8, fontSize: 14, maxWidth: 600, lineHeight: 1.6 }}>
               Which AI shopping agents can access the top e-commerce brands? Real-time robots.txt analysis across {data.totalBrands} brands.
             </p>
           </div>
@@ -165,7 +165,7 @@ export default function PublicMatrixPage() {
           </div>
 
           {/* Controls + Legend — sticky on scroll */}
-          <div style={{ position: "sticky", top: 0, zIndex: 20, backgroundColor: "#0A1628", paddingTop: 8, paddingBottom: 12 }}>
+          <div style={{ position: "sticky", top: 0, zIndex: 20, backgroundColor: "#FFF8F0", paddingTop: 8, paddingBottom: 12 }}>
             <div style={{ display: "flex", gap: 12, marginBottom: 10, flexWrap: "wrap", alignItems: "center" }}>
               <input
                 type="text"
@@ -173,8 +173,8 @@ export default function PublicMatrixPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 style={{
-                  padding: "8px 14px", borderRadius: 6, border: "1px solid #1E293B",
-                  backgroundColor: "#0F1D32", color: "#FFF8F0", fontSize: 13,
+                  padding: "8px 14px", borderRadius: 6, border: "1px solid #E8E0D8",
+                  backgroundColor: "#FFFFFF", color: "#0A1628", fontSize: 13,
                   fontFamily: "JetBrains Mono, monospace", width: 200,
                 }}
               />
@@ -193,7 +193,7 @@ export default function PublicMatrixPage() {
                 { value: "name", label: "A-Z" },
                 { value: "category", label: "By Category" },
               ]} />
-              <span style={{ color: "#64748B", fontSize: 12, fontFamily: "JetBrains Mono, monospace" }}>
+              <span style={{ color: "#6B7280", fontSize: 12, fontFamily: "JetBrains Mono, monospace" }}>
                 {filtered.length} brands shown
               </span>
             </div>
@@ -208,21 +208,21 @@ export default function PublicMatrixPage() {
           <div style={{ overflowX: "auto" }}>
             <div style={{ minWidth: 900 }}>
               {/* Column Headers */}
-              <div style={{ display: "flex", borderBottom: "1px solid #1E293B", paddingBottom: 8, marginBottom: 4 }}>
-                <div style={{ width: 200, flexShrink: 0, fontSize: 11, color: "#64748B", fontFamily: "JetBrains Mono, monospace" }}>
+              <div style={{ display: "flex", borderBottom: "1px solid #E8E0D8", paddingBottom: 8, marginBottom: 4 }}>
+                <div style={{ width: 200, flexShrink: 0, fontSize: 11, color: "#6B7280", fontFamily: "JetBrains Mono, monospace" }}>
                   BRAND
                 </div>
-                <div style={{ width: 70, flexShrink: 0, textAlign: "center", fontSize: 11, color: "#64748B", fontFamily: "JetBrains Mono, monospace" }}>
+                <div style={{ width: 70, flexShrink: 0, textAlign: "center", fontSize: 11, color: "#6B7280", fontFamily: "JetBrains Mono, monospace" }}>
                   STATUS
                 </div>
                 {data.agents.map((agent) => (
                   <div key={agent.id} style={{
                     flex: 1, minWidth: 70, textAlign: "center", fontSize: 9,
-                    color: "#94A3B8", fontFamily: "JetBrains Mono, monospace",
+                    color: "#6B7280", fontFamily: "JetBrains Mono, monospace",
                     lineHeight: 1.3, padding: "0 2px",
                   }}>
                     <div style={{ fontWeight: 700, fontSize: 10 }}>{agent.name.replace("Bot", "").replace("-User", "").replace("-Extended", "")}</div>
-                    <div style={{ color: "#475569", fontSize: 8 }}>{agent.company}</div>
+                    <div style={{ color: "#94A3B8", fontSize: 8 }}>{agent.company}</div>
                   </div>
                 ))}
               </div>
@@ -235,16 +235,36 @@ export default function PublicMatrixPage() {
           </div>
 
           {/* Legend */}
-          <div style={{ marginTop: 32, display: "flex", gap: 24, padding: 16, backgroundColor: "#0F1D32", borderRadius: 8 }}>
+          <div style={{ marginTop: 32, display: "flex", gap: 24, padding: 16, backgroundColor: "#FFFFFF", borderRadius: 8, border: "1px solid #E8E0D8" }}>
             <LegendItem color="#059669" label="Explicitly Allowed" />
             <LegendItem color="#0259DD" label="No Rule (Allowed by Default)" />
             <LegendItem color="#DC2626" label="Explicitly Blocked" />
           </div>
 
+          {/* Watchlist CTA */}
+          <div style={{ marginTop: 32, padding: 24, backgroundColor: "#FFF8F0", borderRadius: 8, border: "2px dashed #E8E0D8", textAlign: "center" }}>
+            <p style={{ fontSize: 14, fontWeight: 700, color: "#0A1628", margin: "0 0 4px" }}>
+              Want alerts when these brands change?
+            </p>
+            <p style={{ fontSize: 12, color: "#6B7280", margin: "0 0 12px" }}>
+              Track any brand in the matrix and get daily email alerts on policy changes.
+            </p>
+            <Link
+              href="/pricing"
+              style={{
+                display: "inline-block", padding: "8px 20px", backgroundColor: "#0259DD",
+                color: "#FFFFFF", fontSize: 12, fontWeight: 700, textDecoration: "none",
+                fontFamily: "JetBrains Mono, monospace",
+              }}
+            >
+              Get watchlist alerts — from $99/mo
+            </Link>
+          </div>
+
           {/* Methodology Note */}
-          <div style={{ marginTop: 32, padding: 24, backgroundColor: "#0F1D32", borderRadius: 8, borderLeft: "3px solid #0259DD" }}>
-            <p style={{ fontSize: 13, color: "#94A3B8", lineHeight: 1.7, margin: 0 }}>
-              <strong style={{ color: "#FFF8F0" }}>About this data:</strong> This matrix is based on robots.txt policy analysis.
+          <div style={{ marginTop: 32, padding: 24, backgroundColor: "#FFFFFF", borderRadius: 8, border: "1px solid #E8E0D8", borderLeft: "3px solid #0259DD" }}>
+            <p style={{ fontSize: 13, color: "#6B7280", lineHeight: 1.7, margin: 0 }}>
+              <strong style={{ color: "#0A1628" }}>About this data:</strong> This matrix is based on robots.txt policy analysis.
               It shows what each brand&apos;s robots.txt file says about AI agent access. Some sites may also block agents at the
               server level (e.g., via WAF or IP blocking), which is not reflected here. robots.txt is a policy declaration, not
               an enforcement mechanism.{" "}
@@ -267,8 +287,8 @@ function BrandRow({ brand, agents }: { brand: BrandResult; agents: Agent[] }) {
     <div style={{
       display: "flex", alignItems: "center",
       padding: "6px 0",
-      borderBottom: "1px solid #1E293B10",
-      backgroundColor: allBlocked ? "#DC262608" : undefined,
+      borderBottom: "1px solid #E8E0D8",
+      backgroundColor: allBlocked ? "#FFF1F0" : "#FFFFFF",
     }}>
       {/* Brand Name */}
       <div style={{ width: 200, flexShrink: 0 }}>
@@ -277,13 +297,13 @@ function BrandRow({ brand, agents }: { brand: BrandResult; agents: Agent[] }) {
           target="_blank"
           rel="noopener noreferrer"
           style={{
-            color: "#FFF8F0", fontSize: 13, fontWeight: 600,
+            color: "#0A1628", fontSize: 13, fontWeight: 600,
             textDecoration: "none",
           }}
         >
           {brand.name}
         </a>
-        <div style={{ fontSize: 10, color: "#475569", fontFamily: "JetBrains Mono, monospace" }}>
+        <div style={{ fontSize: 10, color: "#94A3B8", fontFamily: "JetBrains Mono, monospace" }}>
           {brand.category}
         </div>
       </div>
@@ -337,11 +357,11 @@ function BrandRow({ brand, agents }: { brand: BrandResult; agents: Agent[] }) {
 function StatCard({ value, label, color }: { value: string; label: string; color: string }) {
   return (
     <div style={{
-      backgroundColor: "#0F1D32", borderRadius: 8, padding: "16px 20px",
-      borderLeft: `3px solid ${color}`, flex: "1 1 150px",
+      backgroundColor: "#FFFFFF", borderRadius: 8, padding: "16px 20px",
+      border: "1px solid #E8E0D8", borderLeft: `3px solid ${color}`, flex: "1 1 150px",
     }}>
       <div style={{ fontSize: 28, fontWeight: 800, color, fontFamily: "JetBrains Mono, monospace" }}>{value}</div>
-      <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 2 }}>{label}</div>
+      <div style={{ fontSize: 11, color: "#6B7280", marginTop: 2 }}>{label}</div>
     </div>
   );
 }
@@ -352,8 +372,8 @@ function SelectControl({ value, onChange, options }: { value: string; onChange: 
       value={value}
       onChange={(e) => onChange(e.target.value)}
       style={{
-        padding: "8px 12px", borderRadius: 6, border: "1px solid #1E293B",
-        backgroundColor: "#0F1D32", color: "#FFF8F0", fontSize: 12,
+        padding: "8px 12px", borderRadius: 6, border: "1px solid #E8E0D8",
+        backgroundColor: "#FFFFFF", color: "#0A1628", fontSize: 12,
         fontFamily: "JetBrains Mono, monospace",
       }}
     >
@@ -368,7 +388,7 @@ function LegendItem({ color, label }: { color: string; label: string }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
       <span style={{ display: "inline-block", width: 16, height: 16, borderRadius: 3, backgroundColor: `${color}40` }} />
-      <span style={{ fontSize: 12, color: "#94A3B8", fontFamily: "JetBrains Mono, monospace" }}>{label}</span>
+      <span style={{ fontSize: 12, color: "#6B7280", fontFamily: "JetBrains Mono, monospace" }}>{label}</span>
     </div>
   );
 }
