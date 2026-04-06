@@ -51,7 +51,7 @@ function CheckoutSuccessContent() {
 
       const data = await res.json();
       if (res.ok) {
-        router.push("/account");
+        router.push("/account?welcome=1");
       } else {
         setError(data.error || "Registration failed");
       }
@@ -100,10 +100,10 @@ function CheckoutSuccessContent() {
             <CheckCircle className="w-8 h-8 text-[#059669]" />
           </div>
           <h1 className="text-2xl font-black text-foreground mb-2">
-            Payment Successful
+            You&apos;re in. Welcome to Pro.
           </h1>
           <p className="text-muted-foreground">
-            Create your account to access your full reports.
+            Set up your account below and you&apos;re ready to go.
           </p>
         </div>
 
@@ -172,6 +172,27 @@ function CheckoutSuccessContent() {
             )}
           </button>
         </form>
+
+        {/* What happens next */}
+        <div className="mt-10 border-t border-gray-200 pt-8">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-foreground mb-4">
+            What happens next
+          </h2>
+          <ol className="space-y-3 text-sm text-muted-foreground">
+            <li className="flex items-start gap-3">
+              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#0259DD] text-white text-xs font-bold shrink-0 mt-0.5">1</span>
+              <span><span className="font-semibold text-foreground">Set up your first watchlist.</span> Pick the brands you want to track daily.</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#0259DD] text-white text-xs font-bold shrink-0 mt-0.5">2</span>
+              <span><span className="font-semibold text-foreground">Browse brand readouts.</span> Every brand has a live profile with agent access data.</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#0259DD] text-white text-xs font-bold shrink-0 mt-0.5">3</span>
+              <span><span className="font-semibold text-foreground">Check your email.</span> You&apos;ll start receiving daily change alerts right away.</span>
+            </li>
+          </ol>
+        </div>
 
         <p className="text-center text-sm text-muted-foreground mt-6">
           Already have an account?{" "}

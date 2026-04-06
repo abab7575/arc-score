@@ -1324,6 +1324,35 @@ export default async function BrandPage({ params }: BrandPageProps) {
             </div>
           </div>
         </section>
+
+        {/* ═══════════════════════════════════════════════════════════
+            PRO UPGRADE CTA
+            ═══════════════════════════════════════════════════════════ */}
+        <section className="mt-20">
+          <div className="relative">
+            <div
+              className="absolute inset-0 -z-10 bg-[#0259DD]"
+              style={{ transform: "translate(6px, 6px)" }}
+            />
+            <div className="border-2 border-[#0A1628] bg-white px-6 py-10 sm:px-10 sm:py-12 text-center">
+              <span className="spec-label text-[#FF6648] mb-4 block">PRO</span>
+              <h2 className="text-2xl sm:text-3xl font-black text-foreground mb-3 leading-tight">
+                Track {brand.name}&apos;s agent changes
+              </h2>
+              <p className="text-sm sm:text-base text-muted-foreground max-w-lg mx-auto mb-8 leading-relaxed">
+                Get daily alerts when this brand&apos;s AI agent access policy changes.
+                Full history, CSV exports, and watchlists included.
+              </p>
+              <Link
+                href="/pricing"
+                className="inline-block text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] border-2 border-[#0A1628] px-8 py-3 transition-colors"
+                style={{ boxShadow: "3px 3px 0 #0A1628" }}
+              >
+                Get Pro — $149/mo
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
 
 

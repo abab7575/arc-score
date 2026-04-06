@@ -1,0 +1,31 @@
+# ARC Report
+
+> ARC Report tracks 1,000+ e-commerce brands daily, scanning each site for AI agent readiness — robots.txt policies, structured data, platform detection, and access controls. It provides a public, searchable index of how the retail web treats autonomous AI agents.
+
+## About
+
+ARC Report (arcreport.ai) is a research tool that monitors the AI-agent readiness of major e-commerce brands. Every day it crawls brand storefronts and evaluates whether AI agents like GPTBot, ClaudeBot, and others are permitted or blocked, whether structured data is present, which e-commerce platform powers the site, and how the checkout flow behaves for non-human visitors.
+
+## API
+
+- [API Documentation](/docs): Full reference for the ARC Report API.
+- [Brand Matrix](/api/matrix): Raw JSON matrix of all tracked brands and their current readiness signals.
+- [Changelog](/api/changelog): Feed of recent changes detected across tracked brands.
+
+## Key Pages
+
+- [Home](https://arcreport.ai/): Live dashboard and search across all tracked brands.
+- [Brand Pages](https://arcreport.ai/brand/): Per-brand detail pages with historical data and screenshots.
+- [API Docs](https://arcreport.ai/docs): Developer documentation for integrating ARC Report data.
+
+## Data
+
+ARC Report collects the following signals for each brand:
+
+- **robots.txt policies**: Which AI user-agents are allowed or blocked.
+- **Structured data**: Presence of Schema.org Product, Offer, and BreadcrumbList markup.
+- **Platform detection**: Identified e-commerce platform (Shopify, Salesforce Commerce Cloud, Magento, custom, etc.).
+- **Checkout accessibility**: Whether the add-to-cart and checkout flows are navigable by an agent.
+- **Cookie and consent gates**: Whether cookie banners or consent walls block automated access.
+
+Data is refreshed daily. The full dataset is available via the API.

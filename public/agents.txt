@@ -1,0 +1,17 @@
+# agents.txt — ARC Report (arcreport.ai)
+
+# This site is fully open to AI agents.
+# We practice what we preach: ARC Report tracks AI agent readiness
+# across 1,000+ e-commerce brands, and we welcome agents on our own site.
+
+Status: open
+Allow: all
+
+# API Documentation
+Docs: https://arcreport.ai/docs
+API: https://arcreport.ai/api/matrix
+Changelog: https://arcreport.ai/api/changelog
+
+# Contact
+Contact: hello@arcreport.ai
+Website: https://arcreport.ai

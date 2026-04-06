@@ -17,6 +17,32 @@ export const metadata: Metadata = {
   title: "ARC Report — Agent Access Intelligence for E-Commerce",
   description:
     "Public intelligence layer for how commerce sites are preparing for AI agents. Daily-scanned agent access signals for 1,000+ e-commerce brands: robots.txt policies, platform detection, structured data, and policy changes.",
+  applicationName: "ARC Report",
+  robots: "index, follow",
+  keywords: [
+    "AI agents",
+    "e-commerce",
+    "robots.txt",
+    "agent access",
+    "structured data",
+    "ARC Report",
+    "commerce intelligence",
+    "AI readiness",
+  ],
+  openGraph: {
+    type: "website",
+    url: "https://arcreport.ai",
+    title: "ARC Report — Agent Access Intelligence for E-Commerce",
+    description:
+      "Public intelligence layer for how commerce sites are preparing for AI agents. Daily-scanned agent access signals for 1,000+ e-commerce brands: robots.txt policies, platform detection, structured data, and policy changes.",
+    siteName: "ARC Report",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ARC Report — Agent Access Intelligence for E-Commerce",
+    description:
+      "Public intelligence layer for how commerce sites are preparing for AI agents. Daily-scanned agent access signals for 1,000+ e-commerce brands: robots.txt policies, platform detection, structured data, and policy changes.",
+  },
 };
 
 export default function RootLayout({
