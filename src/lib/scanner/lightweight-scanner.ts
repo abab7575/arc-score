@@ -63,7 +63,7 @@ export interface LightweightScanResult {
 
 const AI_USER_AGENTS = [
   "GPTBot", "ChatGPT-User", "ClaudeBot", "Claude-Web",
-  "PerplexityBot", "Google-Extended", "CCBot", "Amazonbot",
+  "PerplexityBot", "Google-Extended", "CCBot", "Amazonbot", "Bingbot",
 ];
 
 const USER_AGENT_STRINGS: { ua: string; label: string }[] = [

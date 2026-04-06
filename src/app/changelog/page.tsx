@@ -37,13 +37,15 @@ const FIELD_INFO: Record<string, { label: string; tooltip: string }> = {
   platform: { label: "Platform", tooltip: "The e-commerce platform powering the site (Shopify, Magento, etc)." },
   cdn: { label: "CDN", tooltip: "Content Delivery Network — the infrastructure serving the site's content globally." },
   waf: { label: "WAF", tooltip: "Web Application Firewall — security layer that can block AI agents even if robots.txt allows them." },
-  blocked_agent_count: { label: "Blocked Agents", tooltip: "The number of AI shopping agents (out of 8) that are blocked from accessing this site." },
+  blocked_agent_count: { label: "Blocked Agents", tooltip: "The number of AI shopping agents (out of 9) that are blocked from accessing this site." },
   json_ld: { label: "JSON-LD", tooltip: "Structured data markup that helps AI agents understand products, prices, and availability on the page." },
   schema_product: { label: "Schema Product", tooltip: "Schema.org Product markup — the standard way to describe products so machines can read them." },
   open_graph: { label: "Open Graph", tooltip: "Meta tags used by social platforms and AI agents to understand page content (title, image, description)." },
   product_feed: { label: "Product Feed", tooltip: "A machine-readable file listing all products (Google Shopping, Shopify JSON, etc). Essential for feed-based AI agents." },
   llms_txt: { label: "llms.txt", tooltip: "A file that tells AI language models what the site is about and how to interact with it. A new standard." },
   ucp: { label: "UCP", tooltip: "Universal Commerce Protocol — an emerging standard for AI agents to interact with e-commerce sites programmatically." },
+  sitemap: { label: "Sitemap", tooltip: "Whether the site has a sitemap.xml that helps crawlers discover pages." },
+  agents_txt: { label: "agents.txt", tooltip: "An agent declaration file that tells AI agents what the site supports." },
 };
 
 const VALUE_TOOLTIPS: Record<string, string> = {
@@ -115,11 +117,38 @@ function ConfidenceBadge({ field }: { field: string }) {
 }
 
 function formatField(field: string): React.ReactNode {
+  // Handle "agent_access_GPTBot" format
   if (field.startsWith("agent_access_")) {
     const agent = field.replace("agent_access_", "");
     return (
       <Tooltip text={`Whether the AI agent "${agent}" can access this site. Determined by robots.txt rules and real HTTP access testing.`}>
         <span>{agent} access</span>
+      </Tooltip>
+    );
+  }
+  // Handle "agent_ua_GPTBot" format (UA HTTP test results)
+  if (field.startsWith("agent_ua_")) {
+    const agent = field.replace("agent_ua_", "");
+    return (
+      <Tooltip text={`HTTP access test result for "${agent}". Whether the site actually serves content to this agent's user-agent string.`}>
+        <span>{agent} HTTP access</span>
+      </Tooltip>
+    );
+  }
+  // Handle "GPTBot robots.txt" format (per-agent robots.txt rules)
+  if (field.endsWith(" robots.txt")) {
+    const agent = field.replace(" robots.txt", "");
+    return (
+      <Tooltip text={`The robots.txt rule for "${agent}". Whether the site's robots.txt explicitly allows or blocks this agent.`}>
+        <span>{agent} robots.txt</span>
+      </Tooltip>
+    );
+  }
+  // Handle "robots.txt presence"
+  if (field === "robots.txt presence") {
+    return (
+      <Tooltip text="Whether the site has a robots.txt file. Sites without one are open to all crawlers by default.">
+        <span>robots.txt presence</span>
       </Tooltip>
     );
   }

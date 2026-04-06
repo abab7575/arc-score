@@ -319,7 +319,7 @@ export function insertLightweightScan(brandId: number, result: LightweightScanIn
     agentStatus[agent] = "blocked";
   }
   // Agents not mentioned get "no_rule"
-  const allAgents = ["GPTBot", "ChatGPT-User", "ClaudeBot", "Claude-Web", "PerplexityBot", "Google-Extended", "CCBot", "Amazonbot"];
+  const allAgents = ["GPTBot", "ChatGPT-User", "ClaudeBot", "Claude-Web", "PerplexityBot", "Google-Extended", "CCBot", "Amazonbot", "Bingbot"];
   for (const agent of allAgents) {
     if (!agentStatus[agent]) {
       agentStatus[agent] = "no_rule";
