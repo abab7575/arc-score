@@ -134,6 +134,93 @@ for (const stmt of [
   try { sqlite.exec(stmt); } catch { /* column exists */ }
 }
 
+// Auto-migrate: ensure feed_sources table exists
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS feed_sources (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    url TEXT NOT NULL UNIQUE,
+    category TEXT NOT NULL,
+    source_type TEXT NOT NULL DEFAULT 'rss',
+    active INTEGER NOT NULL DEFAULT 1,
+    last_fetched_at TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+
+// Auto-migrate: ensure news_articles table exists
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS news_articles (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    feed_source_id INTEGER REFERENCES feed_sources(id),
+    title TEXT NOT NULL,
+    url TEXT NOT NULL UNIQUE,
+    description TEXT,
+    published_at TEXT,
+    source_type TEXT NOT NULL DEFAULT 'rss',
+    relevance_score INTEGER NOT NULL DEFAULT 0,
+    relevance_tags TEXT NOT NULL DEFAULT '[]',
+    mentioned_brands TEXT NOT NULL DEFAULT '[]',
+    full_content TEXT,
+    ai_summary TEXT,
+    thumbnail_url TEXT,
+    content_meta TEXT NOT NULL DEFAULT '{}',
+    read INTEGER NOT NULL DEFAULT 0,
+    flagged INTEGER NOT NULL DEFAULT 0,
+    archived INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+
+// Auto-migrate: ensure brand_discoveries table exists
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS brand_discoveries (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    url TEXT,
+    category TEXT,
+    discovery_source TEXT NOT NULL DEFAULT 'news_mention',
+    source_article_id INTEGER REFERENCES news_articles(id),
+    reason TEXT,
+    mention_count INTEGER NOT NULL DEFAULT 1,
+    status TEXT NOT NULL DEFAULT 'pending',
+    notes TEXT,
+    reviewed_at TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+
+// Auto-migrate: ensure suggested_brands table exists
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS suggested_brands (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    url TEXT,
+    source_article_id INTEGER REFERENCES news_articles(id),
+    mention_count INTEGER NOT NULL DEFAULT 1,
+    status TEXT NOT NULL DEFAULT 'pending',
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+
+// Auto-migrate: add missing columns to feed_sources
+for (const stmt of [
+  `ALTER TABLE feed_sources ADD COLUMN source_type TEXT NOT NULL DEFAULT 'rss'`,
+]) {
+  try { sqlite.exec(stmt); } catch { /* column exists */ }
+}
+
+// Auto-migrate: add missing columns to news_articles
+for (const stmt of [
+  `ALTER TABLE news_articles ADD COLUMN source_type TEXT NOT NULL DEFAULT 'rss'`,
+  `ALTER TABLE news_articles ADD COLUMN full_content TEXT`,
+  `ALTER TABLE news_articles ADD COLUMN ai_summary TEXT`,
+  `ALTER TABLE news_articles ADD COLUMN thumbnail_url TEXT`,
+  `ALTER TABLE news_articles ADD COLUMN content_meta TEXT NOT NULL DEFAULT '{}'`,
+]) {
+  try { sqlite.exec(stmt); } catch { /* column exists */ }
+}
+
 // Auto-migrate: add heartbeat column so dead scan processes can be detected
 try {
   sqlite.exec(`ALTER TABLE scan_runs ADD COLUMN last_heartbeat_at TEXT`);
