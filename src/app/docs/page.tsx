@@ -68,8 +68,8 @@ export default function DocsPage() {
           <p className="text-base text-muted-foreground">
             JSON endpoints for agent access signals across{" "}
             <span className="font-mono text-foreground">1,000+</span> e-commerce
-            brands. No auth, no API key for read endpoints. Rate-limited at{" "}
-            <span className="font-mono text-foreground">~60 req/min</span>. Use
+            brands. No auth required for public read endpoints. Pro subscribers
+            get higher limits and export access. Use
             it from curl, your scripts, your agents.
           </p>
         </div>
@@ -119,7 +119,7 @@ export default function DocsPage() {
         <Endpoint
           method="GET"
           path="/api/changelog"
-          summary="Recent signal changes detected across brands. Free tier returns 5 most-recent entries. Pro subscribers get 500."
+          summary="Recent signal changes detected across brands. Free tier returns recent entries. Pro subscribers get full 90-day history."
           curl={`curl ${BASE}/api/changelog`}
           response={`{
   "isPro": false,
@@ -193,15 +193,43 @@ export default function DocsPage() {
 
         <section className="mt-10 pt-8 border-t border-gray-200">
           <h2 className="text-sm font-bold uppercase tracking-wider text-foreground mb-3">
-            Want more?
+            Pro Endpoints
           </h2>
           <p className="text-sm text-muted-foreground mb-4">
-            Historical data, exports, higher rate limits, and programmatic
-            access are Pro features. Email{" "}
+            These require authentication (session cookie from login).
+          </p>
+          <div className="space-y-4 text-sm">
+            <div className="border border-gray-200 bg-white p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xs font-mono font-bold text-[#059669] bg-emerald-50 px-2 py-0.5">GET</span>
+                <code className="font-mono text-foreground">/api/export?type=matrix&format=csv</code>
+              </div>
+              <p className="text-muted-foreground">Export the full brand matrix or changelog as CSV or JSON. Params: <code className="font-mono">type</code> (matrix, changelog), <code className="font-mono">format</code> (csv, json).</p>
+            </div>
+            <div className="border border-gray-200 bg-white p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xs font-mono font-bold text-[#059669] bg-emerald-50 px-2 py-0.5">GET</span>
+                <span className="text-xs font-mono font-bold text-[#0259DD] bg-blue-50 px-2 py-0.5">POST</span>
+                <span className="text-xs font-mono font-bold text-[#DC2626] bg-red-50 px-2 py-0.5">DELETE</span>
+                <code className="font-mono text-foreground">/api/watchlist</code>
+              </div>
+              <p className="text-muted-foreground">Manage your brand watchlist. GET returns watched brands, POST adds a brand, DELETE removes one. Body: <code className="font-mono">{`{ brandId }`}</code>.</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-10 pt-8 border-t border-gray-200">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-foreground mb-3">
+            Need more?
+          </h2>
+          <p className="text-sm text-muted-foreground mb-4">
+            Pro ($149/mo) includes full history exports, daily alerts, and higher API limits.
+            Agency ($299/mo) adds Slack/webhook alerts and team seats.{" "}
+            <a href="/pricing" className="text-[#0259DD] hover:underline">See pricing</a> or email{" "}
             <a href="mailto:hello@arcreport.ai" className="text-[#0259DD] hover:underline">
               hello@arcreport.ai
             </a>{" "}
-            for API keys or custom integrations.
+            for custom integrations.
           </p>
         </section>
       </main>
