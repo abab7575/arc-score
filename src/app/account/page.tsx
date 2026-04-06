@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import {
@@ -42,6 +42,8 @@ interface BrandOption {
 
 export default function AccountPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isWelcome = searchParams.get("welcome") === "1";
   const [account, setAccount] = useState<AccountData | null>(null);
   const [brands, setBrands] = useState<BrandOption[]>([]);
   const [loading, setLoading] = useState(true);
@@ -140,6 +142,28 @@ export default function AccountPage() {
       <Navbar />
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+        {/* Welcome banner for new subscribers */}
+        {isWelcome && account.customer.plan !== "free" && (
+          <div className="bg-[#0259DD] text-white rounded-xl p-6 mb-6">
+            <h2 className="text-lg font-black mb-2">Welcome to {account.customer.planName}.</h2>
+            <p className="text-sm text-white/80 mb-4">Your account is active. Here&apos;s how to get started:</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <a href="/account/watchlist" className="bg-white/10 rounded-lg p-3 hover:bg-white/20 transition-colors">
+                <div className="text-xs font-bold text-white/60 uppercase tracking-wider mb-1">Step 1</div>
+                <div className="text-sm font-bold">Set up your watchlist</div>
+              </a>
+              <a href="/" className="bg-white/10 rounded-lg p-3 hover:bg-white/20 transition-colors">
+                <div className="text-xs font-bold text-white/60 uppercase tracking-wider mb-1">Step 2</div>
+                <div className="text-sm font-bold">Browse brand readouts</div>
+              </a>
+              <a href="/leaderboard" className="bg-white/10 rounded-lg p-3 hover:bg-white/20 transition-colors">
+                <div className="text-xs font-bold text-white/60 uppercase tracking-wider mb-1">Step 3</div>
+                <div className="text-sm font-bold">Check the leaderboard</div>
+              </a>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
