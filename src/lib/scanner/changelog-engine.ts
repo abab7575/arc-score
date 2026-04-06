@@ -21,6 +21,26 @@ import {
   confirmAndDeletePendingChange,
   clearStalePendingChanges,
 } from "@/lib/db/queries";
+import { FLAGSHIP_SLUGS } from "./drift-detector";
+import { db, schema } from "@/lib/db";
+import { sql } from "drizzle-orm";
+
+// Resolve flagship brand IDs once (lazy, cached)
+let _flagshipBrandIds: Set<number> | null = null;
+function getFlagshipBrandIds(): Set<number> {
+  if (_flagshipBrandIds) return _flagshipBrandIds;
+  try {
+    const rows = db
+      .select({ id: schema.brands.id })
+      .from(schema.brands)
+      .where(sql`slug IN (${sql.join(FLAGSHIP_SLUGS.map(s => sql`${s}`), sql`, `)})`)
+      .all();
+    _flagshipBrandIds = new Set(rows.map(r => r.id));
+  } catch {
+    _flagshipBrandIds = new Set();
+  }
+  return _flagshipBrandIds;
+}
 
 // ── Types ────────────────────────────────────────────────────────────
 
@@ -97,8 +117,8 @@ function processRobotsTxtChanges(
   let count = 0;
 
   // Parse the result JSON to get robots.txt blocked/allowed lists
-  let currentRobots: { blockedAgents: string[]; allowedAgents: string[] };
-  let previousRobots: { blockedAgents: string[]; allowedAgents: string[] };
+  let currentRobots: { status?: string; blockedAgents: string[]; allowedAgents: string[] };
+  let previousRobots: { status?: string; blockedAgents: string[]; allowedAgents: string[] };
 
   try {
     const currentResult = JSON.parse(current.resultJson);
@@ -110,9 +130,17 @@ function processRobotsTxtChanges(
     return 0;
   }
 
+  // If the current scan's robots.txt was inconclusive (transient failure),
+  // skip all robots.txt comparisons — data was carried forward, not observed fresh
+  if (currentRobots.status === "inconclusive") {
+    return 0;
+  }
+
   // Build per-agent robots.txt status: blocked, allowed, or no_rule
   const currentRobotsStatus = buildRobotsStatus(currentRobots);
   const previousRobotsStatus = buildRobotsStatus(previousRobots);
+
+  const isFlagship = getFlagshipBrandIds().has(brandId);
 
   for (const agent of ROBOTS_TXT_AGENT_FIELDS) {
     const currentStatus = currentRobotsStatus[agent] ?? "no_rule";
@@ -120,24 +148,17 @@ function processRobotsTxtChanges(
 
     if (currentStatus !== previousStatus) {
       const field = `${agent} robots.txt`;
-      insertChangelogEntry(brandId, field, previousStatus, currentStatus);
 
-      // Clean up any pending change for this field since we're publishing immediately
-      clearStalePendingChanges(brandId, field);
-
-      count++;
+      if (isFlagship) {
+        // Flagship brands: route through Tier 2 confirmation to prevent false alerts
+        count += handleConfirmationField(brandId, field, previousStatus, currentStatus);
+      } else {
+        // Non-flagship: immediate publication (Tier 1)
+        insertChangelogEntry(brandId, field, previousStatus, currentStatus);
+        clearStalePendingChanges(brandId, field);
+        count++;
+      }
     }
-  }
-
-  // Also track robots.txt found/not-found as immediate
-  if (current.robotsTxtFound !== previous.robotsTxtFound) {
-    insertChangelogEntry(
-      brandId,
-      "robots.txt presence",
-      String(previous.robotsTxtFound),
-      String(current.robotsTxtFound),
-    );
-    count++;
   }
 
   return count;
@@ -234,6 +255,15 @@ function processScalarChanges(
   let count = 0;
 
   const comparisons: Array<{ field: string; oldVal: string | null; newVal: string | null }> = [];
+
+  // robots.txt presence is Tier 2: must appear in 2 consecutive scans to publish
+  if (String(current.robotsTxtFound) !== String(previous.robotsTxtFound)) {
+    comparisons.push({
+      field: "robots.txt presence",
+      oldVal: String(previous.robotsTxtFound),
+      newVal: String(current.robotsTxtFound),
+    });
+  }
 
   if (String(current.blockedAgentCount) !== String(previous.blockedAgentCount)) {
     comparisons.push({
@@ -338,6 +368,7 @@ export function cleanupRevertedPendingChanges(
   // For each confirmation-requiring field, if current === previous,
   // clear any pending change (the value reverted before confirmation)
   const fieldChecks: Array<{ field: string; same: boolean }> = [
+    { field: "robots.txt presence", same: String(currentScan.robotsTxtFound) === String(previousScan.robotsTxtFound) },
     { field: "blocked_agent_count", same: String(currentScan.blockedAgentCount) === String(previousScan.blockedAgentCount) },
     { field: "cdn", same: currentScan.cdn === previousScan.cdn },
     { field: "waf", same: currentScan.waf === previousScan.waf },

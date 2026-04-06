@@ -4,7 +4,7 @@ import type { ScanReport } from "@/types/report";
 
 /** Minimal type for insertLightweightScan — avoids importing scanner module into DB layer */
 interface LightweightScanInput {
-  robotsTxt: { found: boolean; blockedAgents: string[]; allowedAgents: string[] };
+  robotsTxt: { status?: string; found: boolean; blockedAgents: string[]; allowedAgents: string[] };
   userAgentTests: Array<{ userAgent: string; verdict: string }>;
   jsonLd: { found: boolean };
   schemaOrg: { found: boolean };
@@ -336,13 +336,19 @@ export function insertLightweightScan(brandId: number, result: LightweightScanIn
         // No robots.txt block but HTTP returns 403 — this is a WAF/security restriction, not policy
         agentStatus[test.userAgent] = "restricted";
       }
+    } else if (test.verdict === "degraded") {
+      // Content stripped (< 25% of Chrome baseline) — likely a WAF challenge page
+      // If robots.txt has no explicit block, mark as restricted
+      if (agentStatus[test.userAgent] !== "blocked") {
+        agentStatus[test.userAgent] = "restricted";
+      }
     } else if (test.verdict === "unknown") {
       // Timeout or error — mark as inconclusive, don't change existing status
       if (agentStatus[test.userAgent] === "no_rule") {
         agentStatus[test.userAgent] = "inconclusive";
       }
     }
-    // If verdict is "allowed" or "degraded", keep the robots.txt-derived status
+    // If verdict is "allowed", keep the robots.txt-derived status
   }
 
   const blockedCount = Object.values(agentStatus).filter(v => v === "blocked").length;

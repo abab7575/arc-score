@@ -37,7 +37,7 @@ export interface DriftReport {
 
 // ── Flagship Brands ──────────────────────────────────────────────────
 
-const FLAGSHIP_SLUGS: string[] = [
+export const FLAGSHIP_SLUGS: string[] = [
   "nike", "amazon", "apple", "walmart", "target",
   "costco", "sephora", "nordstrom", "macys", "best-buy",
   "home-depot", "lowes", "wayfair", "zappos", "gap",

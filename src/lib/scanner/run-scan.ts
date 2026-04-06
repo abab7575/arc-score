@@ -6,7 +6,7 @@
  */
 
 import { db, schema } from "@/lib/db";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, gte } from "drizzle-orm";
 import { runLightweightScan } from "./lightweight-scanner";
 import {
   insertLightweightScan,
@@ -157,6 +157,28 @@ export async function runScanOnce(options: { concurrency?: number } = {}): Promi
         ),
       ]);
 
+      // If robots.txt was inconclusive (transient failure), carry forward
+      // the previous scan's robots.txt state instead of flipping to "not found"
+      if (result.robotsTxt.status === "inconclusive") {
+        const prevScan = getLatestLightweightScan(brand.id);
+        if (prevScan) {
+          try {
+            const prevResult = JSON.parse(prevScan.resultJson);
+            const prevRobots = prevResult.robotsTxt;
+            if (prevRobots) {
+              result.robotsTxt = {
+                ...prevRobots,
+                // Preserve the inconclusive status so changelog engine knows
+                // this was carried forward, not a fresh observation
+                status: "inconclusive",
+              };
+            }
+          } catch {
+            // Can't parse previous — proceed with inconclusive defaults
+          }
+        }
+      }
+
       insertLightweightScan(brand.id, result);
 
       try {
@@ -211,12 +233,58 @@ export async function runScanOnce(options: { concurrency?: number } = {}): Promi
   // Stop heartbeat once scanning is done
   clearInterval(heartbeatInterval);
 
-  // 6. Drift checks
+  // 6. Circuit breaker: if >5% of brands changed the same field, remove those entries
+  const CIRCUIT_BREAKER_THRESHOLD = 0.05;
+  let circuitBreakerTripped = false;
+  try {
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayIso = todayStart.toISOString();
+
+    const fieldCounts = db
+      .select({
+        field: schema.changelogEntries.field,
+        count: sql<number>`count(DISTINCT brand_id)`,
+      })
+      .from(schema.changelogEntries)
+      .where(gte(schema.changelogEntries.detectedAt, todayIso))
+      .groupBy(schema.changelogEntries.field)
+      .all();
+
+    for (const { field, count } of fieldCounts) {
+      if (brands.length > 0 && count / brands.length > CIRCUIT_BREAKER_THRESHOLD) {
+        circuitBreakerTripped = true;
+        // Delete the mass-change entries for this field from today
+        db.delete(schema.changelogEntries)
+          .where(
+            and(
+              eq(schema.changelogEntries.field, field),
+              gte(schema.changelogEntries.detectedAt, todayIso),
+            ),
+          )
+          .run();
+        console.warn(
+          `[run-scan] CIRCUIT BREAKER: "${field}" changed for ${count}/${brands.length} brands (${(count / brands.length * 100).toFixed(1)}%) — removed all entries for this field today`,
+        );
+      }
+    }
+  } catch (e) {
+    console.error(`[run-scan] circuit breaker check failed:`, e instanceof Error ? e.message : e);
+  }
+
+  // 7. Drift checks
   let driftReport: DriftReport | null = null;
   let driftAlerts = 0;
   try {
     driftReport = runDriftChecks(run.id);
     driftAlerts = driftReport.alerts.length;
+    if (circuitBreakerTripped) {
+      driftReport.alerts.push({
+        type: "volume_anomaly",
+        severity: "critical",
+        message: "Circuit breaker tripped — mass-change changelog entries removed",
+      });
+    }
     console.log(
       `[run-scan] Drift: ${driftAlerts} alerts (${driftReport.alerts.filter((a) => a.severity === "critical").length} critical)`,
     );
@@ -224,7 +292,7 @@ export async function runScanOnce(options: { concurrency?: number } = {}): Promi
     console.error(`[run-scan] drift check failed:`, e instanceof Error ? e.message : e);
   }
 
-  // 7. Mark run complete
+  // 8. Mark run complete
   const durationSec = Math.round((Date.now() - startTime) / 1000);
   db.update(schema.scanRuns)
     .set({

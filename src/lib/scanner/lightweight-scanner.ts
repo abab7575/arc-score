@@ -7,6 +7,7 @@
  */
 
 import { fetchWithRetry } from "./fetch-with-retry";
+import robotsParser from "robots-parser";
 import type { UserAgentTestResult } from "./data-agent";
 
 // ── Types ──────────────────────────────────────────────────────────
@@ -14,7 +15,8 @@ import type { UserAgentTestResult } from "./data-agent";
 export interface LightweightScanResult {
   // Robots.txt
   robotsTxt: {
-    found: boolean;
+    status: "found" | "not_found" | "inconclusive";
+    found: boolean; // true only when status === "found" (backwards compat)
     content?: string;
     blockedAgents: string[];
     allowedAgents: string[];
@@ -188,49 +190,64 @@ async function fetchHomepage(baseUrl: string): Promise<{
 // ── Robots.txt ─────────────────────────────────────────────────────
 
 async function checkRobotsTxt(baseUrl: string): Promise<LightweightScanResult["robotsTxt"]> {
+  const INCONCLUSIVE: LightweightScanResult["robotsTxt"] = {
+    status: "inconclusive", found: false, blockedAgents: [], allowedAgents: [],
+  };
+  const NOT_FOUND: LightweightScanResult["robotsTxt"] = {
+    status: "not_found", found: false, blockedAgents: [], allowedAgents: [],
+  };
+
+  let res: Response | null;
   try {
-    const res = await fetchWithRetry(
+    res = await fetchWithRetry(
       `${baseUrl}/robots.txt`,
       {
         headers: { "User-Agent": "Mozilla/5.0 (compatible; ARCReport-Scanner/1.0; +https://arcreport.ai)" },
         redirect: "follow",
       },
-      { timeoutMs: 10000, maxAttempts: 2, label: `[Lightweight] robots.txt ${baseUrl}` }
+      { timeoutMs: 10000, maxAttempts: 3, label: `[Lightweight] robots.txt ${baseUrl}` }
     );
-
-    if (!res || !res.ok) return { found: false, blockedAgents: [], allowedAgents: [] };
-
-    const contentType = res.headers.get("content-type") || "";
-    if (contentType.includes("text/html")) {
-      return { found: false, blockedAgents: [], allowedAgents: [] };
-    }
-
-    const content = await res.text();
-    const blockedAgents: string[] = [];
-    const allowedAgents: string[] = [];
-
-    for (const agent of AI_USER_AGENTS) {
-      const agentSection = new RegExp(
-        `User-agent:\\s*${agent}[\\s\\S]*?(?=User-agent:|$)`, "i"
-      );
-      const sectionMatch = content.match(agentSection);
-
-      if (sectionMatch) {
-        const section = sectionMatch[0];
-        if (/Disallow:\s*\/\s*$/m.test(section)) {
-          blockedAgents.push(agent);
-        } else {
-          allowedAgents.push(agent);
-        }
-      } else {
-        allowedAgents.push(agent);
-      }
-    }
-
-    return { found: true, content, blockedAgents, allowedAgents };
   } catch {
-    return { found: false, blockedAgents: [], allowedAgents: [] };
+    // Network error / timeout after all retries → inconclusive
+    return INCONCLUSIVE;
   }
+
+  // fetchWithRetry returns null when all attempts fail (timeout/network)
+  if (!res) return INCONCLUSIVE;
+
+  // Distinguish definitive 404 from transient failures
+  if (res.status === 404) return NOT_FOUND;
+  if (res.status === 403 || res.status === 429 || res.status >= 500) return INCONCLUSIVE;
+  if (!res.ok) return INCONCLUSIVE;
+
+  // Got a 200 — check content type
+  const contentType = res.headers.get("content-type") || "";
+  if (contentType.includes("text/html")) {
+    // Soft-404: site serves an HTML page for /robots.txt → treat as not found
+    return NOT_FOUND;
+  }
+
+  const content = await res.text();
+  if (!content.trim()) return NOT_FOUND;
+
+  // Parse with robots-parser (spec-compliant: wildcard fallback, Allow/Disallow precedence)
+  const robotsUrl = `${baseUrl}/robots.txt`;
+  const robot = robotsParser(robotsUrl, content);
+
+  const blockedAgents: string[] = [];
+  const allowedAgents: string[] = [];
+
+  for (const agent of AI_USER_AGENTS) {
+    // robots-parser checks agent-specific section first, falls back to User-agent: *
+    const testUrl = `${baseUrl}/`;
+    if (robot.isAllowed(testUrl, agent) === false) {
+      blockedAgents.push(agent);
+    } else {
+      allowedAgents.push(agent);
+    }
+  }
+
+  return { status: "found", found: true, content, blockedAgents, allowedAgents };
 }
 
 // ── Simple File Checks (UCP) ───────────────────────────────────────
@@ -615,6 +632,15 @@ async function testUserAgentAccess(
   const results = await Promise.all(
     tests.map(async ({ ua, label, url, pageType, baseline }) => {
       const result = await fetchWithUserAgent(url, ua, baseline);
+      // Retry once on blocked/unknown to reduce false positives from transient WAF responses
+      if (result.verdict === "blocked" || result.verdict === "unknown") {
+        await new Promise(r => setTimeout(r, 2000));
+        const retry = await fetchWithUserAgent(url, ua, baseline);
+        // Only use retry result if it's more permissive (allowed/degraded)
+        if (retry.verdict === "allowed" || retry.verdict === "degraded") {
+          return { userAgent: label, pageType, ...retry } as UserAgentTestResult;
+        }
+      }
       return { userAgent: label, pageType, ...result } as UserAgentTestResult;
     })
   );
