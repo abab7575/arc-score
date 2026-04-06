@@ -193,22 +193,22 @@ export function welcomeEmail(data: WelcomeEmailData): { subject: string; html: s
 
     ${cardBlock(`
       <div style="font-size:14px; font-weight:900; color:#FF6648; font-family:monospace; margin-bottom:8px;">/ 01</div>
-      <div style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px;">Browse the index</div>
+      <a href="https://arcreport.ai" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">Browse the index &rarr;</a>
       <div style="font-size:13px; color:#475569; line-height:1.6;">See which brands are open to AI agents and which are blocking them. Filter by category, platform, or access status.</div>
     `)}
 
     ${cardBlock(`
       <div style="font-size:14px; font-weight:900; color:#FF6648; font-family:monospace; margin-bottom:8px;">/ 02</div>
-      <div style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px;">Check the leaderboard</div>
+      <a href="https://arcreport.ai/leaderboard" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">Check the leaderboard &rarr;</a>
       <div style="font-size:13px; color:#475569; line-height:1.6;">The Top 10 AI-Ready and AI-Resistant brands, ranked by a composite of agent openness and machine-readable coverage.</div>
     `)}
 
     ${cardBlock(`
       <div style="font-size:14px; font-weight:900; color:#FF6648; font-family:monospace; margin-bottom:8px;">/ 03</div>
-      <div style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px;">${isPaid ? "Set up your watchlist" : "Find a brand you care about"}</div>
+      <a href="${isPaid ? "https://arcreport.ai/account/watchlist" : "https://arcreport.ai/landscape"}" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">${isPaid ? "Set up your watchlist" : "Explore the landscape"} &rarr;</a>
       <div style="font-size:13px; color:#475569; line-height:1.6;">${isPaid
         ? "Track up to " + (data.plan === "agency" ? "50" : "10") + " brands and get daily email alerts when their agent access policy changes."
-        : "Every brand page shows real-time agent reach, machine-readable signals, and recent policy changes."
+        : "Understand how AI agents discover, compare, and buy products — and what it means for e-commerce."
       }</div>
     `)}
 
