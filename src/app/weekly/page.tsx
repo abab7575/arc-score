@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Lock } from "lucide-react";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import { EmailCapture } from "@/components/shared/email-capture";
@@ -226,15 +227,21 @@ export default async function WeeklyPage() {
           />
         </div>
 
-        <div className="mt-6 pt-6 border-t border-gray-200 text-xs text-muted-foreground">
-          <p>
-            All changes are observed via daily HTTP scans. Pro subscribers get
-            full historical depth, CSV/JSON exports, and email alerts when
-            specific brands or categories move.{" "}
-            <Link href="/pricing" className="text-[#0259DD] hover:underline font-mono">
-              See pricing →
-            </Link>
+        <div className="mt-8 border-2 border-dashed border-gray-300 bg-gray-50/50 px-6 py-8 text-center">
+          <Lock className="w-5 h-5 text-muted-foreground mx-auto mb-3" />
+          <p className="text-sm font-semibold text-foreground mb-1">
+            Want real-time alerts instead of weekly?
           </p>
+          <p className="text-sm text-muted-foreground mb-4">
+            Pro subscribers get daily change alerts for specific brands, full
+            history exports, and category filtering.
+          </p>
+          <Link
+            href="/pricing"
+            className="inline-block text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-5 py-2 transition-colors"
+          >
+            Upgrade to Pro — $149/mo
+          </Link>
         </div>
       </main>
 
