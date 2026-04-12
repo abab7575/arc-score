@@ -8,6 +8,12 @@ import {
   upsertSubscription,
   deleteSubscription,
 } from "@/lib/customer-auth";
+import { sendEmail } from "@/lib/email/send";
+import {
+  paymentFailedEmail,
+  subscriptionCancelledEmail,
+  subscriptionReactivatedEmail,
+} from "@/lib/email/templates";
 import type Stripe from "stripe";
 
 export async function POST(request: NextRequest) {
@@ -118,6 +124,7 @@ async function handleSubscriptionUpdated(sub: Stripe.Subscription) {
   const planId = plan?.id ?? "pro";
 
   const isActive = ["active", "trialing"].includes(sub.status);
+  const wasFree = customer.plan === "free";
   updateCustomerPlan(customer.id, isActive ? planId : "free");
 
   upsertSubscription({
@@ -129,6 +136,11 @@ async function handleSubscriptionUpdated(sub: Stripe.Subscription) {
     currentPeriodEnd: getSubscriptionPeriodEnd(sub),
     cancelAtPeriodEnd: sub.cancel_at_period_end,
   });
+
+  if (isActive && wasFree) {
+    const emailData = subscriptionReactivatedEmail({ name: customer.name });
+    await sendEmail({ to: customer.email, ...emailData });
+  }
 }
 
 async function handleSubscriptionDeleted(sub: Stripe.Subscription) {
@@ -138,6 +150,9 @@ async function handleSubscriptionDeleted(sub: Stripe.Subscription) {
 
   updateCustomerPlan(customer.id, "free");
   deleteSubscription(sub.id);
+
+  const emailData = subscriptionCancelledEmail({ name: customer.name });
+  await sendEmail({ to: customer.email, ...emailData });
 }
 
 async function handlePaymentFailed(invoice: Stripe.Invoice) {
@@ -148,4 +163,10 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
   if (!customer) return;
 
   console.warn(`Payment failed for customer ${customer.email}`);
+
+  const portalBase = process.env.BASE_URL || "https://www.arcreport.ai";
+  const retryUrl = `${portalBase}/account`;
+
+  const emailData = paymentFailedEmail({ name: customer.name, retryUrl });
+  await sendEmail({ to: customer.email, ...emailData });
 }

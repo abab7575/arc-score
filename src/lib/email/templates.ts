@@ -466,3 +466,88 @@ export function passwordResetEmail(data: PasswordResetData): { subject: string; 
     text: `Reset your ARC Report password.\n\nClick this link to set a new password (expires in 1 hour):\n${data.resetUrl}\n\nIf you didn't request this, ignore this email.`,
   };
 }
+
+// ── Stripe lifecycle emails ────────────────────────────────────────
+
+export interface PaymentFailedData {
+  name: string | null;
+  retryUrl: string;
+}
+
+export function paymentFailedEmail(data: PaymentFailedData): { subject: string; html: string; text: string } {
+  const greeting = data.name ? `${data.name},` : "Hey,";
+
+  const content = `
+    ${sectionLabel("Billing")}
+    ${heading("Payment issue on your subscription")}
+    ${paragraph(`${greeting} Stripe couldn't charge your card for ARC Report Pro. Your account will drop to Free if the retry doesn't go through.`)}
+
+    ${ctaButton("Update card", data.retryUrl, "#FF6648")}
+
+    ${cardBlock(`
+      <div style="font-size:13px; color:#475569; line-height:1.6;">
+        Most common causes: expired card, hit daily limit, bank declined the merchant. Update your card and Stripe will retry automatically.
+      </div>
+    `)}
+
+    ${dividerLine()}
+    ${paragraph('<span style="font-size:13px; color:#94A3B8;">Questions? Reply to this email.</span>')}
+  `;
+
+  return {
+    subject: "Payment issue on your ARC Report subscription",
+    html: layout(content, "Stripe couldn't charge your card — update it to keep Pro."),
+    text: `${greeting}\n\nStripe couldn't charge your card for ARC Report Pro. Your account will drop to Free if the retry doesn't go through.\n\nUpdate card: ${data.retryUrl}`,
+  };
+}
+
+export interface SubscriptionCancelledData {
+  name: string | null;
+}
+
+export function subscriptionCancelledEmail(data: SubscriptionCancelledData): { subject: string; html: string; text: string } {
+  const greeting = data.name ? `${data.name},` : "Hey,";
+  const reactivateUrl = "https://www.arcreport.ai/pricing";
+
+  const content = `
+    ${sectionLabel("Subscription")}
+    ${heading("Your Pro subscription has ended")}
+    ${paragraph(`${greeting} your ARC Report Pro subscription is now cancelled. Your account is back on Free — you can still browse the index and see daily changes, but watchlists, alerts, and exports are off.`)}
+
+    ${ctaButton("Reactivate Pro", reactivateUrl)}
+
+    ${dividerLine()}
+    ${paragraph('<span style="font-size:13px; color:#94A3B8;">Reply to this email if something was broken on our end.</span>')}
+  `;
+
+  return {
+    subject: "Your ARC Report Pro subscription has ended",
+    html: layout(content, "Pro is off. Free access is still live."),
+    text: `${greeting}\n\nYour ARC Report Pro subscription is now cancelled. Your account is back on Free.\n\nReactivate: ${reactivateUrl}`,
+  };
+}
+
+export interface SubscriptionReactivatedData {
+  name: string | null;
+}
+
+export function subscriptionReactivatedEmail(data: SubscriptionReactivatedData): { subject: string; html: string; text: string } {
+  const greeting = data.name ? `${data.name},` : "Hey,";
+
+  const content = `
+    ${sectionLabel("Welcome back")}
+    ${heading("Pro is active again")}
+    ${paragraph(`${greeting} your ARC Report Pro subscription is reactivated. Watchlists, alerts, and exports are back on.`)}
+
+    ${ctaButton("Open your watchlist", "https://www.arcreport.ai/account/watchlist")}
+
+    ${dividerLine()}
+    ${paragraph('<span style="font-size:13px; color:#94A3B8;">Reply to this email anytime.</span>')}
+  `;
+
+  return {
+    subject: "Welcome back to ARC Report Pro",
+    html: layout(content, "Your Pro subscription is active again."),
+    text: `${greeting}\n\nYour ARC Report Pro subscription is reactivated. Watchlists, alerts, and exports are back on.\n\nOpen your watchlist: https://www.arcreport.ai/account/watchlist`,
+  };
+}
