@@ -93,7 +93,7 @@ export function categoryLeaderboardTemplate(
         `| ${b.rank} | ${b.name} | ${b.openAgents} | ${b.signals}/7 | ${b.tier} |`
     )
     .join("\n");
-  return `## ${categoryName} \u2014 AI Readiness Leaderboard\n\n| Rank | Brand | Open Agents | Signals | Tier |\n|------|-------|-------------|---------|------|\n${rows}\n\n*${totalBrands} brands tracked. Data updated daily.*\n\n[View full rankings \u2192](https://arcreport.ai)`;
+  return `## ${categoryName} \u2014 AI Readiness Leaderboard\n\n| Rank | Brand | Open Agents | Signals | Tier |\n|------|-------|-------------|---------|------|\n${rows}\n\n*${totalBrands} brands tracked. Data updated daily.*\n\n[View full rankings \u2192](https://www.arcreport.ai)`;
 }
 
 // ── Score Spotlight ──────────────────────────────────────────────────
@@ -150,7 +150,7 @@ export function scoreSpotlightTemplate(
   const agentRows = agentAccess
     .map((a) => `| ${a.agent} | ${a.status} |`)
     .join("\n");
-  return `## ARC Report Spotlight: ${brandName}\n\n**Tier: ${tier}** | ${openAgents} agents open, ${blockedAgents} blocked | Ranked ${ordinalSuffix(rank)} of ${totalBrands}\n\n### Signals (${signalsPresentCount}/${signalsTotalCount})\n\n| Signal | Present |\n|--------|---------|\n${signalRows}\n\n### Agent Access\n\n| Agent | Status |\n|-------|--------|\n${agentRows}\n\n[View full report \u2192](https://arcreport.ai/brand/${data.brandSlug})`;
+  return `## ARC Report Spotlight: ${brandName}\n\n**Tier: ${tier}** | ${openAgents} agents open, ${blockedAgents} blocked | Ranked ${ordinalSuffix(rank)} of ${totalBrands}\n\n### Signals (${signalsPresentCount}/${signalsTotalCount})\n\n| Signal | Present |\n|--------|---------|\n${signalRows}\n\n### Agent Access\n\n| Agent | Status |\n|-------|--------|\n${agentRows}\n\n[View full report \u2192](https://www.arcreport.ai/brand/${data.brandSlug})`;
 }
 
 // ── Biggest Movers ──────────────────────────────────────────────────
@@ -311,7 +311,7 @@ export function weeklyRoundupTemplate(
           .join("\n")
       : "- *No news highlights this week*";
 
-  return `## ARC Report \u2014 Weekly Roundup\n\n**${totalBrands} brands tracked** | **${totalChanges} changes** across **${brandsMoving} brands** this week\n\n### Top Performers\n\n| Rank | Brand | Open Agents | Tier |\n|------|-------|-------------|------|\n${topRows}\n\n### Most Active\n\n| Brand | Changes |\n|-------|---------|\n${moverRows}\n\n### News Highlights\n\n${newsItems}\n\n---\n\n[Explore the full index \u2192](https://arcreport.ai)`;
+  return `## ARC Report \u2014 Weekly Roundup\n\n**${totalBrands} brands tracked** | **${totalChanges} changes** across **${brandsMoving} brands** this week\n\n### Top Performers\n\n| Rank | Brand | Open Agents | Tier |\n|------|-------|-------------|------|\n${topRows}\n\n### Most Active\n\n| Brand | Changes |\n|-------|---------|\n${moverRows}\n\n### News Highlights\n\n${newsItems}\n\n---\n\n[Explore the full index \u2192](https://www.arcreport.ai)`;
 }
 
 // ── News Reaction ───────────────────────────────────────────────────
@@ -362,5 +362,5 @@ export function newsReactionTemplate(
   const commentBlock = commentary
     ? `\n\n**Our take:** ${commentary}`
     : "";
-  return `## News Reaction\n\n${articleBlocks}${commentBlock}\n\n---\n\n*How does this affect AI agent readiness? [See the data \u2192](https://arcreport.ai)*`;
+  return `## News Reaction\n\n${articleBlocks}${commentBlock}\n\n---\n\n*How does this affect AI agent readiness? [See the data \u2192](https://www.arcreport.ai)*`;
 }

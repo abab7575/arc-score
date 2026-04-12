@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
       expires: Date.now() + 60 * 60 * 1000, // 1 hour
     });
 
-    const baseUrl = process.env.BASE_URL || "https://arcreport.ai";
+    const baseUrl = process.env.BASE_URL || "https://www.arcreport.ai";
     const resetUrl = `${baseUrl}/reset-password?token=${token}`;
 
     await sendEmail({

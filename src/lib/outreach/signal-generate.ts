@@ -291,7 +291,7 @@ export function generateSignalOutreachQueue(options: {
     if (score > maxScore) continue;
 
     const grade = scoreToGrade(score);
-    const reportUrl = `https://arcreport.ai/brand/${scan.brandSlug}`;
+    const reportUrl = `https://www.arcreport.ai/brand/${scan.brandSlug}`;
     const subject = generateSubject(scan.brandName, scan.blockedAgentCount, issues, recentChangeFields);
     const body = generateBody(scan, issues, reportUrl, recentChangeFields);
 
