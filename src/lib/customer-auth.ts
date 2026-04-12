@@ -185,6 +185,51 @@ export function updateCustomerPlan(id: number, plan: string) {
   return db.update(schema.customers).set({ plan }).where(eq(schema.customers.id, id)).run();
 }
 
+const TRIAL_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
+
+export function startCustomerTrial(id: number) {
+  const trialEndsAt = new Date(Date.now() + TRIAL_DURATION_MS).toISOString();
+  return db
+    .update(schema.customers)
+    .set({ plan: "pro", trialEndsAt, trialUsed: true })
+    .where(eq(schema.customers.id, id))
+    .run();
+}
+
+export function clearCustomerTrial(id: number) {
+  return db
+    .update(schema.customers)
+    .set({ trialEndsAt: null })
+    .where(eq(schema.customers.id, id))
+    .run();
+}
+
+/**
+ * If the customer's trial has expired and they do not have an active paid
+ * subscription, downgrade them to free and clear the trial. Returns the
+ * (possibly mutated) customer.
+ */
+export function expireTrialIfNeeded<T extends { id: number; plan: string; trialEndsAt: string | null }>(
+  customer: T,
+): T {
+  if (!customer.trialEndsAt) return customer;
+  const now = Date.now();
+  const end = new Date(customer.trialEndsAt).getTime();
+  if (now < end) return customer;
+
+  const sub = getActiveSubscription(customer.id);
+  if (sub && (sub.status === "active" || sub.status === "trialing")) {
+    return customer;
+  }
+
+  db.update(schema.customers)
+    .set({ plan: "free", trialEndsAt: null })
+    .where(eq(schema.customers.id, customer.id))
+    .run();
+
+  return { ...customer, plan: "free", trialEndsAt: null };
+}
+
 export function updateCustomerStripeId(id: number, stripeCustomerId: string) {
   return db.update(schema.customers).set({ stripeCustomerId }).where(eq(schema.customers.id, id)).run();
 }

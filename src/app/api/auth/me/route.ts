@@ -4,6 +4,7 @@ import {
   getCustomerById,
   getActiveSubscription,
   getClaimedBrands,
+  expireTrialIfNeeded,
   CUSTOMER_COOKIE_NAME,
 } from "@/lib/customer-auth";
 import { PLANS } from "@/lib/stripe";
@@ -19,14 +20,17 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ authenticated: false });
     }
 
-    const customer = getCustomerById(customerId);
-    if (!customer) {
+    const rawCustomer = getCustomerById(customerId);
+    if (!rawCustomer) {
       return NextResponse.json({ authenticated: false });
     }
 
+    const customer = expireTrialIfNeeded(rawCustomer);
     const subscription = getActiveSubscription(customerId);
     const claims = getClaimedBrands(customerId);
     const plan = PLANS[customer.plan as keyof typeof PLANS] ?? PLANS.free;
+    const isTrialing =
+      !!customer.trialEndsAt && new Date(customer.trialEndsAt).getTime() > Date.now();
 
     return NextResponse.json({
       authenticated: true,
@@ -37,7 +41,9 @@ export async function GET(request: NextRequest) {
         plan: customer.plan,
         planName: plan.name,
         isPro: customer.plan !== "free",
-        brandLimit: customer.plan === "agency" ? 50 : customer.plan === "pro" ? 10 : 0,
+        isTrialing,
+        trialEndsAt: customer.trialEndsAt,
+        brandLimit: customer.plan === "pro" ? 10 : 0,
       },
       subscription: subscription
         ? {

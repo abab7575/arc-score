@@ -131,6 +131,8 @@ export const customers = sqliteTable("customers", {
   name: text("name"),
   stripeCustomerId: text("stripe_customer_id").unique(),
   plan: text("plan").notNull().default("free"), // free, pro
+  trialEndsAt: text("trial_ends_at"),
+  trialUsed: integer("trial_used", { mode: "boolean" }).notNull().default(false),
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 
