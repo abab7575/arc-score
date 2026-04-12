@@ -370,7 +370,7 @@ export function onboardingDay2Email(data: OnboardingDay2Data): { subject: string
   const content = `
     ${sectionLabel("Day 2")}
     ${heading("3 things to check on ARC Report today")}
-    ${paragraph(`${greeting} you signed up yesterday — here are three quick ways to get value from your account right now.`)}
+    ${paragraph(`${greeting} it's been a couple of days — here's where to go next.`)}
 
     ${cardBlock(`
       <div style="font-size:14px; font-weight:900; color:#FF6648; font-family:monospace; margin-bottom:8px;">/ 01</div>
