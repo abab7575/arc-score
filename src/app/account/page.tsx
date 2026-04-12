@@ -243,13 +243,30 @@ function AccountContent() {
         {account.customer.plan !== "free" && (
           <a
             href="/account/watchlist"
-            className="flex items-center justify-between bg-white border-2 border-gray-200 rounded-xl p-6 mb-6 hover:border-[#0259DD] transition-colors group"
+            className="flex items-center justify-between bg-white border-2 border-gray-200 rounded-xl p-6 mb-4 hover:border-[#0259DD] transition-colors group"
           >
             <div className="flex items-center gap-3">
               <Shield className="w-5 h-5 text-[#0259DD]" />
               <div>
                 <span className="font-bold text-foreground text-sm">Watchlist</span>
                 <p className="text-xs text-muted-foreground">Track brands and get daily change alerts</p>
+              </div>
+            </div>
+            <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-[#0259DD] transition-colors" />
+          </a>
+        )}
+
+        {/* Export Link */}
+        {account.customer.plan !== "free" && (
+          <a
+            href="/export"
+            className="flex items-center justify-between bg-white border-2 border-gray-200 rounded-xl p-6 mb-6 hover:border-[#0259DD] transition-colors group"
+          >
+            <div className="flex items-center gap-3">
+              <Shield className="w-5 h-5 text-[#0259DD]" />
+              <div>
+                <span className="font-bold text-foreground text-sm">Filtered export</span>
+                <p className="text-xs text-muted-foreground">Filter by platform, CDN, agent access, and export CSV/JSON</p>
               </div>
             </div>
             <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-[#0259DD] transition-colors" />

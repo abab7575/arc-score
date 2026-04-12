@@ -38,7 +38,7 @@ const TIERS = [
       "Watchlists — track up to 10 brands",
       "Daily change alerts via email",
       "Full changes history (90+ days)",
-      "CSV and JSON data export",
+      "Filtered CSV and JSON exports",
       "Claim your brand profile",
     ],
   },

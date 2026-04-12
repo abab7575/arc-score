@@ -1,8 +1,61 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getMatrixData, getLightweightScanHistory, getRecentChangelog } from "@/lib/db/queries";
-import { verifyCustomerSession, CUSTOMER_COOKIE_NAME } from "@/lib/customer-auth";
+import { getMatrixData, getRecentChangelog } from "@/lib/db/queries";
+import {
+  verifyCustomerSession,
+  expireTrialIfNeeded,
+  CUSTOMER_COOKIE_NAME,
+} from "@/lib/customer-auth";
 import { db, schema } from "@/lib/db/index";
-import { eq } from "drizzle-orm";
+import { eq, gte } from "drizzle-orm";
+
+interface FilterParams {
+  platforms: string[];
+  cdns: string[];
+  blockedAgent: string | null;
+  allowedAgent: string | null;
+  changedDays: number | null;
+  requireJsonLd: boolean;
+  requireOpenGraph: boolean;
+  requireProductFeed: boolean;
+  requireLlmsTxt: boolean;
+}
+
+function parseFilters(sp: URLSearchParams): FilterParams {
+  const csv = (k: string): string[] => {
+    const v = sp.get(k);
+    if (!v) return [];
+    return v.split(",").map(s => s.trim()).filter(Boolean);
+  };
+  const num = (k: string): number | null => {
+    const v = sp.get(k);
+    if (!v) return null;
+    const n = parseInt(v, 10);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  };
+  const bool = (k: string): boolean => sp.get(k) === "true";
+
+  return {
+    platforms: csv("platform"),
+    cdns: csv("cdn"),
+    blockedAgent: sp.get("blockedAgent"),
+    allowedAgent: sp.get("allowedAgent"),
+    changedDays: num("changedDays"),
+    requireJsonLd: bool("hasJsonLd"),
+    requireOpenGraph: bool("hasOpenGraph"),
+    requireProductFeed: bool("hasProductFeed"),
+    requireLlmsTxt: bool("hasLlmsTxt"),
+  };
+}
+
+function brandsWithRecentChanges(days: number): Set<number> {
+  const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+  const rows = db
+    .select({ brandId: schema.changelogEntries.brandId })
+    .from(schema.changelogEntries)
+    .where(gte(schema.changelogEntries.detectedAt, cutoff))
+    .all();
+  return new Set(rows.map(r => r.brandId));
+}
 
 export async function GET(request: NextRequest) {
   // Pro-only endpoint
@@ -16,21 +69,62 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Invalid session" }, { status: 401 });
   }
 
-  const customer = db
+  const rawCustomer = db
     .select()
     .from(schema.customers)
     .where(eq(schema.customers.id, customerId))
     .get();
 
-  if (!customer || customer.plan === "free") {
+  if (!rawCustomer) {
+    return NextResponse.json({ error: "Customer not found" }, { status: 404 });
+  }
+
+  const customer = expireTrialIfNeeded(rawCustomer);
+
+  if (customer.plan === "free") {
     return NextResponse.json({ error: "Pro plan required" }, { status: 403 });
   }
 
   const format = request.nextUrl.searchParams.get("format") ?? "json";
   const type = request.nextUrl.searchParams.get("type") ?? "matrix";
+  const filters = parseFilters(request.nextUrl.searchParams);
 
   if (type === "matrix") {
-    const data = getMatrixData();
+    const allData = getMatrixData();
+    const recentChangeSet = filters.changedDays
+      ? brandsWithRecentChanges(filters.changedDays)
+      : null;
+
+    const data = allData.filter(({ brand, scan }) => {
+      if (filters.platforms.length > 0) {
+        if (!scan?.platform || !filters.platforms.includes(scan.platform)) return false;
+      }
+      if (filters.cdns.length > 0) {
+        if (!scan?.cdn || !filters.cdns.includes(scan.cdn)) return false;
+      }
+      if (filters.blockedAgent || filters.allowedAgent) {
+        if (!scan) return false;
+        try {
+          const status = JSON.parse(scan.agentStatusJson) as Record<string, string>;
+          if (filters.blockedAgent) {
+            const s = status[filters.blockedAgent];
+            if (s !== "blocked" && s !== "restricted") return false;
+          }
+          if (filters.allowedAgent) {
+            const s = status[filters.allowedAgent];
+            if (s !== "allowed" && s !== "no_rule") return false;
+          }
+        } catch {
+          return false;
+        }
+      }
+      if (filters.requireJsonLd && !scan?.hasJsonLd) return false;
+      if (filters.requireOpenGraph && !scan?.hasOpenGraph) return false;
+      if (filters.requireProductFeed && !scan?.hasProductFeed) return false;
+      if (filters.requireLlmsTxt && !scan?.hasLlmsTxt) return false;
+      if (recentChangeSet && !recentChangeSet.has(brand.id)) return false;
+      return true;
+    });
 
     if (format === "csv") {
       const headers = ["name", "slug", "url", "category", "platform", "cdn", "waf", "blocked_agents", "has_json_ld", "has_schema_product", "has_open_graph", "has_product_feed", "has_llms_txt", "has_ucp", "scanned_at"];
