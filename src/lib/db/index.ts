@@ -231,13 +231,15 @@ try {
   sqlite.exec(`ALTER TABLE scan_runs ADD COLUMN failure_report TEXT`);
 } catch { /* column exists */ }
 
-// Auto-migrate: add trial columns to customers
-for (const stmt of [
-  `ALTER TABLE customers ADD COLUMN trial_ends_at TEXT`,
-  `ALTER TABLE customers ADD COLUMN trial_used INTEGER NOT NULL DEFAULT 0`,
-]) {
-  try { sqlite.exec(stmt); } catch { /* column exists */ }
-}
+// Auto-migrate: add unsubscribed_at column to customers
+try {
+  sqlite.exec(`ALTER TABLE customers ADD COLUMN unsubscribed_at TEXT`);
+} catch { /* column exists */ }
+
+// Auto-migrate: add unsubscribe column to email_subscribers
+try {
+  sqlite.exec(`ALTER TABLE email_subscribers ADD COLUMN unsubscribed_at TEXT`);
+} catch { /* column exists */ }
 
 // Auto-migrate: watchlists table (Pro feature)
 sqlite.exec(`

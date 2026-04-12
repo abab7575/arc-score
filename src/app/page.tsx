@@ -174,7 +174,7 @@ export default function HomePage() {
           {/* CTAs */}
           <div className="mt-10 flex flex-wrap items-center gap-5">
             <Link
-              href="/signup"
+              href="/pricing"
               className="inline-block text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-6 py-3 transition-colors"
             >
               Start my watchlist →

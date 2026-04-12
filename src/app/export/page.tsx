@@ -120,10 +120,10 @@ export default function ExportPage() {
               Pick any combination of filters — platform, CDN, agent access, structured data, recent changes — and export the matching brands as CSV or JSON.
             </p>
             <Link
-              href={state === "unauthenticated" ? "/signup" : "/pricing"}
+              href="/pricing"
               className="inline-block text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-6 py-3 transition-colors"
             >
-              {state === "unauthenticated" ? "Start 30-day free trial" : "Upgrade to Pro"}
+              {state === "unauthenticated" ? "View pricing" : "Upgrade to Pro"}
             </Link>
           </div>
         </main>

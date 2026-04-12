@@ -76,7 +76,7 @@ ${content}
     <tr>
       <td style="padding-top:12px; font-size:10px; color:#CBD5E1; line-height:1.5;">
         AI agent intelligence for e-commerce. Updated daily.<br>
-        &copy; ${new Date().getFullYear()} ARC Report
+        &copy; ${new Date().getFullYear()} ARC Report &middot; <a href="{{UNSUB_URL}}" style="color:#CBD5E1; text-decoration:underline;">Unsubscribe</a>
       </td>
     </tr>
     </table>
@@ -205,7 +205,7 @@ export function welcomeEmail(data: WelcomeEmailData): { subject: string; html: s
 
     ${cardBlock(`
       <div style="font-size:14px; font-weight:900; color:#FF6648; font-family:monospace; margin-bottom:8px;">/ 03</div>
-      <a href="${isPaid ? "https://www.arcreport.ai/account/watchlist" : "https://www.arcreport.ai/signup"}" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">Set up your watchlist &rarr;</a>
+      <a href="${isPaid ? "https://www.arcreport.ai/account/watchlist" : "https://www.arcreport.ai/pricing"}" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">Set up your watchlist &rarr;</a>
       <div style="font-size:13px; color:#475569; line-height:1.6;">${isPaid
         ? "Track up to " + (data.plan === "agency" ? "50" : "10") + " brands and get daily email alerts when their agent access policy changes."
         : "Upgrade to Pro to track specific brands and get alerted the day their agent access changes."

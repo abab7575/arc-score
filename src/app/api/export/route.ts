@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getMatrixData, getRecentChangelog } from "@/lib/db/queries";
 import {
   verifyCustomerSession,
-  expireTrialIfNeeded,
   CUSTOMER_COOKIE_NAME,
 } from "@/lib/customer-auth";
 import { db, schema } from "@/lib/db/index";
@@ -69,19 +68,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Invalid session" }, { status: 401 });
   }
 
-  const rawCustomer = db
+  const customer = db
     .select()
     .from(schema.customers)
     .where(eq(schema.customers.id, customerId))
     .get();
 
-  if (!rawCustomer) {
-    return NextResponse.json({ error: "Customer not found" }, { status: 404 });
-  }
-
-  const customer = expireTrialIfNeeded(rawCustomer);
-
-  if (customer.plan === "free") {
+  if (!customer || customer.plan === "free") {
     return NextResponse.json({ error: "Pro plan required" }, { status: 403 });
   }
 

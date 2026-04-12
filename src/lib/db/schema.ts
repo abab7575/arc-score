@@ -131,8 +131,7 @@ export const customers = sqliteTable("customers", {
   name: text("name"),
   stripeCustomerId: text("stripe_customer_id").unique(),
   plan: text("plan").notNull().default("free"), // free, pro
-  trialEndsAt: text("trial_ends_at"),
-  trialUsed: integer("trial_used", { mode: "boolean" }).notNull().default(false),
+  unsubscribedAt: text("unsubscribed_at"), // ISO; null = subscribed to commercial emails
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 
@@ -171,6 +170,7 @@ export const emailSubscribers = sqliteTable("email_subscribers", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   email: text("email").notNull().unique(),
   source: text("source").notNull().default("homepage"), // homepage, weekly, brand-page, claim
+  unsubscribedAt: text("unsubscribed_at"), // ISO; null = subscribed
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 

@@ -29,11 +29,10 @@ const TIERS = [
     name: "Pro",
     price: 149,
     period: "/mo",
-    tagline: "30-day free trial — no card required",
-    cta: "Start free trial",
+    tagline: "Watchlists, daily alerts, and exports",
+    cta: "Get Pro Access",
     accent: true,
     features: [
-      "30-day free trial — no card required",
       "Everything in Free",
       "Watchlists — track up to 10 brands",
       "Daily change alerts via email",
@@ -47,52 +46,17 @@ const TIERS = [
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
   const [currentPlan, setCurrentPlan] = useState<string | null>(null);
-  const [authenticated, setAuthenticated] = useState(false);
-  const [isTrialing, setIsTrialing] = useState(false);
 
   useEffect(() => {
     fetch("/api/auth/me")
       .then((r) => r.json())
       .then((data) => {
         if (data.authenticated) {
-          setAuthenticated(true);
           setCurrentPlan(data.customer.plan);
-          setIsTrialing(!!data.customer.isTrialing);
         }
       })
       .catch(() => {});
   }, []);
-
-  async function handleProCta() {
-    if (!authenticated) {
-      window.location.href = "/signup";
-      return;
-    }
-    if (currentPlan === "free") {
-      setLoading("pro");
-      try {
-        const res = await fetch("/api/trial/start", { method: "POST" });
-        if (res.ok) {
-          window.location.href = "/account?trial=started";
-          return;
-        }
-        const data = await res.json();
-        if (res.status === 400 && /already used/i.test(data.error ?? "")) {
-          // Trial already consumed — fall through to paid checkout
-          await handleCheckout("pro");
-          return;
-        }
-        alert(data.error || "Failed to start trial");
-      } catch {
-        alert("Something went wrong. Please try again.");
-      } finally {
-        setLoading(null);
-      }
-      return;
-    }
-    // Already Pro or trialing → send to Stripe to add payment
-    await handleCheckout("pro");
-  }
 
   async function handleCheckout(planId: "pro") {
     setLoading(planId);
@@ -161,25 +125,10 @@ export default function PricingPage() {
                 ))}
               </ul>
 
-              {currentPlan === tier.id && !isTrialing ? (
+              {currentPlan === tier.id ? (
                 <div className="w-full py-3 text-sm font-bold text-center border-2 border-[#059669] text-[#059669] bg-emerald-50">
                   Your Current Plan
                 </div>
-              ) : currentPlan === tier.id && isTrialing ? (
-                <button
-                  onClick={() => handleCheckout("pro")}
-                  disabled={loading !== null}
-                  className="w-full py-3 text-sm font-bold transition-colors flex items-center justify-center gap-2 disabled:opacity-50 bg-[#FF6648] text-white hover:bg-[#e85a3f]"
-                >
-                  {loading === "pro" ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Redirecting...
-                    </>
-                  ) : (
-                    "Add payment to continue"
-                  )}
-                </button>
               ) : tier.id === "free" ? (
                 <a
                   href={tier.ctaHref}
@@ -189,7 +138,7 @@ export default function PricingPage() {
                 </a>
               ) : (
                 <button
-                  onClick={handleProCta}
+                  onClick={() => handleCheckout(tier.id)}
                   disabled={loading !== null}
                   className={`w-full py-3 text-sm font-bold transition-colors flex items-center justify-center gap-2 disabled:opacity-50 ${
                     tier.accent
@@ -200,7 +149,7 @@ export default function PricingPage() {
                   {loading === tier.id ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Starting trial...
+                      Redirecting...
                     </>
                   ) : (
                     tier.cta
