@@ -66,7 +66,7 @@ export interface FounderReport {
     failedBrands: Array<{
       brandSlug: string;
       brandName: string;
-      error: string;
+      error: string | null;
     }>;
     errorCounts: Array<{
       error: string;

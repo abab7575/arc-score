@@ -11,6 +11,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
     "@google/genai": "^1.45.0",
+    "@next/swc-darwin-arm64": "^16.2.3",
     "@resvg/resvg-js": "^2.6.2",
     "better-sqlite3": "^12.6.2",
     "class-variance-authority": "^0.7.1",
