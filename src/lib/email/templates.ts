@@ -277,6 +277,42 @@ export function watchlistAlertEmail(data: WatchlistAlertData): { subject: string
   };
 }
 
+export interface WatchlistInstantAlertData {
+  brandName: string;
+  brandSlug: string;
+  change: string; // human-readable description, e.g. "allowed GPTBot"
+  severity: "high" | "medium";
+}
+
+export function watchlistInstantAlertEmail(data: WatchlistInstantAlertData): { subject: string; html: string; text: string } {
+  const brandUrl = `https://www.arcreport.ai/brand/${data.brandSlug}`;
+  const severityColor = data.severity === "high" ? "#FF6648" : "#FBBA16";
+
+  const content = `
+    ${sectionLabel(data.severity === "high" ? "Critical change" : "Watchlist change")}
+    ${heading(`${data.brandName} just ${data.change}`)}
+    ${paragraph("This brand is on your watchlist. You're getting this instantly because the change is large enough to matter now.")}
+
+    ${cardBlock(`
+      <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.15em; color:#94A3B8; font-family:monospace; margin-bottom:6px;">Change</div>
+      <div style="font-size:16px; font-weight:700; color:#0A1628;">${data.change}</div>
+    `, severityColor)}
+
+    ${ctaButton(`View ${data.brandName}`, brandUrl)}
+
+    ${dividerLine()}
+    <div style="font-size:11px; color:#94A3B8; line-height:1.5;">
+      Instant alerts are a Pro feature. <a href="https://www.arcreport.ai/account/watchlist" style="color:#0259DD; text-decoration:none;">Manage your watchlist</a>.
+    </div>
+  `;
+
+  return {
+    subject: `${data.brandName} just ${data.change}`,
+    html: layout(content, `${data.brandName} change on your watchlist: ${data.change}`),
+    text: `${data.brandName} just ${data.change}.\n\nView: ${brandUrl}`,
+  };
+}
+
 export interface WeeklyDigestData {
   totalChanges: number;
   brandsMoving: number;
