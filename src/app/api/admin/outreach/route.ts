@@ -84,9 +84,9 @@ export async function POST(request: NextRequest) {
     const category = body.category;
     const limit = body.limit ?? 50;
 
-    const { generateOutreachQueue, insertOutreachItems } = await import("@/lib/outreach/generate");
-    const { items, stats: genStats } = generateOutreachQueue({ maxScore, category, limit });
-    const insertResult = insertOutreachItems(items);
+    const { generateSignalOutreachQueue, insertSignalOutreachItems } = await import("@/lib/outreach/signal-generate");
+    const { items, stats: genStats } = generateSignalOutreachQueue({ maxScore, category, limit });
+    const insertResult = insertSignalOutreachItems(items);
     const inserted = insertResult.inserted;
 
     // Auto-find emails via Apollo in the background (don't block response)
@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Build detailed status message
-    const parts = [`Generated ${items.length} outreach emails, inserted ${inserted} new`];
+    const parts = [`Generated ${items.length} outreach drafts from live signal data, inserted ${inserted} new`];
     if (insertResult.needsReview > 0) parts.push(`${insertResult.needsReview} flagged for review`);
     if (insertResult.duplicates > 0) parts.push(`${insertResult.duplicates} already in queue`);
     if (genStats.skippedStale > 0) parts.push(`${genStats.skippedStale} skipped (stale scans)`);

@@ -320,6 +320,7 @@ export const scanRuns = sqliteTable("scan_runs", {
   skippedCount: integer("skipped_count").notNull().default(0),
   changesDetected: integer("changes_detected").notNull().default(0),
   driftReport: text("drift_report"), // JSON drift report from post-run anomaly detection
+  failureReport: text("failure_report"), // JSON summary of failed brands + top error buckets
   startedAt: text("started_at"),
   completedAt: text("completed_at"),
   lastHeartbeatAt: text("last_heartbeat_at"), // updated during scan so dead processes can be detected

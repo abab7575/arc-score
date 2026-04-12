@@ -188,7 +188,7 @@ export default function OutreachPage() {
               <span className="data-num text-lg font-black text-[#FF6648]">1</span>
               <div>
                 <p className="text-sm font-semibold text-foreground">Generate Queue</p>
-                <p className="text-xs text-muted-foreground">Click the button below. Creates pre-written emails for all brands scoring under 70.</p>
+                <p className="text-xs text-muted-foreground">Click the button below. Creates pre-written emails from the latest live signal gaps and changelog movement.</p>
               </div>
             </div>
             <div className="flex gap-3">
@@ -227,7 +227,7 @@ export default function OutreachPage() {
         <div>
           <h1 className="text-xl font-bold text-foreground">Outreach</h1>
           <p className="text-sm text-muted-foreground">
-            Pre-written emails for every scanned brand. Copy, paste, send.
+            Pre-written emails from live ARC signal data. Copy, paste, send.
           </p>
         </div>
         <div className="flex items-center gap-2">

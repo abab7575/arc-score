@@ -1,0 +1,34 @@
+name: Founder Critical Alerts
+
+on:
+  schedule:
+    - cron: "20 */2 * * *"
+  workflow_dispatch:
+
+env:
+  BASE_URL: https://www.arcreport.ai
+
+jobs:
+  send-alerts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Send critical founder alerts
+        run: |
+          echo "Triggering founder alerts: ${BASE_URL}/api/cron/founder-alerts"
+
+          RESPONSE=$(curl -s --max-time 180 -w "\n%{http_code}" -X POST \
+            "${BASE_URL}/api/cron/founder-alerts" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "Status: $HTTP_CODE"
+          echo "Response: $BODY"
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "::error::Founder alerts failed with status $HTTP_CODE"
+            exit 1
+          fi

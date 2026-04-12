@@ -210,16 +210,16 @@ export default function ChangelogPage() {
       <main className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
         <div className="mb-8">
           <h1 className="text-2xl font-black text-foreground tracking-tight mb-2">
-            Changelog
+            Changes
           </h1>
           <p className="text-sm text-muted-foreground">
-            Daily changes detected across all tracked brands. What shifted in the agentic commerce landscape?
+            Daily AI access changes detected across all tracked brands.
           </p>
         </div>
 
         {loading ? (
           <div className="text-center py-20 text-muted-foreground text-sm">
-            Loading changelog...
+            Loading changes...
           </div>
         ) : entries.length === 0 ? (
           <div className="text-center py-20 text-muted-foreground text-sm">

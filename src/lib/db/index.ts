@@ -226,6 +226,11 @@ try {
   sqlite.exec(`ALTER TABLE scan_runs ADD COLUMN last_heartbeat_at TEXT`);
 } catch { /* column exists */ }
 
+// Auto-migrate: add failure_report column so the latest run can explain failures
+try {
+  sqlite.exec(`ALTER TABLE scan_runs ADD COLUMN failure_report TEXT`);
+} catch { /* column exists */ }
+
 // Auto-migrate: watchlists table (Pro feature)
 sqlite.exec(`
   CREATE TABLE IF NOT EXISTS watchlists (

@@ -1,0 +1,34 @@
+name: Daily Outreach Queue
+
+on:
+  schedule:
+    - cron: "15 5 * * *"
+  workflow_dispatch:
+
+env:
+  BASE_URL: https://www.arcreport.ai
+
+jobs:
+  generate-outreach:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Generate outreach drafts from live signal data
+        run: |
+          echo "Triggering daily outreach queue: ${BASE_URL}/api/cron/outreach-queue"
+
+          RESPONSE=$(curl -s --max-time 180 -w "\n%{http_code}" -X POST \
+            "${BASE_URL}/api/cron/outreach-queue?limit=5&maxCredits=5" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "Status: $HTTP_CODE"
+          echo "Response: $BODY"
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "::error::Daily outreach queue failed with status $HTTP_CODE"
+            exit 1
+          fi

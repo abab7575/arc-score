@@ -19,6 +19,19 @@ import { insertLightweightScan, getLatestLightweightScan, getPreviousLightweight
 import { processChangelog, cleanupRevertedPendingChanges } from "./changelog-engine";
 import { runDriftChecks, type DriftReport } from "./drift-detector";
 
+interface FailureReport {
+  failedBrands?: Array<{
+    brandId: number;
+    slug: string;
+    name: string;
+    error: string;
+  }>;
+  errorCounts?: Array<{
+    error: string;
+    count: number;
+  }>;
+}
+
 const WORKER_TICK_MS = 1000; // Check for jobs every 1 second
 const JOB_TIMEOUT_MS = 60000; // 60 second per-brand timeout
 const PAUSE_BETWEEN_JOBS_MS = 200; // Brief pause between jobs
@@ -470,6 +483,24 @@ export function getScanHealth() {
         .all()
     : [];
 
+  let failureReport: FailureReport | null = null;
+  if (latestRun?.failureReport) {
+    try {
+      failureReport = JSON.parse(latestRun.failureReport) as FailureReport;
+    } catch {
+      // ignore parse errors
+    }
+  }
+
+  const failedBrands =
+    failedJobs.length > 0
+      ? failedJobs
+      : (failureReport?.failedBrands ?? []).map((brand) => ({
+          brandSlug: brand.slug,
+          brandName: brand.name,
+          error: brand.error,
+        }));
+
   // Data freshness: brands with scan data < 24 hours old
   const twentyFourHoursAgo = new Date(
     Date.now() - 24 * 60 * 60 * 1000,
@@ -563,7 +594,7 @@ export function getScanHealth() {
         }
       : null,
     driftReport,
-    failedBrands: failedJobs,
+    failedBrands,
     dataFreshness: {
       freshBrands,
       totalBrands,

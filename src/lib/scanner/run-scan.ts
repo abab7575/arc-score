@@ -31,6 +31,13 @@ export interface ScanSummary {
   driftAlerts: number;
 }
 
+interface FailedBrandSummary {
+  brandId: number;
+  slug: string;
+  name: string;
+  error: string;
+}
+
 /**
  * Abandon any "running" scan runs whose last activity exceeds the stale threshold.
  * Called at the start of a new run so stuck state never blocks future scans.
@@ -138,6 +145,8 @@ export async function runScanOnce(options: { concurrency?: number } = {}): Promi
   let completed = 0;
   let failed = 0;
   let changesDetected = 0;
+  const failedBrands: FailedBrandSummary[] = [];
+  const errorCounts = new Map<string, number>();
 
   // 5. Process brands with a proper concurrency pool (always N in flight,
   // never waiting on a batch to drain).
@@ -202,6 +211,14 @@ export async function runScanOnce(options: { concurrency?: number } = {}): Promi
     } catch (err) {
       failed++;
       const msg = err instanceof Error ? err.message : String(err);
+      const normalizedError = msg.length > 220 ? `${msg.slice(0, 217)}...` : msg;
+      failedBrands.push({
+        brandId: brand.id,
+        slug: brand.slug,
+        name: brand.name,
+        error: normalizedError,
+      });
+      errorCounts.set(normalizedError, (errorCounts.get(normalizedError) ?? 0) + 1);
       console.error(`[run-scan] fail ${brand.slug}: ${msg}`);
     }
 
@@ -294,6 +311,15 @@ export async function runScanOnce(options: { concurrency?: number } = {}): Promi
 
   // 8. Mark run complete
   const durationSec = Math.round((Date.now() - startTime) / 1000);
+  const failureReport = failedBrands.length > 0
+    ? JSON.stringify({
+        failedBrands,
+        errorCounts: [...errorCounts.entries()]
+          .map(([error, count]) => ({ error, count }))
+          .sort((a, b) => b.count - a.count),
+      })
+    : null;
+
   db.update(schema.scanRuns)
     .set({
       status: "completed",
@@ -302,6 +328,7 @@ export async function runScanOnce(options: { concurrency?: number } = {}): Promi
       failedCount: failed,
       changesDetected,
       driftReport: driftReport ? JSON.stringify(driftReport) : null,
+      failureReport,
     })
     .where(eq(schema.scanRuns.id, run.id))
     .run();

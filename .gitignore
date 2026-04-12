@@ -52,3 +52,6 @@ scan-results.json
 # generated content assets
 /public/content-images/
 .gstack/
+
+# private gtm operator notes
+/gtm/

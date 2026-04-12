@@ -255,7 +255,7 @@ export default async function ChangelogEntryPage({ params }: PageProps) {
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs text-muted-foreground mb-8">
           <Link href="/changelog" className="hover:text-foreground transition-colors">
-            Changelog
+            Changes
           </Link>
           <span>/</span>
           <span className="text-foreground">{brandName}</span>

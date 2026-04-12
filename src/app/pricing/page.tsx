@@ -183,7 +183,7 @@ export default function PricingPage() {
               {[
                 ["Brand watchlists", "—", "Up to 10"],
                 ["Daily change alerts", "—", "Email"],
-                ["Changelog history", "3 entries", "Full 90+ days"],
+                ["Changes history", "3 entries", "Full 90+ days"],
                 ["Data exports", "—", "CSV + JSON"],
                 ["Brand claiming", "—", "Included"],
                 ["Weekly digest", "Included", "Included"],

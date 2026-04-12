@@ -40,10 +40,8 @@ export function Footer() {
             {/* Right — Links in spec style */}
             <div className="flex items-center gap-0 border border-white/10 divide-x divide-white/10">
               {[
-                { href: "/", label: "INDEX" },
-                { href: "/matrix", label: "MATRIX" },
-                { href: "/landscape", label: "LANDSCAPE" },
-                { href: "/changelog", label: "CHANGELOG" },
+                { href: "/", label: "BRANDS" },
+                { href: "/changelog", label: "CHANGES" },
                 { href: "/pricing", label: "PRICING" },
               ].map((link) => (
                 <Link

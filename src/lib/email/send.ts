@@ -2,13 +2,15 @@
  * Email sending via Resend API.
  */
 
-const FROM_ADDRESS = "ARC Report <alerts@arcreport.ai>";
+const DEFAULT_FROM_ADDRESS = process.env.DEFAULT_FROM_EMAIL ?? "ARC Report <alerts@arcreport.ai>";
+const DEFAULT_REPLY_TO = process.env.DEFAULT_REPLY_TO ?? "hello@arcreport.ai";
 
 export async function sendEmail(opts: {
   to: string;
   subject: string;
   html: string;
   text: string;
+  from?: string;
   replyTo?: string;
 }): Promise<{ success: boolean; error?: string }> {
   const apiKey = process.env.RESEND_API_KEY;
@@ -25,12 +27,12 @@ export async function sendEmail(opts: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: FROM_ADDRESS,
+        from: opts.from ?? DEFAULT_FROM_ADDRESS,
         to: opts.to,
         subject: opts.subject,
         html: opts.html,
         text: opts.text,
-        reply_to: opts.replyTo ?? "hello@arcreport.ai",
+        reply_to: opts.replyTo ?? DEFAULT_REPLY_TO,
       }),
     });
 

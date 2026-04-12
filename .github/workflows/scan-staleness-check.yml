@@ -31,25 +31,44 @@ jobs:
           print((latest.get('completedAt') or '') if latest.get('status') == 'completed' else '')
           ")
 
+          STALE="no"
+
           if [ -z "$COMPLETED" ]; then
-            echo "::error::No completed scan run found on production. Last scan never finished."
-            exit 1
+            echo "::warning::No completed scan run found on production. Attempting recovery."
+            STALE="yes"
+          else
+            AGE_HOURS=$(python3 -c "
+            from datetime import datetime, timezone
+            now = datetime.now(timezone.utc)
+            ts = datetime.fromisoformat('${COMPLETED}'.replace('Z', '+00:00'))
+            print(f'{(now - ts).total_seconds() / 3600:.1f}')
+            ")
+
+            echo "Last successful scan: ${COMPLETED} (${AGE_HOURS}h ago)"
+            STALE=$(python3 -c "print('yes' if float('${AGE_HOURS}') > ${STALE_THRESHOLD_HOURS} else 'no')")
           fi
 
-          AGE_HOURS=$(python3 -c "
-          from datetime import datetime, timezone
-          now = datetime.now(timezone.utc)
-          ts = datetime.fromisoformat('${COMPLETED}'.replace('Z', '+00:00'))
-          print(f'{(now - ts).total_seconds() / 3600:.1f}')
-          ")
-
-          echo "Last successful scan: ${COMPLETED} (${AGE_HOURS}h ago)"
-
-          STALE=$(python3 -c "print('yes' if float('${AGE_HOURS}') > ${STALE_THRESHOLD_HOURS} else 'no')")
-
           if [ "$STALE" = "yes" ]; then
-            echo "::error::Scan is stale: ${AGE_HOURS}h since last completion (threshold: ${STALE_THRESHOLD_HOURS}h)"
-            exit 1
+            echo "::warning::Scan is stale or incomplete. Dispatching recovery scan."
+
+            RECOVERY=$(curl -s --max-time 60 -w "\n%{http_code}" -X POST \
+              "${BASE_URL}/api/cron/lightweight-scan?concurrency=20" \
+              -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+              -H "Content-Type: application/json")
+
+            RECOVERY_CODE=$(echo "$RECOVERY" | tail -1)
+            RECOVERY_BODY=$(echo "$RECOVERY" | head -n -1)
+
+            echo "Recovery status: $RECOVERY_CODE"
+            echo "Recovery response: $RECOVERY_BODY"
+
+            if [ "$RECOVERY_CODE" -ne 200 ]; then
+              echo "::error::Recovery trigger failed with status $RECOVERY_CODE"
+              exit 1
+            fi
+
+            echo "✓ Recovery scan dispatched"
+            exit 0
           fi
 
           echo "✓ Scan freshness OK (${AGE_HOURS}h < ${STALE_THRESHOLD_HOURS}h threshold)"
