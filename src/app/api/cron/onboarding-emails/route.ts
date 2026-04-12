@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     })
     .from(schema.customers)
     .where(
-      sql`${schema.customers.createdAt} >= ${day2Start.toISOString()} AND ${schema.customers.createdAt} <= ${day2End.toISOString()}`
+      sql`${schema.customers.createdAt} >= ${day2Start.toISOString()} AND ${schema.customers.createdAt} <= ${day2End.toISOString()} AND ${schema.customers.unsubscribedAt} IS NULL`
     )
     .all();
 

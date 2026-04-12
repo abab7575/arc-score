@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, schema } from "@/lib/db";
-import { eq, gte, desc, sql } from "drizzle-orm";
+import { eq, gte, desc, isNull, sql } from "drizzle-orm";
 import { sendEmail } from "@/lib/email/send";
 import { weeklyDigestEmail } from "@/lib/email/templates";
 import { getTopMovers, getWeeklyTotals, getRecentChangelog } from "@/lib/db/queries";
@@ -66,10 +66,11 @@ export async function POST(request: NextRequest) {
     })),
   });
 
-  // Get all email subscribers
+  // Get all email subscribers (skip unsubscribed)
   const subscribers = db
     .select({ email: schema.emailSubscribers.email })
     .from(schema.emailSubscribers)
+    .where(isNull(schema.emailSubscribers.unsubscribedAt))
     .all();
 
   let emailsSent = 0;

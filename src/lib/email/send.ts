@@ -2,6 +2,8 @@
  * Email sending via Resend API.
  */
 
+import { unsubscribeUrl } from "./unsubscribe";
+
 const DEFAULT_FROM_ADDRESS = process.env.DEFAULT_FROM_EMAIL ?? "ARC Report <alerts@arcreport.ai>";
 const DEFAULT_REPLY_TO = process.env.DEFAULT_REPLY_TO ?? "hello@arcreport.ai";
 
@@ -20,6 +22,9 @@ export async function sendEmail(opts: {
   }
 
   try {
+    const unsub = unsubscribeUrl(opts.to);
+    const html = opts.html.replaceAll("{{UNSUB_URL}}", unsub);
+    const text = opts.text.replaceAll("{{UNSUB_URL}}", unsub);
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -30,9 +35,13 @@ export async function sendEmail(opts: {
         from: opts.from ?? DEFAULT_FROM_ADDRESS,
         to: opts.to,
         subject: opts.subject,
-        html: opts.html,
-        text: opts.text,
+        html,
+        text,
         reply_to: opts.replyTo ?? DEFAULT_REPLY_TO,
+        headers: {
+          "List-Unsubscribe": `<${unsub}>, <mailto:unsubscribe@arcreport.ai>`,
+          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        },
       }),
     });
 

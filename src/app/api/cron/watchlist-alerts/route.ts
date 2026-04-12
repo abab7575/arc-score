@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     })
     .from(schema.watchlists)
     .innerJoin(schema.customers, eq(schema.watchlists.customerId, schema.customers.id))
-    .where(sql`${schema.customers.plan} != 'free'`)
+    .where(sql`${schema.customers.plan} != 'free' AND ${schema.customers.unsubscribedAt} IS NULL`)
     .all();
 
   // Group by customer
