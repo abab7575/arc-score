@@ -443,3 +443,26 @@ export function brandClaimEmail(data: BrandClaimData): { subject: string; html: 
     text: `You claimed ${data.brandName} on ARC Report.\n\nView your brand's readout: https://www.arcreport.ai/brand/${data.brandSlug}\n\nWant daily alerts? Set up a watchlist: https://www.arcreport.ai/pricing\n\nReply to this email with any questions.`,
   };
 }
+
+export interface PasswordResetData {
+  resetUrl: string;
+}
+
+export function passwordResetEmail(data: PasswordResetData): { subject: string; html: string; text: string } {
+  const content = `
+    ${sectionLabel("Password reset")}
+    ${heading("Reset your password")}
+    ${paragraph("Click the button below to set a new password. This link expires in 1 hour.")}
+
+    ${ctaButton("Reset password", data.resetUrl)}
+
+    ${dividerLine()}
+    ${paragraph('<span style="font-size:13px; color:#94A3B8;">If you didn\'t request this, you can safely ignore this email.</span>')}
+  `;
+
+  return {
+    subject: "Reset your ARC Report password",
+    html: layout(content, "Reset your ARC Report password."),
+    text: `Reset your ARC Report password.\n\nClick this link to set a new password (expires in 1 hour):\n${data.resetUrl}\n\nIf you didn't request this, ignore this email.`,
+  };
+}
