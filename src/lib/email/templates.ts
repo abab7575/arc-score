@@ -64,13 +64,13 @@ ${content}
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
     <tr>
       <td style="font-size:11px; color:#94A3B8; line-height:1.6;">
-        <a href="https://www.arcreport.ai" style="color:#0259DD; text-decoration:none; font-weight:600;">arcreport.ai</a>
+        <a href="https://www.arcreport.ai" style="color:#0259DD; text-decoration:none; font-weight:600;">Brands</a>
         &nbsp;&middot;&nbsp;
-        <a href="https://www.arcreport.ai/leaderboard" style="color:#94A3B8; text-decoration:none;">Leaderboard</a>
-        &nbsp;&middot;&nbsp;
-        <a href="https://www.arcreport.ai/weekly" style="color:#94A3B8; text-decoration:none;">Weekly</a>
+        <a href="https://www.arcreport.ai/changelog" style="color:#94A3B8; text-decoration:none;">Changes</a>
         &nbsp;&middot;&nbsp;
         <a href="https://www.arcreport.ai/pricing" style="color:#94A3B8; text-decoration:none;">Pricing</a>
+        &nbsp;&middot;&nbsp;
+        <a href="https://www.arcreport.ai/account" style="color:#94A3B8; text-decoration:none;">Account</a>
       </td>
     </tr>
     <tr>
@@ -199,16 +199,16 @@ export function welcomeEmail(data: WelcomeEmailData): { subject: string; html: s
 
     ${cardBlock(`
       <div style="font-size:14px; font-weight:900; color:#FF6648; font-family:monospace; margin-bottom:8px;">/ 02</div>
-      <a href="https://www.arcreport.ai/leaderboard" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">Check the leaderboard &rarr;</a>
-      <div style="font-size:13px; color:#475569; line-height:1.6;">The Top 10 AI-Ready and AI-Resistant brands, ranked by a composite of agent openness and machine-readable coverage.</div>
+      <a href="https://www.arcreport.ai" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">Today's top movers &rarr;</a>
+      <div style="font-size:13px; color:#475569; line-height:1.6;">See which brands changed posture toward AI agents today — opened, closed, or flipped a major bot.</div>
     `)}
 
     ${cardBlock(`
       <div style="font-size:14px; font-weight:900; color:#FF6648; font-family:monospace; margin-bottom:8px;">/ 03</div>
-      <a href="${isPaid ? "https://www.arcreport.ai/account/watchlist" : "https://www.arcreport.ai/landscape"}" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">${isPaid ? "Set up your watchlist" : "Explore the landscape"} &rarr;</a>
+      <a href="${isPaid ? "https://www.arcreport.ai/account/watchlist" : "https://www.arcreport.ai/signup"}" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">Set up your watchlist &rarr;</a>
       <div style="font-size:13px; color:#475569; line-height:1.6;">${isPaid
         ? "Track up to " + (data.plan === "agency" ? "50" : "10") + " brands and get daily email alerts when their agent access policy changes."
-        : "Understand how AI agents discover, compare, and buy products — and what it means for e-commerce."
+        : "Upgrade to Pro to track specific brands and get alerted the day their agent access changes."
       }</div>
     `)}
 
@@ -333,7 +333,7 @@ export function weeklyDigestEmail(data: WeeklyDigestData): { subject: string; ht
       </table>
     ` : ""}
 
-    ${ctaButton("See the full weekly", "https://www.arcreport.ai/weekly")}
+    ${ctaButton("See what's changing", "https://www.arcreport.ai/changelog")}
 
     ${cardBlock(`
       ${sectionLabel("Go deeper")}
@@ -354,7 +354,7 @@ export function weeklyDigestEmail(data: WeeklyDigestData): { subject: string; ht
   return {
     subject: `ARC Weekly: ${data.totalChanges} changes across ${data.brandsMoving} brands`,
     html: layout(content, `${data.totalChanges} changes this week. ${data.topMovers[0]?.brandName ?? "See"} was the top mover.`),
-    text: `This Week in Agentic Commerce\n\n${data.totalChanges} total changes across ${data.brandsMoving} brands.\n\nTop movers:\n${data.topMovers.slice(0, 5).map((m, i) => `${i + 1}. ${m.brandName} (${m.changeCount} changes)`).join("\n")}\n\nSee the full weekly: https://www.arcreport.ai/weekly`,
+    text: `This Week in Agentic Commerce\n\n${data.totalChanges} total changes across ${data.brandsMoving} brands.\n\nTop movers:\n${data.topMovers.slice(0, 5).map((m, i) => `${i + 1}. ${m.brandName} (${m.changeCount} changes)`).join("\n")}\n\nSee what's changing: https://www.arcreport.ai/changelog`,
   };
 }
 
@@ -383,14 +383,14 @@ export function onboardingDay2Email(data: OnboardingDay2Data): { subject: string
 
     ${cardBlock(`
       <div style="font-size:14px; font-weight:900; color:#FF6648; font-family:monospace; margin-bottom:8px;">/ 02</div>
-      <a href="https://www.arcreport.ai/leaderboard" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">Check the leaderboard &rarr;</a>
-      <div style="font-size:13px; color:#475569; line-height:1.6;">See which brands are the most AI-ready and which are the most resistant. Updated daily from 1,000+ brand scans.</div>
+      <a href="https://www.arcreport.ai" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">Browse the index &rarr;</a>
+      <div style="font-size:13px; color:#475569; line-height:1.6;">See which brands are open to AI agents and which are blocking them. Filter by category, platform, or access status.</div>
     `)}
 
     ${cardBlock(`
       <div style="font-size:14px; font-weight:900; color:#FF6648; font-family:monospace; margin-bottom:8px;">/ 03</div>
-      <a href="https://www.arcreport.ai/landscape" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">Read the landscape guide &rarr;</a>
-      <div style="font-size:13px; color:#475569; line-height:1.6;">The big picture: how AI agents are reshaping e-commerce discovery, comparison, and purchasing — and what brands are doing about it.</div>
+      <a href="https://www.arcreport.ai/changelog" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">See what changed today &rarr;</a>
+      <div style="font-size:13px; color:#475569; line-height:1.6;">Every brand posture change, every day. Who opened up, who locked down, which agents got flipped.</div>
     `)}
 
     ${ctaButton(isPaid ? "Open your watchlist" : "Browse the index", isPaid ? "https://www.arcreport.ai/account/watchlist" : "https://www.arcreport.ai")}
@@ -402,7 +402,7 @@ export function onboardingDay2Email(data: OnboardingDay2Data): { subject: string
   return {
     subject: "3 things to check on ARC Report today",
     html: layout(content, "Quick ways to get value from your ARC Report account."),
-    text: `${greeting} you signed up yesterday — here are three quick ways to get value from your account right now.\n\n1. ${isPaid ? "Set up your first watchlist: https://www.arcreport.ai/account/watchlist" : "Explore a brand page: https://www.arcreport.ai"}\n2. Check the leaderboard: https://www.arcreport.ai/leaderboard\n3. Read the landscape guide: https://www.arcreport.ai/landscape\n\nReply to this email anytime.`,
+    text: `${greeting} it's been a couple of days — here's where to go next.\n\n1. ${isPaid ? "Set up your first watchlist: https://www.arcreport.ai/account/watchlist" : "Explore a brand page: https://www.arcreport.ai"}\n2. Browse the index: https://www.arcreport.ai\n3. See what changed today: https://www.arcreport.ai/changelog\n\nReply to this email anytime.`,
   };
 }
 
@@ -439,8 +439,8 @@ export function onboardingDay5Email(data: OnboardingDay5Data): { subject: string
 
     ${cardBlock(`
       <div style="font-size:14px; font-weight:900; color:#FF6648; font-family:monospace; margin-bottom:8px;">/ 03</div>
-      <a href="https://www.arcreport.ai/leaderboard" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">Check the latest leaderboard &rarr;</a>
-      <div style="font-size:13px; color:#475569; line-height:1.6;">See where the Top 10 AI-Ready and AI-Resistant brands stand right now, before Sunday's digest drops.</div>
+      <a href="https://www.arcreport.ai/changelog" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">See what's changing daily &rarr;</a>
+      <div style="font-size:13px; color:#475569; line-height:1.6;">The running log of every brand posture change, every day. What the weekly summarizes.</div>
     `)}
 
     ${dividerLine()}
@@ -450,7 +450,7 @@ export function onboardingDay5Email(data: OnboardingDay5Data): { subject: string
   return {
     subject: "Your first weekly digest is coming Sunday",
     html: layout(content, "This Sunday: your first ARC Report weekly digest."),
-    text: `${greeting} — this Sunday you'll receive your first ARC Report weekly digest.\n\nWhat to expect: a summary of the week's biggest shifts across 1,000+ brands, top movers, and notable policy changes.\n\n${isPaid ? "Make sure your watchlist is set up: https://www.arcreport.ai/account/watchlist" : "Want daily alerts? See Pro features: https://www.arcreport.ai/pricing"}\n\nCheck the latest leaderboard: https://www.arcreport.ai/leaderboard\n\nReply to this email anytime.`,
+    text: `${greeting} — this Sunday you'll receive your first ARC Report weekly digest.\n\nWhat to expect: a summary of the week's biggest shifts across 1,000+ brands, top movers, and notable policy changes.\n\n${isPaid ? "Make sure your watchlist is set up: https://www.arcreport.ai/account/watchlist" : "Want daily alerts? See Pro features: https://www.arcreport.ai/pricing"}\n\nSee what's changing daily: https://www.arcreport.ai/changelog\n\nReply to this email anytime.`,
   };
 }
 
