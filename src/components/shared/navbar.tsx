@@ -7,13 +7,8 @@ import { AdminLink } from "./admin-link";
 import { AuthNavLink } from "./auth-nav-link";
 
 const navLinks = [
-  { href: "/", label: "Index" },
-  { href: "/matrix", label: "Matrix" },
-  { href: "/landscape", label: "Landscape" },
-  { href: "/changelog", label: "Changelog" },
-  { href: "/leaderboard", label: "Leaderboard" },
-  { href: "/weekly", label: "Weekly" },
-  { href: "/docs", label: "Docs" },
+  { href: "/", label: "Brands" },
+  { href: "/changelog", label: "Changes" },
   { href: "/pricing", label: "Pricing" },
 ] as const;
 
