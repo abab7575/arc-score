@@ -3,30 +3,9 @@
 import { useState, useMemo, useEffect } from "react";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
-import { EmailCapture } from "@/components/shared/email-capture";
-import { IndexHero } from "@/components/index/index-hero";
 import type { BrandCategory } from "@/lib/brands";
 import { CATEGORY_LABELS } from "@/lib/brands";
 import Link from "next/link";
-import { Info } from "lucide-react";
-
-function HeaderWithTooltip({ label, tooltip, align }: { label: string; tooltip: string; align: "left" | "center" }) {
-  return (
-    <th className={`${align === "center" ? "text-center" : "text-left"} px-4 py-2.5 font-semibold text-foreground`}>
-      <div className={`inline-flex items-center gap-1.5 group/tip relative ${align === "center" ? "justify-center" : ""}`}>
-        {label}
-        <Info className="w-3.5 h-3.5 text-muted-foreground/50 group-hover/tip:text-[#0259DD] transition-colors cursor-help" />
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-[#0A1628] text-white text-xs font-normal leading-relaxed p-3 opacity-0 invisible group-hover/tip:opacity-100 group-hover/tip:visible transition-all z-50 pointer-events-none group-hover/tip:pointer-events-auto">
-          <p className="mb-2">{tooltip}</p>
-          <Link href="/landscape" className="text-[#84AFFB] hover:text-white text-[10px] font-semibold uppercase tracking-wider">
-            Learn more →
-          </Link>
-          <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#0A1628] rotate-45" />
-        </div>
-      </div>
-    </th>
-  );
-}
 
 interface MatrixBrand {
   id: number;
@@ -46,27 +25,58 @@ interface MatrixBrand {
   scannedAt?: string;
 }
 
-interface MatrixStats {
-  totalBrands: number;
-  scannedBrands: number;
-  brandsBlocking: number;
-  percentFullyOpen: number;
+interface HomepageStats {
+  brandCount: number;
+  lastScan: string | null;
+  changesThisWeek: number;
+  agentsTracked: number;
+  recentChanges: Array<{
+    id: number;
+    brandId: number;
+    brandSlug: string;
+    brandName: string;
+    field: string;
+    oldValue: string | null;
+    newValue: string | null;
+    detectedAt: string;
+  }>;
+}
+
+function relativeTime(iso: string | null): string {
+  if (!iso) return "—";
+  const diffMs = Date.now() - new Date(iso).getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  if (diffMin < 1) return "just now";
+  if (diffMin < 60) return `${diffMin} min ago`;
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return `${diffHr} hour${diffHr === 1 ? "" : "s"} ago`;
+  const diffDay = Math.floor(diffHr / 24);
+  return `${diffDay} day${diffDay === 1 ? "" : "s"} ago`;
+}
+
+function formatFieldLabel(field: string): string {
+  if (field.startsWith("agent_access_")) return field.replace("agent_access_", "") + " access";
+  if (field.startsWith("agent_ua_")) return field.replace("agent_ua_", "") + " HTTP access";
+  if (field.endsWith(" robots.txt")) return field;
+  return field;
 }
 
 export default function HomePage() {
   const [brands, setBrands] = useState<MatrixBrand[]>([]);
-  const [stats, setStats] = useState<MatrixStats | null>(null);
+  const [stats, setStats] = useState<HomepageStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<BrandCategory | "all">("all");
   const [sortBy, setSortBy] = useState<"alpha" | "blocked" | "platform">("alpha");
 
   useEffect(() => {
-    fetch("/api/matrix")
-      .then(res => res.json())
-      .then(data => {
-        setBrands(data.brands ?? []);
-        setStats(data.stats ?? null);
+    Promise.all([
+      fetch("/api/matrix").then(res => res.json()),
+      fetch("/api/homepage-stats").then(res => res.json()),
+    ])
+      .then(([matrixData, statsData]) => {
+        setBrands(matrixData.brands ?? []);
+        setStats(statsData);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -74,7 +84,6 @@ export default function HomePage() {
 
   const filtered = useMemo(() => {
     let result = brands;
-
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       result = result.filter(b =>
@@ -83,11 +92,9 @@ export default function HomePage() {
         b.category.toLowerCase().includes(q)
       );
     }
-
     if (selectedCategory !== "all") {
       result = result.filter(b => b.category === selectedCategory);
     }
-
     result = [...result].sort((a, b) => {
       switch (sortBy) {
         case "blocked":
@@ -99,7 +106,6 @@ export default function HomePage() {
           return a.name.localeCompare(b.name);
       }
     });
-
     return result;
   }, [brands, searchQuery, selectedCategory, sortBy]);
 
@@ -108,7 +114,7 @@ export default function HomePage() {
     "@type": "Organization",
     name: "ARC Report",
     url: "https://arcreport.ai",
-    description: "AI agent intelligence for e-commerce. Daily scanning of 1,000+ brands for robots.txt policies, user-agent access, structured data, and platform detection.",
+    description: "ARC Report scans 1,000+ ecommerce brands daily and alerts you when their AI agent access posture changes.",
   };
 
   return (
@@ -118,189 +124,241 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
       <Navbar />
-      <IndexHero brandCount={stats?.totalBrands} />
 
-      {/* How it works */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 pt-10 pb-2">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="border-2 border-gray-200 bg-white px-5 py-4">
-            <div className="text-sm font-black text-[#FF6648] font-mono mb-2">/ 01</div>
-            <div className="text-sm font-bold text-foreground mb-1">We scan 1,000+ brands daily</div>
-            <div className="text-xs text-muted-foreground leading-relaxed">robots.txt policies, real HTTP agent access tests, structured data, platform detection, and protocol files like llms.txt.</div>
+      {/* Hero */}
+      <section style={{ backgroundColor: "#0A1628" }} className="border-b border-white/10">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+          <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-[1.05] max-w-3xl">
+            See which AI agents your competitors are letting in.
+          </h1>
+          <p className="mt-5 text-base sm:text-lg text-white/70 max-w-2xl leading-relaxed">
+            ARC Report scans 1,000+ ecommerce brands every day and alerts you the moment their AI access posture changes — robots.txt, user-agent rules, platform, CDN, structured data.
+          </p>
+
+          {/* Proof row */}
+          <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8 max-w-3xl">
+            <div>
+              <div className="text-2xl sm:text-3xl font-black text-white font-mono tabular-nums">
+                {stats?.brandCount ?? "—"}
+              </div>
+              <div className="mt-1 text-[10px] sm:text-xs uppercase tracking-wider text-white/50 font-semibold">
+                Brands monitored
+              </div>
+            </div>
+            <div>
+              <div className="text-2xl sm:text-3xl font-black text-white font-mono tabular-nums">
+                {relativeTime(stats?.lastScan ?? null)}
+              </div>
+              <div className="mt-1 text-[10px] sm:text-xs uppercase tracking-wider text-white/50 font-semibold">
+                Last scan
+              </div>
+            </div>
+            <div>
+              <div className="text-2xl sm:text-3xl font-black text-white font-mono tabular-nums">
+                {stats?.changesThisWeek ?? "—"}
+              </div>
+              <div className="mt-1 text-[10px] sm:text-xs uppercase tracking-wider text-white/50 font-semibold">
+                Changes this week
+              </div>
+            </div>
+            <div>
+              <div className="text-2xl sm:text-3xl font-black text-white font-mono tabular-nums">
+                {stats?.agentsTracked ?? 9}
+              </div>
+              <div className="mt-1 text-[10px] sm:text-xs uppercase tracking-wider text-white/50 font-semibold">
+                Agents tracked
+              </div>
+            </div>
           </div>
-          <div className="border-2 border-gray-200 bg-white px-5 py-4">
-            <div className="text-sm font-black text-[#FF6648] font-mono mb-2">/ 02</div>
-            <div className="text-sm font-bold text-foreground mb-1">Changes are confirmed and published</div>
-            <div className="text-xs text-muted-foreground leading-relaxed">Every signal change is verified across two consecutive scans before appearing in the changelog. No false positives.</div>
-          </div>
-          <div className="border-2 border-gray-200 bg-white px-5 py-4">
-            <div className="text-sm font-black text-[#FF6648] font-mono mb-2">/ 03</div>
-            <div className="text-sm font-bold text-foreground mb-1">You get alerts when things move</div>
-            <div className="text-xs text-muted-foreground leading-relaxed">Pro subscribers track specific brands and get daily email alerts. Everyone else gets the free weekly digest.</div>
+
+          {/* CTAs */}
+          <div className="mt-10 flex flex-wrap items-center gap-5">
+            <Link
+              href="/login"
+              className="inline-block text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-6 py-3 transition-colors"
+            >
+              Start my watchlist →
+            </Link>
+            <a
+              href="#brand-index"
+              className="text-sm font-semibold text-white/70 hover:text-white transition-colors underline underline-offset-4"
+            >
+              Browse the index
+            </a>
           </div>
         </div>
       </section>
 
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
-        {/* Stats bar */}
-        {stats && (
-          <div className="flex items-center gap-6 mb-6 text-sm">
-            <div>
-              <span className="data-num text-lg font-bold text-foreground">{stats.totalBrands}</span>
-              <span className="text-muted-foreground ml-1.5">brands tracked</span>
-            </div>
-            <div className="w-px h-5 bg-border" />
-            <div>
-              <span className="data-num text-lg font-bold text-[#059669]">{stats.percentFullyOpen}%</span>
-              <span className="text-muted-foreground ml-1.5">fully open to AI</span>
-            </div>
-            <div className="w-px h-5 bg-border" />
-            <div>
-              <span className="data-num text-lg font-bold text-[#FF6648]">{stats.brandsBlocking}</span>
-              <span className="text-muted-foreground ml-1.5">blocking agents</span>
-            </div>
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+        {/* Brand index */}
+        <div id="brand-index" className="scroll-mt-16">
+          <div className="flex items-baseline justify-between mb-4">
+            <h2 className="text-xl font-black text-foreground tracking-tight">
+              Brand index
+            </h2>
+            <span className="text-xs text-muted-foreground">
+              {filtered.length} of {brands.length} brand{brands.length !== 1 ? "s" : ""}
+            </span>
           </div>
-        )}
 
-        {/* Filters */}
-        <div className="flex flex-wrap items-center gap-3 mb-4">
-          <input
-            type="text"
-            placeholder="Search brands..."
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            className="border border-gray-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-[#0259DD] w-48"
-          />
-          <select
-            value={selectedCategory}
-            onChange={e => setSelectedCategory(e.target.value as BrandCategory | "all")}
-            className="border border-gray-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-[#0259DD]"
-          >
-            <option value="all">All Categories</option>
-            {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
-              <option key={key} value={key}>{label}</option>
-            ))}
-          </select>
-          <select
-            value={sortBy}
-            onChange={e => setSortBy(e.target.value as typeof sortBy)}
-            className="border border-gray-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-[#0259DD]"
-          >
-            <option value="alpha">A-Z</option>
-            <option value="blocked">Most Blocked</option>
-            <option value="platform">By Platform</option>
-          </select>
-          <span className="text-xs text-muted-foreground ml-auto">
-            {filtered.length} brand{filtered.length !== 1 ? "s" : ""}
-          </span>
-        </div>
-
-        {/* Brand table */}
-        {loading ? (
-          <div className="text-center py-20 text-muted-foreground text-sm">
-            Loading brands...
+          {/* Filters */}
+          <div className="flex flex-wrap items-center gap-3 mb-4">
+            <input
+              type="text"
+              placeholder="Search brands..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="border border-gray-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-[#0259DD] w-48"
+            />
+            <select
+              value={selectedCategory}
+              onChange={e => setSelectedCategory(e.target.value as BrandCategory | "all")}
+              className="border border-gray-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-[#0259DD]"
+            >
+              <option value="all">All Categories</option>
+              {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+                <option key={key} value={key}>{label}</option>
+              ))}
+            </select>
+            <select
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value as typeof sortBy)}
+              className="border border-gray-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-[#0259DD]"
+            >
+              <option value="alpha">A-Z</option>
+              <option value="blocked">Most Blocked</option>
+              <option value="platform">By Platform</option>
+            </select>
           </div>
-        ) : (
-          <div className="border border-gray-200 bg-white overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50/50">
-                  <th className="text-left px-4 py-2.5 font-semibold text-foreground">Brand</th>
-                  <HeaderWithTooltip
-                    label="Platform"
-                    tooltip="The e-commerce platform powering the site (Shopify, Magento, Salesforce Commerce Cloud, etc). Detected from response headers and page source."
-                    align="left"
-                  />
-                  <HeaderWithTooltip
-                    label="Agents Blocked"
-                    tooltip="How many of the 8 major AI shopping agents (GPTBot, ClaudeBot, PerplexityBot, etc) are blocked via robots.txt or HTTP response. 0/8 = fully open to AI agents."
-                    align="center"
-                  />
-                  <HeaderWithTooltip
-                    label="Structured Data"
-                    tooltip="Machine-readable product data on the site. LD = JSON-LD schema markup. OG = Open Graph tags. Feed = product feed (Google Shopping, Shopify JSON). Agents need this to understand products."
-                    align="center"
-                  />
-                  <HeaderWithTooltip
-                    label="CDN / WAF"
-                    tooltip="Content Delivery Network and Web Application Firewall protecting the site. WAFs like DataDome or PerimeterX can block AI agents even if robots.txt allows them."
-                    align="left"
-                  />
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map(brand => (
-                  <tr key={brand.id} className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
-                    <td className="px-4 py-2.5">
-                      <Link href={`/brand/${brand.slug}`} className="font-medium text-foreground hover:text-[#0259DD] transition-colors">
-                        {brand.name}
-                      </Link>
-                      <span className="text-xs text-muted-foreground ml-2">{brand.category}</span>
-                    </td>
-                    <td className="px-4 py-2.5">
-                      {brand.platform ? (
-                        <span className="text-xs font-mono bg-gray-100 px-2 py-0.5">{brand.platform}</span>
-                      ) : (
-                        <span className="text-xs text-muted-foreground">--</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-2.5 text-center">
-                      {brand.scanned ? (
-                        <span className={`data-num font-bold ${
-                          (brand.blockedAgentCount ?? 0) === 0
-                            ? "text-[#059669]"
-                            : (brand.blockedAgentCount ?? 0) >= 4
-                              ? "text-[#FF6648]"
-                              : "text-[#FBBA16]"
-                        }`}>
-                          {brand.blockedAgentCount ?? 0} / 8
-                        </span>
-                      ) : (
-                        <span className="text-xs text-muted-foreground">pending</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-2.5 text-center">
-                      <div className="flex items-center justify-center gap-1.5">
-                        {brand.scanned ? (
-                          <>
-                            {brand.hasJsonLd && <span className="text-[9px] font-mono bg-blue-50 text-blue-700 px-1.5 py-0.5">LD</span>}
-                            {brand.hasOpenGraph && <span className="text-[9px] font-mono bg-green-50 text-green-700 px-1.5 py-0.5">OG</span>}
-                            {brand.hasProductFeed && <span className="text-[9px] font-mono bg-amber-50 text-amber-700 px-1.5 py-0.5">Feed</span>}
-                            {!brand.hasJsonLd && !brand.hasOpenGraph && !brand.hasProductFeed && (
-                              <span className="text-xs text-muted-foreground">none</span>
-                            )}
-                          </>
+
+          {/* Brand table */}
+          {loading ? (
+            <div className="text-center py-20 text-muted-foreground text-sm">
+              Loading brands...
+            </div>
+          ) : (
+            <div className="border border-gray-200 bg-white overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-200 bg-gray-50/50">
+                    <th className="text-left px-4 py-2.5 font-semibold text-foreground">Brand</th>
+                    <th className="text-left px-4 py-2.5 font-semibold text-foreground">Platform</th>
+                    <th className="text-center px-4 py-2.5 font-semibold text-foreground">Agents Blocked</th>
+                    <th className="text-center px-4 py-2.5 font-semibold text-foreground">Structured Data</th>
+                    <th className="text-left px-4 py-2.5 font-semibold text-foreground">CDN / WAF</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map(brand => (
+                    <tr key={brand.id} className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
+                      <td className="px-4 py-2.5">
+                        <Link href={`/brand/${brand.slug}`} className="font-medium text-foreground hover:text-[#0259DD] transition-colors">
+                          {brand.name}
+                        </Link>
+                        <span className="text-xs text-muted-foreground ml-2">{brand.category}</span>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        {brand.platform ? (
+                          <span className="text-xs font-mono bg-gray-100 px-2 py-0.5">{brand.platform}</span>
                         ) : (
                           <span className="text-xs text-muted-foreground">--</span>
                         )}
-                      </div>
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <div className="flex items-center gap-1.5">
-                        {brand.cdn && brand.cdn !== "unknown" && (
-                          <span className="text-[9px] font-mono bg-gray-100 px-1.5 py-0.5">{brand.cdn}</span>
+                      </td>
+                      <td className="px-4 py-2.5 text-center">
+                        {brand.scanned ? (
+                          <span className={`font-mono font-bold tabular-nums ${
+                            (brand.blockedAgentCount ?? 0) === 0
+                              ? "text-[#059669]"
+                              : (brand.blockedAgentCount ?? 0) >= 4
+                                ? "text-[#FF6648]"
+                                : "text-[#FBBA16]"
+                          }`}>
+                            {brand.blockedAgentCount ?? 0} / 8
+                          </span>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">pending</span>
                         )}
-                        {brand.waf && brand.waf !== "none-detected" && (
-                          <span className="text-[9px] font-mono bg-red-50 text-red-700 px-1.5 py-0.5">{brand.waf}</span>
-                        )}
-                        {(!brand.cdn || brand.cdn === "unknown") && (!brand.waf || brand.waf === "none-detected") && (
-                          <span className="text-xs text-muted-foreground">--</span>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+                      </td>
+                      <td className="px-4 py-2.5 text-center">
+                        <div className="flex items-center justify-center gap-1.5">
+                          {brand.scanned ? (
+                            <>
+                              {brand.hasJsonLd && <span className="text-[9px] font-mono bg-blue-50 text-blue-700 px-1.5 py-0.5">LD</span>}
+                              {brand.hasOpenGraph && <span className="text-[9px] font-mono bg-green-50 text-green-700 px-1.5 py-0.5">OG</span>}
+                              {brand.hasProductFeed && <span className="text-[9px] font-mono bg-amber-50 text-amber-700 px-1.5 py-0.5">Feed</span>}
+                              {!brand.hasJsonLd && !brand.hasOpenGraph && !brand.hasProductFeed && (
+                                <span className="text-xs text-muted-foreground">none</span>
+                              )}
+                            </>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">--</span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <div className="flex items-center gap-1.5">
+                          {brand.cdn && brand.cdn !== "unknown" && (
+                            <span className="text-[9px] font-mono bg-gray-100 px-1.5 py-0.5">{brand.cdn}</span>
+                          )}
+                          {brand.waf && brand.waf !== "none-detected" && (
+                            <span className="text-[9px] font-mono bg-red-50 text-red-700 px-1.5 py-0.5">{brand.waf}</span>
+                          )}
+                          {(!brand.cdn || brand.cdn === "unknown") && (!brand.waf || brand.waf === "none-detected") && (
+                            <span className="text-xs text-muted-foreground">--</span>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
 
-        <div className="mt-12 max-w-lg mx-auto">
-          <EmailCapture
-            source="homepage"
-            heading="Get the weekly digest"
-            subtext="One email per week with the biggest agent access changes across 1,000+ brands."
-          />
+        {/* Live Changes feed */}
+        <div className="mt-12">
+          <div className="flex items-baseline justify-between mb-4">
+            <h2 className="text-xl font-black text-foreground tracking-tight">
+              Recent changes
+            </h2>
+            <Link href="/changelog" className="text-xs font-semibold text-[#0259DD] hover:text-[#FF6648] transition-colors">
+              View all →
+            </Link>
+          </div>
+
+          {stats && stats.recentChanges.length > 0 ? (
+            <div className="border border-gray-200 bg-white divide-y divide-gray-100">
+              {stats.recentChanges.map(entry => (
+                <Link
+                  key={entry.id}
+                  href={`/brand/${entry.brandSlug}`}
+                  className="flex items-center justify-between px-4 py-3 hover:bg-gray-50/50 transition-colors"
+                >
+                  <div className="flex-1 min-w-0 text-sm">
+                    <span className="font-medium text-foreground">{entry.brandName}</span>
+                    <span className="text-muted-foreground ml-2">
+                      {formatFieldLabel(entry.field)}:{" "}
+                    </span>
+                    <span className="font-mono text-xs bg-red-50 text-red-700 px-1 py-0.5">
+                      {entry.oldValue ?? "none"}
+                    </span>
+                    <span className="text-muted-foreground mx-1">→</span>
+                    <span className="font-mono text-xs bg-green-50 text-green-700 px-1 py-0.5">
+                      {entry.newValue ?? "none"}
+                    </span>
+                  </div>
+                  <span className="text-xs text-muted-foreground font-mono ml-4 flex-shrink-0">
+                    {relativeTime(entry.detectedAt)}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="border border-gray-200 bg-white px-4 py-8 text-center text-sm text-muted-foreground">
+              No recent changes.
+            </div>
+          )}
         </div>
       </main>
 
