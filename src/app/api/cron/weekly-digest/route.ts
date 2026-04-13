@@ -3,7 +3,7 @@ import { db, schema } from "@/lib/db";
 import { eq, gte, desc, isNull, sql } from "drizzle-orm";
 import { sendEmail } from "@/lib/email/send";
 import { weeklyDigestEmail } from "@/lib/email/templates";
-import { getTopMovers, getWeeklyTotals, getRecentChangelog } from "@/lib/db/queries";
+import { getTopMovers, getWeeklyTotals, getPreviousWeekTotals, getRecentChangelog } from "@/lib/db/queries";
 
 /**
  * Weekly digest cron — sends the weekly summary to all email subscribers.
@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
 
   // Gather weekly data
   const totals = getWeeklyTotals(7);
+  const previousWeek = getPreviousWeekTotals(7);
   const topMovers = getTopMovers(7, 10);
 
   // Get notable changes (robots.txt and agent access changes from the week)
@@ -64,6 +65,7 @@ export async function POST(request: NextRequest) {
       oldValue: c.oldValue,
       newValue: c.newValue,
     })),
+    previousWeek,
   });
 
   // Get all email subscribers (skip unsubscribed)

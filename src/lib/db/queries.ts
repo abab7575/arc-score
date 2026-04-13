@@ -545,6 +545,36 @@ export function getWeeklyTotals(days: number) {
   };
 }
 
+/** Totals for the week ending `days` days ago (exclusive of the current window). */
+export function getPreviousWeekTotals(days: number) {
+  const windowStart = new Date(Date.now() - 2 * days * 24 * 60 * 60 * 1000).toISOString();
+  const windowEnd = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+  const total = db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.changelogEntries)
+    .where(
+      and(
+        gte(schema.changelogEntries.detectedAt, windowStart),
+        lt(schema.changelogEntries.detectedAt, windowEnd),
+      ),
+    )
+    .get();
+  const uniqueBrands = db
+    .select({ count: sql<number>`count(DISTINCT brand_id)` })
+    .from(schema.changelogEntries)
+    .where(
+      and(
+        gte(schema.changelogEntries.detectedAt, windowStart),
+        lt(schema.changelogEntries.detectedAt, windowEnd),
+      ),
+    )
+    .get();
+  return {
+    totalChanges: total?.count ?? 0,
+    brandsMoving: uniqueBrands?.count ?? 0,
+  };
+}
+
 export function insertChangelogEntry(brandId: number, field: string, oldValue: string | null, newValue: string | null) {
   return db
     .insert(schema.changelogEntries)

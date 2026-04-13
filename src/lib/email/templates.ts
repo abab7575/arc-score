@@ -212,6 +212,12 @@ export function welcomeEmail(data: WelcomeEmailData): { subject: string; html: s
       }</div>
     `)}
 
+    ${isPaid ? cardBlock(`
+      <div style="font-size:14px; font-weight:900; color:#FF6648; font-family:monospace; margin-bottom:8px;">/ 04</div>
+      <a href="https://www.arcreport.ai/account/watchlist?suggested=1" style="font-size:15px; font-weight:700; color:#0A1628; margin-bottom:4px; display:block; text-decoration:none;">Suggested starter brands &rarr;</a>
+      <div style="font-size:13px; color:#475569; line-height:1.6;">We'll suggest 5 brands to watch based on the most active in your category.</div>
+    `) : ""}
+
     ${ctaButton("Open the index", "https://www.arcreport.ai")}
 
     ${dividerLine()}
@@ -236,9 +242,32 @@ export interface WatchlistAlertData {
   }>;
 }
 
+function deriveWatchlistVerdict(changes: WatchlistAlertData["changes"]): string {
+  let toward = 0;
+  let away = 0;
+  for (const c of changes) {
+    const oldV = (c.oldValue || "").toLowerCase();
+    const newV = (c.newValue || "").toLowerCase();
+    const openedUp =
+      (oldV.includes("block") || oldV.includes("closed") || oldV.includes("disallow")) &&
+      (newV.includes("allow") || newV.includes("open"));
+    const lockedDown =
+      (oldV.includes("allow") || oldV.includes("open")) &&
+      (newV.includes("block") || newV.includes("closed") || newV.includes("disallow"));
+    if (openedUp) toward++;
+    else if (lockedDown) away++;
+  }
+  const brandCount = new Set(changes.map(c => c.brandSlug)).size;
+  if (toward === 0 && away === 0) {
+    return `${brandCount} brand${brandCount === 1 ? "" : "s"} on your watchlist changed signals today.`;
+  }
+  return `${toward} brand${toward === 1 ? "" : "s"} on your watchlist moved toward AI agents today. ${away} moved away.`;
+}
+
 export function watchlistAlertEmail(data: WatchlistAlertData): { subject: string; html: string; text: string } {
   const brandCount = new Set(data.changes.map(c => c.brandSlug)).size;
   const changeCount = data.changes.length;
+  const verdict = deriveWatchlistVerdict(data.changes);
 
   const changeRows = data.changes.map(c =>
     changeRow(c.brandName, c.brandSlug, c.field, c.oldValue ?? "none", c.newValue ?? "none")
@@ -247,7 +276,7 @@ export function watchlistAlertEmail(data: WatchlistAlertData): { subject: string
   const content = `
     ${sectionLabel("Watchlist alert")}
     ${heading(`${changeCount} change${changeCount === 1 ? "" : "s"} detected`)}
-    ${paragraph(`${brandCount} brand${brandCount === 1 ? "" : "s"} on your watchlist ${brandCount === 1 ? "has" : "have"} new activity.`)}
+    ${paragraph(verdict)}
 
     ${statBlock([
       { value: String(changeCount), label: "Changes", color: "#FF6648" },
@@ -324,10 +353,27 @@ export interface WeeklyDigestData {
     oldValue: string | null;
     newValue: string | null;
   }>;
+  previousWeek?: {
+    totalChanges: number;
+    brandsMoving: number;
+  };
+}
+
+function formatDelta(current: number, previous: number | undefined): string {
+  if (previous === undefined) return "";
+  const diff = current - previous;
+  if (diff === 0) return `<span style="font-size:10px; color:#94A3B8; margin-left:6px;">&nbsp;&middot; flat WoW</span>`;
+  const sign = diff > 0 ? "+" : "";
+  const color = diff > 0 ? "#16A34A" : "#DC2626";
+  return `<span style="font-size:10px; font-weight:700; color:${color}; margin-left:6px;">&nbsp;&middot; ${sign}${diff} WoW</span>`;
 }
 
 export function weeklyDigestEmail(data: WeeklyDigestData): { subject: string; html: string; text: string } {
   const dateStr = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+
+  const topMoverCount = data.topMovers.length;
+  const mostCommonChange = data.notableChanges[0]?.field?.replace(/_/g, " ") || "agent access";
+  const headlineInsight = `This week: ${topMoverCount} brand${topMoverCount === 1 ? "" : "s"} changed posture, with ${mostCommonChange} the most common move.`;
 
   const moverRows = data.topMovers.slice(0, 5).map((m, i) => `
     <tr>
@@ -348,12 +394,21 @@ export function weeklyDigestEmail(data: WeeklyDigestData): { subject: string; ht
   const content = `
     ${sectionLabel(`Weekly digest &mdash; ${dateStr}`)}
     ${heading("This week in agentic commerce")}
-    ${paragraph("What shifted across 1,000+ brand scans this week. The signals that matter, the noise filtered out.")}
+    ${paragraph(headlineInsight)}
 
-    ${statBlock([
-      { value: String(data.totalChanges), label: "Total changes", color: "#FF6648" },
-      { value: String(data.brandsMoving), label: "Brands moving", color: "#0259DD" },
-    ])}
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin:16px 0;">
+      <tr>
+        <td style="padding:16px 20px; background-color:#FFFFFF; border:2px solid #0A1628; vertical-align:top;">
+          <div style="font-size:32px; font-weight:900; color:#FF6648; font-family:monospace; letter-spacing:-0.02em;">${data.totalChanges}</div>
+          <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.15em; color:#94A3B8; margin-top:4px;">Total changes${formatDelta(data.totalChanges, data.previousWeek?.totalChanges)}</div>
+        </td>
+        <td style="width:12px;"></td>
+        <td style="padding:16px 20px; background-color:#FFFFFF; border:2px solid #0A1628; vertical-align:top;">
+          <div style="font-size:32px; font-weight:900; color:#0259DD; font-family:monospace; letter-spacing:-0.02em;">${data.brandsMoving}</div>
+          <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.15em; color:#94A3B8; margin-top:4px;">Brands moving${formatDelta(data.brandsMoving, data.previousWeek?.brandsMoving)}</div>
+        </td>
+      </tr>
+    </table>
 
     ${data.topMovers.length > 0 ? `
       ${subheading("Top movers")}
@@ -445,13 +500,36 @@ export function onboardingDay2Email(data: OnboardingDay2Data): { subject: string
 export interface BrandClaimData {
   brandName: string;
   brandSlug: string;
+  snapshot?: {
+    verdict: string | null;
+    platform: string | null;
+    cdn: string | null;
+    topBlocker: string | null;
+  };
 }
 
 export function brandClaimEmail(data: BrandClaimData): { subject: string; html: string; text: string } {
+  const snapshot = data.snapshot;
+  const snapshotBlock = snapshot
+    ? cardBlock(`
+        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.15em; color:#94A3B8; font-family:monospace; margin-bottom:10px;">Current readout</div>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+          <tr><td style="padding:4px 0; font-size:12px; color:#94A3B8; width:90px;">Verdict</td><td style="padding:4px 0; font-size:13px; font-weight:700; color:#0A1628;">${snapshot.verdict ?? "Unknown"}</td></tr>
+          <tr><td style="padding:4px 0; font-size:12px; color:#94A3B8;">Platform</td><td style="padding:4px 0; font-size:13px; font-weight:700; color:#0A1628;">${snapshot.platform ?? "Unknown"}</td></tr>
+          <tr><td style="padding:4px 0; font-size:12px; color:#94A3B8;">CDN</td><td style="padding:4px 0; font-size:13px; font-weight:700; color:#0A1628;">${snapshot.cdn ?? "Unknown"}</td></tr>
+          <tr><td style="padding:4px 0; font-size:12px; color:#94A3B8;">Top blocker</td><td style="padding:4px 0; font-size:13px; font-weight:700; color:#0A1628;">${snapshot.topBlocker ?? "None detected"}</td></tr>
+        </table>
+      `, "#0259DD")
+    : cardBlock(`
+        <div style="font-size:13px; color:#475569;">Scan in progress &mdash; we'll have your full readout shortly.</div>
+      `);
+
   const content = `
     ${sectionLabel("Brand claim received")}
     ${heading(`You claimed ${data.brandName}.`)}
     ${paragraph(`We've noted your interest in managing ${data.brandName}'s profile on ARC Report. Here's what that means.`)}
+
+    ${snapshotBlock}
 
     ${cardBlock(`
       <div style="font-size:14px; font-weight:900; color:#FF6648; font-family:monospace; margin-bottom:8px;">/ 01</div>
