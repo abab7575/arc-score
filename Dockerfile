@@ -16,7 +16,7 @@ COPY . .
 RUN mkdir -p /app/brand-csvs && cp /app/data/*.csv /app/brand-csvs/ 2>/dev/null || true
 
 # Seed the database BEFORE build (so DB exists when Next.js collects page data)
-RUN npx tsx src/lib/db/seed.ts && npx tsx scripts/seed-feeds.ts \
+RUN npx tsx src/lib/db/seed.ts \
     && for csv in /app/brand-csvs/*.csv; do npx tsx scripts/bulk-import.ts "$csv"; done
 
 # Build Next.js
