@@ -18,7 +18,7 @@ export function AdminLink() {
 
   return (
     <Link
-      href="/admin/dashboard"
+      href="/admin/brands"
       className="text-sm font-medium text-[#0259DD] hover:text-[#0259DD]/80 transition-colors"
     >
       Admin

@@ -2,26 +2,17 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Store, Newspaper, Rss, GitBranch, Megaphone, Send, Settings, LogOut, Grid3X3, BookOpen } from "lucide-react";
+import { Store, Activity, LogOut } from "lucide-react";
 
 const navItems = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/brands", label: "Brands", icon: Store },
-  { href: "/admin/robots-matrix", label: "Matrix", icon: Grid3X3 },
-  { href: "/admin/intel", label: "Intel", icon: Newspaper },
-  { href: "/admin/newsfeed", label: "Newsfeed", icon: Rss },
-  { href: "/admin/brand-pipeline", label: "Pipeline", icon: GitBranch },
-  { href: "/admin/content-studio", label: "Content", icon: Megaphone },
-  { href: "/admin/outreach", label: "Outreach", icon: Send },
-  { href: "/admin/tech-explainer", label: "Explainer", icon: BookOpen },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
+  { href: "/admin/scan-health", label: "Scan Health", icon: Activity },
 ];
 
 export function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  // Hide on login page
   if (pathname === "/admin/login") return null;
 
   async function handleLogout() {

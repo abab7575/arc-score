@@ -7,7 +7,6 @@ import Database from "better-sqlite3";
 import path from "path";
 import fs from "fs";
 import { BRANDS } from "../brands";
-import { FEED_SOURCES } from "../news/feed-sources";
 
 const DB_PATH = path.join(process.cwd(), "data", "arc-score.db");
 fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
@@ -161,23 +160,6 @@ insertMany();
 
 const count = sqlite.prepare("SELECT COUNT(*) as count FROM brands").get() as { count: number };
 console.log(`Seeded ${count.count} brands.`);
-
-// Seed RSS feeds from shared definition
-const insertFeed = sqlite.prepare(`
-  INSERT OR IGNORE INTO feed_sources (name, url, category)
-  VALUES (?, ?, ?)
-`);
-
-const insertFeeds = sqlite.transaction(() => {
-  for (const feed of FEED_SOURCES) {
-    insertFeed.run(feed.name, feed.url, feed.category);
-  }
-});
-
-insertFeeds();
-
-const feedCount = sqlite.prepare("SELECT COUNT(*) as count FROM feed_sources").get() as { count: number };
-console.log(`Seeded ${feedCount.count} RSS feeds.`);
 
 sqlite.close();
 console.log("Done.");
