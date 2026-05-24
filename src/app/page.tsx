@@ -173,18 +173,18 @@ export default function HomePage() {
 
           {/* CTAs */}
           <div className="mt-10 flex flex-wrap items-center gap-5">
-            <Link
-              href="/pricing"
-              className="inline-block text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-6 py-3 transition-colors"
-            >
-              Start my watchlist →
-            </Link>
             <a
               href="#brand-index"
+              className="inline-block text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-6 py-3 transition-colors"
+            >
+              Browse the index →
+            </a>
+            <Link
+              href="/changelog"
               className="text-sm font-semibold text-white/70 hover:text-white transition-colors underline underline-offset-4"
             >
-              Browse the index
-            </a>
+              See today's changes
+            </Link>
           </div>
         </div>
       </section>

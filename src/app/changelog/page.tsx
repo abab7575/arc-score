@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import Link from "next/link";
-import { Lock, Info, LinkIcon } from "lucide-react";
+import { Info, LinkIcon } from "lucide-react";
 
 function Tooltip({ text, children }: { text: string; children: React.ReactNode }) {
   return (
@@ -181,15 +181,13 @@ function formatValue(value: string | null): React.ReactNode {
 
 export default function ChangelogPage() {
   const [entries, setEntries] = useState<ChangelogEntry[]>([]);
-  const [isPro, setIsPro] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/changelog")
+    fetch("/api/changelog?limit=200")
       .then(res => res.json())
       .then(data => {
         setEntries(data.entries ?? []);
-        setIsPro(data.isPro ?? false);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -227,10 +225,7 @@ export default function ChangelogPage() {
           </div>
         ) : (
           <div className="space-y-8">
-            {(() => {
-              let runningIndex = 0;
-              const FREE_VISIBLE_LIMIT = 3;
-              return Object.entries(grouped).map(([date, dateEntries]) => (
+            {Object.entries(grouped).map(([date, dateEntries]) => (
                 <div key={date}>
                   <div className="flex items-center gap-3 mb-3">
                     <span className="spec-label text-xs text-muted-foreground">{date}</span>
@@ -240,16 +235,11 @@ export default function ChangelogPage() {
 
                   <div className="space-y-2">
                     {dateEntries.map(entry => {
-                      runningIndex++;
-                      const isBlurred = !isPro && runningIndex > FREE_VISIBLE_LIMIT;
                       return (
                         <div
                           key={entry.id}
-                          className={`flex items-start gap-3 border border-gray-200 bg-white px-4 py-3 group/entry hover:border-[#0259DD] transition-colors relative ${isBlurred ? "select-none" : ""}`}
+                          className="flex items-start gap-3 border border-gray-200 bg-white px-4 py-3 group/entry hover:border-[#0259DD] transition-colors relative"
                         >
-                          {isBlurred && (
-                            <div className="absolute inset-0 backdrop-blur-[6px] bg-white/60 z-10" />
-                          )}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
                               <Link
@@ -282,27 +272,7 @@ export default function ChangelogPage() {
                     })}
                   </div>
                 </div>
-              ));
-            })()}
-
-            {/* Pro upsell */}
-            {!isPro && entries.length > 3 && (
-              <div className="border-2 border-dashed border-gray-300 bg-gray-50/50 px-6 py-8 text-center">
-                <Lock className="w-5 h-5 text-muted-foreground mx-auto mb-3" />
-                <p className="text-sm font-semibold text-foreground mb-1">
-                  Full history is blurred
-                </p>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Upgrade to Pro for the full changelog — 90+ days of history, exports, and daily alerts.
-                </p>
-                <Link
-                  href="/pricing"
-                  className="inline-block text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-5 py-2 transition-colors"
-                >
-                  Upgrade for full history — $149/mo
-                </Link>
-              </div>
-            )}
+              ))}
           </div>
         )}
       </main>

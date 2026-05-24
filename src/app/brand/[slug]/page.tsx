@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
-import { TrackBrandButton } from "@/components/brand/track-button";
 import {
   getBrandBySlug,
   getLatestLightweightScan,
@@ -309,11 +308,6 @@ export default async function BrandPage({ params }: BrandPageProps) {
             </div>
           )}
         </section>
-
-        {/* 7. CTA */}
-        <div className="pt-2">
-          <TrackBrandButton brandId={brand.id} />
-        </div>
 
       </main>
       <Footer />

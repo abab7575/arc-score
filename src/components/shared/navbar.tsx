@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { AdminLink } from "./admin-link";
-import { AuthNavLink } from "./auth-nav-link";
 
 const navLinks = [
   { href: "/", label: "Brands" },
@@ -50,7 +49,6 @@ export function Navbar() {
               </Link>
             ))}
             <AdminLink />
-            <AuthNavLink />
           </div>
 
           {/* Mobile hamburger button */}
@@ -78,7 +76,6 @@ export function Navbar() {
                 </Link>
               ))}
               <AdminLink />
-              <AuthNavLink />
             </div>
           </div>
         )}
