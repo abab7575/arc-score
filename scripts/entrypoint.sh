@@ -17,9 +17,8 @@ if [ ! -f "$DB_PATH" ]; then
     echo "[entrypoint] Copying seed database..."
     cp ./data.seed/arc-score.db "$DB_PATH"
   else
-    echo "[entrypoint] Running seed scripts..."
+    echo "[entrypoint] Running seed script..."
     npx tsx src/lib/db/seed.ts
-    npx tsx scripts/seed-feeds.ts
   fi
 
   echo "[entrypoint] Seed complete."
