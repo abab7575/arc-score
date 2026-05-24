@@ -22,24 +22,15 @@ RUN npx tsx src/lib/db/seed.ts \
 # Build Next.js
 RUN npm run build
 
-# Stage 2: Runtime with Puppeteer/Chromium
+# Stage 2: Runtime (lightweight HTTP scanner only — no browser needed)
 FROM node:20-slim AS runner
 
 WORKDIR /app
 
-# Install Chromium and fonts for Puppeteer
+# Minimal runtime deps: CA certs for outbound HTTPS scans
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-      chromium \
-      fonts-noto-cjk \
-      fonts-noto-color-emoji \
-      fonts-liberation \
-      ca-certificates \
+    apt-get install -y --no-install-recommends ca-certificates \
     && rm -rf /var/lib/apt/lists/*
-
-# Tell Puppeteer to use system Chromium
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 # Set production environment
 ENV NODE_ENV=production
