@@ -1,10 +1,18 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import Link from "next/link";
 import { Info, LinkIcon } from "lucide-react";
+import { getChangelogWithBrands } from "@/lib/index-data";
+import type { Metadata } from "next";
+
+// Server-rendered with hourly revalidation (new entries land once per daily scan).
+export const revalidate = 3600;
+
+export const metadata: Metadata = {
+  title: "Changelog — AI Agent Access Changes | ARC Report",
+  description:
+    "Daily confirmed changes in AI agent access across the ARC Report brand index: robots.txt policy shifts, WAF changes, structured data, and protocol file adoption.",
+};
 
 function Tooltip({ text, children }: { text: string; children: React.ReactNode }) {
   return (
@@ -180,18 +188,7 @@ function formatValue(value: string | null): React.ReactNode {
 }
 
 export default function ChangelogPage() {
-  const [entries, setEntries] = useState<ChangelogEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/changelog?limit=200")
-      .then(res => res.json())
-      .then(data => {
-        setEntries(data.entries ?? []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
+  const entries: ChangelogEntry[] = getChangelogWithBrands(200);
 
   // Group by date
   const grouped = entries.reduce<Record<string, ChangelogEntry[]>>((acc, entry) => {
@@ -215,11 +212,7 @@ export default function ChangelogPage() {
           </p>
         </div>
 
-        {loading ? (
-          <div className="text-center py-20 text-muted-foreground text-sm">
-            Loading changes...
-          </div>
-        ) : entries.length === 0 ? (
+        {entries.length === 0 ? (
           <div className="text-center py-20 text-muted-foreground text-sm">
             No changes detected yet. Run the daily scan to start tracking.
           </div>

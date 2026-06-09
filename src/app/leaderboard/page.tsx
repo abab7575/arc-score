@@ -5,7 +5,8 @@ import { EmailCapture } from "@/components/shared/email-capture";
 import { getMatrixData } from "@/lib/db/queries";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
+// Server-rendered with hourly revalidation (rankings move once per daily scan).
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "AI-Ready Leaderboard — ARC Report",
