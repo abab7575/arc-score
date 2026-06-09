@@ -1,6 +1,15 @@
 import Link from "next/link";
+import { getIndexStats } from "@/lib/index-data";
+
+function formatUtc(iso: string | null): string {
+  if (!iso) return "PENDING";
+  return iso.replace("T", " ").slice(0, 16) + " UTC";
+}
 
 export function Footer() {
+  // Live counts — never hardcode these (C4).
+  const stats = getIndexStats();
+
   return (
     <footer className="mt-16">
       {/* Color block strip — cassette tape bottom edge */}
@@ -29,25 +38,30 @@ export function Footer() {
               </div>
               <div className="space-y-1">
                 <p className="spec-label text-white/25 text-[9px]">
-                  &copy; {new Date().getFullYear()} ARC REPORT — ALL RIGHTS RESERVED
+                  THE OPEN DATASET OF AI AGENT ACCESS IN E-COMMERCE
                 </p>
                 <p className="spec-label text-white/25 text-[9px]">
-                  AI AGENT INTELLIGENCE FOR E-COMMERCE
+                  DATA LICENSED CC BY 4.0 — ATTRIBUTION REQUIRED
                 </p>
               </div>
             </div>
 
             {/* Right — Links in spec style */}
-            <div className="flex items-center gap-0 border border-white/10 divide-x divide-white/10">
+            <div className="flex flex-wrap items-center gap-0 border border-white/10 divide-x divide-white/10">
               {[
-                { href: "/", label: "BRANDS" },
-                { href: "/changelog", label: "CHANGES" },
-                { href: "/pricing", label: "PRICING" },
+                { href: "/", label: "INDEX" },
+                { href: "/insights", label: "INSIGHTS" },
+                { href: "/data", label: "DATA" },
+                { href: "/methodology", label: "METHODOLOGY" },
+                { href: "/reliability", label: "RELIABILITY" },
+                { href: "/docs", label: "API" },
+                { href: "/docs/mcp", label: "MCP" },
+                { href: "/about", label: "ABOUT" },
               ].map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="spec-label text-[9px] text-white/40 hover:text-white hover:bg-white/5 px-4 py-2.5 transition-colors"
+                  className="spec-label text-[9px] text-white/40 hover:text-white hover:bg-white/5 px-3 py-2.5 transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -55,10 +69,12 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Bottom spec line */}
-          <div className="mt-8 flex items-center gap-3 opacity-30">
+          {/* Bottom spec line — live, never decorative */}
+          <div className="mt-8 flex items-center gap-3 opacity-40">
             <div className="ruled-line flex-1" style={{ background: "repeating-linear-gradient(90deg, rgba(255,255,255,0.15), rgba(255,255,255,0.15) 4px, transparent 4px, transparent 8px)" }} />
-            <span className="spec-label text-white/40 text-[8px]">DATA UPDATED DAILY</span>
+            <span className="spec-label text-white/50 text-[8px]">
+              {stats.brandCount.toLocaleString()} BRANDS · {stats.agentsTracked} AGENTS · LAST SCAN {formatUtc(stats.lastScan)}
+            </span>
             <span className="w-1.5 h-1.5 rounded-full bg-[#059669]" />
             <div className="ruled-line flex-1" style={{ background: "repeating-linear-gradient(90deg, rgba(255,255,255,0.15), rgba(255,255,255,0.15) 4px, transparent 4px, transparent 8px)" }} />
           </div>
