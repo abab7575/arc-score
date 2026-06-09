@@ -32,6 +32,16 @@ export default function HomePage() {
   const stats = getIndexStats();
   const recentChanges = getChangelogWithBrands(10);
 
+  // The readiness gap — the actual product story. "Allowed in robots.txt" is a
+  // near-constant; "actually reachable by an agent" is where brands fail.
+  const scanned = brands.filter((b) => b.scanned);
+  const wafGapCount = scanned.filter((b) => {
+    const vals = Object.values(b.agentStatus ?? {});
+    return !vals.some((v) => v === "blocked") && vals.some((v) => v === "restricted");
+  }).length;
+  const readyCount = scanned.filter((b) => (b.arcScore ?? 0) >= 65).length;
+  const readyPct = scanned.length ? Math.round((readyCount / scanned.length) * 100) : 0;
+
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -112,18 +122,21 @@ export default function HomePage() {
             in commerce.
           </h1>
           <p className="mt-5 text-base sm:text-lg text-white/70 max-w-2xl leading-relaxed">
-            ARC Report scans {stats.brandCount.toLocaleString()} e-commerce brands every day —
-            robots.txt policies, live agent HTTP tests, structured data, platforms — and publishes
-            the results as an open dataset. Free to browse, download, and query.
+            ARC Report scans {stats.brandCount.toLocaleString()} e-commerce brands every day for AI
+            agent access. Most unlock the door in robots.txt — but only{" "}
+            <span className="text-[#FBBA16] font-semibold">{readyPct}% are actually agent-ready</span>,
+            and <span className="text-[#FBBA16] font-semibold">{wafGapCount.toLocaleString()} block
+            the agents they think they&apos;re welcoming</span> at the WAF. It&apos;s all open data —
+            browse, download, or query it.
           </p>
 
           {/* Instrument readouts */}
           <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl">
             {[
               { value: stats.brandCount.toLocaleString(), label: "BRANDS MONITORED", color: "#FF6648" },
-              { value: relativeTime(stats.lastScan), label: "LAST SCAN", color: "#FBBA16" },
-              { value: stats.changesThisWeek.toLocaleString(), label: "CHANGES THIS WEEK", color: "#84AFFB" },
-              { value: String(stats.agentsTracked), label: "AGENTS TRACKED", color: "#059669" },
+              { value: `${readyPct}%`, label: "ACTUALLY AGENT-READY", color: "#059669" },
+              { value: wafGapCount.toLocaleString(), label: "SILENTLY WAF-BLOCKING", color: "#FBBA16" },
+              { value: relativeTime(stats.lastScan), label: "LAST SCAN", color: "#84AFFB" },
             ].map((stat) => (
               <div
                 key={stat.label}
