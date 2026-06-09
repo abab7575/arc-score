@@ -11,8 +11,6 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      { source: "/compare", destination: "/matrix", permanent: true },
-      { source: "/compare/:path*", destination: "/matrix", permanent: true },
       { source: "/agents", destination: "/", permanent: true },
       { source: "/submit", destination: "/", permanent: true },
       { source: "/instant-check", destination: "/", permanent: true },

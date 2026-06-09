@@ -8,6 +8,7 @@ import { AdminLink } from "./admin-link";
 const navLinks = [
   { href: "/", label: "Index" },
   { href: "/matrix", label: "Matrix" },
+  { href: "/compare", label: "Compare" },
   { href: "/insights", label: "Insights" },
   { href: "/changelog", label: "Changes" },
   { href: "/data", label: "Data" },
