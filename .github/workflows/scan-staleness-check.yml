@@ -1,7 +1,8 @@
 name: Scan Staleness Check
 
 # Runs every 6 hours. Fails (and sends a GitHub workflow-failure email to repo
-# watchers) if the most recent successful scan completed more than 26 hours ago.
+# watchers) if the most recent successful scan completed more than 26 hours ago
+# AND the recovery dispatch also fails.
 
 on:
   schedule:
@@ -21,32 +22,31 @@ jobs:
         run: |
           set -e
 
-          RESPONSE=$(curl -s --max-time 30 "${BASE_URL}/api/scan-health")
-          echo "Health response: $RESPONSE"
+          RESPONSE=$(curl -s --max-time 30 "${BASE_URL}/api/scan-health" || true)
+          echo "Health response: ${RESPONSE:0:500}"
 
-          COMPLETED=$(echo "$RESPONSE" | python3 -c "
+          # All staleness logic in one python block kept at base indentation —
+          # nesting python -c inside shell if-blocks re-indents the source and
+          # raises IndentationError (this broke every previous run).
+          STALE=$(echo "$RESPONSE" | python3 -c "
           import json, sys
-          d = json.load(sys.stdin)
+          from datetime import datetime, timezone
+          try:
+              d = json.load(sys.stdin)
+          except Exception:
+              print('age=unknown reason=unparseable-health-response', file=sys.stderr)
+              print('yes')
+              raise SystemExit
           latest = d.get('latestRun') or {}
-          print((latest.get('completedAt') or '') if latest.get('status') == 'completed' else '')
+          completed = (latest.get('completedAt') or '') if latest.get('status') == 'completed' else ''
+          if not completed:
+              print('age=unknown reason=no-completed-run', file=sys.stderr)
+              print('yes')
+              raise SystemExit
+          age = (datetime.now(timezone.utc) - datetime.fromisoformat(completed.replace('Z', '+00:00'))).total_seconds() / 3600
+          print(f'last_completed={completed} age_hours={age:.1f}', file=sys.stderr)
+          print('yes' if age > float('${STALE_THRESHOLD_HOURS}') else 'no')
           ")
-
-          STALE="no"
-
-          if [ -z "$COMPLETED" ]; then
-            echo "::warning::No completed scan run found on production. Attempting recovery."
-            STALE="yes"
-          else
-            AGE_HOURS=$(python3 -c "
-            from datetime import datetime, timezone
-            now = datetime.now(timezone.utc)
-            ts = datetime.fromisoformat('${COMPLETED}'.replace('Z', '+00:00'))
-            print(f'{(now - ts).total_seconds() / 3600:.1f}')
-            ")
-
-            echo "Last successful scan: ${COMPLETED} (${AGE_HOURS}h ago)"
-            STALE=$(python3 -c "print('yes' if float('${AGE_HOURS}') > ${STALE_THRESHOLD_HOURS} else 'no')")
-          fi
 
           if [ "$STALE" = "yes" ]; then
             echo "::warning::Scan is stale or incomplete. Dispatching recovery scan."
@@ -71,4 +71,4 @@ jobs:
             exit 0
           fi
 
-          echo "✓ Scan freshness OK (${AGE_HOURS}h < ${STALE_THRESHOLD_HOURS}h threshold)"
+          echo "✓ Scan freshness OK (under ${STALE_THRESHOLD_HOURS}h threshold)"
