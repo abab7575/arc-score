@@ -2,10 +2,10 @@ import { Navbar } from "@/components/shared/navbar";
 import { MatrixExplorer } from "@/components/matrix/matrix-explorer";
 import { buildMatrixPayload } from "@/lib/index-data";
 
-// Server-rendered with hourly revalidation; the full matrix ships in the HTML.
+// Rendered per request from the live scan volume; full matrix ships in the HTML.
 export const dynamic = "force-dynamic";
 
-type AgentStatus = "allowed" | "blocked" | "no_rule";
+type AgentStatus = "allowed" | "blocked" | "no_rule" | "restricted" | "inconclusive";
 
 export default function PublicMatrixPage() {
   const { stats, brands } = buildMatrixPayload();
