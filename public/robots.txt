@@ -1,16 +1,32 @@
-# ARC Report — arcreport.ai
-# AI Agent Readiness Scanner for 1,000+ E-Commerce Brands
+# ARC Report — www.arcreport.ai
+# The public reference dataset for AI agent access in e-commerce.
+# This site welcomes all crawlers and AI agents. We practice what we measure.
 #
-# This site openly welcomes all crawlers and AI agents.
+# Machine-readable entry points:
+#   /llms.txt          — site guide for language models
+#   /data/latest.json  — full daily snapshot (CC BY 4.0)
+#   /api/mcp           — MCP server (Streamable HTTP)
 
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /api/admin
+Disallow: /api/cron
 
-# AI Agents — explicitly welcomed
+# AI agents — explicitly welcomed
 User-agent: GPTBot
 Allow: /
 
+User-agent: ChatGPT-User
+Allow: /
+
 User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
 Allow: /
 
 User-agent: PerplexityBot
@@ -28,4 +44,7 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 
-Sitemap: https://arcreport.ai/sitemap.xml
+User-agent: Googlebot
+Allow: /
+
+Sitemap: https://www.arcreport.ai/sitemap.xml
