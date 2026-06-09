@@ -9,8 +9,9 @@ import {
   getWeeklyTotals,
 } from "@/lib/db/queries";
 import type { Metadata } from "next";
+import { PRO_PRICE_MONTHLY } from "@/lib/site";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Weekly Intelligence — ARC Report",
@@ -240,7 +241,7 @@ export default async function WeeklyPage() {
             href="/pricing"
             className="inline-block text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-5 py-2 transition-colors"
           >
-            Upgrade to Pro — $149/mo
+            {`Upgrade to Pro — $${PRO_PRICE_MONTHLY}/mo`}
           </Link>
         </div>
       </main>

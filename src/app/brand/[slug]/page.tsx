@@ -8,6 +8,7 @@ import {
   getChangelogForBrand,
 } from "@/lib/db/queries";
 import type { Metadata } from "next";
+import { TRACKED_AGENT_IDS } from "@/lib/site";
 
 interface BrandPageProps {
   params: Promise<{ slug: string }>;
@@ -15,17 +16,7 @@ interface BrandPageProps {
 
 type AgentStatus = "allowed" | "blocked" | "restricted" | "no_rule" | "inconclusive";
 
-const AGENT_ORDER = [
-  "GPTBot",
-  "ChatGPT-User",
-  "ClaudeBot",
-  "Claude-Web",
-  "PerplexityBot",
-  "Google-Extended",
-  "CCBot",
-  "Amazonbot",
-  "Bingbot",
-];
+const AGENT_ORDER = TRACKED_AGENT_IDS;
 
 export const dynamic = "force-dynamic";
 

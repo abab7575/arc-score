@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db, schema } from "@/lib/db/index";
 import { sql, gte, desc } from "drizzle-orm";
+import { TRACKED_AGENT_COUNT } from "@/lib/site";
 
 export async function GET() {
   const brandCountRow = db
@@ -25,7 +26,7 @@ export async function GET() {
     .get();
   const changesThisWeek = changesRow?.count ?? 0;
 
-  const agentsTracked = 9;
+  const agentsTracked = TRACKED_AGENT_COUNT;
 
   const recent = db
     .select({

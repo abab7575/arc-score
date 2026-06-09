@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import type { Metadata } from "next";
+import { PRO_PRICE_MONTHLY } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "API Docs — ARC Report",
@@ -223,7 +224,7 @@ export default function DocsPage() {
             Need more?
           </h2>
           <p className="text-sm text-muted-foreground mb-4">
-            Pro ($149/mo) includes full history, daily alerts, watchlists, and data exports.{" "}
+            {`Pro ($${PRO_PRICE_MONTHLY}/mo) includes full history, daily alerts, watchlists, and data exports.`}{" "}
             <a href="/pricing" className="text-[#0259DD] hover:underline">See pricing</a> or email{" "}
             <a href="mailto:hello@arcreport.ai" className="text-[#0259DD] hover:underline">
               hello@arcreport.ai

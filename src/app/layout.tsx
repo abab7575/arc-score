@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "sonner";
+import { SITE_URL, BRAND_COUNT_DISPLAY } from "@/lib/site";
 import "./globals.css";
 
 const inter = Inter({
@@ -13,10 +14,14 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
+const SITE_TITLE = "ARC Report — The Open Dataset of AI Agent Access in E-Commerce";
+const SITE_DESCRIPTION = `The public reference dataset for how commerce sites treat AI agents. ${BRAND_COUNT_DISPLAY} e-commerce brands scanned daily: robots.txt policies, live agent HTTP tests, structured data, platform detection, llms.txt. Free, open data (CC BY 4.0).`;
+const OG_IMAGE = `${SITE_URL}/api/og?title=AI+Agent+Access+in+E-Commerce&subtitle=The+open+reference+dataset+%E2%80%94+scanned+daily`;
+
 export const metadata: Metadata = {
-  title: "ARC Report — Agent Access Intelligence for E-Commerce",
-  description:
-    "Public intelligence layer for how commerce sites are preparing for AI agents. Daily-scanned agent access signals for 1,000+ e-commerce brands: robots.txt policies, platform detection, structured data, and policy changes.",
+  metadataBase: new URL(SITE_URL),
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
   applicationName: "ARC Report",
   robots: "index, follow",
   keywords: [
@@ -28,31 +33,28 @@ export const metadata: Metadata = {
     "ARC Report",
     "commerce intelligence",
     "AI readiness",
+    "open data",
   ],
   openGraph: {
     type: "website",
-    url: "https://arcreport.ai",
-    title: "ARC Report — Agent Access Intelligence for E-Commerce",
-    description:
-      "Public intelligence layer for how commerce sites are preparing for AI agents. Daily-scanned agent access signals for 1,000+ e-commerce brands: robots.txt policies, platform detection, structured data, and policy changes.",
+    url: SITE_URL,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     siteName: "ARC Report",
     images: [
       {
-        url: "https://arcreport.ai/api/og?title=AI+Agent+Intelligence+for+E-Commerce&subtitle=1%2C000%2B+brands+scanned+daily&stat=1%2C006",
+        url: OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: "ARC Report — AI Agent Intelligence for E-Commerce",
+        alt: "ARC Report — AI Agent Access in E-Commerce",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "ARC Report — Agent Access Intelligence for E-Commerce",
-    description:
-      "Public intelligence layer for how commerce sites are preparing for AI agents. Daily-scanned agent access signals for 1,000+ e-commerce brands.",
-    images: [
-      "https://arcreport.ai/api/og?title=AI+Agent+Intelligence+for+E-Commerce&subtitle=1%2C000%2B+brands+scanned+daily&stat=1%2C006",
-    ],
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [OG_IMAGE],
   },
 };
 

@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { TRACKED_AGENTS } from "@/lib/site";
 
 interface Agent {
   id: string;
@@ -10,17 +11,17 @@ interface Agent {
   product: string;
 }
 
-const AGENTS: Agent[] = [
-  { id: "GPTBot", short: "GPT", company: "OpenAI", product: "ChatGPT training" },
-  { id: "ChatGPT-User", short: "GPT-U", company: "OpenAI", product: "ChatGPT live" },
-  { id: "ClaudeBot", short: "Claude", company: "Anthropic", product: "Claude training" },
-  { id: "Claude-Web", short: "Cl-Web", company: "Anthropic", product: "Claude live" },
-  { id: "PerplexityBot", short: "Perp", company: "Perplexity", product: "Perplexity / Comet" },
-  { id: "Google-Extended", short: "Goog", company: "Google", product: "AI Mode / Gemini" },
-  { id: "Amazonbot", short: "Amzn", company: "Amazon", product: "Buy For Me" },
-  { id: "Bingbot", short: "Bing", company: "Microsoft", product: "Copilot / Bing" },
-  { id: "CCBot", short: "CC", company: "Common Crawl", product: "Open training data" },
-];
+const SHORT_NAMES: Record<string, string> = {
+  "GPTBot": "GPT", "ChatGPT-User": "GPT-U", "ClaudeBot": "Claude", "Claude-Web": "Cl-Web",
+  "PerplexityBot": "Perp", "Google-Extended": "Goog", "Amazonbot": "Amzn", "Bingbot": "Bing", "CCBot": "CC",
+};
+
+const AGENTS: Agent[] = TRACKED_AGENTS.map((a) => ({
+  id: a.id,
+  short: SHORT_NAMES[a.id] ?? a.id,
+  company: a.company,
+  product: a.product,
+}));
 
 type AgentStatus = "allowed" | "blocked" | "no_rule";
 

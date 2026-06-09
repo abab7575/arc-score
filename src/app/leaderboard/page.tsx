@@ -4,6 +4,7 @@ import { Footer } from "@/components/shared/footer";
 import { EmailCapture } from "@/components/shared/email-capture";
 import { getMatrixData } from "@/lib/db/queries";
 import type { Metadata } from "next";
+import { PRO_PRICE_MONTHLY } from "@/lib/site";
 
 // Server-rendered with hourly revalidation (rankings move once per daily scan).
 export const revalidate = 3600;
@@ -185,7 +186,7 @@ export default function LeaderboardPage() {
             href="/pricing"
             className="inline-block text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-5 py-2 transition-colors"
           >
-            Get Pro — $149/mo
+            {`Get Pro — $${PRO_PRICE_MONTHLY}/mo`}
           </Link>
         </div>
 

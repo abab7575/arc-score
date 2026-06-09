@@ -1,6 +1,7 @@
 import { db, schema } from "./index";
 import { eq, desc, sql, and, gte, lt } from "drizzle-orm";
 import type { ScanReport } from "@/types/report";
+import { TRACKED_AGENT_IDS } from "@/lib/site";
 
 /** Minimal type for insertLightweightScan — avoids importing scanner module into DB layer */
 interface LightweightScanInput {
@@ -319,7 +320,7 @@ export function insertLightweightScan(brandId: number, result: LightweightScanIn
     agentStatus[agent] = "blocked";
   }
   // Agents not mentioned get "no_rule"
-  const allAgents = ["GPTBot", "ChatGPT-User", "ClaudeBot", "Claude-Web", "PerplexityBot", "Google-Extended", "CCBot", "Amazonbot", "Bingbot"];
+  const allAgents = TRACKED_AGENT_IDS;
   for (const agent of allAgents) {
     if (!agentStatus[agent]) {
       agentStatus[agent] = "no_rule";

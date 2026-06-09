@@ -1256,37 +1256,20 @@ function CTASection() {
         </div>
         <div>
           <p className="text-sm text-white/55 mb-8 max-w-md mx-auto">
-            Weekly automated scanning of your site.
-            Ranked against 100 of the world&apos;s top e-commerce brands.
-            Watch your score improve as you make each fix.
+            ARC Report scans 1,000+ e-commerce brands daily and publishes
+            the results as a free, open dataset — browse it, download it,
+            or query it from your agent.
           </p>
         </div>
         <div>
           <div className="flex flex-wrap justify-center gap-3 mb-12">
-            <a href="/submit" className="inline-flex items-center gap-2 text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-8 py-4 transition-all relative group hover:translate-y-[-2px]">
-              Get Your AgentScore <ArrowRight size={14} />
+            <a href="/" className="inline-flex items-center gap-2 text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-8 py-4 transition-all relative group hover:translate-y-[-2px]">
+              Browse the Index <ArrowRight size={14} />
               <span className="absolute inset-0 bg-black/30 -z-10 translate-x-[3px] translate-y-[3px] group-hover:translate-x-[4px] group-hover:translate-y-[4px] transition-transform" />
             </a>
-            <a href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-white border-2 border-white/20 hover:border-white/50 px-8 py-4 transition-all">
-              View the Leaderboard <ExternalLink size={12} />
+            <a href="/data" className="inline-flex items-center gap-2 text-sm font-semibold text-white border-2 border-white/20 hover:border-white/50 px-8 py-4 transition-all">
+              Download the Data <ExternalLink size={12} />
             </a>
-          </div>
-        </div>
-        <div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto">
-            <div className="rounded-xl p-5 text-center" style={{ backgroundColor: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
-              <p className="text-sm font-bold text-white mb-1">Free</p>
-              <p className="text-[10px] text-white/45">Public leaderboard. One scan/month.</p>
-            </div>
-            <div className="rounded-xl p-5 text-center relative" style={{ backgroundColor: "rgba(2,89,221,0.12)", border: "2px solid rgba(2,89,221,0.3)" }}>
-              <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[8px] font-mono font-bold bg-[#0259DD] text-white px-2 py-0.5 rounded-full">POPULAR</span>
-              <p className="text-sm font-bold text-[#84AFFB] mb-1">Growth — €49/mo</p>
-              <p className="text-[10px] text-white/45">5 sites weekly. 6-month trends. Alerts.</p>
-            </div>
-            <div className="rounded-xl p-5 text-center" style={{ backgroundColor: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
-              <p className="text-sm font-bold text-white mb-1">Pro — €149/mo</p>
-              <p className="text-[10px] text-white/45">20 sites. API. Competitor tracking.</p>
-            </div>
           </div>
         </div>
       </div>
