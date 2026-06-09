@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { TRACKED_AGENT_IDS } from "@/lib/site";
+import { buildFixPrompts } from "@/lib/fix-prompts";
+import { FixPrompts } from "@/components/brand/fix-prompts";
 
 interface ScanResultData {
   known: boolean;
@@ -248,6 +250,24 @@ export function ScanWidget({ defaultDomain }: { defaultDomain?: string }) {
               ))}
             </ul>
           </section>
+
+          <FixPrompts
+            prompts={buildFixPrompts({
+              domain: result.domain ?? "",
+              agentStatus: result.agentStatus ?? {},
+              signals: {
+                jsonLd: !!result.signals?.jsonLd,
+                schemaProduct: !!result.signals?.schemaProduct,
+                openGraph: !!result.signals?.openGraph,
+                sitemap: !!result.signals?.sitemap,
+                productFeed: !!result.signals?.productFeed,
+                llmsTxt: !!result.signals?.llmsTxt,
+                agentsTxt: !!result.signals?.agentsTxt,
+              },
+              platform: result.platform,
+              waf: result.waf,
+            })}
+          />
 
           <div className="border border-gray-200 bg-gray-50/60 px-4 py-3 text-xs text-muted-foreground">
             {result.domain} has been queued for the daily index — it will get a permanent brand page,

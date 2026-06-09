@@ -11,6 +11,8 @@ import type { Metadata } from "next";
 import { TRACKED_AGENT_IDS, TRACKED_AGENT_COUNT, SITE_URL } from "@/lib/site";
 import { db, schema } from "@/lib/db";
 import { computeArcScore, arcScoreLabel } from "@/lib/scoring/arc-score";
+import { buildFixPrompts } from "@/lib/fix-prompts";
+import { FixPrompts } from "@/components/brand/fix-prompts";
 import { eq } from "drizzle-orm";
 
 interface BrandPageProps {
@@ -209,6 +211,21 @@ export default async function BrandPage({ params }: BrandPageProps) {
   const scoreMeta = arcScoreLabel(score.total);
 
   const { blocked: blockedCount } = summarizeAccess(scan);
+  const fixPrompts = buildFixPrompts({
+    domain: brand.url.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, ""),
+    agentStatus,
+    signals: {
+      jsonLd: scan.hasJsonLd,
+      schemaProduct: scan.hasSchemaProduct,
+      openGraph: scan.hasOpenGraph,
+      sitemap: scan.hasSitemap,
+      productFeed: scan.hasProductFeed,
+      llmsTxt: scan.hasLlmsTxt,
+      agentsTxt: scan.hasAgentsTxt,
+    },
+    platform: scan.platform,
+    waf: scan.waf,
+  });
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -420,6 +437,9 @@ export default async function BrandPage({ params }: BrandPageProps) {
             </div>
           )}
         </section>
+
+        {/* 6a. Fix prompts for failed checks */}
+        <FixPrompts prompts={fixPrompts} />
 
         {/* 6b. Embeddable badge */}
         <section>
