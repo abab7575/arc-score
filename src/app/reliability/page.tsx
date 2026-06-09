@@ -4,6 +4,7 @@ import { Footer } from "@/components/shared/footer";
 import { db, schema } from "@/lib/db";
 import { sql, desc } from "drizzle-orm";
 import { getMatrixData } from "@/lib/db/queries";
+import { getFailureInsights } from "@/lib/scan-failures";
 import { TRACKED_AGENT_IDS, CONTACT_EMAIL } from "@/lib/site";
 import type { Metadata } from "next";
 
@@ -71,6 +72,9 @@ export default function ReliabilityPage() {
   }
   const conclusiveRate =
     totalVerdicts > 0 ? Math.round((conclusiveVerdicts / totalVerdicts) * 1000) / 10 : 0;
+
+  const failures = getFailureInsights(7);
+  const persistent = failures.repeatOffenders.filter((o) => o.consecutiveRuns >= 3);
 
   return (
     <div className="min-h-screen bg-background">
@@ -150,6 +154,56 @@ export default function ReliabilityPage() {
                 </tbody>
               </table>
             </div>
+          </section>
+        )}
+
+        {failures.latestBuckets.length > 0 && (
+          <section className="mb-10">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-foreground mb-3">
+              Why scans fail
+            </h2>
+            <p className="text-sm text-muted-foreground mb-3">
+              Error breakdown from the latest completed run. Failed brands get one calm retry
+              (lower concurrency, doubled timeout) before being counted here.
+            </p>
+            <div className="border border-gray-200 bg-white overflow-x-auto mb-4">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-200 bg-gray-50/50">
+                    <th className="text-left px-4 py-2.5 font-semibold">Error</th>
+                    <th className="text-right px-4 py-2.5 font-semibold">Brands</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {failures.latestBuckets.map((b) => (
+                    <tr key={b.error} className="border-b border-gray-100 last:border-0">
+                      <td className="px-4 py-2 font-mono text-xs break-all">{b.error}</td>
+                      <td className="px-4 py-2 text-right font-mono">{b.count}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {persistent.length > 0 && (
+              <>
+                <p className="text-sm text-muted-foreground mb-2">
+                  {persistent.length} brand{persistent.length === 1 ? "" : "s"} failed{" "}
+                  {persistent.length === 1 ? "its" : "their"} last 3+ consecutive scans
+                  (of {failures.runsExamined} runs examined). Persistent failers are reviewed
+                  for removal or reclassification — a site that blocks our scanner is recorded
+                  as a finding, not silently dropped.
+                </p>
+                <div className="border border-gray-200 bg-white max-h-56 overflow-y-auto">
+                  {persistent.slice(0, 30).map((o) => (
+                    <div key={o.slug} className="flex items-baseline gap-3 px-4 py-2 text-xs border-b border-gray-100 last:border-0">
+                      <span className="font-semibold text-foreground w-36 truncate shrink-0">{o.name}</span>
+                      <span className="font-mono text-muted-foreground w-16 shrink-0">{o.consecutiveRuns}/{failures.runsExamined} runs</span>
+                      <span className="font-mono text-muted-foreground truncate">{o.lastError}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </section>
         )}
 

@@ -594,7 +594,9 @@ export function getScanHealth() {
         }
       : null,
     driftReport,
-    failedBrands,
+    failedBrands: failedBrands.slice(0, 100),
+    failedBrandCount: failedBrands.length,
+    failureBuckets: failureReport?.errorCounts ?? [],
     dataFreshness: {
       freshBrands,
       totalBrands,

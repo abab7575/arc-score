@@ -124,7 +124,9 @@ export function runDriftChecks(runId: number): DriftReport {
     )
     .get();
 
-  const actualFailedCount = failedJobs?.count ?? 0;
+  // The lightweight daily run records failures on the run row, not in
+  // scan_jobs — take whichever source actually has data.
+  const actualFailedCount = Math.max(failedJobs?.count ?? 0, failedCount);
   const inconclusiveRate = totalBrands > 0
     ? actualFailedCount / totalBrands
     : 0;

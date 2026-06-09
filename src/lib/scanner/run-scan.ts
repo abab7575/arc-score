@@ -18,6 +18,8 @@ import { runDriftChecks, type DriftReport } from "./drift-detector";
 
 const STALE_HEARTBEAT_MS = 3 * 60 * 1000; // 3 min without heartbeat = dead
 const PER_BRAND_TIMEOUT_MS = 60_000; // internal branches (robots.txt retries, agents.txt sequential) can hit 30s
+const RETRY_SWEEP_CONCURRENCY = 3; // calm second visit for failed brands
+const RETRY_SWEEP_TIMEOUT_MS = 120_000;
 const DEFAULT_CONCURRENCY = 40; // higher concurrency absorbs slow brands without stalling throughput
 const HEARTBEAT_INTERVAL_MS = 30_000;
 
@@ -154,14 +156,16 @@ export async function runScanOnce(options: { concurrency?: number } = {}): Promi
   const progressLogEvery = 100;
   let lastLoggedMilestone = 0;
 
+  let perBrandTimeoutMs = PER_BRAND_TIMEOUT_MS;
+
   async function processOne(brand: typeof brands[number]): Promise<void> {
     try {
       const result = await Promise.race([
         runLightweightScan(brand.url, brand.productUrl ?? undefined),
         new Promise<never>((_, reject) =>
           setTimeout(
-            () => reject(new Error(`Timeout after ${PER_BRAND_TIMEOUT_MS / 1000}s`)),
-            PER_BRAND_TIMEOUT_MS,
+            () => reject(new Error(`Timeout after ${perBrandTimeoutMs / 1000}s`)),
+            perBrandTimeoutMs,
           ),
         ),
       ]);
@@ -246,6 +250,31 @@ export async function runScanOnce(options: { concurrency?: number } = {}): Promi
 
   const workers = Array.from({ length: concurrency }, () => worker());
   await Promise.all(workers);
+
+  // 5b. Retry sweep: a large share of failures are transient (slow sites
+  // buckling under the saturated outbound pipe). Re-visit every failed brand
+  // once, calmly: low concurrency, doubled timeout. Brands that fail twice
+  // in one night are recorded as the run's real failures.
+  if (failedBrands.length > 0) {
+    const failedIds = new Set(failedBrands.map((f) => f.brandId));
+    const retryList = brands.filter((b) => failedIds.has(b.id));
+    console.log(
+      `[run-scan] retry sweep: ${retryList.length} failed brands, concurrency=${RETRY_SWEEP_CONCURRENCY}, timeout=${RETRY_SWEEP_TIMEOUT_MS / 1000}s`,
+    );
+    failed = 0;
+    failedBrands.length = 0;
+    errorCounts.clear();
+    perBrandTimeoutMs = RETRY_SWEEP_TIMEOUT_MS;
+    brandQueue.push(...retryList);
+    const retryWorkers = Array.from(
+      { length: Math.min(RETRY_SWEEP_CONCURRENCY, retryList.length) },
+      () => worker(),
+    );
+    await Promise.all(retryWorkers);
+    console.log(
+      `[run-scan] retry sweep done: ${retryList.length - failed}/${retryList.length} recovered, ${failed} still failing`,
+    );
+  }
 
   // Stop heartbeat once scanning is done
   clearInterval(heartbeatInterval);
