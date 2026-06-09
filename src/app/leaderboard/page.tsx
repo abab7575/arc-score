@@ -3,6 +3,7 @@ import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import { EmailCapture } from "@/components/shared/email-capture";
 import { getMatrixData } from "@/lib/db/queries";
+import { computeArcScore } from "@/lib/scoring/arc-score";
 import type { Metadata } from "next";
 import { PRO_PRICE_MONTHLY } from "@/lib/site";
 
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
 export default function LeaderboardPage() {
   const matrix = getMatrixData().filter((entry) => entry.scan !== null);
 
-  // Score each brand: openness = allowed agents / total agents, weighted by machine-readable signals
+  // Rank brands by ARC Score v1.0 (see /methodology#score)
   const scored = matrix.map(({ brand, scan }) => {
     if (!scan) return null;
 
@@ -38,21 +39,7 @@ export default function LeaderboardPage() {
       (s) => s === "blocked" || s === "restricted",
     ).length;
 
-    const signalCount = [
-      scan.hasJsonLd,
-      scan.hasSchemaProduct,
-      scan.hasOpenGraph,
-      scan.hasSitemap,
-      scan.hasProductFeed,
-      scan.hasLlmsTxt,
-      scan.hasAgentsTxt,
-      scan.hasUcp,
-    ].filter(Boolean).length;
-
-    // Composite score: 70% agent openness + 30% signal coverage
-    const opennessScore = openAgents / totalAgents;
-    const signalScore = signalCount / 8;
-    const composite = opennessScore * 0.7 + signalScore * 0.3;
+    const score = computeArcScore(scan);
 
     return {
       brand,
@@ -60,16 +47,15 @@ export default function LeaderboardPage() {
       openAgents,
       blockedAgents,
       totalAgents,
-      signalCount,
-      composite,
+      score,
     };
   }).filter((x): x is NonNullable<typeof x> => x !== null);
 
   type ScoredBrand = (typeof scored)[number];
 
   // Sort for leaderboards
-  const aiReady: ScoredBrand[] = [...scored].sort((a, b) => b.composite - a.composite).slice(0, 10);
-  const aiResistant: ScoredBrand[] = [...scored].sort((a, b) => a.composite - b.composite).slice(0, 10);
+  const aiReady: ScoredBrand[] = [...scored].sort((a, b) => b.score.total - a.score.total).slice(0, 10);
+  const aiResistant: ScoredBrand[] = [...scored].sort((a, b) => a.score.total - b.score.total).slice(0, 10);
 
   return (
     <div className="min-h-screen bg-background">
@@ -113,15 +99,12 @@ export default function LeaderboardPage() {
                     <span className="text-xs text-muted-foreground">
                       {entry.openAgents}/{entry.totalAgents} agents open
                       {" "}
-                      &middot; {entry.signalCount}/8 signals
+                      &middot; data {entry.score.structuredData}/25 &middot; protocols {entry.score.protocolFiles}/15
                     </span>
                   </div>
-                  <div className="w-16 bg-gray-100 h-2 rounded-full overflow-hidden">
-                    <div
-                      className="bg-emerald-500 h-full rounded-full"
-                      style={{ width: `${Math.round(entry.composite * 100)}%` }}
-                    />
-                  </div>
+                  <span className="text-xl font-black font-mono text-emerald-600 tabular-nums" title="ARC Score v1.0">
+                    {entry.score.total}
+                  </span>
                 </Link>
               ))}
             </div>
@@ -152,15 +135,12 @@ export default function LeaderboardPage() {
                     <span className="text-xs text-muted-foreground">
                       {entry.blockedAgents}/{entry.totalAgents} agents blocked
                       {" "}
-                      &middot; {entry.signalCount}/8 signals
+                      &middot; data {entry.score.structuredData}/25 &middot; protocols {entry.score.protocolFiles}/15
                     </span>
                   </div>
-                  <div className="w-16 bg-gray-100 h-2 rounded-full overflow-hidden">
-                    <div
-                      className="bg-red-500 h-full rounded-full"
-                      style={{ width: `${Math.round((1 - entry.composite) * 100)}%` }}
-                    />
-                  </div>
+                  <span className="text-xl font-black font-mono text-red-500 tabular-nums" title="ARC Score v1.0">
+                    {entry.score.total}
+                  </span>
                 </Link>
               ))}
             </div>
@@ -192,8 +172,9 @@ export default function LeaderboardPage() {
 
         <div className="mt-8 text-center text-xs text-muted-foreground">
           <p>
-            Rankings are based on daily HTTP scans of 1,000+ brands.
-            Composite score: 70% agent access openness + 30% machine-readable signal coverage.
+            Rankings use ARC Score v1.0: agent access breadth (50) + structured
+            data (25) + protocol files (15) + scan stability (10), computed from
+            daily scans. Formula: <Link href="/methodology#score" className="text-[#0259DD] hover:underline">/methodology</Link>.
             {" "}
             <Link href="/matrix" className="text-[#0259DD] hover:underline">
               See the full matrix

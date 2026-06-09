@@ -20,6 +20,7 @@ export default function PublicMatrixPage() {
       agents: (b.agentStatus ?? {}) as Record<string, AgentStatus>,
       blockedCount: b.blockedAgentCount ?? 0,
       scannedAt: b.scannedAt ?? null,
+      arcScore: b.arcScore,
     }));
 
   return (

@@ -15,7 +15,7 @@ import { TRACKED_AGENT_COUNT } from "@/lib/site";
 export function BrandTable({ brands }: { brands: MatrixBrandRow[] }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<BrandCategory | "all">("all");
-  const [sortBy, setSortBy] = useState<"alpha" | "blocked" | "score" | "platform">("alpha");
+  const [sortBy, setSortBy] = useState<"alpha" | "blocked" | "score" | "platform">("score");
 
   const filtered = useMemo(() => {
     let result = brands;
@@ -32,6 +32,8 @@ export function BrandTable({ brands }: { brands: MatrixBrandRow[] }) {
     }
     result = [...result].sort((a, b) => {
       switch (sortBy) {
+        case "score":
+          return (b.arcScore ?? -1) - (a.arcScore ?? -1);
         case "blocked":
           return (b.blockedAgentCount ?? 0) - (a.blockedAgentCount ?? 0);
         case "platform":
@@ -79,6 +81,7 @@ export function BrandTable({ brands }: { brands: MatrixBrandRow[] }) {
           onChange={e => setSortBy(e.target.value as typeof sortBy)}
           className="border border-gray-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-[#0259DD]"
         >
+          <option value="score">ARC Score</option>
           <option value="alpha">A-Z</option>
           <option value="blocked">Most Blocked</option>
           <option value="platform">By Platform</option>
@@ -91,6 +94,7 @@ export function BrandTable({ brands }: { brands: MatrixBrandRow[] }) {
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50/50">
               <th className="text-left px-4 py-2.5 font-semibold text-foreground">Brand</th>
+              <th className="text-right px-4 py-2.5 font-semibold text-foreground" title="ARC Score v1.0 — see /methodology">Score</th>
               <th className="text-left px-4 py-2.5 font-semibold text-foreground">Platform</th>
               <th className="text-center px-4 py-2.5 font-semibold text-foreground">Agents Blocked</th>
               <th className="text-center px-4 py-2.5 font-semibold text-foreground">Structured Data</th>
@@ -105,6 +109,18 @@ export function BrandTable({ brands }: { brands: MatrixBrandRow[] }) {
                     {brand.name}
                   </Link>
                   <span className="text-xs text-muted-foreground ml-2">{brand.category}</span>
+                </td>
+                <td className="px-4 py-2.5 text-right">
+                  {brand.arcScore !== undefined ? (
+                    <span className={`font-mono font-bold tabular-nums ${
+                      brand.arcScore >= 85 ? "text-[#059669]"
+                        : brand.arcScore >= 65 ? "text-[#0259DD]"
+                        : brand.arcScore >= 40 ? "text-[#D97706]"
+                        : "text-[#DC2626]"
+                    }`}>{brand.arcScore}</span>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">--</span>
+                  )}
                 </td>
                 <td className="px-4 py-2.5">
                   {brand.platform ? (

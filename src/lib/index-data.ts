@@ -8,6 +8,7 @@ import { db, schema } from "@/lib/db";
 import { sql, gte, desc } from "drizzle-orm";
 import { getMatrixData, getRecentChangelog } from "@/lib/db/queries";
 import { TRACKED_AGENT_COUNT } from "@/lib/site";
+import { computeArcScore } from "@/lib/scoring/arc-score";
 
 export interface MatrixBrandRow {
   id: number;
@@ -30,6 +31,13 @@ export interface MatrixBrandRow {
   hasAgentsTxt?: boolean;
   hasUcp?: boolean;
   scannedAt?: string;
+  arcScore?: number;
+  arcScoreComponents?: {
+    agentAccess: number;
+    structuredData: number;
+    protocolFiles: number;
+    scanStability: number;
+  };
 }
 
 export interface MatrixStats {
@@ -73,6 +81,18 @@ export function buildMatrixPayload(): { stats: MatrixStats; brands: MatrixBrandR
       ...(scan
         ? {
             agentStatus: safeParse(scan.agentStatusJson),
+            ...(() => {
+              const score = computeArcScore(scan);
+              return {
+                arcScore: score.total,
+                arcScoreComponents: {
+                  agentAccess: score.agentAccess,
+                  structuredData: score.structuredData,
+                  protocolFiles: score.protocolFiles,
+                  scanStability: score.scanStability,
+                },
+              };
+            })(),
             platform: scan.platform,
             cdn: scan.cdn,
             waf: scan.waf,

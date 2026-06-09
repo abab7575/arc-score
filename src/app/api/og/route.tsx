@@ -8,6 +8,13 @@ export async function GET(request: NextRequest) {
   const title = searchParams.get("title") || "AI Agent Intelligence for E-Commerce";
   const subtitle = searchParams.get("subtitle") || "1,000+ brands scanned daily";
   const stat = searchParams.get("stat") || "";
+  const score = searchParams.get("score");
+  const scoreColor =
+    score === null ? "#FF6648"
+      : Number(score) >= 85 ? "#059669"
+      : Number(score) >= 65 ? "#0259DD"
+      : Number(score) >= 40 ? "#D97706"
+      : "#DC2626";
 
   return new ImageResponse(
     (
@@ -116,8 +123,30 @@ export async function GET(request: NextRequest) {
             {subtitle}
           </div>
 
+          {/* ARC Score block */}
+          {score !== null && (
+            <div style={{ display: "flex", marginTop: "32px", gap: "24px" }}>
+              <div
+                style={{
+                  backgroundColor: "#FFFFFF",
+                  border: "2px solid #0A1628",
+                  padding: "16px 24px",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <span style={{ fontSize: "44px", fontWeight: 900, color: scoreColor, fontFamily: "monospace" }}>
+                  {score}/100
+                </span>
+                <span style={{ fontSize: "11px", color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.15em", fontWeight: 700 }}>
+                  ARC Score v1.0
+                </span>
+              </div>
+            </div>
+          )}
+
           {/* Stat block */}
-          {stat && (
+          {!score && stat && (
             <div
               style={{
                 display: "flex",

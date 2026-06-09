@@ -10,6 +10,7 @@ import {
 import type { Metadata } from "next";
 import { TRACKED_AGENT_IDS, TRACKED_AGENT_COUNT, SITE_URL } from "@/lib/site";
 import { db, schema } from "@/lib/db";
+import { computeArcScore, arcScoreLabel } from "@/lib/scoring/arc-score";
 import { eq } from "drizzle-orm";
 
 interface BrandPageProps {
@@ -65,11 +66,12 @@ export async function generateMetadata({ params }: BrandPageProps): Promise<Meta
 
   const title = `${brand.name} — AI Agent Access Report | ARC Report`;
   const description = `${brand.name}'s AI agent access, scanned daily: robots.txt policy per agent, live HTTP tests, platform, structured data, llms.txt.${scannedNote}`;
+  const ogScore = scan ? computeArcScore(scan).total : null;
   const ogImage = `${SITE_URL}/api/og?title=${encodeURIComponent(`${brand.name} — agent access`)}&subtitle=${encodeURIComponent(
     scan
       ? `${open}/${TRACKED_AGENT_COUNT} agents allowed · scanned ${scan.scannedAt.split("T")[0]}`
       : "Daily AI agent access scan",
-  )}`;
+  )}${ogScore !== null ? `&score=${ogScore}` : ""}`;
 
   return {
     title,
@@ -203,6 +205,8 @@ export default async function BrandPage({ params }: BrandPageProps) {
   }));
 
   const verdict = deriveVerdict(statuses);
+  const score = computeArcScore(scan);
+  const scoreMeta = arcScoreLabel(score.total);
 
   const { blocked: blockedCount } = summarizeAccess(scan);
   const jsonLd = {
@@ -269,6 +273,43 @@ export default async function BrandPage({ params }: BrandPageProps) {
             {verdict.label}
           </div>
         </div>
+
+        {/* 2b. ARC Score with always-visible component breakdown */}
+        <section className="border-2 border-gray-200 bg-white px-5 py-4">
+          <div className="flex items-baseline justify-between gap-4">
+            <div>
+              <div className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground mb-1">
+                ARC Score v1.0
+              </div>
+              <div className="text-3xl font-black font-mono" style={{ color: scoreMeta.color }}>
+                {score.total}
+                <span className="text-base text-muted-foreground font-semibold">/100</span>
+                <span className="ml-3 text-sm font-bold" style={{ color: scoreMeta.color }}>{scoreMeta.label}</span>
+              </div>
+            </div>
+            <Link href="/methodology#score" className="text-xs text-[#0259DD] hover:underline shrink-0">
+              How it&apos;s computed →
+            </Link>
+          </div>
+          <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[
+              { label: "Agent access", value: score.agentAccess, max: 50 },
+              { label: "Structured data", value: score.structuredData, max: 25 },
+              { label: "Protocol files", value: score.protocolFiles, max: 15 },
+              { label: "Scan stability", value: score.scanStability, max: 10 },
+            ].map((c) => (
+              <div key={c.label}>
+                <div className="flex items-baseline justify-between text-xs mb-1">
+                  <span className="text-muted-foreground">{c.label}</span>
+                  <span className="font-mono font-bold text-foreground">{c.value}/{c.max}</span>
+                </div>
+                <div className="h-1.5 bg-gray-100">
+                  <div className="h-full bg-[#0259DD]" style={{ width: `${(c.value / c.max) * 100}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* 3. Agent allow/block table */}
         <section>
@@ -378,6 +419,30 @@ export default async function BrandPage({ params }: BrandPageProps) {
               ))}
             </div>
           )}
+        </section>
+
+        {/* 6b. Embeddable badge */}
+        <section>
+          <h2 className="text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-3">
+            Embed this score
+          </h2>
+          <div className="border border-gray-200 bg-white px-4 py-4 space-y-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`/badge/${brand.slug}.svg`}
+              alt={`ARC Score badge for ${brand.name}`}
+              height={22}
+            />
+            <div>
+              <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-1">HTML</div>
+              <pre className="bg-gray-50 border border-gray-200 text-[11px] font-mono p-2 overflow-x-auto">{`<a href="${SITE_URL}/brand/${brand.slug}"><img src="${SITE_URL}/badge/${brand.slug}.svg" alt="ARC Score for ${brand.name}" height="22"></a>`}</pre>
+            </div>
+            <div>
+              <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-1">Markdown</div>
+              <pre className="bg-gray-50 border border-gray-200 text-[11px] font-mono p-2 overflow-x-auto">{`[![ARC Score for ${brand.name}](${SITE_URL}/badge/${brand.slug}.svg)](${SITE_URL}/brand/${brand.slug})`}</pre>
+            </div>
+            <p className="text-xs text-muted-foreground">Updates automatically with each daily scan.</p>
+          </div>
         </section>
 
         {/* 7. Methodology */}

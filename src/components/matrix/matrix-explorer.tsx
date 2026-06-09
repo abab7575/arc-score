@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { TRACKED_AGENTS } from "@/lib/site";
+import { exportMatrixImage } from "@/components/matrix/export-image";
 
 interface Agent {
   id: string;
@@ -33,9 +34,10 @@ interface BrandRow {
   agents: Record<string, AgentStatus>;
   blockedCount: number;
   scannedAt: string | null;
+  arcScore?: number;
 }
 
-type SortMode = "most-blocked" | "most-open" | "name" | "category";
+type SortMode = "score" | "most-blocked" | "most-open" | "name" | "category";
 type FilterMode = "all" | "blocking" | "open";
 
 const COLORS = {
@@ -70,7 +72,7 @@ export interface MatrixExplorerProps {
  * progressive enhancement.
  */
 export function MatrixExplorer({ brands, stats }: MatrixExplorerProps) {
-  const [sort, setSort] = useState<SortMode>("most-blocked");
+  const [sort, setSort] = useState<SortMode>("score");
   const [filter, setFilter] = useState<FilterMode>("all");
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -91,6 +93,8 @@ export function MatrixExplorer({ brands, stats }: MatrixExplorerProps) {
       result = result.filter((r) => r.name.toLowerCase().includes(q));
     }
     const sorted = [...result];
+    if (sort === "score")
+      sorted.sort((a, b) => (b.arcScore ?? -1) - (a.arcScore ?? -1) || a.name.localeCompare(b.name));
     if (sort === "most-blocked")
       sorted.sort((a, b) => b.blockedCount - a.blockedCount || a.name.localeCompare(b.name));
     if (sort === "most-open")
@@ -179,6 +183,7 @@ export function MatrixExplorer({ brands, stats }: MatrixExplorerProps) {
                 value={sort}
                 onChange={(v) => setSort(v as SortMode)}
                 options={[
+                  { value: "score", label: "ARC Score" },
                   { value: "most-blocked", label: "Most blocked" },
                   { value: "most-open", label: "Most open" },
                   { value: "name", label: "A–Z" },
@@ -189,6 +194,28 @@ export function MatrixExplorer({ brands, stats }: MatrixExplorerProps) {
                 {filtered.length.toLocaleString()} shown
               </span>
               <div style={{ flex: 1 }} />
+              <button
+                onClick={() =>
+                  exportMatrixImage(
+                    filtered.map((b) => ({ name: b.name, arcScore: b.arcScore, agents: b.agents })),
+                    AGENTS.map((a) => a.id),
+                    AGENTS.map((a) => a.short),
+                  )
+                }
+                style={{
+                  padding: "7px 12px",
+                  border: `1px solid ${COLORS.cobalt}`,
+                  backgroundColor: COLORS.cobalt,
+                  color: "#FFFFFF",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  ...mono,
+                }}
+                title="Download the current view as a PNG with attribution and date"
+              >
+                Export as image
+              </button>
               <Legend />
             </div>
           </div>
@@ -224,6 +251,23 @@ export function MatrixExplorer({ brands, stats }: MatrixExplorerProps) {
                     }}
                   >
                     BRAND
+                  </th>
+                  <th
+                    style={{
+                      padding: "10px 8px 8px 0",
+                      textAlign: "right",
+                      fontSize: 10,
+                      fontWeight: 600,
+                      color: COLORS.muted,
+                      ...mono,
+                      letterSpacing: 0.5,
+                      borderBottom: `1px solid ${COLORS.border}`,
+                      width: 52,
+                      minWidth: 52,
+                    }}
+                    title="ARC Score v1.0 — agent access 50 + structured data 25 + protocol files 15 + stability 10. Formula: /methodology"
+                  >
+                    SCORE
                   </th>
                   {AGENTS.map((agent) => (
                     <th
@@ -327,6 +371,26 @@ function HeatmapRow({ brand }: { brand: BrandRow }) {
         >
           {brand.name}
         </Link>
+      </td>
+      <td
+        style={{
+          padding: "0 8px 0 0",
+          textAlign: "right",
+          height: 24,
+          borderBottom: `1px solid ${COLORS.border}`,
+          ...mono,
+          fontSize: 11,
+          fontWeight: 700,
+          color:
+            brand.arcScore === undefined ? COLORS.muted
+              : brand.arcScore >= 85 ? COLORS.allowed
+              : brand.arcScore >= 65 ? COLORS.cobalt
+              : brand.arcScore >= 40 ? "#D97706"
+              : COLORS.blocked,
+        }}
+        title={`ARC Score ${brand.arcScore ?? "—"}/100`}
+      >
+        {brand.arcScore ?? "—"}
       </td>
       {AGENTS.map((agent) => {
         const status = brand.agents[agent.id];
