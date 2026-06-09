@@ -470,6 +470,22 @@ export function getRecentChangelog(limit: number = 50) {
     .all();
 }
 
+/** Free public history window: all confirmed changes in the last `days` days. */
+export function getBrandHistory(brandId: number, days: number = 90) {
+  const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+  return db
+    .select()
+    .from(schema.changelogEntries)
+    .where(
+      and(
+        eq(schema.changelogEntries.brandId, brandId),
+        gte(schema.changelogEntries.detectedAt, cutoff),
+      ),
+    )
+    .orderBy(desc(schema.changelogEntries.detectedAt))
+    .all();
+}
+
 export function getChangelogForBrand(brandId: number, limit: number = 50) {
   return db
     .select()

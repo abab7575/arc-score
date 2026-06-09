@@ -5,7 +5,7 @@ import { Footer } from "@/components/shared/footer";
 import {
   getBrandBySlug,
   getLatestLightweightScan,
-  getChangelogForBrand,
+  getBrandHistory,
 } from "@/lib/db/queries";
 import type { Metadata } from "next";
 import { TRACKED_AGENT_IDS, TRACKED_AGENT_COUNT, SITE_URL } from "@/lib/site";
@@ -162,6 +162,18 @@ function statusSource(status: AgentStatus): string {
   }
 }
 
+type HistoryEntry = { id: number; field: string; oldValue: string | null; newValue: string | null; detectedAt: string };
+
+function historyByDate(entries: HistoryEntry[]): Array<[string, HistoryEntry[]]> {
+  const groups = new Map<string, HistoryEntry[]>();
+  for (const e of entries) {
+    const date = e.detectedAt.split("T")[0];
+    if (!groups.has(date)) groups.set(date, []);
+    groups.get(date)!.push(e);
+  }
+  return [...groups.entries()];
+}
+
 function formatFieldLabel(field: string): string {
   if (field.startsWith("agent_access_")) return field.replace("agent_access_", "") + " access";
   if (field.startsWith("agent_ua_")) return field.replace("agent_ua_", "") + " HTTP access";
@@ -174,7 +186,7 @@ export default async function BrandPage({ params }: BrandPageProps) {
   if (!brand) notFound();
 
   const scan = getLatestLightweightScan(brand.id);
-  const changelog = getChangelogForBrand(brand.id, 3);
+  const changelog = getBrandHistory(brand.id, 90);
 
   if (!scan) {
     return (
@@ -402,40 +414,55 @@ export default async function BrandPage({ params }: BrandPageProps) {
           </ul>
         </section>
 
-        {/* 6. Recent changes */}
+        {/* 6. Change history — free 90-day timeline */}
         <section>
-          <h2 className="text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-3">
-            Recent changes
-          </h2>
+          <div className="flex items-baseline justify-between mb-3">
+            <h2 className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">
+              Change history · last 90 days
+            </h2>
+            <span className="text-[10px] text-muted-foreground font-mono">
+              {changelog.length} change{changelog.length === 1 ? "" : "s"}
+            </span>
+          </div>
           {changelog.length === 0 ? (
             <div className="border border-gray-200 bg-white px-4 py-6 text-center text-sm text-muted-foreground">
-              No changes detected yet.
+              No confirmed changes in the last 90 days — this brand&apos;s agent access
+              posture has been stable.
             </div>
           ) : (
-            <div className="border border-gray-200 bg-white divide-y divide-gray-100">
-              {changelog.map(entry => (
-                <div key={entry.id} className="px-4 py-3 text-sm">
-                  <div className="flex items-baseline justify-between gap-3">
-                    <span className="font-medium text-foreground">
-                      {formatFieldLabel(entry.field)}
-                    </span>
-                    <span className="text-xs text-muted-foreground font-mono">
-                      {formatDateShort(entry.detectedAt)}
-                    </span>
+            <ol className="relative border-l-2 border-gray-200 ml-2 space-y-4">
+              {historyByDate(changelog).map(([date, entries]) => (
+                <li key={date} className="ml-5">
+                  <span className="absolute -left-[7px] mt-1.5 w-3 h-3 rounded-full bg-[#0259DD] border-2 border-white" />
+                  <div className="text-xs font-mono font-bold text-foreground mb-1.5">
+                    {formatDateShort(date)}
                   </div>
-                  <div className="mt-1 text-xs text-muted-foreground">
-                    <span className="font-mono bg-red-50 text-red-700 px-1 py-0.5">
-                      {entry.oldValue ?? "none"}
-                    </span>
-                    <span className="mx-1">→</span>
-                    <span className="font-mono bg-green-50 text-green-700 px-1 py-0.5">
-                      {entry.newValue ?? "none"}
-                    </span>
+                  <div className="space-y-1.5">
+                    {entries.map(entry => (
+                      <div key={entry.id} className="text-sm bg-white border border-gray-200 px-3 py-2">
+                        <span className="font-medium text-foreground">
+                          {formatFieldLabel(entry.field)}
+                        </span>
+                        <span className="block sm:inline sm:ml-2 mt-1 sm:mt-0 text-xs">
+                          <span className="font-mono bg-red-50 text-red-700 px-1 py-0.5">
+                            {entry.oldValue ?? "none"}
+                          </span>
+                          <span className="mx-1 text-muted-foreground">→</span>
+                          <span className="font-mono bg-green-50 text-green-700 px-1 py-0.5">
+                            {entry.newValue ?? "none"}
+                          </span>
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                </div>
+                </li>
               ))}
-            </div>
+            </ol>
           )}
+          <p className="text-[11px] text-muted-foreground mt-3">
+            The free public window is 90 days. Multi-year history, watchlists, and change
+            alerts are part of <Link href="/pro" className="text-[#0259DD] hover:underline">Pro</Link>.
+          </p>
         </section>
 
         {/* 6a. Fix prompts for failed checks */}

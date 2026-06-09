@@ -39,19 +39,18 @@ export const SCORE_VERSION = "1.0";
 /** Pro tier (kept functional but quiet at /pro). */
 export const PRO_PRICE_MONTHLY = 149;
 export const PRO_FEATURES = [
-  "Full multi-year changelog history",
-  "CSV + JSON exports beyond the free daily snapshot",
-  "Higher-rate API access",
-  "Saved filters with email alerts",
-  "Quarterly industry reports",
+  "Watchlists for the brands you track",
+  "Daily alert emails when a watched brand changes",
+  "Full multi-year history (free pages show 90 days)",
+  "CSV + JSON export of full history",
 ] as const;
 
 export const FREE_FEATURES = [
   "Every brand, every signal, scanned daily",
-  "Full agent access matrix",
-  "Per-brand signal readouts and ARC Score",
-  "Daily changelog feed + RSS",
-  "Public read API, MCP server, and CC BY 4.0 data downloads",
+  "Full agent access matrix, compare tool, and instant scans",
+  "Per-brand ARC Score with component breakdown",
+  "90 days of change history on every brand page",
+  "Public read API, MCP server, RSS, and CC BY 4.0 downloads",
 ] as const;
 
 export const DATA_LICENSE = {

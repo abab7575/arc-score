@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FREE_FEATURES, PRO_FEATURES } from "@/lib/site";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 
@@ -30,11 +31,9 @@ export default function PricingPage() {
             <h2 className="text-lg font-bold text-foreground mb-1">Public Index</h2>
             <p className="text-sm text-muted-foreground mb-5">Free, forever</p>
             <ul className="space-y-2 text-sm text-foreground">
-              <li>• 1,000+ brands scanned daily</li>
-              <li>• Full agent access matrix</li>
-              <li>• Per-brand signal readouts</li>
-              <li>• Daily changelog feed</li>
-              <li>• Public read API</li>
+              {FREE_FEATURES.map((f) => (
+                <li key={f}>• {f}</li>
+              ))}
             </ul>
             <Link
               href="/"
@@ -50,11 +49,9 @@ export default function PricingPage() {
             </h2>
             <p className="text-sm text-muted-foreground mb-5">Historical depth, API, exports</p>
             <ul className="space-y-2 text-sm text-foreground">
-              <li>• Full multi-year changelog history</li>
-              <li>• CSV + JSON exports</li>
-              <li>• Higher-rate API access</li>
-              <li>• Saved filters with email alerts</li>
-              <li>• Quarterly industry reports</li>
+              {PRO_FEATURES.map((f) => (
+                <li key={f}>• {f}</li>
+              ))}
             </ul>
             <a
               href="mailto:hello@arcreport.ai?subject=ARC%20Pro%20early%20access"
