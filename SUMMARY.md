@@ -137,11 +137,11 @@ All five phases shipped, in order, one commit per task (see `git log
 1. **Fix apex DNS** (the one thing code can't do — see A1 above).
 2. Set `BASE_URL=https://www.arcreport.ai` on Railway explicitly (defaults are
    correct now, but explicit beats implicit).
-3. The production DB's scan workflow has been failing since ~2026-04-04 (local
-   snapshot's last scan; the live site may be fresher — check
-   /api/scan-health after deploy). If stale, re-enable/repair
-   `daily-lightweight-scan.yml` — the entire "scanned daily" promise depends
-   on it.
+3. Production scans are healthy (verified live: run #75 completed
+   2026-06-09, 949/1015 brands, status yellow on drift alerts) — but 66
+   failures/run is worth a look; /reliability now surfaces this publicly.
+   The local dev DB is a stale 2026-04-04 snapshot; consider refreshing it
+   so dev/build data matches production more closely.
 4. ARC Score v1.1: move scan-stability to a trailing 7-scan window and
    consider llms.txt quality weighting (hasH1/hasSummary are already scanned).
 5. Wire the corrections log to a DB table once the first correction happens
