@@ -14,22 +14,23 @@ export function ScanInput() {
         e.preventDefault();
         if (domain.trim()) router.push(`/scan?domain=${encodeURIComponent(domain.trim())}`);
       }}
-      className="mt-8 flex flex-col sm:flex-row gap-2 max-w-xl"
+      className="flex flex-col sm:flex-row gap-3"
     >
       <input
         type="text"
         inputMode="url"
-        placeholder="Scan any site — yourstore.com"
+        placeholder="> yourstore.com"
         value={domain}
         onChange={(e) => setDomain(e.target.value)}
-        className="flex-1 border-2 border-white/20 bg-white/10 px-4 py-3 text-sm font-mono text-white placeholder:text-white/40 focus:outline-none focus:border-[#84AFFB]"
+        className="flex-1 border-2 border-white/20 bg-white/10 px-4 py-3 text-sm font-mono text-white placeholder:text-white/40 focus:outline-none focus:border-[#84AFFB] transition-colors"
         aria-label="Domain to scan"
       />
       <button
         type="submit"
-        className="text-sm font-bold text-[#0A1628] bg-white hover:bg-white/90 px-6 py-3 transition-colors"
+        className="relative text-sm font-bold text-[#0A1628] bg-[#FBBA16] hover:bg-[#ffc93a] px-6 py-3 transition-all hover:translate-y-[-2px] group"
       >
         Scan free →
+        <span className="absolute inset-0 bg-[#FF6648] -z-10 translate-x-[3px] translate-y-[3px] group-hover:translate-x-[4px] group-hover:translate-y-[4px] transition-transform" />
       </button>
     </form>
   );

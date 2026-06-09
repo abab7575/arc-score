@@ -6,7 +6,7 @@ import { getIndexStats } from "@/lib/index-data";
 import { DATA_LICENSE, SITE_URL, TRACKED_AGENT_COUNT } from "@/lib/site";
 import type { Metadata } from "next";
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Open Data Downloads — ARC Report",

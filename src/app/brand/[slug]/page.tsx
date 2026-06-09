@@ -9,11 +9,9 @@ import {
 } from "@/lib/db/queries";
 import type { Metadata } from "next";
 import { TRACKED_AGENT_IDS, TRACKED_AGENT_COUNT, SITE_URL } from "@/lib/site";
-import { db, schema } from "@/lib/db";
 import { computeArcScore, arcScoreLabel } from "@/lib/scoring/arc-score";
 import { buildFixPrompts } from "@/lib/fix-prompts";
 import { FixPrompts } from "@/components/brand/fix-prompts";
-import { eq } from "drizzle-orm";
 
 interface BrandPageProps {
   params: Promise<{ slug: string }>;
@@ -23,18 +21,10 @@ type AgentStatus = "allowed" | "blocked" | "restricted" | "no_rule" | "inconclus
 
 const AGENT_ORDER = TRACKED_AGENT_IDS;
 
-// Statically generate every brand page; revalidate hourly (one daily scan).
-export const revalidate = 3600;
-export const dynamicParams = true;
-
-export function generateStaticParams() {
-  return db
-    .select({ slug: schema.brands.slug })
-    .from(schema.brands)
-    .where(eq(schema.brands.active, true))
-    .all()
-    .map((b) => ({ slug: b.slug }));
-}
+// Rendered per-request from the live scan volume (better-sqlite3 is sync and
+// in-process, so this is ~1ms). Build-time prerender would bake the empty
+// seed DB — see the daily scan architecture.
+export const dynamic = "force-dynamic";
 
 function summarizeAccess(scan: { agentStatusJson: string } | undefined): {
   blocked: number;

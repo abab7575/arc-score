@@ -5,7 +5,7 @@ import { getIndexStats } from "@/lib/index-data";
 import { TRACKED_AGENTS, TRACKED_AGENT_COUNT, SCORE_VERSION, CONTACT_EMAIL } from "@/lib/site";
 import type { Metadata } from "next";
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Methodology — How ARC Report Scans Work | ARC Report",

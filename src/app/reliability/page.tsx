@@ -8,7 +8,7 @@ import { getFailureInsights } from "@/lib/scan-failures";
 import { TRACKED_AGENT_IDS, CONTACT_EMAIL } from "@/lib/site";
 import type { Metadata } from "next";
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Reliability — Scan Success Rates & Corrections | ARC Report",

@@ -12,7 +12,7 @@ import { getArchiveWeeks } from "@/lib/weekly";
 import type { Metadata } from "next";
 import { PRO_PRICE_MONTHLY } from "@/lib/site";
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Weekly Intelligence — ARC Report",

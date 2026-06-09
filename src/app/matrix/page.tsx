@@ -3,7 +3,7 @@ import { MatrixExplorer } from "@/components/matrix/matrix-explorer";
 import { buildMatrixPayload } from "@/lib/index-data";
 
 // Server-rendered with hourly revalidation; the full matrix ships in the HTML.
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 type AgentStatus = "allowed" | "blocked" | "no_rule";
 

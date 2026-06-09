@@ -7,7 +7,7 @@ import { TRACKED_AGENT_COUNT } from "@/lib/site";
 import type { Metadata } from "next";
 
 // Regenerates with each scan (hourly revalidation; data changes once daily).
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Insights — AI Agent Access Statistics | ARC Report",

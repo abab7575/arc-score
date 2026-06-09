@@ -7,18 +7,17 @@ import { ScanInput } from "@/components/scan/scan-input";
 import { SITE_URL } from "@/lib/site";
 
 // Server-rendered with hourly revalidation (data changes once per daily scan).
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 function relativeTime(iso: string | null): string {
   if (!iso) return "—";
   const diffMs = Date.now() - new Date(iso).getTime();
   const diffMin = Math.floor(diffMs / 60000);
-  if (diffMin < 1) return "just now";
-  if (diffMin < 60) return `${diffMin} min ago`;
+  if (diffMin < 1) return "now";
+  if (diffMin < 60) return `${diffMin}m ago`;
   const diffHr = Math.floor(diffMin / 60);
-  if (diffHr < 24) return `${diffHr} hour${diffHr === 1 ? "" : "s"} ago`;
-  const diffDay = Math.floor(diffHr / 24);
-  return `${diffDay} day${diffDay === 1 ? "" : "s"} ago`;
+  if (diffHr < 24) return `${diffHr}h ago`;
+  return `${Math.floor(diffHr / 24)}d ago`;
 }
 
 function formatFieldLabel(field: string): string {
@@ -77,11 +76,40 @@ export default function HomePage() {
       />
       <Navbar />
 
-      {/* Hero */}
-      <section style={{ backgroundColor: "#0A1628" }} className="border-b border-white/10">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+      {/* Hero — mission control */}
+      <section style={{ backgroundColor: "#0A1628" }} className="relative border-b border-white/10 overflow-hidden">
+        {/* CRT scan lines + retro grid */}
+        <div className="scan-lines" />
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.07]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(132,175,251,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(132,175,251,0.4) 1px, transparent 1px)",
+            backgroundSize: "48px 48px",
+          }}
+        />
+
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-14 sm:py-18 z-[2]">
+          {/* Mission patch line */}
+          <div className="flex items-center gap-3 mb-7">
+            <span className="spec-label text-[#FF6648] text-[10px] px-2.5 py-1 border border-[#FF6648]/40" style={{ backgroundColor: "#FF664818" }}>
+              ARC // PUBLIC RECORD
+            </span>
+            <div className="hidden sm:flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#059669] animate-pulse" />
+              <span className="spec-label text-white/40 text-[9px]">
+                DAILY SCAN · {stats.agentsTracked} AGENTS · OPEN DATA CC BY 4.0
+              </span>
+            </div>
+          </div>
+
           <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-[1.05] max-w-3xl">
-            The public record of AI agent access in commerce.
+            The public record of{" "}
+            <span className="relative inline-block text-[#FBBA16]">
+              AI agent access
+              <span className="absolute left-0 -bottom-1 w-full h-[3px] bg-[#FF6648]" />
+            </span>{" "}
+            in commerce.
           </h1>
           <p className="mt-5 text-base sm:text-lg text-white/70 max-w-2xl leading-relaxed">
             ARC Report scans {stats.brandCount.toLocaleString()} e-commerce brands every day —
@@ -89,66 +117,67 @@ export default function HomePage() {
             the results as an open dataset. Free to browse, download, and query.
           </p>
 
-          {/* Proof row */}
-          <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8 max-w-3xl">
-            <div>
-              <div className="text-2xl sm:text-3xl font-black text-white font-mono tabular-nums">
-                {stats.brandCount.toLocaleString()}
+          {/* Instrument readouts */}
+          <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl">
+            {[
+              { value: stats.brandCount.toLocaleString(), label: "BRANDS MONITORED", color: "#FF6648" },
+              { value: relativeTime(stats.lastScan), label: "LAST SCAN", color: "#FBBA16" },
+              { value: stats.changesThisWeek.toLocaleString(), label: "CHANGES THIS WEEK", color: "#84AFFB" },
+              { value: String(stats.agentsTracked), label: "AGENTS TRACKED", color: "#059669" },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="relative border border-white/15 bg-white/[0.04] px-4 py-3"
+              >
+                <div className="absolute top-0 left-0 w-full h-[3px]" style={{ backgroundColor: stat.color }} />
+                <div className="text-xl sm:text-2xl font-black text-white font-mono tabular-nums leading-tight">
+                  {stat.value}
+                </div>
+                <div className="mt-1.5 spec-label text-white/45 text-[9px]">
+                  {stat.label}
+                </div>
               </div>
-              <div className="mt-1 text-[10px] sm:text-xs uppercase tracking-wider text-white/50 font-semibold">
-                Brands monitored
-              </div>
-            </div>
-            <div>
-              <div className="text-2xl sm:text-3xl font-black text-white font-mono tabular-nums">
-                {relativeTime(stats.lastScan)}
-              </div>
-              <div className="mt-1 text-[10px] sm:text-xs uppercase tracking-wider text-white/50 font-semibold">
-                Last scan
-              </div>
-            </div>
-            <div>
-              <div className="text-2xl sm:text-3xl font-black text-white font-mono tabular-nums">
-                {stats.changesThisWeek.toLocaleString()}
-              </div>
-              <div className="mt-1 text-[10px] sm:text-xs uppercase tracking-wider text-white/50 font-semibold">
-                Changes this week
-              </div>
-            </div>
-            <div>
-              <div className="text-2xl sm:text-3xl font-black text-white font-mono tabular-nums">
-                {stats.agentsTracked}
-              </div>
-              <div className="mt-1 text-[10px] sm:text-xs uppercase tracking-wider text-white/50 font-semibold">
-                Agents tracked
-              </div>
-            </div>
+            ))}
           </div>
 
-          {/* Instant scan */}
-          <ScanInput />
+          {/* Instant scan — console input */}
+          <div className="mt-8 max-w-xl">
+            <div className="spec-label text-white/40 text-[9px] mb-2">RUN YOUR OWN SCAN — FREE, NO SIGNUP</div>
+            <ScanInput />
+          </div>
 
-          {/* CTAs */}
-          <div className="mt-6 flex flex-wrap items-center gap-5">
+          {/* CTAs with offset-shadow blocks */}
+          <div className="mt-8 flex flex-wrap items-center gap-5">
             <a
               href="#brand-index"
-              className="inline-block text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-6 py-3 transition-colors"
+              className="relative inline-block text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-6 py-3 transition-all hover:translate-y-[-2px] group"
             >
               Browse the index →
+              <span className="absolute inset-0 bg-[#0259DD] -z-10 translate-x-[3px] translate-y-[3px] group-hover:translate-x-[4px] group-hover:translate-y-[4px] transition-transform" />
             </a>
             <Link
               href="/data"
-              className="text-sm font-semibold text-white/70 hover:text-white transition-colors underline underline-offset-4"
+              className="text-sm font-semibold text-white/70 hover:text-[#FBBA16] transition-colors underline underline-offset-4"
             >
               Download the data
             </Link>
             <Link
               href="/docs/mcp"
-              className="text-sm font-semibold text-white/70 hover:text-white transition-colors underline underline-offset-4"
+              className="text-sm font-semibold text-white/70 hover:text-[#FBBA16] transition-colors underline underline-offset-4"
             >
               Query via MCP
             </Link>
           </div>
+        </div>
+
+        {/* Cassette color strip — bottom edge */}
+        <div className="relative z-[2] flex h-[6px]">
+          <div className="flex-1 bg-[#FF6648]" />
+          <div className="flex-1 bg-[#FBBA16]" />
+          <div className="flex-1 bg-[#0259DD]" />
+          <div className="flex-1 bg-[#84AFFB]" />
+          <div className="flex-1 bg-[#FFE1D7]" />
+          <div className="flex-1 bg-[#059669]" />
         </div>
       </section>
 

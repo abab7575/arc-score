@@ -1,8 +1,19 @@
 # ARC Score — Next Steps
 
-Last updated: 2026-03-02
+Last updated: 2026-06-09
 
 ---
+
+## 0. URGENT — Apex domain DNS (5-minute registrar fix)
+
+- [ ] **Fix apex `arcreport.ai`**: it points to a broken registrar URL-forwarder
+      (301 → malformed `https://www.arcreport.aiconfirm/`). Crawlers/AI agents
+      hitting the apex get nothing. Fix in the DNS/registrar panel: either
+      point the apex at Railway and add `arcreport.ai` as a custom domain
+      (app middleware already 301s apex→www), or correct the forward target
+      to `https://www.arcreport.ai/` with path preservation.
+      Verify: `curl -sI -A GPTBot https://arcreport.ai/matrix` → 301 to
+      `https://www.arcreport.ai/matrix`.
 
 ## 1. Domain
 

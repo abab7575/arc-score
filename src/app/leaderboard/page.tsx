@@ -8,7 +8,7 @@ import type { Metadata } from "next";
 import { PRO_PRICE_MONTHLY } from "@/lib/site";
 
 // Server-rendered with hourly revalidation (rankings move once per daily scan).
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "AI-Ready Leaderboard — ARC Report",

@@ -6,7 +6,7 @@ import { getChangelogWithBrands } from "@/lib/index-data";
 import type { Metadata } from "next";
 
 // Server-rendered with hourly revalidation (new entries land once per daily scan).
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Changelog — AI Agent Access Changes | ARC Report",
