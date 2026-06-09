@@ -1,12 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getBrandBySlug, getLatestScanForBrand, getFullScanReport, getScoreHistory } from "@/lib/db/queries";
+import { rateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
+  const ip = request.headers.get("x-forwarded-for") || "unknown";
+  const rl = rateLimit(ip, 60, 60000);
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded. Try again in a minute." }, { status: 429 });
+  }
+
   const { slug } = await params;
   const brand = getBrandBySlug(slug);
 

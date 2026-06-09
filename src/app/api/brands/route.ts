@@ -1,10 +1,17 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getAllBrandsWithLatestScores } from "@/lib/db/queries";
 import type { BrandSummary } from "@/types/report";
+import { rateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
+  const ip = request.headers.get("x-forwarded-for") || "unknown";
+  const rl = rateLimit(ip, 60, 60000);
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded. Try again in a minute." }, { status: 429 });
+  }
+
   const { searchParams } = new URL(request.url);
   const category = searchParams.get("category");
   const sort = searchParams.get("sort") ?? "score";

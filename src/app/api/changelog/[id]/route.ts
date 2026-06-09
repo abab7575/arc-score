@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, schema } from "@/lib/db/index";
 import { eq } from "drizzle-orm";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const ip = request.headers.get("x-forwarded-for") || "unknown";
+  const rl = rateLimit(ip, 60, 60000);
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded. Try again in a minute." }, { status: 429 });
+  }
+
   const { id } = await params;
   const entryId = parseInt(id);
   if (isNaN(entryId)) {

@@ -1,9 +1,16 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db, schema } from "@/lib/db/index";
 import { sql, gte, desc } from "drizzle-orm";
 import { TRACKED_AGENT_COUNT } from "@/lib/site";
+import { rateLimit } from "@/lib/rate-limit";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for") || "unknown";
+  const rl = rateLimit(ip, 60, 60000);
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded. Try again in a minute." }, { status: 429 });
+  }
+
   const brandCountRow = db
     .select({ count: sql<number>`count(*)` })
     .from(schema.brands)
