@@ -8,7 +8,9 @@ import {
   getChangelogForBrand,
 } from "@/lib/db/queries";
 import type { Metadata } from "next";
-import { TRACKED_AGENT_IDS } from "@/lib/site";
+import { TRACKED_AGENT_IDS, TRACKED_AGENT_COUNT, SITE_URL } from "@/lib/site";
+import { db, schema } from "@/lib/db";
+import { eq } from "drizzle-orm";
 
 interface BrandPageProps {
   params: Promise<{ slug: string }>;
@@ -18,15 +20,68 @@ type AgentStatus = "allowed" | "blocked" | "restricted" | "no_rule" | "inconclus
 
 const AGENT_ORDER = TRACKED_AGENT_IDS;
 
-export const dynamic = "force-dynamic";
+// Statically generate every brand page; revalidate hourly (one daily scan).
+export const revalidate = 3600;
+export const dynamicParams = true;
+
+export function generateStaticParams() {
+  return db
+    .select({ slug: schema.brands.slug })
+    .from(schema.brands)
+    .where(eq(schema.brands.active, true))
+    .all()
+    .map((b) => ({ slug: b.slug }));
+}
+
+function summarizeAccess(scan: { agentStatusJson: string } | undefined): {
+  blocked: number;
+  open: number;
+} {
+  if (!scan) return { blocked: 0, open: 0 };
+  try {
+    const status = JSON.parse(scan.agentStatusJson) as Record<string, string>;
+    const values = Object.values(status);
+    const blocked = values.filter((v) => v === "blocked" || v === "restricted").length;
+    return { blocked, open: values.length - blocked };
+  } catch {
+    return { blocked: 0, open: 0 };
+  }
+}
 
 export async function generateMetadata({ params }: BrandPageProps): Promise<Metadata> {
   const { slug } = await params;
   const brand = getBrandBySlug(slug);
   if (!brand) return { title: "Brand Not Found" };
+
+  const scan = getLatestLightweightScan(brand.id);
+  const { blocked, open } = summarizeAccess(scan);
+  const scannedNote = scan
+    ? ` As of ${scan.scannedAt.split("T")[0]}, ${brand.name} ${
+        blocked === 0
+          ? `allows all ${TRACKED_AGENT_COUNT} tracked AI agents`
+          : `blocks or restricts ${blocked} of ${TRACKED_AGENT_COUNT} tracked AI agents`
+      }${scan.platform && scan.platform !== "unknown" ? ` and runs on ${scan.platform}` : ""}.`
+    : "";
+
+  const title = `${brand.name} — AI Agent Access Report | ARC Report`;
+  const description = `${brand.name}'s AI agent access, scanned daily: robots.txt policy per agent, live HTTP tests, platform, structured data, llms.txt.${scannedNote}`;
+  const ogImage = `${SITE_URL}/api/og?title=${encodeURIComponent(`${brand.name} — agent access`)}&subtitle=${encodeURIComponent(
+    scan
+      ? `${open}/${TRACKED_AGENT_COUNT} agents allowed · scanned ${scan.scannedAt.split("T")[0]}`
+      : "Daily AI agent access scan",
+  )}`;
+
   return {
-    title: `${brand.name} AI Agent Access | ARC Report`,
-    description: `Live scan of ${brand.name}'s AI agent access — robots.txt, user-agent rules, platform, CDN, structured data.`,
+    title,
+    description,
+    alternates: { canonical: `${SITE_URL}/brand/${brand.slug}` },
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/brand/${brand.slug}`,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
+    },
+    twitter: { card: "summary_large_image", title, description, images: [ogImage] },
   };
 }
 
@@ -149,6 +204,27 @@ export default async function BrandPage({ params }: BrandPageProps) {
 
   const verdict = deriveVerdict(statuses);
 
+  const { blocked: blockedCount } = summarizeAccess(scan);
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: `${brand.name} — AI Agent Access Report`,
+    url: `${SITE_URL}/brand/${brand.slug}`,
+    dateModified: scan.scannedAt,
+    isPartOf: {
+      "@type": "Dataset",
+      name: "ARC Report — AI agent access in e-commerce",
+      url: SITE_URL,
+      license: "https://creativecommons.org/licenses/by/4.0/",
+    },
+    about: {
+      "@type": "Organization",
+      name: brand.name,
+      url: brand.url,
+    },
+    description: `Daily scan of ${brand.name}: ${blockedCount === 0 ? `all ${TRACKED_AGENT_COUNT} tracked AI agents allowed` : `${blockedCount} of ${TRACKED_AGENT_COUNT} tracked AI agents blocked or restricted`}.`,
+  };
+
   const dataSignals: Array<{ label: string; value: string }> = [
     { label: "JSON-LD", value: scan.hasJsonLd ? "Detected" : "Not detected" },
     { label: "Schema.org Product", value: scan.hasSchemaProduct ? "Detected" : "Not detected" },
@@ -159,6 +235,10 @@ export default async function BrandPage({ params }: BrandPageProps) {
 
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar />
       <main className="max-w-2xl mx-auto px-4 sm:px-6 py-12 space-y-8">
 
@@ -298,6 +378,16 @@ export default async function BrandPage({ params }: BrandPageProps) {
               ))}
             </div>
           )}
+        </section>
+
+        {/* 7. Methodology */}
+        <section className="border-t border-gray-200 pt-5 text-xs text-muted-foreground">
+          Scanned daily via robots.txt parsing and live HTTP tests for{" "}
+          {TRACKED_AGENT_COUNT} AI agents. Changes are confirmed across two
+          consecutive scans before publishing.{" "}
+          <Link href="/methodology" className="text-[#0259DD] hover:underline">
+            Read the full methodology →
+          </Link>
         </section>
 
       </main>

@@ -10,42 +10,44 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE_URL, lastModified: new Date(), changeFrequency: "daily", priority: 1.0 },
     { url: `${BASE_URL}/matrix`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${BASE_URL}/leaderboard`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
     { url: `${BASE_URL}/changelog`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${BASE_URL}/insights`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
     { url: `${BASE_URL}/weekly`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE_URL}/data`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${BASE_URL}/docs`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE_URL}/docs/mcp`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE_URL}/methodology`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE_URL}/reliability`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
+    { url: `${BASE_URL}/about`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE_URL}/landscape`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
     { url: `${BASE_URL}/guide`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
-    { url: `${BASE_URL}/pricing`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE_URL}/docs`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
-    { url: `${BASE_URL}/leaderboard`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${BASE_URL}/pro`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
+    { url: `${BASE_URL}/blog`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
   ];
 
-  // Dynamic brand pages — query all active brands with their latest scan date
+  // Dynamic brand pages — single query for latest scan date per brand
   const brands = db
-    .select({
-      slug: schema.brands.slug,
-      id: schema.brands.id,
-    })
+    .select({ slug: schema.brands.slug, id: schema.brands.id })
     .from(schema.brands)
     .where(eq(schema.brands.active, true))
     .all();
 
-  const brandPages: MetadataRoute.Sitemap = brands.map((brand) => {
-    // Get the latest scan date for this brand
-    const latestScan = db
-      .select({ scannedAt: schema.scans.scannedAt })
-      .from(schema.scans)
-      .where(eq(schema.scans.brandId, brand.id))
-      .orderBy(desc(schema.scans.scannedAt))
-      .limit(1)
-      .get();
+  const latestScans = new Map<number, string>();
+  for (const row of db
+    .select({ brandId: schema.lightweightScans.brandId, scannedAt: schema.lightweightScans.scannedAt })
+    .from(schema.lightweightScans)
+    .orderBy(desc(schema.lightweightScans.scannedAt))
+    .all()) {
+    if (!latestScans.has(row.brandId)) latestScans.set(row.brandId, row.scannedAt);
+  }
 
-    return {
-      url: `${BASE_URL}/brand/${brand.slug}`,
-      lastModified: latestScan?.scannedAt ? new Date(latestScan.scannedAt) : new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.6,
-    };
-  });
+  const brandPages: MetadataRoute.Sitemap = brands.map((brand) => ({
+    url: `${BASE_URL}/brand/${brand.slug}`,
+    lastModified: latestScans.has(brand.id) ? new Date(latestScans.get(brand.id)!) : new Date(),
+    changeFrequency: "daily" as const,
+    priority: 0.6,
+  }));
 
   return [...staticPages, ...brandPages];
 }
