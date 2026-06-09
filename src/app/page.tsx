@@ -3,6 +3,7 @@ import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import { BrandTable } from "@/components/index/brand-table";
 import { buildMatrixPayload, getChangelogWithBrands, getIndexStats } from "@/lib/index-data";
+import { ScanInput } from "@/components/scan/scan-input";
 import { SITE_URL } from "@/lib/site";
 
 // Server-rendered with hourly revalidation (data changes once per daily scan).
@@ -124,8 +125,11 @@ export default function HomePage() {
             </div>
           </div>
 
+          {/* Instant scan */}
+          <ScanInput />
+
           {/* CTAs */}
-          <div className="mt-10 flex flex-wrap items-center gap-5">
+          <div className="mt-6 flex flex-wrap items-center gap-5">
             <a
               href="#brand-index"
               className="inline-block text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-6 py-3 transition-colors"

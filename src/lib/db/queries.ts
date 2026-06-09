@@ -311,7 +311,13 @@ export function getAllScansForBrand(brandId: number) {
 
 // ── Lightweight Scan Queries ────────────────────────────────────────
 
-export function insertLightweightScan(brandId: number, result: LightweightScanInput) {
+/**
+ * Derive per-agent status from robots.txt rules + UA test results.
+ * Shared by the daily pipeline and the on-demand /api/scan endpoint.
+ */
+export function deriveAgentStatus(
+  result: Pick<LightweightScanInput, "robotsTxt" | "userAgentTests">,
+): Record<string, string> {
   const agentStatus: Record<string, string> = {};
   for (const agent of result.robotsTxt.allowedAgents) {
     agentStatus[agent] = "allowed";
@@ -320,8 +326,7 @@ export function insertLightweightScan(brandId: number, result: LightweightScanIn
     agentStatus[agent] = "blocked";
   }
   // Agents not mentioned get "no_rule"
-  const allAgents = TRACKED_AGENT_IDS;
-  for (const agent of allAgents) {
+  for (const agent of TRACKED_AGENT_IDS) {
     if (!agentStatus[agent]) {
       agentStatus[agent] = "no_rule";
     }
@@ -351,6 +356,12 @@ export function insertLightweightScan(brandId: number, result: LightweightScanIn
     }
     // If verdict is "allowed", keep the robots.txt-derived status
   }
+
+  return agentStatus;
+}
+
+export function insertLightweightScan(brandId: number, result: LightweightScanInput) {
+  const agentStatus = deriveAgentStatus(result);
 
   const blockedCount = Object.values(agentStatus).filter(v => v === "blocked").length;
   const restrictedCount = Object.values(agentStatus).filter(v => v === "restricted").length;
