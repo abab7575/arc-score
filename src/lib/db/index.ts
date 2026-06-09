@@ -117,6 +117,48 @@ sqlite.exec(`
   )
 `);
 
+// Auto-migrate: ensure scan orchestration tables exist (the runtime pipeline
+// creates them on first run, but build-time prerenders query them too)
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS scan_runs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    scan_type TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'queued',
+    total_brands INTEGER NOT NULL DEFAULT 0,
+    completed_count INTEGER NOT NULL DEFAULT 0,
+    failed_count INTEGER NOT NULL DEFAULT 0,
+    skipped_count INTEGER NOT NULL DEFAULT 0,
+    changes_detected INTEGER NOT NULL DEFAULT 0,
+    drift_report TEXT,
+    failure_report TEXT,
+    started_at TEXT,
+    completed_at TEXT,
+    last_heartbeat_at TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS scan_jobs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    run_id INTEGER NOT NULL REFERENCES scan_runs(id),
+    brand_id INTEGER NOT NULL REFERENCES brands(id),
+    status TEXT NOT NULL DEFAULT 'queued',
+    error TEXT,
+    retry_count INTEGER NOT NULL DEFAULT 0,
+    scan_duration_ms INTEGER,
+    started_at TEXT,
+    completed_at TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS system_state (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL,
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+
 // Auto-migrate: add drift_report column to scan_runs (stores JSON drift report)
 try {
   sqlite.exec(`ALTER TABLE scan_runs ADD COLUMN drift_report TEXT`);
