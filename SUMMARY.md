@@ -1,5 +1,50 @@
 # SUMMARY — arcreport.ai reference-dataset upgrade (2026-06-09)
 
+## Addendum — four product features (same day, second batch)
+
+- **F1 — Instant free scan.** "Scan any site" input on the homepage hero and a
+  dedicated `/scan` page (server-rendered, in sitemap). `POST /api/scan`:
+  domains already in the index resolve instantly to their brand page at no
+  rate-limit cost; unknown domains run the standard lightweight pipeline live
+  (same `deriveAgentStatus` logic as the daily scan, extracted for reuse),
+  render in the brand-readout format (ARC Score + components, per-agent table,
+  infra, signals), and are queued in `submissions` for daily-index inclusion.
+  5 on-demand scans/IP/day with a friendly 429. No signup, no email gate.
+  Verified end-to-end: known brand → redirect payload; example.com → live scan
+  (score 60), queued row in DB, remaining-scan countdown.
+- **F2 — Public compare tool at `/compare`.** Server-rendered side-by-side for
+  2–5 brands: ARC Scores with component bars, per-agent matrix, data signals,
+  platform/WAF. `?brands=a,b,c` is the share URL and drives the server render;
+  the picker is a client enhancement that just navigates. Unique OG image and
+  canonical per comparison; default render is Nike vs Adidas vs Uniqlo plus a
+  popular-comparisons grid for SEO. "Export as image" bakes ARC attribution +
+  date into a canvas PNG. Removed the legacy `/compare→/matrix` redirect;
+  added to navbar + sitemap.
+- **F3 — Fix-prompt generator.** `src/lib/fix-prompts.ts` has one crafted
+  Claude Code prompt template per failed check (robots.txt policy blocks, WAF
+  restrictions, JSON-LD/Product schema, Open Graph, sitemap, llms.txt, product
+  feed), parameterised with the brand's actual findings — specific blocked
+  agents with company context, detected platform for idiomatic fixes, detected
+  WAF vendor, and post-deploy verification commands. Rendered on every brand
+  readout (brand pages + instant-scan results) as expandable entries with
+  "Copy Claude Code prompt" buttons and the "run this in Claude Code from your
+  site's repository" note.
+- **F4 — Free 90-day history.** Brand pages now show a date-grouped timeline
+  of all confirmed changes in the last 90 days (was a 3-entry list), with an
+  honest "stable posture" empty state. Plan boundaries updated in
+  `site.ts`/`/pro`: free = 90-day history, instant scans, compare, full index;
+  Pro = watchlists, daily alert emails, full multi-year history, CSV/JSON
+  export of full history.
+- **Verification:** all new pages server-rendered and in sitemap.xml
+  (1,033 URLs); mobile checked at 375px with headless-browser screenshots
+  (/compare, /scan, /brand/nike — zero horizontal overflow, tables scroll in
+  containers); 35/35 tests passing; production build clean (1,058 pages).
+- **Follow-ups:** the on-demand scan rate limiter is in-memory (resets on
+  deploy — acceptable for a free tier, but move to SQLite if abused); queued
+  instant-scan domains land in `submissions` with category "instant-scan" and
+  still need the existing admin approve-to-brands flow (or a small cron) to
+  auto-promote them into the daily index.
+
 All five phases shipped, in order, one commit per task (see `git log
 15a72a9..`). Build: clean (1,056 static pages). Tests: 35 passing
 (`npm test`). Everything below is live in `main`.
