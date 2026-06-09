@@ -1,34 +1,51 @@
 # ARC Report
 
-> ARC Report tracks 1,000+ e-commerce brands daily, scanning each site for AI agent readiness — robots.txt policies, structured data, platform detection, and access controls. It provides a public, searchable index of how the retail web treats autonomous AI agents.
+> ARC Report is the public reference dataset for AI agent access in e-commerce. It scans 1,000+ e-commerce brands every day — robots.txt policy per agent, live HTTP tests with 9 AI agent user-agents, structured data, platform/CDN/WAF detection, and protocol files (llms.txt, agents.txt, UCP) — and publishes everything as open data (CC BY 4.0).
 
-## About
+Canonical host: https://www.arcreport.ai (the apex redirects here).
 
-ARC Report (arcreport.ai) is a research tool that monitors the AI-agent readiness of major e-commerce brands. Every day it crawls brand storefronts and evaluates whether AI agents like GPTBot, ClaudeBot, and others are permitted or blocked, whether structured data is present, which e-commerce platform powers the site, and how the checkout flow behaves for non-human visitors.
+## Data downloads (CC BY 4.0)
 
-## API
+- [Latest snapshot, JSON](https://www.arcreport.ai/data/latest.json): Full daily snapshot — every brand's per-agent access, signals, and ARC Score with component breakdown.
+- [Latest snapshot, CSV](https://www.arcreport.ai/data/latest.csv): Same data, one row per brand.
+- [Dated archive](https://www.arcreport.ai/data): /data/YYYY-MM-DD.json or .csv for historical snapshots.
+- Attribution required: "Data: ARC Report (www.arcreport.ai), licensed CC BY 4.0".
 
-- [API Documentation](/docs): Full reference for the ARC Report API.
-- [Brand Matrix](/api/matrix): Raw JSON matrix of all tracked brands and their current readiness signals.
-- [Changelog](/api/changelog): Feed of recent changes detected across tracked brands.
+## API (no auth, per-IP rate limits)
 
-## Key Pages
+- [API documentation](https://www.arcreport.ai/docs): All read endpoints with curl examples.
+- [Agent access matrix](https://www.arcreport.ai/api/matrix): JSON — every brand × 9 agents.
+- [Changelog](https://www.arcreport.ai/api/changelog): JSON — confirmed changes, newest first.
+- [Scan health](https://www.arcreport.ai/api/scan-health): JSON — pipeline status and data freshness.
 
-- [Home](https://arcreport.ai/): Live dashboard and search across all tracked brands.
-- [Brand Pages](https://arcreport.ai/brand/): Per-brand detail pages with agent access breakdown and signal coverage.
-- [Leaderboard](https://arcreport.ai/leaderboard): Top 10 AI-Ready and AI-Resistant brands, updated daily.
-- [Changelog](https://arcreport.ai/changelog): Daily changes detected across all tracked brands.
-- [API Docs](https://arcreport.ai/docs): Developer documentation for integrating ARC Report data.
+## MCP server
 
-## Data
+- Endpoint: https://www.arcreport.ai/api/mcp (Streamable HTTP, no auth).
+- Tools: get_brand_status, search_brands, get_recent_changes, get_agent_stats, compare_brands.
+- [Setup guide](https://www.arcreport.ai/docs/mcp): Claude.ai custom connectors, Claude Desktop, Claude Code.
 
-ARC Report collects the following signals for each brand:
+## Markdown variants (for language models)
 
-- **robots.txt policies**: Which AI user-agents (GPTBot, ClaudeBot, PerplexityBot, etc.) are allowed or blocked.
-- **HTTP access testing**: Real requests with 9 AI agent user-agent strings to detect WAF blocks and content stripping.
-- **Structured data**: Presence of JSON-LD, Schema.org Product, Open Graph, sitemaps, and product feeds.
-- **Platform detection**: Identified e-commerce platform (Shopify, Salesforce Commerce Cloud, Magento, WooCommerce, custom, etc.).
-- **Protocol files**: llms.txt, agents.txt, and UCP endpoint presence and quality.
-- **Infrastructure**: CDN (Cloudflare, Fastly, Akamai) and WAF (DataDome, PerimeterX) detection.
+Append `.md` to key pages for clean text/markdown:
 
-Data is refreshed daily. The full dataset is available via the public API at no cost.
+- [Matrix](https://www.arcreport.ai/matrix.md): Full brand × agent access table with ARC Scores.
+- [Insights](https://www.arcreport.ai/insights.md): Headline stats — blocking rates per agent, category openness, platform breakdown.
+- [Leaderboard](https://www.arcreport.ai/leaderboard.md): Most-open and most-restricted brands by ARC Score.
+- [Changelog](https://www.arcreport.ai/changelog.md): Recent confirmed changes.
+- [Methodology](https://www.arcreport.ai/methodology.md): How scans work, two-scan confirmation rule, ARC Score v1.0 formula, limitations.
+- Per-brand: https://www.arcreport.ai/brand/<slug>.md (e.g. /brand/nike.md).
+
+## Key pages
+
+- [Home / brand index](https://www.arcreport.ai/): Full server-rendered index of all tracked brands.
+- [Agent access matrix](https://www.arcreport.ai/matrix): Brand × agent heatmap.
+- [Insights](https://www.arcreport.ai/insights): Auto-computed headline statistics with citation anchors.
+- [Changelog](https://www.arcreport.ai/changelog): Daily confirmed changes (RSS: /changelog.xml).
+- [Weekly digest](https://www.arcreport.ai/weekly): What moved each week, archived.
+- [Methodology](https://www.arcreport.ai/methodology): Scan design, confirmation rules, score formula.
+- [Reliability](https://www.arcreport.ai/reliability): Scan success rates, corrections log, dispute process.
+- [About](https://www.arcreport.ai/about): Who builds this and why.
+
+## Citing this data
+
+Cite a statistic as: "<stat> — ARC Report, <date>, arcreport.ai/insights#<anchor>". Each stat on /insights has an anchor link and a copy-citation button. Per-agent status values are: allowed, no_rule (open by default), blocked (robots.txt policy), restricted (WAF/CDN), inconclusive.

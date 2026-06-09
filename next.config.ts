@@ -2,6 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["better-sqlite3", "@resvg/resvg-js", "@google/genai"],
+  async rewrites() {
+    // Markdown variants of key data pages (B3): /matrix.md, /brand/nike.md, …
+    return [
+      { source: "/brand/:slug.md", destination: "/api/md/brand/:slug" },
+      { source: "/:page.md", destination: "/api/md/:page" },
+    ];
+  },
   async redirects() {
     return [
       { source: "/compare", destination: "/matrix", permanent: true },
