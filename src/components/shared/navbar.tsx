@@ -6,9 +6,12 @@ import { Menu, X } from "lucide-react";
 import { AdminLink } from "./admin-link";
 
 const navLinks = [
-  { href: "/", label: "Brands" },
+  { href: "/", label: "Index" },
+  { href: "/matrix", label: "Matrix" },
+  { href: "/insights", label: "Insights" },
   { href: "/changelog", label: "Changes" },
-  { href: "/pricing", label: "Pricing" },
+  { href: "/data", label: "Data" },
+  { href: "/docs", label: "API" },
 ] as const;
 
 export function Navbar() {

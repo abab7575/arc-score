@@ -8,6 +8,7 @@ import {
   getChangelogByFieldPattern,
   getWeeklyTotals,
 } from "@/lib/db/queries";
+import { getArchiveWeeks } from "@/lib/weekly";
 import type { Metadata } from "next";
 import { PRO_PRICE_MONTHLY } from "@/lib/site";
 
@@ -101,6 +102,7 @@ function ChangeRow({ entry }: { entry: ChangelogRow }) {
 }
 
 export default async function WeeklyPage() {
+  const archiveWeeks = getArchiveWeeks();
   const totals = getWeeklyTotals(WINDOW_DAYS);
   const topMovers = getTopMovers(WINDOW_DAYS, 15);
 
@@ -220,6 +222,32 @@ export default async function WeeklyPage() {
           ))}
         </Section>
 
+        <section className="mb-12">
+          <div className="flex items-baseline justify-between mb-3">
+            <h2 className="text-lg sm:text-xl font-black text-foreground tracking-tight">
+              Digest archive
+            </h2>
+            <a href="/weekly.xml" className="text-xs font-semibold text-[#0259DD] hover:underline">RSS feed</a>
+          </div>
+          <p className="text-sm text-muted-foreground mb-4">
+            Every completed week, archived as a permanent page with its own summary.
+          </p>
+          {archiveWeeks.length === 0 ? (
+            <div className="border-2 border-gray-200 bg-white px-4 py-6 text-sm text-muted-foreground text-center">
+              The first weekly digest publishes once a full week of changes is recorded.
+            </div>
+          ) : (
+            <div className="border-2 border-gray-200 bg-white divide-y divide-gray-100">
+              {archiveWeeks.map((w) => (
+                <Link key={w} href={`/weekly/${w}`} className="flex items-center justify-between px-4 py-3 text-sm hover:bg-gray-50/50">
+                  <span className="font-semibold text-foreground">Week of {w}</span>
+                  <span className="text-xs text-muted-foreground font-mono">view digest →</span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </section>
+
         <div className="mt-12">
           <EmailCapture
             source="weekly"
@@ -238,7 +266,7 @@ export default async function WeeklyPage() {
             history exports, and category filtering.
           </p>
           <Link
-            href="/pricing"
+            href="/pro"
             className="inline-block text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-5 py-2 transition-colors"
           >
             {`Upgrade to Pro — $${PRO_PRICE_MONTHLY}/mo`}

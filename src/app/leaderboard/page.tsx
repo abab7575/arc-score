@@ -163,7 +163,7 @@ export default function LeaderboardPage() {
             Pro subscribers get daily alerts when tracked brands move up or down the rankings.
           </p>
           <Link
-            href="/pricing"
+            href="/pro"
             className="inline-block text-sm font-bold text-white bg-[#FF6648] hover:bg-[#e85a3f] px-5 py-2 transition-colors"
           >
             {`Get Pro — $${PRO_PRICE_MONTHLY}/mo`}

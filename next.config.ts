@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
       { source: "/instant-check", destination: "/", permanent: true },
       { source: "/report", destination: "/", permanent: true },
       { source: "/report/:path*", destination: "/", permanent: true },
+      { source: "/pricing", destination: "/pro", permanent: true },
     ];
   },
   async headers() {

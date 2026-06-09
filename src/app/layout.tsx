@@ -22,6 +22,14 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: SITE_TITLE,
   description: SITE_DESCRIPTION,
+  alternates: {
+    types: {
+      "application/rss+xml": [
+        { url: "/changelog.xml", title: "ARC Report — Agent Access Changelog" },
+        { url: "/weekly.xml", title: "ARC Report — Weekly Agent Access Digest" },
+      ],
+    },
+  },
   applicationName: "ARC Report",
   robots: "index, follow",
   keywords: [

@@ -3,7 +3,7 @@ import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 
 export const metadata = {
-  title: "Pricing — ARC Report",
+  title: "Pro — ARC Report",
   description:
     "The ARC Report public index is free. Paid plans for historical data, exports, and higher-rate API access are coming soon.",
 };
@@ -16,11 +16,12 @@ export default function PricingPage() {
       <main className="max-w-3xl mx-auto px-4 sm:px-6 py-20">
         <div className="text-center mb-10">
           <h1 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight mb-3">
-            Free for everyone.
+            The index is free. Pro adds depth.
           </h1>
           <p className="text-base text-muted-foreground max-w-xl mx-auto">
-            Every brand. Every signal. Every day. The full ARC Report public
-            index is free — no account required.
+            Every brand, every signal, every day — free, no account, CC BY 4.0.
+            Pro exists for teams that need more history and higher limits, and
+            it funds the public dataset.
           </p>
         </div>
 
