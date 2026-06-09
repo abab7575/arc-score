@@ -27,7 +27,7 @@ export const TRACKED_AGENTS = [
   { id: "CCBot", company: "Common Crawl", product: "Open training data" },
 ] as const;
 
-export const TRACKED_AGENT_IDS = TRACKED_AGENTS.map((a) => a.id);
+export const TRACKED_AGENT_IDS: string[] = TRACKED_AGENTS.map((a) => a.id);
 export const TRACKED_AGENT_COUNT = TRACKED_AGENTS.length;
 
 /** Display-only approximation for static copy (metadata, prose). */
