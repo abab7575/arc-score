@@ -9,6 +9,7 @@
 import { fetchWithRetry } from "./fetch-with-retry";
 import robotsParser from "robots-parser";
 import type { UserAgentTestResult } from "./data-agent";
+import { assertPublicUrl } from "@/lib/security/network";
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -97,6 +98,7 @@ export async function runLightweightScan(
   const startTime = Date.now();
   const baseUrl = url.startsWith("http") ? url : `https://${url}`;
   const targetProductUrl = productUrl || baseUrl;
+  await Promise.all([assertPublicUrl(baseUrl), assertPublicUrl(targetProductUrl)]);
 
   // Run independent checks in parallel
   const [

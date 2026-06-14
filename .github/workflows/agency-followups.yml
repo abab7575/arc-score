@@ -1,0 +1,16 @@
+name: Agency Campaign Follow-ups
+
+on:
+  schedule:
+    - cron: "17 10 * * *"
+  workflow_dispatch:
+
+jobs:
+  follow_up:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send eligible follow-ups
+        run: |
+          curl --fail-with-body --silent --show-error \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "https://www.arcreport.ai/api/cron/agency-followups"

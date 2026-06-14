@@ -4,6 +4,14 @@
 
 Canonical host: https://www.arcreport.ai (the apex redirects here).
 
+## Arc for Agencies
+
+ARC Report is also a paid AI-commerce monitoring workspace for ecommerce agencies. Agencies can monitor up to 50 client or prospect stores, prioritize access and product-data issues, generate co-branded reports, receive regression alerts, and query private portfolio intelligence through an authenticated MCP server.
+
+- [Agency product](https://www.arcreport.ai/#agency-system): product overview and pricing.
+- [Agency sign-in and self-serve workspace](https://www.arcreport.ai/agency/login): passwordless agency access.
+- [Agency MCP documentation](https://www.arcreport.ai/docs/agency-mcp): private, workspace-scoped portfolio tools.
+
 ## Data downloads (CC BY 4.0)
 
 - [Latest snapshot, JSON](https://www.arcreport.ai/data/latest.json): Full daily snapshot — every brand's per-agent access, signals, and ARC Score with component breakdown.
@@ -22,7 +30,8 @@ Canonical host: https://www.arcreport.ai (the apex redirects here).
 
 - Endpoint: https://www.arcreport.ai/api/mcp (Streamable HTTP, no auth).
 - Tools: get_brand_status, search_brands, get_recent_changes, get_agent_stats, compare_brands.
-- [Setup guide](https://www.arcreport.ai/docs/mcp): Claude.ai custom connectors, Claude Desktop, Claude Code.
+- [Public dataset MCP](https://www.arcreport.ai/docs/mcp): no-auth access to the public brand index.
+- [Agency MCP](https://www.arcreport.ai/docs/agency-mcp): authenticated private portfolio tools for paid agency workspaces.
 
 ## Markdown variants (for language models)
 

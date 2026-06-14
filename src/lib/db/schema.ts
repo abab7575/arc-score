@@ -347,3 +347,98 @@ export const systemState = sqliteTable("system_state", {
   value: text("value").notNull(),
   updatedAt: text("updated_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
+
+// ── Arc for Agencies ─────────────────────────────────────────────────
+
+export const agencyWorkspaces = sqliteTable("agency_workspaces", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  customerId: integer("customer_id").references(() => customers.id),
+  name: text("name").notNull(),
+  domain: text("domain").notNull().unique(),
+  logoUrl: text("logo_url"),
+  primaryColor: text("primary_color").notNull().default("#0259DD"),
+  status: text("status").notNull().default("prospect"), // prospect, preview, trialing, active, past_due, canceled
+  trialEndsAt: text("trial_ends_at"),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+export const agencySites = sqliteTable("agency_sites", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  workspaceId: integer("workspace_id").notNull().references(() => agencyWorkspaces.id),
+  brandId: integer("brand_id").references(() => brands.id),
+  domain: text("domain").notNull(),
+  name: text("name").notNull(),
+  sourceUrl: text("source_url"),
+  relationship: text("relationship").notNull().default("prospect"), // prospect, client
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+export const agencyPreviews = sqliteTable("agency_previews", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  workspaceId: integer("workspace_id").notNull().references(() => agencyWorkspaces.id),
+  tokenHash: text("token_hash").notNull().unique(),
+  selectedSiteIdsJson: text("selected_site_ids_json").notNull().default("[]"),
+  expiresAt: text("expires_at").notNull(),
+  firstViewedAt: text("first_viewed_at"),
+  lastViewedAt: text("last_viewed_at"),
+  viewCount: integer("view_count").notNull().default(0),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+export const agencyLoginTokens = sqliteTable("agency_login_tokens", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  email: text("email").notNull(),
+  workspaceId: integer("workspace_id").references(() => agencyWorkspaces.id),
+  tokenHash: text("token_hash").notNull().unique(),
+  expiresAt: text("expires_at").notNull(),
+  usedAt: text("used_at"),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+export const agencyCampaigns = sqliteTable("agency_campaigns", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  workspaceId: integer("workspace_id").notNull().references(() => agencyWorkspaces.id),
+  previewId: integer("preview_id").notNull().references(() => agencyPreviews.id),
+  contactEmail: text("contact_email").notNull(),
+  contactName: text("contact_name"),
+  subject: text("subject").notNull(),
+  body: text("body").notNull(),
+  status: text("status").notNull().default("draft"), // draft, approved, scheduled, sent, bounced, suppressed
+  validationWarningsJson: text("validation_warnings_json").notNull().default("[]"),
+  approvedAt: text("approved_at"),
+  scheduledAt: text("scheduled_at"),
+  sentAt: text("sent_at"),
+  providerMessageId: text("provider_message_id"),
+  followupCount: integer("followup_count").notNull().default(0),
+  lastFollowupAt: text("last_followup_at"),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+export const agencyEvents = sqliteTable("agency_events", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  workspaceId: integer("workspace_id").notNull().references(() => agencyWorkspaces.id),
+  previewId: integer("preview_id").references(() => agencyPreviews.id),
+  eventType: text("event_type").notNull(),
+  metadataJson: text("metadata_json").notNull().default("{}"),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+export const emailSuppressions = sqliteTable("email_suppressions", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  email: text("email").notNull().unique(),
+  reason: text("reason").notNull(),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+export const agencyApiKeys = sqliteTable("agency_api_keys", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  workspaceId: integer("workspace_id").notNull().references(() => agencyWorkspaces.id),
+  name: text("name").notNull().default("LLM connector"),
+  keyHash: text("key_hash").notNull().unique(),
+  keyPrefix: text("key_prefix").notNull(),
+  lastUsedAt: text("last_used_at"),
+  revokedAt: text("revoked_at"),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+});

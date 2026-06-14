@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db, schema } from "@/lib/db";
+import { billingEnvironmentReady } from "@/lib/agency/stripe";
 
 export async function GET() {
   try {
@@ -17,6 +18,11 @@ export async function GET() {
       db: {
         connected: true,
         brands: brandCount,
+      },
+      services: {
+        emailConfigured: Boolean(process.env.RESEND_API_KEY && process.env.RESEND_WEBHOOK_SECRET),
+        billingConfigured: billingEnvironmentReady(),
+        customerAuthConfigured: Boolean(process.env.CUSTOMER_SESSION_SECRET),
       },
     });
   } catch (err) {

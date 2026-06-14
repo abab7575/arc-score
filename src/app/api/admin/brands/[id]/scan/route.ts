@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { exec } from "child_process";
+import { execFile } from "child_process";
 import { db, schema } from "@/lib/db/index";
 import { eq } from "drizzle-orm";
 
@@ -20,8 +20,7 @@ export async function POST(
     }
 
     // Trigger scan in background
-    const cmd = `npx tsx scripts/scan-brand.ts --slug=${brand.slug} --force`;
-    exec(cmd, { cwd: process.cwd() }, (error, stdout, stderr) => {
+    execFile("npx", ["tsx", "scripts/scan-brand.ts", `--slug=${brand.slug}`, "--force"], { cwd: process.cwd() }, (error, stdout) => {
       if (error) {
         console.error(`[scan/${brand.slug}] Error:`, error.message);
       } else {

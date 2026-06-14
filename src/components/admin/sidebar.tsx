@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Store, Activity, LogOut } from "lucide-react";
+import { Store, Activity, LogOut, Building2, Send } from "lucide-react";
 
 const navItems = [
   { href: "/admin/brands", label: "Brands", icon: Store },
   { href: "/admin/scan-health", label: "Scan Health", icon: Activity },
+  { href: "/admin/agencies", label: "Agencies", icon: Building2 },
+  { href: "/admin/campaigns", label: "Campaigns", icon: Send },
 ];
 
 export function AdminSidebar() {

@@ -1,0 +1,25 @@
+name: Daily Database Backup
+
+on:
+  schedule:
+    - cron: "45 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Download consistent SQLite backup
+        run: |
+          curl --fail-with-body --silent --show-error \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "https://www.arcreport.ai/api/cron/backup" \
+            --output arc-report.db
+          test -s arc-report.db
+      - name: Store encrypted-at-rest workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: arc-report-db-${{ github.run_id }}
+          path: arc-report.db
+          retention-days: 30

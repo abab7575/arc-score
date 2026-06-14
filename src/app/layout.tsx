@@ -14,15 +14,16 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-const SITE_TITLE = "ARC Report — The Open Dataset of AI Agent Access in E-Commerce";
-const SITE_DESCRIPTION = `The public reference dataset for how commerce sites treat AI agents. ${BRAND_COUNT_DISPLAY} e-commerce brands scanned daily: robots.txt policies, live agent HTTP tests, structured data, platform detection, llms.txt. Free, open data (CC BY 4.0).`;
-const OG_IMAGE = `${SITE_URL}/api/og?title=AI+Agent+Access+in+E-Commerce&subtitle=The+open+reference+dataset+%E2%80%94+scanned+daily`;
+const SITE_TITLE = "ARC Report — AI Commerce Monitoring for Ecommerce Agencies";
+const SITE_DESCRIPTION = `Help ecommerce agencies lead clients into agentic commerce: monitor stores, uncover AI-commerce issues, generate co-branded reports, and query portfolio intelligence through MCP. Powered by ${BRAND_COUNT_DISPLAY} daily store scans.`;
+const OG_IMAGE = `${SITE_URL}/api/og?title=Lead+Clients+into+Agentic+Commerce&subtitle=Portfolio+monitoring%2C+evidence%2C+and+implementation+guidance+for+agencies`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: SITE_TITLE,
   description: SITE_DESCRIPTION,
   alternates: {
+    canonical: SITE_URL,
     types: {
       "application/rss+xml": [
         { url: "/changelog.xml", title: "ARC Report — Agent Access Changelog" },
@@ -54,7 +55,7 @@ export const metadata: Metadata = {
         url: OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: "ARC Report — AI Agent Access in E-Commerce",
+        alt: "ARC Report — AI Commerce Monitoring for Ecommerce Agencies",
       },
     ],
   },

@@ -10,8 +10,13 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /agency
+Disallow: /preview
 Disallow: /api/admin
+Disallow: /api/agency
 Disallow: /api/cron
+Disallow: /api/stripe
+Disallow: /api/webhooks
 
 # AI agents — explicitly welcomed
 User-agent: GPTBot

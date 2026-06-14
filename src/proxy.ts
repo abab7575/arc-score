@@ -4,7 +4,7 @@ import { verifySessionToken, SESSION_COOKIE_NAME } from "@/lib/auth";
 const APEX_HOST = "arcreport.ai";
 const CANONICAL_HOST = "www.arcreport.ai";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
   // Canonicalize apex → www so every crawler and agent gets one clean 301.
@@ -14,6 +14,15 @@ export async function middleware(request: NextRequest) {
       `https://${CANONICAL_HOST}${pathname}${search}`,
       301,
     );
+  }
+
+  const isUnsafeMethod = !["GET", "HEAD", "OPTIONS"].includes(request.method);
+  const isBrowserMutation = pathname.startsWith("/api/admin") || pathname.startsWith("/api/agency");
+  if (isUnsafeMethod && isBrowserMutation) {
+    const origin = request.headers.get("origin");
+    if (origin === "null" || (origin && origin !== request.nextUrl.origin)) {
+      return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+    }
   }
 
   // Protect /admin/* pages (except login)

@@ -210,13 +210,20 @@ export default function DocsPage() {
 
         <section className="mt-10 pt-8 border-t border-gray-200">
           <h2 className="text-sm font-bold uppercase tracking-wider text-foreground mb-3">
-            MCP Server
+            Public Dataset MCP
           </h2>
           <p className="text-sm text-muted-foreground">
-            Prefer tools over endpoints? The same data is exposed as an MCP server at{" "}
+            The public brand index is also available as a read-only MCP server at{" "}
             <code className="font-mono text-xs bg-gray-100 px-1.5 py-0.5">{BASE}/api/mcp</code>{" "}
-            (Streamable HTTP, no auth). Setup guides for Claude.ai, Claude Desktop, and Claude Code:{" "}
-            <Link href="/docs/mcp" className="text-[#0259DD] hover:underline">/docs/mcp</Link>.
+            (Streamable HTTP, no authentication). It exposes public brand status, search, comparisons,
+            statistics, and confirmed changes. See{" "}
+            <Link href="/docs/mcp" className="text-[#0259DD] hover:underline">Public MCP setup</Link>.
+          </p>
+          <p className="text-sm text-muted-foreground mt-3">
+            Agency portfolio data is not available through this endpoint. Paid workspaces use a separate,
+            authenticated server at{" "}
+            <code className="font-mono text-xs bg-gray-100 px-1.5 py-0.5">{BASE}/api/agency/mcp</code>.
+            See the <Link href="/docs/agency-mcp" className="text-[#0259DD] hover:underline">Agency MCP guide</Link>.
           </p>
         </section>
 

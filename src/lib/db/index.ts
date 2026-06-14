@@ -4,12 +4,12 @@ import * as schema from "./schema";
 import path from "path";
 import fs from "fs";
 
-const DB_PATH = path.join(process.cwd(), "data", "arc-score.db");
+export const DB_PATH = path.resolve(process.env.DATABASE_PATH || path.join(process.cwd(), "data", "arc-score.db"));
 
 // Ensure data directory exists
 fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
 
-const sqlite = new Database(DB_PATH);
+export const sqlite = new Database(DB_PATH);
 sqlite.pragma("journal_mode = WAL");
 sqlite.pragma("busy_timeout = 5000");
 sqlite.pragma("foreign_keys = ON");
@@ -301,6 +301,100 @@ sqlite.exec(`
     source TEXT NOT NULL DEFAULT 'homepage',
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
   )
+`);
+
+// Arc for Agencies tables are additive and intentionally separate from the
+// public dataset so prospecting/customer data never leaks into public APIs.
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS agency_workspaces (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_id INTEGER REFERENCES customers(id),
+    name TEXT NOT NULL,
+    domain TEXT NOT NULL UNIQUE,
+    logo_url TEXT,
+    primary_color TEXT NOT NULL DEFAULT '#0259DD',
+    status TEXT NOT NULL DEFAULT 'prospect',
+    trial_ends_at TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  CREATE TABLE IF NOT EXISTS agency_sites (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    workspace_id INTEGER NOT NULL REFERENCES agency_workspaces(id),
+    brand_id INTEGER REFERENCES brands(id),
+    domain TEXT NOT NULL,
+    name TEXT NOT NULL,
+    source_url TEXT,
+    relationship TEXT NOT NULL DEFAULT 'prospect',
+    active INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    UNIQUE(workspace_id, domain)
+  );
+  CREATE TABLE IF NOT EXISTS agency_previews (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    workspace_id INTEGER NOT NULL REFERENCES agency_workspaces(id),
+    token_hash TEXT NOT NULL UNIQUE,
+    selected_site_ids_json TEXT NOT NULL DEFAULT '[]',
+    expires_at TEXT NOT NULL,
+    first_viewed_at TEXT,
+    last_viewed_at TEXT,
+    view_count INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  CREATE TABLE IF NOT EXISTS agency_login_tokens (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL,
+    workspace_id INTEGER REFERENCES agency_workspaces(id),
+    token_hash TEXT NOT NULL UNIQUE,
+    expires_at TEXT NOT NULL,
+    used_at TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  CREATE TABLE IF NOT EXISTS agency_campaigns (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    workspace_id INTEGER NOT NULL REFERENCES agency_workspaces(id),
+    preview_id INTEGER NOT NULL REFERENCES agency_previews(id),
+    contact_email TEXT NOT NULL,
+    contact_name TEXT,
+    subject TEXT NOT NULL,
+    body TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'draft',
+    validation_warnings_json TEXT NOT NULL DEFAULT '[]',
+    approved_at TEXT,
+    scheduled_at TEXT,
+    sent_at TEXT,
+    provider_message_id TEXT,
+    followup_count INTEGER NOT NULL DEFAULT 0,
+    last_followup_at TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  CREATE TABLE IF NOT EXISTS agency_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    workspace_id INTEGER NOT NULL REFERENCES agency_workspaces(id),
+    preview_id INTEGER REFERENCES agency_previews(id),
+    event_type TEXT NOT NULL,
+    metadata_json TEXT NOT NULL DEFAULT '{}',
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  CREATE TABLE IF NOT EXISTS email_suppressions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    reason TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  CREATE TABLE IF NOT EXISTS agency_api_keys (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    workspace_id INTEGER NOT NULL REFERENCES agency_workspaces(id),
+    name TEXT NOT NULL DEFAULT 'LLM connector',
+    key_hash TEXT NOT NULL UNIQUE,
+    key_prefix TEXT NOT NULL,
+    last_used_at TEXT,
+    revoked_at TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  CREATE INDEX IF NOT EXISTS idx_agency_sites_workspace ON agency_sites(workspace_id);
+  CREATE INDEX IF NOT EXISTS idx_agency_campaigns_status ON agency_campaigns(status);
+  CREATE INDEX IF NOT EXISTS idx_agency_events_workspace ON agency_events(workspace_id);
 `);
 
 export const db = drizzle(sqlite, { schema });

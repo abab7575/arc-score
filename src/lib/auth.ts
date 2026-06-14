@@ -96,3 +96,50 @@ export async function verifySessionToken(token: string): Promise<boolean> {
 }
 
 export const SESSION_COOKIE_NAME = "arc_admin_session";
+
+export const AGENCY_SESSION_COOKIE_NAME = "arc_agency_session";
+
+export interface AgencySession {
+  customerId: number;
+  workspaceId: number;
+  email: string;
+  exp: number;
+}
+
+export async function createAgencySessionToken(
+  session: Omit<AgencySession, "exp">,
+): Promise<string> {
+  const secret = process.env.CUSTOMER_SESSION_SECRET;
+  if (!secret) throw new Error("CUSTOMER_SESSION_SECRET not set");
+  const payload: AgencySession = {
+    ...session,
+    exp: Date.now() + SESSION_DURATION_MS,
+  };
+  const data = btoa(JSON.stringify(payload))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+  return `${data}.${await hmacSign(data, secret)}`;
+}
+
+export async function readAgencySessionToken(token: string): Promise<AgencySession | null> {
+  const secret = process.env.CUSTOMER_SESSION_SECRET;
+  if (!secret || !token) return null;
+  const [data, signature, extra] = token.split(".");
+  if (!data || !signature || extra) return null;
+  if (!(await hmacVerify(data, signature, secret))) return null;
+  try {
+    const payload = JSON.parse(atob(data.replace(/-/g, "+").replace(/_/g, "/"))) as AgencySession;
+    if (
+      payload.exp < Date.now() ||
+      !Number.isInteger(payload.customerId) ||
+      !Number.isInteger(payload.workspaceId) ||
+      typeof payload.email !== "string"
+    ) {
+      return null;
+    }
+    return payload;
+  } catch {
+    return null;
+  }
+}

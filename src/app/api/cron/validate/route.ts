@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { exec } from "child_process";
+import { execFile } from "child_process";
 
 /**
  * Cron: Scanner Validation
@@ -19,11 +19,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const top = request.nextUrl.searchParams.get("top") ?? "20";
+  const requestedTop = Number(request.nextUrl.searchParams.get("top") ?? "20");
+  const top = Number.isInteger(requestedTop) ? Math.min(100, Math.max(1, requestedTop)) : 20;
 
-  const cmd = `npx tsx scripts/validate-scanner.ts --top=${top}`;
-
-  exec(cmd, { cwd: process.cwd() }, (error, stdout, stderr) => {
+  execFile("npx", ["tsx", "scripts/validate-scanner.ts", `--top=${top}`], { cwd: process.cwd() }, (error, stdout, stderr) => {
     if (error) {
       console.error("[cron/validate] Error:", error.message);
       console.error("[cron/validate] stderr:", stderr);

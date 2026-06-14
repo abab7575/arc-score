@@ -55,7 +55,8 @@ export function Footer() {
                 { href: "/methodology", label: "METHODOLOGY" },
                 { href: "/reliability", label: "RELIABILITY" },
                 { href: "/docs", label: "API" },
-                { href: "/docs/mcp", label: "MCP" },
+                { href: "/docs/mcp", label: "PUBLIC MCP" },
+                { href: "/docs/agency-mcp", label: "AGENCY MCP" },
                 { href: "/about", label: "ABOUT" },
               ].map((link) => (
                 <Link

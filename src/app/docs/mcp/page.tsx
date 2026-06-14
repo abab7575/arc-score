@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "MCP Server — Query ARC Report from Claude | ARC Report",
+  title: "Public Dataset MCP — Query the ARC Index | ARC Report",
   description:
     "Connect the ARC Report MCP server to Claude.ai, Claude Desktop, or Claude Code and query AI agent access for 1,000+ e-commerce brands in natural language. No auth required.",
 };
@@ -26,9 +26,9 @@ export default function McpDocsPage() {
       <Navbar />
       <main className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
         <div className="mb-10">
-          <div className="spec-label text-muted-foreground mb-2">MCP SERVER</div>
+          <div className="spec-label text-muted-foreground mb-2">PUBLIC DATASET MCP</div>
           <h1 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight mb-3">
-            Query the index from your agent
+            Query the public index from your LLM
           </h1>
           <p className="text-base text-muted-foreground">
             ARC Report ships a remote{" "}
@@ -40,8 +40,13 @@ export default function McpDocsPage() {
             <code className="font-mono text-xs bg-gray-100 px-1 py-0.5">last_updated</code> timestamp for citation.
           </p>
           <div className="border-l-2 border-[#FF6648] pl-4 mt-5 text-sm">
-            <p className="text-foreground font-semibold mb-1">Server URL</p>
+            <p className="text-foreground font-semibold mb-1">Public server URL</p>
             <code className="font-mono text-muted-foreground">{MCP_URL}</code>
+          </div>
+          <div className="mt-5 border border-[#FBBA16] bg-amber-50 px-4 py-3 text-sm">
+            <strong>This server contains public index data only.</strong>{" "}
+            Agency portfolio health, private reports, regressions, and fix prompts use the authenticated{" "}
+            <Link href="/docs/agency-mcp" className="text-[#0259DD] hover:underline">Agency MCP</Link>.
           </div>
         </div>
 
