@@ -20,7 +20,14 @@ export async function proxy(request: NextRequest) {
   const isBrowserMutation = pathname.startsWith("/api/admin") || pathname.startsWith("/api/agency");
   if (isUnsafeMethod && isBrowserMutation) {
     const origin = request.headers.get("origin");
-    if (origin === "null" || (origin && origin !== request.nextUrl.origin)) {
+    const forwardedHost = request.headers.get("x-forwarded-host") || request.headers.get("host");
+    const forwardedProto = request.headers.get("x-forwarded-proto") || "https";
+    const allowedOrigins = new Set([
+      request.nextUrl.origin,
+      `https://${CANONICAL_HOST}`,
+      forwardedHost ? `${forwardedProto}://${forwardedHost}` : "",
+    ]);
+    if (origin === "null" || (origin && !allowedOrigins.has(origin))) {
       return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
     }
   }
