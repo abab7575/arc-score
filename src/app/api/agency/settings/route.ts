@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { getAgencySession } from "@/lib/agency/core";
+import { publicUrl } from "@/lib/public-url";
 
 export async function POST(request: Request) {
   const auth = await getAgencySession();
@@ -17,5 +18,5 @@ export async function POST(request: Request) {
     primaryColor,
     updatedAt: new Date().toISOString(),
   }).where(eq(schema.agencyWorkspaces.id, auth.workspace.id)).run();
-  return NextResponse.redirect(new URL("/agency/settings", request.url), 303);
+  return NextResponse.redirect(publicUrl("/agency/settings"), 303);
 }

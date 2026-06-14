@@ -3,20 +3,21 @@ import { eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { getAgencySession, recordAgencyEvent } from "@/lib/agency/core";
 import { billingEnvironmentReady, getStripe } from "@/lib/agency/stripe";
+import { publicUrl } from "@/lib/public-url";
 import { SITE_URL } from "@/lib/site";
 
-export async function POST(request: Request) {
+export async function POST() {
   const auth = await getAgencySession();
   if (!auth) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   if (!billingEnvironmentReady()) {
-    return NextResponse.redirect(new URL("/agency/billing?error=Live+billing+is+not+configured", request.url), 303);
+    return NextResponse.redirect(publicUrl("/agency/billing?error=Live+billing+is+not+configured"), 303);
   }
   const price = process.env.STRIPE_AGENCY_PRICE_ID;
   if (!price) return NextResponse.json({ error: "STRIPE_AGENCY_PRICE_ID not configured" }, { status: 503 });
   const stripe = getStripe();
   const stripePrice = await stripe.prices.retrieve(price);
   if (process.env.NODE_ENV === "production" && !stripePrice.livemode) {
-    return NextResponse.redirect(new URL("/agency/billing?error=Live+billing+is+not+configured", request.url), 303);
+    return NextResponse.redirect(publicUrl("/agency/billing?error=Live+billing+is+not+configured"), 303);
   }
   const customer = db.select().from(schema.customers).where(eq(schema.customers.id, auth.session.customerId)).get();
   if (!customer) return NextResponse.json({ error: "Customer missing" }, { status: 404 });

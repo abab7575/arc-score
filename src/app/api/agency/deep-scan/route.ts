@@ -3,13 +3,14 @@ import { NextResponse } from "next/server";
 import { execFile } from "child_process";
 import { db, schema } from "@/lib/db";
 import { getAgencySession, recordAgencyEvent, workspaceHasPaidAccess } from "@/lib/agency/core";
+import { publicUrl } from "@/lib/public-url";
 
 export const maxDuration = 300;
 
 export async function POST(request: Request) {
   const auth = await getAgencySession();
   if (!auth) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if (!workspaceHasPaidAccess(auth.workspace)) return NextResponse.redirect(new URL("/agency/billing", request.url), 303);
+  if (!workspaceHasPaidAccess(auth.workspace)) return NextResponse.redirect(publicUrl("/agency/billing"), 303);
   const siteId = Number((await request.formData()).get("siteId"));
   const site = db.select().from(schema.agencySites).where(and(
     eq(schema.agencySites.id, siteId),
@@ -25,5 +26,5 @@ export async function POST(request: Request) {
       ...(error ? { error: error.message } : {}),
     });
   });
-  return NextResponse.redirect(new URL("/agency/sites", request.url), 303);
+  return NextResponse.redirect(publicUrl("/agency/sites"), 303);
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifySessionToken, SESSION_COOKIE_NAME } from "@/lib/auth";
+import { publicUrl } from "@/lib/public-url";
 
 const APEX_HOST = "arcreport.ai";
 const CANONICAL_HOST = "www.arcreport.ai";
@@ -36,7 +37,7 @@ export async function proxy(request: NextRequest) {
   if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
     const token = request.cookies.get(SESSION_COOKIE_NAME)?.value;
     if (!token || !(await verifySessionToken(token))) {
-      return NextResponse.redirect(new URL("/admin/login", request.url));
+      return NextResponse.redirect(publicUrl("/admin/login"));
     }
   }
 
