@@ -8,11 +8,18 @@ import type { MatrixBrandRow } from "@/lib/index-data";
 import { TRACKED_AGENT_COUNT } from "@/lib/site";
 
 /**
- * Client-side filtering/sorting on top of server-rendered data.
- * The full brand list arrives as props (in the initial HTML), so crawlers
- * and agents see every row; the controls are progressive enhancement.
+ * Client-side filtering/sorting on top of a server-rendered index or sample.
+ * The controls remain progressive enhancement over the rows supplied.
  */
-export function BrandTable({ brands }: { brands: MatrixBrandRow[] }) {
+export function BrandTable({
+  brands,
+  totalCount = brands.length,
+  title = "Brand index",
+}: {
+  brands: MatrixBrandRow[];
+  totalCount?: number;
+  title?: string;
+}) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<BrandCategory | "all">("all");
   const [sortBy, setSortBy] = useState<"alpha" | "blocked" | "score" | "platform">("score");
@@ -50,23 +57,27 @@ export function BrandTable({ brands }: { brands: MatrixBrandRow[] }) {
     <>
       <div className="flex items-baseline justify-between mb-4">
         <h2 className="text-xl font-black text-foreground tracking-tight">
-          Brand index
+          {title}
         </h2>
         <span className="text-xs text-muted-foreground">
-          {filtered.length} of {brands.length} brand{brands.length !== 1 ? "s" : ""}
+          {filtered.length} shown from {totalCount.toLocaleString()} brand{totalCount !== 1 ? "s" : ""}
         </span>
       </div>
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3 mb-4">
+        <label htmlFor="brand-search" className="sr-only">Search brands</label>
         <input
+          id="brand-search"
           type="text"
           placeholder="Search brands..."
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
           className="border border-gray-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-[#0259DD] w-48"
         />
+        <label htmlFor="brand-category" className="sr-only">Filter by category</label>
         <select
+          id="brand-category"
           value={selectedCategory}
           onChange={e => setSelectedCategory(e.target.value as BrandCategory | "all")}
           className="border border-gray-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-[#0259DD]"
@@ -76,7 +87,9 @@ export function BrandTable({ brands }: { brands: MatrixBrandRow[] }) {
             <option key={key} value={key}>{label}</option>
           ))}
         </select>
+        <label htmlFor="brand-sort" className="sr-only">Sort brands</label>
         <select
+          id="brand-sort"
           value={sortBy}
           onChange={e => setSortBy(e.target.value as typeof sortBy)}
           className="border border-gray-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-[#0259DD]"

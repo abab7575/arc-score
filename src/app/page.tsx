@@ -59,6 +59,9 @@ function formatFieldLabel(field: string): string {
 
 export default function HomePage() {
   const { brands } = buildMatrixPayload();
+  const featuredBrands = [...brands]
+    .sort((a, b) => (b.arcScore ?? -1) - (a.arcScore ?? -1))
+    .slice(0, 100);
   const stats = getIndexStats();
   const recentChanges = getChangelogWithBrands(10);
 
@@ -403,10 +406,15 @@ export default function HomePage() {
               <div className="spec-label text-[#FF6648]">PUBLIC REFERENCE INDEX</div>
               <h2 className="text-2xl sm:text-3xl font-black mt-2">Explore the underlying data.</h2>
             </div>
-            <a href="#brand-index" className="text-sm font-bold text-[#0259DD]">Jump to all stores ↓</a>
+            <Link href="/matrix" className="text-sm font-bold text-[#0259DD]">Browse all {brands.length.toLocaleString()} stores →</Link>
           </div>
           <div id="brand-index" className="scroll-mt-16">
-          <BrandTable brands={brands} />
+          <BrandTable brands={featuredBrands} totalCount={brands.length} title="Representative store index" />
+          <p className="mt-3 text-xs text-muted-foreground">
+            Showing 100 high-scoring stores for a fast overview. The{" "}
+            <Link href="/matrix" className="text-[#0259DD] hover:underline">full matrix</Link>,
+            API, downloads, and MCP include every tracked store.
+          </p>
           </div>
 
           <div className="mt-12">
