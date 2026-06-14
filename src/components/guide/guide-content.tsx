@@ -13,7 +13,6 @@ import {
   Globe,
   CheckCircle2,
   AlertTriangle,
-  XCircle,
   Zap,
   Clock,
   Calendar,
@@ -769,20 +768,19 @@ function ChapterFive() {
    ═══════════════════════════════════════════════════════════════════════ */
 
 function CtaSection() {
-  const [url, setUrl] = useState("");
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!url || !email) return;
+    if (!email) return;
     setLoading(true);
     try {
       await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, brandUrl: url }),
+        body: JSON.stringify({ email, source: "guide" }),
       });
       setSubmitted(true);
     } catch {
@@ -797,10 +795,10 @@ function CtaSection() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
         <div className="text-center mb-10">
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-            Get notified when your site changes
+            Get the weekly agentic commerce brief
           </h2>
           <p className="text-base text-white/50 max-w-xl mx-auto">
-            Add your site and email, and we&apos;ll notify you when our daily scan detects a change in your agent-access posture. No credit card required.
+            The most important agent-access changes, new machine-readable signals, and infrastructure shifts from the ARC index. No credit card required.
           </p>
         </div>
 
@@ -811,21 +809,10 @@ function CtaSection() {
               <span className="spec-label text-[#059669] text-[10px]">SUBMITTED</span>
             </div>
             <h3 className="text-lg font-bold text-white mb-2">You&apos;re on the list.</h3>
-            <p className="text-sm text-white/50">We&apos;ll notify you when your site&apos;s agent-access signals change.</p>
+            <p className="text-sm text-white/50">The next weekly intelligence brief will arrive by email.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="max-w-lg mx-auto space-y-4">
-            <div>
-              <label className="spec-label text-white/40 text-[9px] mb-1.5 block">YOUR SITE URL *</label>
-              <input
-                type="url"
-                required
-                placeholder="https://yourstore.com"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                className="w-full px-4 py-3 border border-white/15 bg-white/5 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-[#FF6648]/50 transition-colors font-mono"
-              />
-            </div>
             <div>
               <label className="spec-label text-white/40 text-[9px] mb-1.5 block">YOUR EMAIL *</label>
               <input
@@ -842,7 +829,7 @@ function CtaSection() {
               disabled={loading}
               className="w-full px-6 py-3 bg-[#FF6648] text-white text-sm font-bold hover:bg-[#e85a3f] transition-colors disabled:opacity-50 relative group"
             >
-              {loading ? "Submitting..." : "Notify Me on Changes"}
+              {loading ? "Submitting..." : "Get the Weekly Brief"}
               <span className="absolute inset-0 bg-[#0259DD] -z-10 translate-x-[2px] translate-y-[2px] group-hover:translate-x-[3px] group-hover:translate-y-[3px] transition-transform" />
             </button>
           </form>

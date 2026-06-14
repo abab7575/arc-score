@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 export const brands = sqliteTable("brands", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -173,6 +173,16 @@ export const emailSubscribers = sqliteTable("email_subscribers", {
   unsubscribedAt: text("unsubscribed_at"), // ISO; null = subscribed
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
+
+export const publicDigestDeliveries = sqliteTable("public_digest_deliveries", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  subscriberId: integer("subscriber_id").notNull().references(() => emailSubscribers.id),
+  weekStart: text("week_start").notNull(),
+  providerMessageId: text("provider_message_id"),
+  sentAt: text("sent_at").notNull().$defaultFn(() => new Date().toISOString()),
+}, (table) => [
+  uniqueIndex("public_digest_deliveries_subscriber_week").on(table.subscriberId, table.weekStart),
+]);
 
 // ── Admin: Content Queue ─────────────────────────────────────────────
 

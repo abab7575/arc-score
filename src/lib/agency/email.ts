@@ -70,7 +70,7 @@ export function getUnsubscribeUrl(email: string): string {
 export function emailShell(title: string, bodyHtml: string, unsubscribeUrl?: string): string {
   return `<!doctype html><html><body style="margin:0;background:#fff8f0;color:#0a1628;font-family:Arial,sans-serif">
   <div style="max-width:620px;margin:0 auto;padding:32px 20px">
-    <div style="font:700 13px monospace;color:#0259dd;margin-bottom:20px">ARC REPORT / FOR AGENCIES</div>
+    <div style="font:700 13px monospace;color:#0259dd;margin-bottom:20px">ARC REPORT / AGENTIC COMMERCE INTELLIGENCE</div>
     <h1 style="font-size:24px;line-height:1.2">${title}</h1>${bodyHtml}
     <p style="font-size:12px;color:#6b7280;margin-top:32px">ARC Report · Independent AI-commerce monitoring
     ${unsubscribeUrl ? ` · <a href="${unsubscribeUrl}">Unsubscribe</a>` : ""}</p>

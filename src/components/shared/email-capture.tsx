@@ -48,12 +48,15 @@ export function EmailCapture({
       <p className="text-sm font-bold text-foreground mb-1">{heading}</p>
       <p className="text-xs text-muted-foreground mb-4">{subtext}</p>
       <form onSubmit={handleSubmit} className="flex gap-2">
+        <label htmlFor={`email-capture-${source}`} className="sr-only">Email address</label>
         <input
+          id={`email-capture-${source}`}
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@company.com"
           required
+          autoComplete="email"
           className="flex-1 px-3 py-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#0259DD] rounded-none"
         />
         <button

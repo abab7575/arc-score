@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Loader2, UserCheck } from "lucide-react";
 
 export function ClaimBrandButton({ brandId, brandName }: { brandId: number; brandName: string }) {
-  const [state, setState] = useState<"idle" | "form" | "loading" | "done">("idle");
+  const [state, setState] = useState<"idle" | "form" | "loading" | "done" | "error">("idle");
   const [email, setEmail] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
@@ -13,14 +13,15 @@ export function ClaimBrandButton({ brandId, brandName }: { brandId: number; bran
     setState("loading");
     try {
       // Save email as subscriber with brand claim context
-      await fetch("/api/subscribe", {
+      const response = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, source: `claim:${brandId}` }),
       });
+      if (!response.ok) throw new Error("Claim submission failed");
       setState("done");
     } catch {
-      setState("done"); // Still show success — email is captured
+      setState("error");
     }
   }
 
@@ -33,34 +34,40 @@ export function ClaimBrandButton({ brandId, brandName }: { brandId: number; bran
     );
   }
 
-  if (state === "form" || state === "loading") {
+  if (state === "form" || state === "loading" || state === "error") {
     return (
-      <form onSubmit={handleSubmit} className="flex items-center gap-2">
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="your@email.com"
-          required
-          autoFocus
-          className="px-3 py-1.5 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#0259DD] w-48"
-        />
-        <button
-          type="submit"
-          disabled={state === "loading"}
-          className="px-3 py-1.5 bg-[#0A1628] text-white text-sm font-medium hover:bg-[#0A1628]/90 transition-colors disabled:opacity-50 flex items-center gap-1"
-        >
-          {state === "loading" ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
-          Claim
-        </button>
-        <button
-          type="button"
-          onClick={() => setState("idle")}
-          className="text-xs text-muted-foreground hover:text-foreground"
-        >
-          Cancel
-        </button>
-      </form>
+      <div>
+        <form onSubmit={handleSubmit} className="flex items-center gap-2">
+          <label htmlFor={`claim-email-${brandId}`} className="sr-only">Work email for {brandName}</label>
+          <input
+            id={`claim-email-${brandId}`}
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="your@email.com"
+            required
+            autoFocus
+            autoComplete="email"
+            className="px-3 py-1.5 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#0259DD] w-48"
+          />
+          <button
+            type="submit"
+            disabled={state === "loading"}
+            className="px-3 py-1.5 bg-[#0A1628] text-white text-sm font-medium hover:bg-[#0A1628]/90 transition-colors disabled:opacity-50 flex items-center gap-1"
+          >
+            {state === "loading" ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
+            Claim
+          </button>
+          <button
+            type="button"
+            onClick={() => setState("idle")}
+            className="text-xs text-muted-foreground hover:text-foreground"
+          >
+            Cancel
+          </button>
+        </form>
+        {state === "error" && <p className="mt-2 text-xs text-red-600">Could not submit the claim. Please try again.</p>}
+      </div>
     );
   }
 

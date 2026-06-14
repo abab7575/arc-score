@@ -299,7 +299,18 @@ sqlite.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL UNIQUE,
     source TEXT NOT NULL DEFAULT 'homepage',
+    unsubscribed_at TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS public_digest_deliveries (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    subscriber_id INTEGER NOT NULL REFERENCES email_subscribers(id),
+    week_start TEXT NOT NULL,
+    provider_message_id TEXT,
+    sent_at TEXT NOT NULL DEFAULT (datetime('now')),
+    UNIQUE(subscriber_id, week_start)
   )
 `);
 

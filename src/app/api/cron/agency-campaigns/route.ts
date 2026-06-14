@@ -4,7 +4,8 @@ import { db, schema } from "@/lib/db";
 import { emailShell, getUnsubscribeUrl, sendAgencyEmail } from "@/lib/agency/email";
 
 export async function GET(request: NextRequest) {
-  if (request.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) {
+  const secret = process.env.CRON_SECRET;
+  if (!secret || request.headers.get("authorization") !== `Bearer ${secret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const now = new Date().toISOString();
