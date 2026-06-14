@@ -8,7 +8,7 @@ import path from "path";
 import fs from "fs";
 import { BRANDS } from "../brands";
 
-const DB_PATH = path.join(process.cwd(), "data", "arc-score.db");
+const DB_PATH = path.resolve(process.env.DATABASE_PATH || path.join(process.cwd(), "data", "arc-score.db"));
 fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
 
 const sqlite = new Database(DB_PATH);

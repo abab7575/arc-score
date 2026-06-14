@@ -22,6 +22,7 @@ jobs:
           for csv in data/*.csv; do
             npx tsx scripts/bulk-import.ts "$csv"
           done
+          npx tsx scripts/seed-ci-data.ts
       - run: npm test
       - run: npx tsc --noEmit
       - run: npm run build
